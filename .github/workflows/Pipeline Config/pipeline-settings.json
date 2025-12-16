@@ -2,7 +2,7 @@
   "project": {
     "name": "Unity-Template",
     "displayName": "Unity Template 项目",
-    "unityVersion": "2022.3.58f1",
+    "unityVersion": "6000.3.1f1",
     "description": "Unity 项目模板的CI/CD配置"
   },
   "triggers": {

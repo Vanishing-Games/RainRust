@@ -20,7 +20,7 @@ namespace PlayerControlByOris
 
         protected override void OnTick(float deltaTime)
         {
-            mPCComponent.mRigidbody.velocity = ctrlVelocity + extraVelocity;
+            mPCComponent.mRigidbody.linearVelocity = ctrlVelocity + extraVelocity;
         }
 
         private Vector2 ctrlVelocity => mPCComponent.CtrlVelocity;
