@@ -10,7 +10,7 @@ namespace RainRustRenderPipeline
     {
         protected override RenderPipeline CreatePipeline()
         {
-            return null;
+            return new RainRustRenderPipeline();
         }
     }
 }
