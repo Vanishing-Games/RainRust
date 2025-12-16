@@ -1,21 +1,21 @@
-using System.Collections;
-using System.Collections.Generic;
+using Core;
 using UnityEngine;
 using UnityEngine.Rendering;
 
 public class PipelineSetter : MonoBehaviour
 {
-    public RenderPipelineAsset mRenderPipelineAsset;
+    public RenderPipelineAsset mUrpRenderPipelineAsset;
+    public RenderPipelineAsset mCustomRenderPipelineAsset;
 
     void OnEnable()
     {
-        GraphicsSettings.defaultRenderPipeline = mRenderPipelineAsset;
+        GraphicsSettings.defaultRenderPipeline = mCustomRenderPipelineAsset;
     }
 
 #if UNITY_EDITOR
     void OnValidate()
     {
-        GraphicsSettings.defaultRenderPipeline = mRenderPipelineAsset;
+        GraphicsSettings.defaultRenderPipeline = mCustomRenderPipelineAsset;
     }
 #endif
 }

@@ -33,6 +33,7 @@ namespace Core
         public static readonly LogTag Addressables = new("Addressables");
         public static readonly LogTag Test = new("Test");
         public static readonly LogTag Command = new("Command");
+        public static readonly LogTag Rendering = new("Rendering");
 
         // ========== Second Tags ==========
         public static readonly LogTag CodeUnfucker = new("CodeUnfucker", Editor.Path);
