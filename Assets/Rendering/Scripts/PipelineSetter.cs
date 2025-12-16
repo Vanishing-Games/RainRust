@@ -6,16 +6,21 @@ public class PipelineSetter : MonoBehaviour
 {
     public RenderPipelineAsset mUrpRenderPipelineAsset;
     public RenderPipelineAsset mCustomRenderPipelineAsset;
+    public bool UseCustomPipeline = true;
 
     void OnEnable()
     {
-        GraphicsSettings.defaultRenderPipeline = mCustomRenderPipelineAsset;
+        GraphicsSettings.defaultRenderPipeline = UseCustomPipeline
+            ? mCustomRenderPipelineAsset
+            : mUrpRenderPipelineAsset;
     }
 
 #if UNITY_EDITOR
     void OnValidate()
     {
-        GraphicsSettings.defaultRenderPipeline = mCustomRenderPipelineAsset;
+        GraphicsSettings.defaultRenderPipeline = UseCustomPipeline
+            ? mCustomRenderPipelineAsset
+            : mUrpRenderPipelineAsset;
     }
 #endif
 }
