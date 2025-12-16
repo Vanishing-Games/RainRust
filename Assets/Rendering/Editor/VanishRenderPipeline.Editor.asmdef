@@ -1,11 +1,7 @@
 {
-    "name": "RainRustRenderPipeline",
-    "rootNamespace": "RainRustRenderPipeline",
-    "references": [
-        "GUID:198f161f050714b85981e87f526d009e",
-        "GUID:df380645f10b7bc4b97d4f5eb6303d95",
-        "GUID:69257879134bba646869b21467b3338d"
-    ],
+    "name": "RainRustRenderPipeline.Editor",
+    "rootNamespace": "VanishRenderPipeline.Editor",
+    "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
