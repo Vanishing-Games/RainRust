@@ -7,9 +7,9 @@ namespace RainRustRenderPipeline
 {
     public class RainRustRenderPipeline : RenderPipeline
     {
-        protected override void Render(ScriptableRenderContext context, Camera[] cameras)
+        protected override void Render(ScriptableRenderContext context, List<Camera> cameras)
         {
-            throw new System.NotImplementedException();
+            return;
         }
     }
 }
