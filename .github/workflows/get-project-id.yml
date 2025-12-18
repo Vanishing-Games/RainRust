@@ -33,8 +33,11 @@ jobs:
                       title
                       fields(first: 20) {
                         nodes {
-                          id
-                          name
+                          __typename
+                          ... on ProjectV2FieldCommon {  # 这是所有字段共有的基础类型
+                            id
+                            name
+                          }
                           ... on ProjectV2SingleSelectField {
                             options {
                               id
