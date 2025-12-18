@@ -71,14 +71,14 @@ jobs:
             if (!priorityField) throw new Error("未找到优先级字段");
             if (!ddlField) throw new Error("未找到DDL字段");
 
-            // 获取 P3 选项
-            const p3Option = priorityField.options.find(o => o.name === "P3");
-            if (!p3Option) throw new Error("未找到 P3 选项");
+            // 获取 P2 选项
+            const p2Option = priorityField.options.find(o => o.name === "P2");
+            if (!p2Option) throw new Error("未找到 P2 选项");
 
             // 设置 step outputs
             core.setOutput("project_id", project.id);
             core.setOutput("priority_field_id", priorityField.id);
-            core.setOutput("p3_option_id", p3Option.id);
+            core.setOutput("p3_option_id", p2Option.id);
             core.setOutput("ddl_field_id", ddlField.id);
 
       - name: 输出到 GitHub Summary
@@ -88,7 +88,7 @@ jobs:
           script: |
             const projectId = "${{ steps.set-ids.outputs.project_id }}";
             const priorityFieldId = "${{ steps.set-ids.outputs.priority_field_id }}";
-            const p3OptionId = "${{ steps.set-ids.outputs.p3_option_id }}";
+            const p2OptionId = "${{ steps.set-ids.outputs.p3_option_id }}";
             const ddlFieldId = "${{ steps.set-ids.outputs.ddl_field_id }}";
 
             core.summary
@@ -96,7 +96,7 @@ jobs:
               .addList([
                 `Project ID: ${projectId}`,
                 `Priority Field ID: ${priorityFieldId}`,
-                `P3 Option ID: ${p3OptionId}`,
+                `P3 Option ID: ${p2OptionId}`,
                 `DDL Field ID: ${ddlFieldId}`
               ])
               .write();
