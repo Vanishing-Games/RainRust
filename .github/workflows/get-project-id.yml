@@ -2,6 +2,7 @@ name: 获取 Project 相关ID
 
 on:
   workflow_call:
+  workflow_dispatch:
 
 jobs:
   get_ids:
