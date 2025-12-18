@@ -143,11 +143,11 @@ jobs:
               title = `Issue #${item.content.number} DDL 提醒[Action自动生成] \n`;
 
               if (diffDays < 0) {
-                message = `${title} ${assignees} 🚨💥 DDL到此为止了！💀🛑\n@${coreTeam} 🍵🧋有奶茶喝了🥤🎉`;
+                message = `${title} ${assignees} 🚨💥 **DDL到此为止了**！💀🛑\n@${coreTeam} 🍵🧋有**奶茶**喝了🥤🎉`;
               } else if (diffDays === 0) {
-                message = `${title} ${assignees} ⏰⚡️ 沟槽的DDL要结束了‼️🔥💨`;
+                message = `${title} ${assignees} ⏰⚡️ **沟槽**的**DDL**要**结束**了‼️🔥💨`;
               } else if ([7,3,1].includes(diffDays)) {
-                message = `${title} ${assignees} ⏳📝 DDL ${diffDays} 天 📅⚠️💪`;
+                message = `${title} ${assignees} ⏳📝 DDL **${diffDays}** 天 📅⚠️💪`;
               }
 
               if (!message) continue;
