@@ -1,0 +1,90 @@
+name: DDL 来了😰 DDL 来啦😰
+
+on:
+  schedule:
+    - cron: '0 9 * * *' # 每天 09:00 UTC
+
+jobs:
+  reminder:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 获取 Project 相关 ID
+        id: ids
+        uses: ./.github/workflows/get-project-id.yml
+
+      - name: 检查DDL并降下神罚
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.CICD_PAT }}
+          script: |
+            const projectId = "${{ steps.ids.outputs.project_id }}";
+            const ddlFieldName = "DDL";
+            const coreTeam = "Vanishing-Games/core-developers";
+            const today = new Date();
+            today.setHours(0,0,0,0);
+
+            const result = await github.graphql(`
+              query {
+                node(id: "${projectId}") {
+                  ... on ProjectV2 {
+                    items(first: 100) {
+                      nodes {
+                        id
+                        content {
+                          ... on Issue {
+                            number
+                            title
+                            repository { owner { login } name }
+                            assignees(first: 10) { nodes { login } }
+                          }
+                        }
+                        fieldValues(first: 20) {
+                          nodes {
+                            ... on ProjectV2ItemFieldDateValue {
+                              date
+                              field { ... on ProjectV2FieldCommon { name } }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            `);
+
+            for (const item of result.node.items.nodes) {
+              if (!item.content) continue;
+
+              const ddlField = item.fieldValues.nodes.find(f => f.field?.name === ddlFieldName);
+              if (!ddlField?.date) continue;
+
+              const ddl = new Date(ddlField.date);
+              ddl.setHours(0,0,0,0);
+
+              const diffDays = Math.floor((ddl - today) / 86400000);
+              let message = null;
+
+              if (diffDays < 0) {
+                // 逾期提醒
+                const assignees = item.content.assignees.nodes.map(a => `@${a.login}`).join(' ');
+                message = `${assignees} 🚨 任务已逾期，请尽快处理！\n@${coreTeam}`;
+              } else if (diffDays === 0) {
+                // 当天截止提醒
+                const assignees = item.content.assignees.nodes.map(a => `@${a.login}`).join(' ');
+                message = `${assignees} ⏰ 今天是截止日，请完成任务`;
+              } else if ([7,3,1].includes(diffDays)) {
+                // 提前提醒
+                const assignees = item.content.assignees.nodes.map(a => `@${a.login}`).join(' ');
+                message = `${assignees} ⏳ 距离截止日期还有 ${diffDays} 天，请注意`;
+              }
+
+              if (!message) continue;
+
+              await github.rest.issues.createComment({
+                owner: item.content.repository.owner.login,
+                repo: item.content.repository.name,
+                issue_number: item.content.number,
+                body: message
+              });
+            }

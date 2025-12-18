@@ -1,0 +1,59 @@
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  add-to-project:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 获取 Project 相关 ID
+        id: ids
+        uses: ./.github/workflows/get-project-id.yml  # 调用 reusable workflow
+
+      - name: 关联 Issue 到 Project
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.CICD_PAT }}
+          script: |
+            const issueNodeId = context.payload.issue.node_id;
+            const projectId = "${{ steps.ids.outputs.project_id }}";
+            const priorityFieldId = "${{ steps.ids.outputs.priority_field_id }}";
+            const p3OptionId = "${{ steps.ids.outputs.p3_option_id }}";
+            const ddlFieldId = "${{ steps.ids.outputs.ddl_field_id }}";
+
+            const addItem = await github.graphql(`
+              mutation($projectId: ID!, $contentId: ID!) {
+                addProjectV2ItemById(input: { projectId: $projectId, contentId: $contentId }) {
+                  item { id }
+                }
+              }
+            `, { projectId, contentId: issueNodeId });
+
+            const itemId = addItem.addProjectV2ItemById.item.id;
+
+            const threeDaysLater = new Date();
+            threeDaysLater.setDate(threeDaysLater.getDate() + 3);
+
+            // 设置 Priority = P3
+            await github.graphql(`
+              mutation {
+                updateProjectV2ItemFieldValue(input: {
+                  projectId: "${projectId}"
+                  itemId: "${itemId}"
+                  fieldId: "${priorityFieldId}"
+                  value: { singleSelectOptionId: "${p3OptionId}" }
+                }) { projectV2Item { id } }
+              }
+            `);
+
+            // 设置 DDL = 3天后
+            await github.graphql(`
+              mutation {
+                updateProjectV2ItemFieldValue(input: {
+                  projectId: "${projectId}"
+                  itemId: "${itemId}"
+                  fieldId: "${ddlFieldId}"
+                  value: { date: "${threeDaysLater.toISOString().split("T")[0]}" }
+                }) { projectV2Item { id } }
+              }
+            `);
