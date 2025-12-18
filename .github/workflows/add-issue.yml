@@ -41,7 +41,7 @@ jobs:
             `);
 
             const project = result.organization.projectsV2.nodes.find(p => p.title === projectName);
-            if (!project) throw new Error("Project not found");
+            if (!project) throw new Error("未找到目标 Project: " + projectName);
 
             const fields = project.fields.nodes.map(f => ({
               id: f.id,
@@ -65,12 +65,13 @@ jobs:
 
             // 输出到 GitHub Summary
             core.summary
-              .addHeading('获取到的 Project 相关 ID')
+              .addHeading('📌 获取到的 Project 相关信息')
               .addList([
+                `Project 名称: ${project.title}`,
                 `Project ID: ${project.id}`,
-                `Priority Field ID: ${priorityField.id}`,
-                `P2 Option ID: ${p2Option.id}`,
-                `DDL Field ID: ${ddlField.id}`
+                `优先级字段 ID: ${priorityField.id}`,
+                `P2 选项 ID: ${p2Option.id}`,
+                `DDL 字段 ID: ${ddlField.id}`
               ])
               .write();
 
@@ -83,6 +84,8 @@ jobs:
           github-token: ${{ secrets.PROJECT_PAT }}
           script: |
             const issueNodeId = context.payload.issue.node_id;
+            const issueNumber = context.payload.issue.number;
+            const repoName = context.payload.repository.name;
             const projectId = "${{ steps.get_project.outputs.project_id }}";
             const priorityFieldId = "${{ steps.get_project.outputs.priority_field_id }}";
             const p2OptionId = "${{ steps.get_project.outputs.p2_option_id }}";
@@ -114,13 +117,26 @@ jobs:
             // 设置 DDL = 3天后
             const threeDaysLater = new Date();
             threeDaysLater.setDate(threeDaysLater.getDate() + 3);
+            const ddlDateStr = threeDaysLater.toISOString().split("T")[0];
+
             await github.graphql(`
               mutation {
                 updateProjectV2ItemFieldValue(input: {
                   projectId: "${projectId}"
                   itemId: "${itemId}"
                   fieldId: "${ddlFieldId}"
-                  value: { date: "${threeDaysLater.toISOString().split("T")[0]}" }
+                  value: { date: "${ddlDateStr}" }
                 }) { projectV2Item { id } }
               }
             `);
+
+            // 输出到 GitHub Summary
+            core.summary
+              .addHeading('✅ Issue 已关联到 Project')
+              .addList([
+                `仓库: ${repoName}`,
+                `Issue #${issueNumber} 已添加到 Project "${projectId}"`,
+                `已设置优先级: P2`,
+                `已设置 DDL: ${ddlDateStr}`
+              ])
+              .write();
