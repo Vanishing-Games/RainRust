@@ -103,6 +103,7 @@ jobs:
                         content {
                           ... on Issue {
                             number
+                            state
                             repository { owner { login } name }
                             assignees(first: 10) { nodes { login } }
                           }
@@ -122,10 +123,11 @@ jobs:
               }
             `);
 
-            const summaryMessages = [];
+            const summaryRows = [];
 
             for (const item of result.node.items.nodes) {
               if (!item.content) continue;
+              if (item.content.state === "CLOSED") continue; // ✅ 已关闭的 Issue 跳过
 
               // 找到 DDL 字段值
               const ddlField = item.fieldValues.nodes.find(f => f.field?.id === ddlFieldId);
@@ -155,15 +157,19 @@ jobs:
                 body: message
               });
 
-              summaryMessages.push(`Issue #${item.content.number} (${item.content.repository.name}) 提醒已发送: ${message}`);
+              const issueUrl = `https://github.com/${item.content.repository.owner.login}/${item.content.repository.name}/issues/${item.content.number}`;
+              summaryRows.push(`| [#${item.content.number}](${issueUrl}) | ${item.content.repository.name} | ${message} |`);
             }
 
             // 输出到 GitHub Summary
-            if (summaryMessages.length === 0) {
+            if (summaryRows.length === 0) {
               core.summary.addRaw('✅ 今日没有需要提醒的任务').write();
             } else {
               core.summary
                 .addHeading('📣 DDL 提醒发送情况')
-                .addList(summaryMessages)
+                .addRaw('| Issue | 仓库 | 提醒内容 |')
+                .addRaw('| --- | --- | --- |')
+                .addRaw(summaryRows.join('\n'))
                 .write();
             }
+
