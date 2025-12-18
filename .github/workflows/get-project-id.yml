@@ -2,6 +2,9 @@ name: 获取 Project 相关ID
 
 on:
   workflow_call:  # 允许被其他 workflow 调用
+  pull_request:
+    branches: [develop, main]
+    types: [opened, synchronize, reopened, ready_for_review]
 
 outputs:
   project_id:
@@ -62,9 +65,30 @@ jobs:
             const ddlField = project.fields.nodes.find(f => f.name === "DDL");
             const p3Option = priorityField.options.find(o => o.name === "P3");
 
+            // 输出 step outputs
             return {
               project_id: project.id,
               priority_field_id: priorityField.id,
               p3_option_id: p3Option.id,
               ddl_field_id: ddlField.id
             };
+
+      - name: 输出到 GitHub Summary
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.CICD_PAT }}
+          script: |
+            const projectId = "${{ steps.set-ids.outputs.project_id }}";
+            const priorityFieldId = "${{ steps.set-ids.outputs.priority_field_id }}";
+            const p3OptionId = "${{ steps.set-ids.outputs.p3_option_id }}";
+            const ddlFieldId = "${{ steps.set-ids.outputs.ddl_field_id }}";
+
+            core.summary
+              .addHeading('获取到的 Project 相关 ID')
+              .addList([
+                `Project ID: ${projectId}`,
+                `Priority Field ID: ${priorityFieldId}`,
+                `P3 Option ID: ${p3OptionId}`,
+                `DDL Field ID: ${ddlFieldId}`
+              ])
+              .write();
