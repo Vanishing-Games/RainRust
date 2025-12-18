@@ -57,13 +57,11 @@ jobs:
             if (!ddlField) throw new Error("未找到DDL字段");
             if (!p2Option) throw new Error("未找到 P2 选项");
 
-            // 输出 step outputs
             core.setOutput("project_id", project.id);
             core.setOutput("priority_field_id", priorityField.id);
             core.setOutput("p2_option_id", p2Option.id);
             core.setOutput("ddl_field_id", ddlField.id);
 
-            // 输出到 GitHub Summary
             core.summary
               .addHeading('📌 获取到的 Project 相关信息')
               .addList([
@@ -76,7 +74,7 @@ jobs:
               .write();
 
       # -------------------------------
-      # 2️⃣ 关联 Issue 到 Project 并设置 Priority / DDL
+      # 2️⃣ 关联 Issue 到 Project 并设置 Priority / DDL（仅在无值时设置）
       # -------------------------------
       - name: 关联 Issue 到 Project
         uses: actions/github-script@v7
@@ -102,41 +100,69 @@ jobs:
 
             const itemId = addItem.addProjectV2ItemById.item.id;
 
-            // 设置 Priority = P2
-            await github.graphql(`
-              mutation {
-                updateProjectV2ItemFieldValue(input: {
-                  projectId: "${projectId}"
-                  itemId: "${itemId}"
-                  fieldId: "${priorityFieldId}"
-                  value: { singleSelectOptionId: "${p2OptionId}" }
-                }) { projectV2Item { id } }
+            // 查询当前 Item 的字段值
+            const itemQuery = await github.graphql(`
+              query($itemId: ID!, $priorityFieldId: ID!, $ddlFieldId: ID!) {
+                node(id: $itemId) {
+                  ... on ProjectV2Item {
+                    fieldValues(first: 10) {
+                      nodes {
+                        field { id name __typename }
+                        ... on ProjectV2ItemFieldSingleSelectValue {
+                          singleSelectOption { id name }
+                        }
+                        ... on ProjectV2ItemFieldDateValue {
+                          date
+                        }
+                      }
+                    }
+                  }
+                }
               }
-            `);
+            `, { itemId, priorityFieldId, ddlFieldId });
 
-            // 设置 DDL = 3天后
-            const threeDaysLater = new Date();
-            threeDaysLater.setDate(threeDaysLater.getDate() + 3);
-            const ddlDateStr = threeDaysLater.toISOString().split("T")[0];
+            const fieldValues = itemQuery.node.fieldValues.nodes;
 
-            await github.graphql(`
-              mutation {
-                updateProjectV2ItemFieldValue(input: {
-                  projectId: "${projectId}"
-                  itemId: "${itemId}"
-                  fieldId: "${ddlFieldId}"
-                  value: { date: "${ddlDateStr}" }
-                }) { projectV2Item { id } }
-              }
-            `);
+            // 检查 Priority 是否已设置
+            const priorityValue = fieldValues.find(f => f.field.id === priorityFieldId);
+            if (!priorityValue || !priorityValue.singleSelectOption) {
+              await github.graphql(`
+                mutation {
+                  updateProjectV2ItemFieldValue(input: {
+                    projectId: "${projectId}"
+                    itemId: "${itemId}"
+                    fieldId: "${priorityFieldId}"
+                    value: { singleSelectOptionId: "${p2OptionId}" }
+                  }) { projectV2Item { id } }
+                }
+              `);
+            }
 
-            // 输出到 GitHub Summary
+            // 检查 DDL 是否已设置
+            const ddlValue = fieldValues.find(f => f.field.id === ddlFieldId);
+            if (!ddlValue || !ddlValue.date) {
+              const threeDaysLater = new Date();
+              threeDaysLater.setDate(threeDaysLater.getDate() + 3);
+              const ddlDateStr = threeDaysLater.toISOString().split("T")[0];
+
+              await github.graphql(`
+                mutation {
+                  updateProjectV2ItemFieldValue(input: {
+                    projectId: "${projectId}"
+                    itemId: "${itemId}"
+                    fieldId: "${ddlFieldId}"
+                    value: { date: "${ddlDateStr}" }
+                  }) { projectV2Item { id } }
+                }
+              `);
+            }
+
             core.summary
               .addHeading('✅ Issue 已关联到 Project')
               .addList([
                 `仓库: ${repoName}`,
                 `Issue #${issueNumber} 已添加到 Project "${projectId}"`,
-                `已设置优先级: P2`,
-                `已设置 DDL: ${ddlDateStr}`
+                `优先级: ${priorityValue && priorityValue.singleSelectOption ? priorityValue.singleSelectOption.name : "已设置 P2"}`,
+                `DDL: ${ddlValue && ddlValue.date ? ddlValue.date : "已设置 3天后"}`
               ])
               .write();
