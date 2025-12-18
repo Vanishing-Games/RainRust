@@ -9,12 +9,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # -------------------------------
-      # 0️⃣ Checkout 仓库
-      # -------------------------------
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      # -------------------------------
       # 1️⃣ 获取 Project 相关 ID
       # -------------------------------
       - name: 获取 Project 相关 ID
