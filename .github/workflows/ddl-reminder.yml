@@ -165,10 +165,13 @@ jobs:
             if (summaryRows.length === 0) {
               core.summary.addRaw('✅ 今日没有需要提醒的任务').write();
             } else {
+              // 将每行内容中的换行符替换为 <br>
+              const safeRows = summaryRows.map(row => row.replace(/\n/g, '<br>'));
+                    
               const tableContent = `
             | Issue | 仓库 | 提醒内容 |
             | --- | --- | --- |
-            ${summaryRows.join('\n')}
+            ${safeRows.join('\n')}
             `;
                     
               core.summary
