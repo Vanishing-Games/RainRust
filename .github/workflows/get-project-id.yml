@@ -12,7 +12,7 @@ jobs:
     outputs:
       project_id: ${{ steps.set-ids.outputs.project_id }}
       priority_field_id: ${{ steps.set-ids.outputs.priority_field_id }}
-      p3_option_id: ${{ steps.set-ids.outputs.p3_option_id }}
+      p2_option_id: ${{ steps.set-ids.outputs.p2_option_id }}
       ddl_field_id: ${{ steps.set-ids.outputs.ddl_field_id }}
     steps:
       - name: 从 GitHub 查询 Project ID
@@ -78,7 +78,7 @@ jobs:
             // 设置 step outputs
             core.setOutput("project_id", project.id);
             core.setOutput("priority_field_id", priorityField.id);
-            core.setOutput("p3_option_id", p2Option.id);
+            core.setOutput("p2_option_id", p2Option.id);
             core.setOutput("ddl_field_id", ddlField.id);
 
       - name: 输出到 GitHub Summary
@@ -88,7 +88,7 @@ jobs:
           script: |
             const projectId = "${{ steps.set-ids.outputs.project_id }}";
             const priorityFieldId = "${{ steps.set-ids.outputs.priority_field_id }}";
-            const p2OptionId = "${{ steps.set-ids.outputs.p3_option_id }}";
+            const p2OptionId = "${{ steps.set-ids.outputs.p2_option_id }}";
             const ddlFieldId = "${{ steps.set-ids.outputs.ddl_field_id }}";
 
             core.summary

@@ -18,7 +18,7 @@ jobs:
             const issueNodeId = context.payload.issue.node_id;
             const projectId = "${{ steps.ids.outputs.project_id }}";
             const priorityFieldId = "${{ steps.ids.outputs.priority_field_id }}";
-            const p3OptionId = "${{ steps.ids.outputs.p3_option_id }}";
+            const p2OptionId = "${{ steps.ids.outputs.p2_option_id }}";
             const ddlFieldId = "${{ steps.ids.outputs.ddl_field_id }}";
 
             const addItem = await github.graphql(`
@@ -41,7 +41,7 @@ jobs:
                   projectId: "${projectId}"
                   itemId: "${itemId}"
                   fieldId: "${priorityFieldId}"
-                  value: { singleSelectOptionId: "${p3OptionId}" }
+                  value: { singleSelectOptionId: "${p2OptionId}" }
                 }) { projectV2Item { id } }
               }
             `);
