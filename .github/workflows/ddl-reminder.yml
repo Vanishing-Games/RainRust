@@ -143,11 +143,11 @@ jobs:
               title = `Issue #${item.content.number} DDL 提醒[Action自动生成] \n`;
 
               if (diffDays < 0) {
-                message = `${title} ${assignees} 🚨 任务已逾期，请尽快处理！\n@${coreTeam}`;
+                message = `${title} ${assignees} 🚨💥 DDL到此为止了！💀🛑\n@${coreTeam} 🍵🧋有奶茶喝了🥤🎉`;
               } else if (diffDays === 0) {
-                message = `${title} ${assignees} ⏰ 今天是截止日，请完成任务`;
+                message = `${title} ${assignees} ⏰⚡️ 沟槽的DDL要结束了‼️🔥💨`;
               } else if ([7,3,1].includes(diffDays)) {
-                message = `${title} ${assignees} ⏳ 距离截止日期还有 ${diffDays} 天，请注意`;
+                message = `${title} ${assignees} ⏳📝 DDL ${diffDays} 天 📅⚠️💪`;
               }
 
               if (!message) continue;
