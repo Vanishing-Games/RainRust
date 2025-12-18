@@ -165,11 +165,13 @@ jobs:
             if (summaryRows.length === 0) {
               core.summary.addRaw('✅ 今日没有需要提醒的任务').write();
             } else {
+              const tableHeader = '| Issue | 仓库 | 提醒内容 |';
+              const tableDivider = '| --- | --- | --- |';
+                    
               core.summary
                 .addHeading('📣 DDL 提醒发送情况')
-                .addRaw('| Issue | 仓库 | 提醒内容 |')
-                .addRaw('| --- | --- | --- |')
-                .addRaw(summaryRows.join('\n'))
+                .addRaw([tableHeader, tableDivider, ...summaryRows].join('\n'))
                 .write();
             }
+
 
