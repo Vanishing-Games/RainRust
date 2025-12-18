@@ -16,7 +16,7 @@ jobs:
       # -------------------------------
       - name: 获取 Project 相关 ID
         id: get_project
-        uses: ./get-project-id.yml
+        uses: ./.github/workflows/get-project-id.yml
 
       # -------------------------------
       # 2️⃣ 检查 DDL 并发送提醒
