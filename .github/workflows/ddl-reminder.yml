@@ -89,7 +89,7 @@ jobs:
       - name: 检查DDL并降下神罚
         uses: actions/github-script@v7
         with:
-          github-token: ${{ secrets.CICD_PAT }}
+          github-token: ${{ secrets.PROJECT_PAT }}
           script: |
             const projectId = "${{ steps.get_project.outputs.project_id }}";
             const ddlFieldId = "${{ steps.get_project.outputs.ddl_field_id }}";
