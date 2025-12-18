@@ -2,9 +2,6 @@ name: 获取 Project 相关ID
 
 on:
   workflow_call:
-  pull_request:
-    branches: [develop, main]
-    types: [opened, synchronize, reopened, ready_for_review]    
 
 jobs:
   get_ids:
