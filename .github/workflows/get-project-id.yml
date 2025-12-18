@@ -1,28 +1,16 @@
 name: 获取 Project 相关ID
 
 on:
-  workflow_call:  # 允许被其他 workflow 调用
-  pull_request:
-    branches: [develop, main]
-    types: [opened, synchronize, reopened, ready_for_review]
-
-outputs:
-  project_id:
-    description: 'Project Node ID'
-    value: ${{ steps.set-ids.outputs.project_id }}
-  priority_field_id:
-    description: 'Priority Field ID'
-    value: ${{ steps.set-ids.outputs.priority_field_id }}
-  p3_option_id:
-    description: 'P3 Option ID'
-    value: ${{ steps.set-ids.outputs.p3_option_id }}
-  ddl_field_id:
-    description: 'DDL Field ID'
-    value: ${{ steps.set-ids.outputs.ddl_field_id }}
+  workflow_call:
 
 jobs:
   get_ids:
     runs-on: ubuntu-latest
+    outputs:
+      project_id: ${{ steps.set-ids.outputs.project_id }}
+      priority_field_id: ${{ steps.set-ids.outputs.priority_field_id }}
+      p3_option_id: ${{ steps.set-ids.outputs.p3_option_id }}
+      ddl_field_id: ${{ steps.set-ids.outputs.ddl_field_id }}
     steps:
       - name: 从 GitHub 查询 Project ID
         id: set-ids
@@ -65,13 +53,11 @@ jobs:
             const ddlField = project.fields.nodes.find(f => f.name === "DDL");
             const p3Option = priorityField.options.find(o => o.name === "P3");
 
-            // 输出 step outputs
-            return {
-              project_id: project.id,
-              priority_field_id: priorityField.id,
-              p3_option_id: p3Option.id,
-              ddl_field_id: ddlField.id
-            };
+            // ✅ 设置 step outputs
+            core.setOutput("project_id", project.id);
+            core.setOutput("priority_field_id", priorityField.id);
+            core.setOutput("p3_option_id", p3Option.id);
+            core.setOutput("ddl_field_id", ddlField.id);
 
       - name: 输出到 GitHub Summary
         uses: actions/github-script@v7
