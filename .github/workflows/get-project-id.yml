@@ -24,6 +24,7 @@ jobs:
             const projectName = "创似我算了";
             const org = "Vanishing-Games";
 
+            // GraphQL 查询组织的 Projects V2
             const result = await github.graphql(`
               query {
                 organization(login: "${org}") {
@@ -34,7 +35,7 @@ jobs:
                       fields(first: 20) {
                         nodes {
                           __typename
-                          ... on ProjectV2FieldCommon {  # 这是所有字段共有的基础类型
+                          ... on ProjectV2FieldCommon {
                             id
                             name
                           }
@@ -52,13 +53,29 @@ jobs:
               }
             `);
 
+            // 找到目标 Project
             const project = result.organization.projectsV2.nodes.find(p => p.title === projectName);
             if (!project) throw new Error("Project not found");
 
-            const priorityField = project.fields.nodes.find(f => f.name === "优先级");
-            const ddlField = project.fields.nodes.find(f => f.name === "DDL");
-            const p3Option = priorityField.options.find(o => o.name === "P3");
+            // 处理字段，确保 options 总是数组
+            const fields = project.fields.nodes.map(f => ({
+              id: f.id,
+              name: f.name,
+              options: f.__typename === "ProjectV2SingleSelectField" ? f.options : []
+            }));
 
+            // 获取优先级字段和 DDL 字段
+            const priorityField = fields.find(f => f.name === "优先级");
+            const ddlField = fields.find(f => f.name === "DDL");
+
+            if (!priorityField) throw new Error("未找到优先级字段");
+            if (!ddlField) throw new Error("未找到DDL字段");
+
+            // 获取 P3 选项
+            const p3Option = priorityField.options.find(o => o.name === "P3");
+            if (!p3Option) throw new Error("未找到 P3 选项");
+
+            // 设置 step outputs
             core.setOutput("project_id", project.id);
             core.setOutput("priority_field_id", priorityField.id);
             core.setOutput("p3_option_id", p3Option.id);
@@ -67,7 +84,7 @@ jobs:
       - name: 输出到 GitHub Summary
         uses: actions/github-script@v7
         with:
-          github-token: ${{ secrets.CICD_PAT }}
+          github-token: ${{ secrets.PROJECT_PAT }}
           script: |
             const projectId = "${{ steps.set-ids.outputs.project_id }}";
             const priorityFieldId = "${{ steps.set-ids.outputs.priority_field_id }}";
