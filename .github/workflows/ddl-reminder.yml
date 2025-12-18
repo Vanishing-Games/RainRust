@@ -26,8 +26,6 @@ jobs:
         with:
           github-token: ${{ secrets.PROJECT_PAT }}
           script: |
-            const core = require('@actions/core');
-
             const org = "Vanishing-Games";
             const projectName = "创似我算了";
 
