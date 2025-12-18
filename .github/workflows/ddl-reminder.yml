@@ -12,12 +12,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # -------------------------------
-      # 0️⃣ Checkout 仓库
-      # -------------------------------
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      # -------------------------------
       # 1️⃣ 获取 Project 相关 ID
       # -------------------------------
       - name: 获取 Project 相关 ID
@@ -50,7 +44,7 @@ jobs:
             `);
 
             const project = result.organization.projectsV2.nodes.find(p => p.title === projectName);
-            if (!project) throw new Error("Project not found");
+            if (!project) throw new Error("未找到目标 Project: " + projectName);
 
             const fields = project.fields.nodes.map(f => ({
               id: f.id,
@@ -74,19 +68,20 @@ jobs:
 
             // 输出到 GitHub Summary
             core.summary
-              .addHeading('获取到的 Project 相关 ID')
+              .addHeading('📌 获取到的 Project 相关信息')
               .addList([
+                `Project 名称: ${project.title}`,
                 `Project ID: ${project.id}`,
-                `Priority Field ID: ${priorityField.id}`,
-                `P2 Option ID: ${p2Option.id}`,
-                `DDL Field ID: ${ddlField.id}`
+                `优先级字段 ID: ${priorityField.id}`,
+                `P2 选项 ID: ${p2Option.id}`,
+                `DDL 字段 ID: ${ddlField.id}`
               ])
               .write();
 
       # -------------------------------
       # 2️⃣ 检查 DDL 并发送提醒
       # -------------------------------
-      - name: 检查DDL并降下神罚
+      - name: 检查 DDL 并发送提醒
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.PROJECT_PAT }}
@@ -127,6 +122,8 @@ jobs:
               }
             `);
 
+            const summaryMessages = [];
+
             for (const item of result.node.items.nodes) {
               if (!item.content) continue;
 
@@ -138,7 +135,7 @@ jobs:
               ddl.setHours(0,0,0,0);
               const diffDays = Math.floor((ddl - today) / 86400000);
 
-              const assignees = item.content.assignees.nodes.map(a => `@${a.login}`).join(' ');
+              const assignees = item.content.assignees.nodes.map(a => `@${a.login}`).join(' ') || '未分配人员';
               let message = null;
 
               if (diffDays < 0) {
@@ -157,4 +154,16 @@ jobs:
                 issue_number: item.content.number,
                 body: message
               });
+
+              summaryMessages.push(`Issue #${item.content.number} (${item.content.repository.name}) 提醒已发送: ${message}`);
+            }
+
+            // 输出到 GitHub Summary
+            if (summaryMessages.length === 0) {
+              core.summary.addRaw('✅ 今日没有需要提醒的任务').write();
+            } else {
+              core.summary
+                .addHeading('📣 DDL 提醒发送情况')
+                .addList(summaryMessages)
+                .write();
             }
