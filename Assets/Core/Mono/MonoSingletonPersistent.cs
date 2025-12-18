@@ -20,13 +20,13 @@ namespace Core
                 {
                     if (instance == null)
                     {
-                        instance = FindObjectOfType<T>();
+                        instance = FindFirstObjectByType<T>();
 
                         if (instance == null)
                         {
                             GameObject singletonObject = new(typeof(T).Name);
                             instance = singletonObject.AddComponent<T>();
-                            DontDestroyOnLoad(singletonObject);
+                            DontDestroyMe(instance.transform);
                         }
                     }
                     return instance;
@@ -39,12 +39,20 @@ namespace Core
             if (instance == null)
             {
                 instance = this as T;
-                DontDestroyOnLoad(gameObject);
+                DontDestroyMe(transform);
             }
             else
             {
                 Destroy(gameObject);
             }
+        }
+
+        private static void DontDestroyMe(Transform me)
+        {
+            if (me.parent == null)
+                DontDestroyOnLoad(me.gameObject);
+            else
+                DontDestroyMe(me.parent);
         }
     }
 }

@@ -381,7 +381,7 @@ jobs:
           echo "|------|------|------|" >> $GITHUB_STEP_SUMMARY
           
           if [[ "${{ steps.predict.outputs.should_run_style }}" == "true" ]]; then
-            echo "| 🎨 代码风格检查 | ✅ 执行 | 使用roslynator检查代码格式 |" >> $GITHUB_STEP_SUMMARY
+            echo "| 🎨 代码风格检查 | ✅ 执行 | 使用CSharpier检查代码格式 |" >> $GITHUB_STEP_SUMMARY
           else
             echo "| 🎨 代码风格检查 | ⏭️ 跳过 | - |" >> $GITHUB_STEP_SUMMARY
           fi
@@ -412,7 +412,7 @@ jobs:
           fi
 
   # =============================================================================
-  # 阶段1: 代码风格检查 - 使用roslynator检查代码格式
+  # 阶段1: 代码风格检查 - 使用CSharpier检查代码格式
   # =============================================================================
   code-style-check:
     name: 🎨 代码风格检查
@@ -421,56 +421,204 @@ jobs:
     if: needs.flow-prediction.outputs.should_run_style == 'true'
     
     steps:
-      - name: 检出代码
+      - name: 📥 检出代码
         uses: actions/checkout@v4
+        with: 
+          fetch-depth: 0 # 必须为 0 以进行 git diff
 
-      - name: 📖 加载代码检查配置
-        id: load-style-config
+      - name: ⚙️ 安装 CSharpier
         run: |
-          echo "🔧 加载代码风格检查配置..."
-          
+          echo "⬇️ 安装 .NET Tool: CSharpier..."
+          dotnet tool install -g csharpier
+
+          echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
+          csharpier --version
+
+      - name: 📖 加载与解析配置
+        id: config
+        run: |
+          echo "🔧 读取 Pipeline 配置..."
           CONFIG_FILE=".github/workflows/Pipeline Config/pipeline-settings.json"
           
-          # 提取代码检查配置
           CHECK_PATHS=$(jq -r '.jobs.code_style.settings.checkPaths[]' "$CONFIG_FILE" | tr '\n' ' ')
-          EXCLUDE_PATHS=$(jq -r '.jobs.code_style.settings.excludePaths[]' "$CONFIG_FILE" | tr '\n' ' ')
           AUTO_FIX=$(jq -r '.jobs.code_style.settings.autoFix' "$CONFIG_FILE")
           
-          echo "检查路径: $CHECK_PATHS"  
-          echo "排除路径: $EXCLUDE_PATHS"
-          echo "自动修复: $AUTO_FIX"
+          if [ -z "$CHECK_PATHS" ]; then CHECK_PATHS="."; fi
+          
+          echo "📂 包含路径: $CHECK_PATHS"
           
           echo "check_paths=$CHECK_PATHS" >> $GITHUB_OUTPUT
-          echo "exclude_paths=$EXCLUDE_PATHS" >> $GITHUB_OUTPUT
           echo "auto_fix=$AUTO_FIX" >> $GITHUB_OUTPUT
 
-      - name: 🧹 运行代码格式检查
+      - name: 🧹 执行增量代码检查
+        id: run_check
+        env:
+          CHECK_PATHS: ${{ steps.config.outputs.check_paths }}
         run: |
-          echo "🎨 开始代码风格检查..."
-          echo "本步骤将检查代码格式是否符合项目规范"
-          echo ""
-          echo "检查路径: ${{ steps.load-style-config.outputs.check_paths }}"
-          echo "排除路径: ${{ steps.load-style-config.outputs.exclude_paths }}"
-          echo "自动修复: ${{ steps.load-style-config.outputs.auto_fix }}"
-          echo ""
-          
-          # 这里应该集成实际的代码格式检查工具
-          # 比如使用CSharpier、Roslynator等
-          
-          # 模拟代码检查过程
-          echo "✅ 代码风格检查通过"
-          echo "📋 检查结果: 所有文件都符合代码规范"
+          echo "🎨 准备计算变更文件..."
 
-      - name: 📊 代码检查摘要
+          BASE_REF="origin/develop"
+          if [[ "$GITHUB_EVENT_NAME" == "push" ]]; then
+            BASE_REF="HEAD^"
+          fi
+                  
+          echo "🔍 对比基准: $BASE_REF"
+          echo "🔍 检索路径范围: $CHECK_PATHS"
+                  
+          # 读取变更文件（逐行，保留空格）
+          mapfile -t FINAL_FILES_ARRAY < <(
+            git diff --name-only --diff-filter=ACMR $BASE_REF HEAD -- $CHECK_PATHS | grep '\.cs$' || true
+          )
+                  
+          if [ ${#FINAL_FILES_ARRAY[@]} -eq 0 ]; then
+            echo "✅ 在指定路径下无 .cs 文件变更。"
+            echo "status=skipped" >> $GITHUB_OUTPUT
+            echo "files_count=0" >> $GITHUB_OUTPUT
+            echo "failed_files=''" >> $GITHUB_OUTPUT 
+            exit 0
+          fi
+                  
+          COUNT=${#FINAL_FILES_ARRAY[@]}
+          echo "📝 即将检查 $COUNT 个文件..."
+          echo "files_count=$COUNT" >> $GITHUB_OUTPUT
+                  
+          echo "📄 即将检查的文件列表:"
+          printf '%s\n' "${FINAL_FILES_ARRAY[@]}"
+                  
+          # Base64 保存文件列表
+          printf "%s\n" "${FINAL_FILES_ARRAY[@]}" | base64 -w 0 | \
+            xargs -I {} echo "checked_files_list={}" >> $GITHUB_OUTPUT
+                  
+          echo "🚀 运行 CSharpier..."
+          set +e
+          CSHARPIER_OUTPUT=$(csharpier check "${FINAL_FILES_ARRAY[@]}" 2>&1)
+          EXIT_CODE=$?
+          set -e
+                  
+          echo "💼 保存CSharpier 输出..."
+          echo "csharpier_raw=$(echo "$CSHARPIER_OUTPUT" | base64 -w 0)" >> $GITHUB_OUTPUT
+                  
+          # 解析失败的文件
+          FAILED_FILES_RAW=$(echo "$CSHARPIER_OUTPUT" | grep -oE '^Error .*\.cs' | sed -E 's/^Error (.*\.cs).*/\1/')
+                  
+          FAILED_FILES_LIST=""
+          if [ -n "$FAILED_FILES_RAW" ]; then
+            while IFS= read -r line; do
+              CLEAN_LINE=$(echo "$line" | xargs)
+              [ -n "$CLEAN_LINE" ] && FAILED_FILES_LIST+="- $CLEAN_LINE"$'\n'
+            done <<< "$FAILED_FILES_RAW"
+          fi
+                  
+          if [ $EXIT_CODE -eq 0 ]; then
+            echo "status=success" >> $GITHUB_OUTPUT
+            echo "failed_files=" >> $GITHUB_OUTPUT
+          else
+            echo "status=failure" >> $GITHUB_OUTPUT
+            echo "failed_files=$(echo "$FAILED_FILES_LIST" | base64 -w 0)" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+
+      - name: 📊 生成检查报告
+        if: always()
         run: |
-          echo "## 🎨 代码风格检查结果" >> $GITHUB_STEP_SUMMARY
+          STATUS="${{ steps.run_check.outputs.status }}"
+          COUNT="${{ steps.run_check.outputs.files_count }}"
+          ENCODED_FAILED_FILES="${{ steps.run_check.outputs.failed_files }}"
+          ENCODED_CHECKED_FILES="${{ steps.run_check.outputs.checked_files_list }}"
+          ENCODED_RAW_OUTPUT="${{ steps.run_check.outputs.csharpier_raw }}"
+
+          # --- 解码失败文件列表 ---
+          if [ -n "$ENCODED_FAILED_FILES" ]; then
+              FAILED_FILES=$(echo "$ENCODED_FAILED_FILES" | base64 -d)
+          else
+              FAILED_FILES=""
+          fi
+
+          # --- 解码所有接受检查的文件 ---
+          if [ -n "$ENCODED_CHECKED_FILES" ]; then
+              CHECKED_FILES=$(echo "$ENCODED_CHECKED_FILES" | base64 -d)
+          else
+              CHECKED_FILES=""
+          fi
+
+          # --- 解码 CSharpier 原始输出 ---
+          if [ -n "$ENCODED_RAW_OUTPUT" ]; then
+              RAW_OUTPUT=$(echo "$ENCODED_RAW_OUTPUT" | base64 -d)
+          else
+              RAW_OUTPUT="(无输出)"
+          fi
+
+          echo "## 🎨 代码风格检查报告" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "✅ **检查状态:** 通过" >> $GITHUB_STEP_SUMMARY
+
+          # --- 状态显示 ---
+          if [ "$STATUS" == "success" ]; then
+            echo "✅ **结果:** 通过" >> $GITHUB_STEP_SUMMARY
+            echo "🎉 所有变更的 C# 文件格式正确。" >> $GITHUB_STEP_SUMMARY
+
+          elif [ "$STATUS" == "skipped" ]; then
+            echo "⚪ **结果:** 跳过" >> $GITHUB_STEP_SUMMARY
+            echo "✨ 指定路径内无 .cs 文件变更。" >> $GITHUB_STEP_SUMMARY
+
+          else
+            echo "❌ **结果:** 失败" >> $GITHUB_STEP_SUMMARY
+            echo "⚠️ 发现代码格式问题，请在本地运行 \`csharpier .\` 进行修复。" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+
+            # --- 失败文件列表 ---
+            if [ -n "$FAILED_FILES" ]; then
+              FAILED_COUNT=$(echo "$FAILED_FILES" | wc -l)
+              echo "### 📄 未通过格式检查的文件（${FAILED_COUNT} 个）" >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+
+              echo '```' >> $GITHUB_STEP_SUMMARY
+              echo "$FAILED_FILES" >> $GITHUB_STEP_SUMMARY
+              echo '```' >> $GITHUB_STEP_SUMMARY
+            else
+              echo "❓ **注意:** CSharpier 检查失败，但未能解析出具体文件列表。" >> $GITHUB_STEP_SUMMARY
+            fi
+          fi
+
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**配置信息:**" >> $GITHUB_STEP_SUMMARY
-          echo "- 检查路径: \`${{ steps.load-style-config.outputs.check_paths }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "- 排除路径: \`${{ steps.load-style-config.outputs.exclude_paths }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "- 自动修复: \`${{ steps.load-style-config.outputs.auto_fix }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "---" >> $GITHUB_STEP_SUMMARY
+
+          # --- 所有检查文件 ---
+          echo "### 📂 所有接受检查的文件（$COUNT 个）" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ -n "$CHECKED_FILES" ]; then
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            echo "$CHECKED_FILES" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+          else
+            echo "_（无文件）_" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "---" >> $GITHUB_STEP_SUMMARY
+
+          # --- 配置详情 ---
+          echo "### ⚙️ 配置详情" >> $GITHUB_STEP_SUMMARY
+          echo "| 配置项 | 值 |" >> $GITHUB_STEP_SUMMARY
+          echo "| :--- | :--- |" >> $GITHUB_STEP_SUMMARY
+          echo "| **检查路径** | \`${{ steps.config.outputs.check_paths }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| **检查文件数** | $COUNT |" >> $GITHUB_STEP_SUMMARY
+          echo "| **自动修复** | ❌ (已禁用) |" >> $GITHUB_STEP_SUMMARY
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "---" >> $GITHUB_STEP_SUMMARY
+
+          # --- CSharpier 原始输出（已解码） ---
+          echo "### 📄 CSharpier 原始输出" >> $GITHUB_STEP_SUMMARY
+          echo "<details><summary>点击展开原始输出</summary>" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo "$RAW_OUTPUT" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+          echo "</details>" >> $GITHUB_STEP_SUMMARY
 
   # =============================================================================  
   # 阶段2: 单元测试 - 运行Unity项目中的单元测试
@@ -489,6 +637,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           lfs: true
+          submodules: recursive
 
       - name: 📖 加载测试配置
         id: load-test-config  
@@ -592,6 +741,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           lfs: true
+          submodules: recursive
 
       - name: 📖 加载构建配置
         id: load-build-config
@@ -700,8 +850,6 @@ jobs:
       always() &&
       needs.flow-prediction.outputs.should_run_deploy == 'true' &&
       (needs.build-tests.result == 'success' || needs.build-tests.result == 'failure')
-    
-
     
     steps:
       - name: 检出代码
@@ -1002,4 +1150,27 @@ jobs:
           if [[ -n "${{ needs.flow-prediction.outputs.skip_reason }}" ]]; then
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "**跳过信息:** ${{ needs.flow-prediction.outputs.skip_reason }}" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          # 判断最终状态
+          FAILED=0
+          # Flow 必须成功
+          if [[ "$FLOW_STATUS" != "success" ]]; then
+            FAILED=1
+          fi
+
+          # 以下只要执行且失败就算失败（skipped 不算）
+          for STATUS in "$STYLE_STATUS" "$TEST_STATUS" "$BUILD_STATUS" "$DEPLOY_STATUS"
+          do
+            if [[ "$STATUS" == "failure" ]]; then
+              FAILED=1
+            fi
+          done
+
+          if [[ $FAILED -eq 1 ]]; then
+            echo "❌ 流水线失败"
+            exit 1
+          else
+            echo "🎉 流水线成功"
+            exit 0
           fi
