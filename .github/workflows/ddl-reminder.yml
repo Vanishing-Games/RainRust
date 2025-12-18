@@ -5,18 +5,85 @@ on:
     - cron: '0 9 * * *' # 每天 09:00 UTC
   pull_request:
     branches: [develop, main]
-    types: [opened, synchronize, reopened, ready_for_review]    
+    types: [opened, synchronize, reopened, ready_for_review]
 
 jobs:
   reminder:
     runs-on: ubuntu-latest
     steps:
       # -------------------------------
-      # 1️⃣ 调用 get-project-id.yml workflow
+      # 0️⃣ Checkout 仓库
+      # -------------------------------
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # -------------------------------
+      # 1️⃣ 获取 Project 相关 ID
       # -------------------------------
       - name: 获取 Project 相关 ID
         id: get_project
-        uses: ./.github/workflows/get-project-id.yml
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.PROJECT_PAT }}
+          script: |
+            const core = require('@actions/core');
+
+            const org = "Vanishing-Games";
+            const projectName = "创似我算了";
+
+            const result = await github.graphql(`
+              query {
+                organization(login: "${org}") {
+                  projectsV2(first: 20) {
+                    nodes {
+                      id
+                      title
+                      fields(first: 20) {
+                        nodes {
+                          __typename
+                          ... on ProjectV2FieldCommon { id name }
+                          ... on ProjectV2SingleSelectField { options { id name } }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            `);
+
+            const project = result.organization.projectsV2.nodes.find(p => p.title === projectName);
+            if (!project) throw new Error("Project not found");
+
+            const fields = project.fields.nodes.map(f => ({
+              id: f.id,
+              name: f.name,
+              options: f.__typename === "ProjectV2SingleSelectField" ? f.options : []
+            }));
+
+            const priorityField = fields.find(f => f.name === "优先级");
+            const ddlField = fields.find(f => f.name === "DDL");
+            const p2Option = priorityField.options.find(o => o.name === "P2");
+
+            if (!priorityField) throw new Error("未找到优先级字段");
+            if (!ddlField) throw new Error("未找到DDL字段");
+            if (!p2Option) throw new Error("未找到 P2 选项");
+
+            // 设置 step outputs
+            core.setOutput("project_id", project.id);
+            core.setOutput("priority_field_id", priorityField.id);
+            core.setOutput("p2_option_id", p2Option.id);
+            core.setOutput("ddl_field_id", ddlField.id);
+
+            // 输出到 GitHub Summary
+            core.summary
+              .addHeading('获取到的 Project 相关 ID')
+              .addList([
+                `Project ID: ${project.id}`,
+                `Priority Field ID: ${priorityField.id}`,
+                `P2 Option ID: ${p2Option.id}`,
+                `DDL Field ID: ${ddlField.id}`
+              ])
+              .write();
 
       # -------------------------------
       # 2️⃣ 检查 DDL 并发送提醒
