@@ -1,25 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-3268578134249569343
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b00045f12942b46c698459096c89274e, type: 3}
-  m_Name: FullScreenPassRendererFeatureOldGUID
-  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::FullScreenPassRendererFeature_OldGUID
-  m_Active: 1
-  injectionPoint: 600
-  fetchColorBuffer: 1
-  requirements: 0
-  passMaterial: {fileID: 2100000, guid: 9445f9a4399744c6ab2d28fcea8b0c11, type: 3}
-  passIndex: 0
-  bindDepthStencilAttachment: 1
-  m_Version: 1
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -47,8 +27,8 @@ MonoBehaviour:
     probeSamplingDebugTexture: {fileID: 0}
     probeVolumeBlendStatesCS: {fileID: 0}
   m_RendererFeatures:
-  - {fileID: -3268578134249569343}
-  m_RendererFeatureMap: c103722b81ada3d2
+  - {fileID: 2095839648410281338}
+  m_RendererFeatureMap: 7aa5ac550eeb151d
   m_UseNativeRenderPass: 0
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
   m_AssetVersion: 3
@@ -76,3 +56,83 @@ MonoBehaviour:
   m_DepthTextureFormat: 0
   m_AccurateGbufferNormals: 0
   m_IntermediateTextureMode: 1
+--- !u!114 &2095839648410281338
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fac037417a02b641846a79bc2c9ba0d, type: 3}
+  m_Name: GiLight2D
+  m_EditorClassIdentifier: GiLight2D::GiLight2D.GiLight2D
+  m_Active: 1
+  _event: 250
+  _mask:
+    serializedVersion: 2
+    m_Bits: 16383
+  _volume:
+    enabled: 0
+    value:
+      serializedVersion: 2
+      m_Bits: 0
+  _output:
+    _output: 1
+    _globalTexture: _giTex
+    _alpha: 0
+  _depthStencil: 1
+  _rays: 100
+  _traceOptions:
+    _enable: 0
+    _scale: 1
+    _piercing: 0.5
+    _bounces: 1
+    _intencity: 1
+    _scales:
+    - 1
+    - 1
+    - 1
+  _intensity:
+    Range: {x: 0, y: 3}
+    Value: 1
+  _distance: 7
+  _aspect: 0
+  _steps: 4
+  _distOffset:
+    enabled: 0
+    value:
+      Range: {x: -0.01, y: 0.1}
+      Value: 0
+  _noiseOptions:
+    _noise: 0
+    _scale: 1
+    _velocity: {x: 0, y: 0}
+    _pattern: 0
+    _bilinear: 1
+    _texture: {fileID: 0}
+    _orthoRelative:
+      enabled: 0
+      value: 0
+  _border:
+    enabled: 0
+    value:
+      Range: {x: 0, y: 3}
+      Value: 0
+  _scaleMode:
+    _scaleMode: 0
+    _ratio: 1
+    _height: 240
+  _blurOptions:
+    _enable: 1
+    _mode: 3
+    _step: 0
+  _outputOverride: 0
+  _runInSceneView: 1
+  _shaders:
+    _gi: {fileID: 4800000, guid: a3976991d178c5240be7f3f1e3b11a51, type: 3}
+    _jfa: {fileID: 4800000, guid: ff0aea4fe3c269346a4f46c39caaceff, type: 3}
+    _dist: {fileID: 4800000, guid: 58ebf41794527ea41b07b4fed7fc2bd6, type: 3}
+    _blit: {fileID: 4800000, guid: 851a2599be5043ef8d6e2150ec99215d, type: 3}
+    _blur: {fileID: 4800000, guid: 9d7ba1ec95c14b35be2428add4d01f82, type: 3}

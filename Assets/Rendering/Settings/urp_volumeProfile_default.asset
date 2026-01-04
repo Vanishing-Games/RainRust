@@ -290,6 +290,52 @@ MonoBehaviour:
   worldOffset:
     m_OverrideState: 1
     m_Value: {x: 0, y: 0, z: 0}
+--- !u!114 &-2003229725613761247
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 23a3010b37764c3295d27e38ba2684b3, type: 3}
+  m_Name: GiLightVol
+  m_EditorClassIdentifier: GiLight2D::GiLight2D.GiLightVol
+  active: 1
+  m_Rays:
+    m_OverrideState: 1
+    m_Value: 33
+  m_Intensity:
+    m_OverrideState: 1
+    m_Value: 1
+  m_Distance:
+    m_OverrideState: 1
+    m_Value: 33
+  m_Aspect:
+    m_OverrideState: 1
+    m_Value: 0
+  m_Steps:
+    m_OverrideState: 1
+    m_Value: 5
+  m_Scale:
+    m_OverrideState: 1
+    m_Value: 1
+  m_NoiseTex:
+    m_OverrideState: 1
+    m_Value: 1
+  m_NoiseVel:
+    m_OverrideState: 1
+    m_Value: {x: 0, y: 0}
+  m_NoiseScale:
+    m_OverrideState: 1
+    m_Value: 1
+  m_NoiseFilter:
+    m_OverrideState: 1
+    m_Value: 0
+  m_Blur:
+    m_OverrideState: 1
+    m_Value: 0
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -322,6 +368,7 @@ MonoBehaviour:
   - {fileID: 6953875436991687345}
   - {fileID: -7655882033765373336}
   - {fileID: -2229080203895651130}
+  - {fileID: -2003229725613761247}
 --- !u!114 &371180526040359883
 MonoBehaviour:
   m_ObjectHideFlags: 3
