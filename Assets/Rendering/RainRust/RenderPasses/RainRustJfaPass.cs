@@ -8,81 +8,103 @@ namespace RainRust.Rendering
 {
     public class RainRustJfaPass : ScriptableRenderPass
     {
+        private Material m_JfaMaterial;
+        private const string k_JfaShaderName = "Hidden/GiLight2D/JumpFloodAlgorithm";
+
         public RainRustJfaPass()
         {
             renderPassEvent = RenderPassEvent.BeforeRenderingOpaques;
         }
 
-        class RainRustJfaPassData
+        class PassData
         {
-            public RendererListHandle rendererListHandle;
+            public Material material;
+            public TextureHandle source;
+            public Vector2 stepSize;
+            public Vector2 aspect;
         }
- 
+
         public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
         {
+            // Ensure material is created
+            if (m_JfaMaterial == null)
+            {
+                var shader = Shader.Find(k_JfaShaderName);
+                if (shader == null)
+                {
+                    Debug.LogError($"Shader not found: {k_JfaShaderName}");
+                    return;
+                }
+                m_JfaMaterial = CoreUtils.CreateEngineMaterial(shader);
+            }
+
             // Get the shared data from the previous pass
             var rainRustContextData = frameData.Get<RainRustContextData>();
 
-            // 获取纹理的分辨率
-            var jfaRtHandle = rainRustContextData.jfaRt.Current();
-            Int32 width = jfaRtHandle.GetTextureDesc().width;
-            Int32 height = jfaRtHandle.GetTextureDesc().height;
+            // Note: RainRustDrawObjectsPass has already swapped the ping-pong buffer after its blit.
+            // So rainRustContextData.jfaRt.Previous() holds the initial seed data.
 
-            var n = Math.Max(width, height);
-            var iterations = (Int32)Math.Ceiling(Mathf.Log(n, 2));
+            // Resolution and JFA steps
+            var desc = renderGraph.GetTextureDesc(rainRustContextData.jfaRt.Current());
+            int width = desc.width;
+            int height = desc.height;
+            int maxDimension = Math.Max(width, height);
+            int iterations = (int)Math.Ceiling(Mathf.Log(maxDimension, 2));
 
-            for(int i = 0; i < iterations; i++)
+            Vector2 aspect = new Vector2(1f, (float)height / width); // Matches shader's _Aspect usage
+
+            for (int i = 0; i < iterations; i++)
             {
+                // JFA Step calculation: N/2, N/4, ... 1
+                float step = Mathf.Pow(2, iterations - 1 - i);
+                Vector2 stepSize = new Vector2(step / width, step / height);
+
                 using (
-                    var builder = renderGraph.AddRasterRenderPass<RainRustJfaPassData>(
-                        "RainRust JFA Pass",
+                    var builder = renderGraph.AddRasterRenderPass<PassData>(
+                        "RainRust JFA Step " + i,
                         out var passData
                     )
                 )
                 {
                     builder.AllowPassCulling(false);
 
-                    builder.SetRenderAttachment(
-                        rainRustContextData.jfaRt.Current(),
-                        0,
-                        AccessFlags.Write
-                    );
+                    // Let's get the handles manually to be explicit
+                    TextureHandle source = rainRustContextData.jfaRt.Previous();
+                    TextureHandle destination = rainRustContextData.jfaRt.Current();
+                    rainRustContextData.jfaRt.Swap();
 
-                    InitRendererLists(ref passData, renderGraph);
-                    builder.UseRendererList(passData.rendererListHandle);
+                    passData.material = m_JfaMaterial;
+                    passData.source = source;
+                    passData.stepSize = stepSize;
+                    passData.aspect = aspect;
+
+                    builder.UseTexture(source, AccessFlags.Read);
+                    builder.SetRenderAttachment(destination, 0, AccessFlags.Write);
 
                     builder.SetRenderFunc(
-                        static (RainRustJfaPassData data, RasterGraphContext context) =>
-                            ExecutePass(data, context)
+                        static (PassData data, RasterGraphContext context) =>
+                        {
+                            data.material.SetVector("_StepSize", data.stepSize);
+                            data.material.SetVector("_Aspect", data.aspect);
+                            // _SeedTex is handled by Blitter.BlitTexture typically passing source as _BlitTexture or similar,
+                            // but our shader uses _SeedTex. We need to manually set it or use property block.
+                            // Ideally the shader should use _BlitTexture if using Blitter.
+                            // However, let's try setting it directly on material or via cmd.
+                            // Since we are using a specific material property _SeedTex:
+                            data.material.SetTexture("_SeedTex", data.source);
+
+                            // Full screen blit
+                            Blitter.BlitTexture(
+                                context.cmd,
+                                data.source,
+                                new Vector4(1, 1, 0, 0),
+                                data.material,
+                                0
+                            );
+                        }
                     );
                 }
-
-                rainRustContextData.jfaRt.Swap();
             }
-
-            // Swap to make sure the next pass uses the latest result
-            rainRustContextData.jfaRt.Swap();
         }
-
-
-
-		private void InitRendererLists(ref RainRustJfaPassData passData, RenderGraph renderGraph)
-        {
-            throw new NotImplementedException();
-        }
-
-		private static void ExecutePass(RainRustJfaPassData data, RasterGraphContext context)
-        {
-            // Clear the render target to black
-            context.cmd.ClearRenderTarget(true, true, Color.red);
-
-            // Draw the objects in the list
-            context.cmd.DrawRendererList(data.rendererListHandle);
-        }
-
-        private static readonly ProfilingSampler sDrawObjectsProfilingSampler = new(
-            "RainRust Draw Objects Pass"
-        );
-        private static readonly ShaderTagId sShaderTagId = new("UniversalForward");
     }
 }
