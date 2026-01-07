@@ -1,4 +1,4 @@
-Shader "Hidden/GiLight2D/Distance"
+Shader "Hidden/RainRust/Distance"
 {
     SubShader
     {
@@ -16,14 +16,14 @@ Shader "Hidden/GiLight2D/Distance"
             #pragma vertex vert_default
             #pragma fragment frag
             
-            sampler2D _SeedTex;
-            float  _Offset;
-            float2 _Aspect;
+            sampler2D _JfaTex;
+            float     _Offset;
+            float2    _Aspect;
 
             // =======================================================================
             float frag(fragIn i) : SV_Target
             {
-                float2 sample = tex2D(_SeedTex, i.uv);
+                float2 sample = tex2D(_JfaTex, i.uv);
                 i.uv.x   *= _Aspect;
                 sample.x *= _Aspect;
                 

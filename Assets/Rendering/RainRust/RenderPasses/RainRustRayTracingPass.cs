@@ -11,84 +11,84 @@ namespace RainRust.Rendering
         {
             renderPassEvent = RenderPassEvent.BeforeRenderingOpaques;
         }
-        class PassData
+
+        class RainRustRayTracingPassData
         {
-            public RendererListHandle rendererListHandle;
+            public Material material;
+            public TextureHandle mainRtHandle;
+            public TextureHandle distanceRtHandle;
+            public Texture noiseTextureHandle;
+
+            public int rayCount;
+            public Vector4 aspect;
+            public Vector4 scale;
+            public Vector4 noiseTilingOffset;
+            public float intensity;
+            public float power;
         }
 
         public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
         {
-            using var builder = renderGraph.AddRasterRenderPass<PassData>(
-                "RainRust Draw Objects Pass",
-                out var passData
-            );
+            // Ensure material is created
+            if (m_RayTracingMaterial == null)
+            {
+                var shader = Shader.Find(k_RayTracingShaderName);
+                if (shader == null)
+                {
+                    Debug.LogError($"Shader not found: {k_RayTracingShaderName}");
+                    return;
+                }
+                m_RayTracingMaterial = CoreUtils.CreateEngineMaterial(shader);
+            }
 
-            SetupRenderGraph(builder, passData, renderGraph, frameData);
+            var rainRustContextData = frameData.Get<RainRustContextData>();
 
-            builder.SetRenderFunc(
-                static (PassData data, RasterGraphContext context) => ExecutePass(data, context)
-            );
+            var desc = renderGraph.GetTextureDesc(rainRustContextData.jfaRt.Current());
+            int width = desc.width;
+            int height = desc.height;
+
+            Vector2 aspect = new(1f, (float)height / width);
+
+            using (
+                var builder = renderGraph.AddRasterRenderPass<RainRustRayTracingPassData>(
+                    "RainRust Distance Pass",
+                    out var passData
+                )
+            )
+            {
+                builder.AllowPassCulling(false);
+
+                TextureHandle jfaResult = rainRustContextData.jfaRt.Previous(); // Final JFA result after all iterations
+
+                // passData.material = m_RayTracingMaterial;
+                // passData.jfaTex = jfaResult;
+                // passData.offset = Vector2.zero;
+                // passData.aspect = aspect;
+
+                // builder.UseTexture(jfaResult, AccessFlags.Read);
+                // builder.SetRenderAttachment(rainRustContextData.distanceRt, 0, AccessFlags.Write);
+
+                // builder.SetRenderFunc(
+                //     static (RainRustRayTracingPassData data, RasterGraphContext context) =>
+                //     {
+                //         data.material.SetVector("_Offset", data.offset);
+                //         data.material.SetVector("_Aspect", data.aspect);
+                //         data.material.SetTexture("_JfaTex", data.jfaTex);
+
+                //         // Full screen blit
+                //         Blitter.BlitTexture(
+                //             context.cmd,
+                //             data.jfaTex,
+                //             new Vector4(1, 1, 0, 0),
+                //             data.material,
+                //             0
+                //         );
+                //     }
+                // );
+            }
         }
 
-        private static void SetupRenderGraph(
-            IRasterRenderGraphBuilder builder,
-            PassData passData,
-            RenderGraph renderGraph,
-            ContextContainer frameData
-        )
-        {
-            // Get the data needed to create the list of objects to draw
-            UniversalRenderingData renderingData = frameData.Get<UniversalRenderingData>();
-            UniversalCameraData cameraData = frameData.Get<UniversalCameraData>();
-            UniversalLightData lightData = frameData.Get<UniversalLightData>();
-            SortingCriteria sortFlags = cameraData.defaultOpaqueSortFlags;
-            RenderQueueRange renderQueueRange = RenderQueueRange.opaque;
-            FilteringSettings filterSettings = new(renderQueueRange, ~0);
-
-            // Redraw only objects that have their LightMode tag set to UniversalForward
-            ShaderTagId shadersToOverride = new("UniversalForward");
-
-            // Create drawing settings
-            DrawingSettings drawSettings = RenderingUtils.CreateDrawingSettings(
-                shadersToOverride,
-                renderingData,
-                cameraData,
-                lightData,
-                sortFlags
-            );
-
-            // Add the override material to the drawing settings
-            // drawSettings.overrideMaterial = materialToUse;
-
-            // Create the list of objects to draw
-            var rendererListParameters = new RendererListParams(
-                renderingData.cullResults,
-                drawSettings,
-                filterSettings
-            );
-
-            // Convert the list to a list handle that the render graph system can use
-            passData.rendererListHandle = renderGraph.CreateRendererList(rendererListParameters);
-
-            // Set the render target as the color and depth textures of the active camera texture
-            UniversalResourceData resourceData = frameData.Get<UniversalResourceData>();
-            builder.UseRendererList(passData.rendererListHandle);
-            builder.SetRenderAttachment(resourceData.activeColorTexture, 0);
-            builder.SetRenderAttachmentDepth(resourceData.activeDepthTexture, AccessFlags.Write);
-        }
-
-        private static void ExecutePass(PassData data, RasterGraphContext context)
-        {
-            // Clear the render target to black
-            context.cmd.ClearRenderTarget(true, true, Color.black);
-
-            // Draw the objects in the list
-            context.cmd.DrawRendererList(data.rendererListHandle);
-        }
-
-        private static readonly ProfilingSampler sDrawObjectsProfilingSampler = new(
-            "RainRust Draw Objects Pass"
-        );
-        private static readonly ShaderTagId sShaderTagId = new("UniversalForward");
+        private Material m_RayTracingMaterial;
+        private const string k_RayTracingShaderName = "Hidden/RainRust/RayTracing";
     }
 }

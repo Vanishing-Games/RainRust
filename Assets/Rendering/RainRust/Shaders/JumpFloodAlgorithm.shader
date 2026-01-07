@@ -1,4 +1,4 @@
-Shader "Hidden/GiLight2D/JumpFloodAlgorithm"
+Shader "Hidden/RainRust/JumpFloodAlgorithm"
 {
     SubShader
     {

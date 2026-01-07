@@ -8,9 +8,6 @@ namespace RainRust.Rendering
 {
     public class RainRustJfaPass : ScriptableRenderPass
     {
-        private Material m_JfaMaterial;
-        private const string k_JfaShaderName = "Hidden/GiLight2D/JumpFloodAlgorithm";
-
         public RainRustJfaPass()
         {
             renderPassEvent = RenderPassEvent.BeforeRenderingOpaques;
@@ -51,13 +48,13 @@ namespace RainRust.Rendering
             int maxDimension = Math.Max(width, height);
             int iterations = (int)Math.Ceiling(Mathf.Log(maxDimension, 2));
 
-            Vector2 aspect = new Vector2(1f, (float)height / width); // Matches shader's _Aspect usage
+            Vector2 aspect = new(1f, (float)height / width); // Matches shader's _Aspect usage
 
             for (int i = 0; i < iterations; i++)
             {
                 // JFA Step calculation: N/2, N/4, ... 1
                 float step = Mathf.Pow(2, iterations - 1 - i);
-                Vector2 stepSize = new Vector2(step / width, step / height);
+                Vector2 stepSize = new(step / width, step / height);
 
                 using (
                     var builder = renderGraph.AddRasterRenderPass<PassData>(
@@ -86,11 +83,6 @@ namespace RainRust.Rendering
                         {
                             data.material.SetVector("_StepSize", data.stepSize);
                             data.material.SetVector("_Aspect", data.aspect);
-                            // _SeedTex is handled by Blitter.BlitTexture typically passing source as _BlitTexture or similar,
-                            // but our shader uses _SeedTex. We need to manually set it or use property block.
-                            // Ideally the shader should use _BlitTexture if using Blitter.
-                            // However, let's try setting it directly on material or via cmd.
-                            // Since we are using a specific material property _SeedTex:
                             data.material.SetTexture("_SeedTex", data.source);
 
                             // Full screen blit
@@ -106,5 +98,8 @@ namespace RainRust.Rendering
                 }
             }
         }
+
+        private Material m_JfaMaterial;
+        private const string k_JfaShaderName = "Hidden/RainRust/JumpFloodAlgorithm";
     }
 }
