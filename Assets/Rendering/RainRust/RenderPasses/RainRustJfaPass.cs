@@ -80,7 +80,7 @@ namespace RainRust.Rendering
         private static void ExecutePass(PassData data, RasterGraphContext context)
         {
             // Clear the render target to black
-            context.cmd.ClearRenderTarget(true, true, Color.black);
+            context.cmd.ClearRenderTarget(true, true, Color.red);
 
             // Draw the objects in the list
             context.cmd.DrawRendererList(data.rendererListHandle);
