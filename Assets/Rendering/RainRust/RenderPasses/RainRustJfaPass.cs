@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.RenderGraphModule;
@@ -11,82 +12,66 @@ namespace RainRust.Rendering
         {
             renderPassEvent = RenderPassEvent.BeforeRenderingOpaques;
         }
-        class PassData
+
+        class RainRustJfaPassData
         {
             public RendererListHandle rendererListHandle;
         }
-
+ 
         public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
         {
             // Get the shared data from the previous pass
-            RainRustContextData rainRustData = frameData.Get<RainRustContextData>();
-            TextureHandle inputTexture = rainRustData.mainRt;
+            var rainRustContextData = frameData.Get<RainRustContextData>();
 
-            using var builder = renderGraph.AddRasterRenderPass<PassData>(
-                "RainRust JFA Pass",
-                out var passData
-            );
+            // 获取纹理的分辨率
+            var jfaRtHandle = rainRustContextData.jfaRt.Current();
+            Int32 width = jfaRtHandle.GetTextureDesc().width;
+            Int32 height = jfaRtHandle.GetTextureDesc().height;
 
-            builder.AllowPassCulling(false);
+            var n = Math.Max(width, height);
+            var iterations = (Int32)Math.Ceiling(Mathf.Log(n, 2));
 
-            // Declare that we read from the texture produced by the previous pass
-            builder.UseTexture(inputTexture, AccessFlags.Read);
+            for(int i = 0; i < iterations; i++)
+            {
+                using (
+                    var builder = renderGraph.AddRasterRenderPass<RainRustJfaPassData>(
+                        "RainRust JFA Pass",
+                        out var passData
+                    )
+                )
+                {
+                    builder.AllowPassCulling(false);
 
-            SetupRenderGraph(builder, passData, renderGraph, frameData);
+                    builder.SetRenderAttachment(
+                        rainRustContextData.jfaRt.Current(),
+                        0,
+                        AccessFlags.Write
+                    );
 
-            builder.SetRenderFunc(
-                static (PassData data, RasterGraphContext context) => ExecutePass(data, context)
-            );
+                    InitRendererLists(ref passData, renderGraph);
+                    builder.UseRendererList(passData.rendererListHandle);
+
+                    builder.SetRenderFunc(
+                        static (RainRustJfaPassData data, RasterGraphContext context) =>
+                            ExecutePass(data, context)
+                    );
+                }
+
+                rainRustContextData.jfaRt.Swap();
+            }
+
+            // Swap to make sure the next pass uses the latest result
+            rainRustContextData.jfaRt.Swap();
         }
 
-        private static void SetupRenderGraph(
-            IRasterRenderGraphBuilder builder,
-            PassData passData,
-            RenderGraph renderGraph,
-            ContextContainer frameData
-        )
+
+
+		private void InitRendererLists(ref RainRustJfaPassData passData, RenderGraph renderGraph)
         {
-            // Get the data needed to create the list of objects to draw
-            UniversalRenderingData renderingData = frameData.Get<UniversalRenderingData>();
-            UniversalCameraData cameraData = frameData.Get<UniversalCameraData>();
-            UniversalLightData lightData = frameData.Get<UniversalLightData>();
-            SortingCriteria sortFlags = cameraData.defaultOpaqueSortFlags;
-            RenderQueueRange renderQueueRange = RenderQueueRange.opaque;
-            FilteringSettings filterSettings = new(renderQueueRange, ~0);
-
-            // Redraw only objects that have their LightMode tag set to UniversalForward
-            ShaderTagId shadersToOverride = new("UniversalForward");
-
-            // Create drawing settings
-            DrawingSettings drawSettings = RenderingUtils.CreateDrawingSettings(
-                shadersToOverride,
-                renderingData,
-                cameraData,
-                lightData,
-                sortFlags
-            );
-
-            // Add the override material to the drawing settings
-            // drawSettings.overrideMaterial = materialToUse;
-
-            // Create the list of objects to draw
-            var rendererListParameters = new RendererListParams(
-                renderingData.cullResults,
-                drawSettings,
-                filterSettings
-            );
-
-            // Convert the list to a list handle that the render graph system can use
-            passData.rendererListHandle = renderGraph.CreateRendererList(rendererListParameters);
-
-            // Set the render target as the color and depth textures of the active camera texture
-            UniversalResourceData resourceData = frameData.Get<UniversalResourceData>();
-            builder.UseRendererList(passData.rendererListHandle);
-            builder.SetRenderAttachment(resourceData.activeColorTexture, 0);
-            builder.SetRenderAttachmentDepth(resourceData.activeDepthTexture, AccessFlags.Write);
+            throw new NotImplementedException();
         }
 
-        private static void ExecutePass(PassData data, RasterGraphContext context)
+		private static void ExecutePass(RainRustJfaPassData data, RasterGraphContext context)
         {
             // Clear the render target to black
             context.cmd.ClearRenderTarget(true, true, Color.red);

@@ -16,7 +16,7 @@ namespace RainRust.Rendering
         }
 
         public TextureHandle Current() => now;
-
+        public TextureHandle Previous() => pre;
         public void Swap() => (pre, now) = (now, pre);
     }
 
