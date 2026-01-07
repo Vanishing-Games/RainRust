@@ -24,6 +24,11 @@ namespace RainRust.Rendering
             public RendererListHandle rendererListHandle;
         }
 
+        class BlitPassData
+        {
+            public TextureHandle src;
+        }
+
         public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
         {
             // 1. Get datas needed for the pass
@@ -33,7 +38,18 @@ namespace RainRust.Rendering
             var resourceData = frameData.Get<UniversalResourceData>();
 
             // 2. Create the texture handles
-            CreateRenderTextureHandles(renderGraph, cameraData, out TextureHandle mainRtHandle);
+            CreateRenderTextureHandles(
+                renderGraph,
+                cameraData,
+                out TextureHandle mainRtHandle,
+                out TextureHandle jfaFirstRtHandle,
+                out TextureHandle jfaSecondRtHandle
+            );
+
+            // Store the texture handle in the context data so subsequent passes can use it
+            RainRustContextData rainRustData = frameData.Create<RainRustContextData>();
+            rainRustData.mainRt = mainRtHandle;
+            rainRustData.jfaRt = new TextureHandlePingPong(jfaFirstRtHandle, jfaSecondRtHandle);
 
             // 3. Update keywords and other shader params
             SetupKeywordsAndParameters(ref m_CurrentRrSettings, ref cameraData);
@@ -74,6 +90,42 @@ namespace RainRust.Rendering
                 builder.SetRenderFunc(
                     static (RainRustDrawObjectsPassData data, RasterGraphContext context) =>
                         ExecutePass(data, context)
+                );
+            }
+
+            // Record the Blit pass to copy mainRt to the first JFA RT
+            RecordBlitPass(renderGraph, mainRtHandle, rainRustData.jfaRt.Current());
+            rainRustData.jfaRt.Swap();
+        }
+
+        private void RecordBlitPass(
+            RenderGraph renderGraph,
+            TextureHandle source,
+            TextureHandle destination
+        )
+        {
+            using (
+                var builder = renderGraph.AddRasterRenderPass<BlitPassData>(
+                    "RainRust Blit Main to JFA",
+                    out var passData
+                )
+            )
+            {
+                passData.src = source;
+                builder.UseTexture(source, AccessFlags.Read);
+                builder.SetRenderAttachment(destination, 0);
+
+                builder.SetRenderFunc(
+                    static (BlitPassData data, RasterGraphContext context) =>
+                    {
+                        Blitter.BlitTexture(
+                            context.cmd,
+                            data.src,
+                            new Vector4(1, 1, 0, 0),
+                            0,
+                            false
+                        );
+                    }
                 );
             }
         }
@@ -132,7 +184,9 @@ namespace RainRust.Rendering
         private void CreateRenderTextureHandles(
             RenderGraph renderGraph,
             UniversalCameraData cameraData,
-            out TextureHandle mainRtHandle
+            out TextureHandle mainRtHandle,
+            out TextureHandle jfaFirstRtHandle,
+            out TextureHandle jfaSecondRtHandle
         )
         {
             RenderTextureDescriptor textureDescriptor;
@@ -148,6 +202,24 @@ namespace RainRust.Rendering
                 renderGraph,
                 textureDescriptor,
                 "RainRust Main Texture",
+                false,
+                FilterMode.Bilinear,
+                TextureWrapMode.Clamp
+            );
+
+            textureDescriptor.colorFormat = RenderTextureFormat.RG16;
+            jfaFirstRtHandle = UniversalRenderer.CreateRenderGraphTexture(
+                renderGraph,
+                textureDescriptor,
+                "RainRust Jfa Texture 0",
+                false,
+                FilterMode.Bilinear,
+                TextureWrapMode.Clamp
+            );
+            jfaSecondRtHandle = UniversalRenderer.CreateRenderGraphTexture(
+                renderGraph,
+                textureDescriptor,
+                "RainRust Jfa Texture 1",
                 false,
                 FilterMode.Bilinear,
                 TextureWrapMode.Clamp

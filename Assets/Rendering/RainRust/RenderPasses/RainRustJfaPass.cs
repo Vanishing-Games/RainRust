@@ -18,10 +18,19 @@ namespace RainRust.Rendering
 
         public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
         {
+            // Get the shared data from the previous pass
+            RainRustContextData rainRustData = frameData.Get<RainRustContextData>();
+            TextureHandle inputTexture = rainRustData.mainRt;
+
             using var builder = renderGraph.AddRasterRenderPass<PassData>(
-                "RainRust Draw Objects Pass",
+                "RainRust JFA Pass",
                 out var passData
             );
+
+            builder.AllowPassCulling(false);
+
+            // Declare that we read from the texture produced by the previous pass
+            builder.UseTexture(inputTexture, AccessFlags.Read);
 
             SetupRenderGraph(builder, passData, renderGraph, frameData);
 

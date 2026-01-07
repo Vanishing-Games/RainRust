@@ -29,7 +29,7 @@ namespace RainRust.Rendering
         )
         {
             renderer.EnqueuePass(m_RainRustDrawObjectsPass);
-            // renderer.EnqueuePass(m_JfaPass);
+            renderer.EnqueuePass(m_JfaPass);
             // renderer.EnqueuePass(m_DistancePass);
             // renderer.EnqueuePass(m_RainRustRayTracingPass);
             // renderer.EnqueuePass(m_RainRustRenderingPass);
