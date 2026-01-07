@@ -24,11 +24,6 @@ namespace RainRust.Rendering
             public RendererListHandle rendererListHandle;
         }
 
-        class BlitPassData
-        {
-            public TextureHandle src;
-        }
-
         public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
         {
             // 1. Get datas needed for the pass
@@ -92,42 +87,6 @@ namespace RainRust.Rendering
                 builder.SetRenderFunc(
                     static (RainRustDrawObjectsPassData data, RasterGraphContext context) =>
                         ExecutePass(data, context)
-                );
-            }
-
-            // Record the Blit pass to copy mainRt to the first JFA RT
-            RecordBlitPass(renderGraph, mainRtHandle, rainRustData.jfaRt.Current());
-            rainRustData.jfaRt.Swap();
-        }
-
-        private void RecordBlitPass(
-            RenderGraph renderGraph,
-            TextureHandle source,
-            TextureHandle destination
-        )
-        {
-            using (
-                var builder = renderGraph.AddRasterRenderPass<BlitPassData>(
-                    "RainRust Blit Main to JFA",
-                    out var passData
-                )
-            )
-            {
-                passData.src = source;
-                builder.UseTexture(source, AccessFlags.Read);
-                builder.SetRenderAttachment(destination, 0);
-
-                builder.SetRenderFunc(
-                    static (BlitPassData data, RasterGraphContext context) =>
-                    {
-                        Blitter.BlitTexture(
-                            context.cmd,
-                            data.src,
-                            new Vector4(1, 1, 0, 0),
-                            0,
-                            false
-                        );
-                    }
                 );
             }
         }
@@ -236,9 +195,6 @@ namespace RainRust.Rendering
                 TextureWrapMode.Clamp
             );
         }
-
-        // Remove the unused SetupRenderGraph method to avoid confusion
-        // This method is not called anywhere and conflicts with the main implementation
 
         private static void ExecutePass(
             RainRustDrawObjectsPassData data,

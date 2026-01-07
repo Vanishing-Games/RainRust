@@ -16,6 +16,7 @@ namespace RainRust.Rendering
         {
             // csharpier-ignore-start
             m_RainRustDrawObjectsPass = new RainRustDrawObjectsPass();
+            m_JfaInitPass             = new RainRustJfaInitPass();
             m_JfaPass                 = new RainRustJfaPass();
             m_DistancePass            = new RainRustDistancePass();
             m_RainRustRayTracingPass  = new RainRustRayTracingPass();
@@ -29,6 +30,7 @@ namespace RainRust.Rendering
         )
         {
             renderer.EnqueuePass(m_RainRustDrawObjectsPass);
+            renderer.EnqueuePass(m_JfaInitPass);
             renderer.EnqueuePass(m_JfaPass);
             renderer.EnqueuePass(m_DistancePass);
             // renderer.EnqueuePass(m_RainRustRayTracingPass);
@@ -38,9 +40,11 @@ namespace RainRust.Rendering
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
+            m_JfaInitPass.Dispose();
         }
 
         private RainRustDrawObjectsPass m_RainRustDrawObjectsPass;
+        private RainRustJfaInitPass m_JfaInitPass;
         private RainRustJfaPass m_JfaPass;
         private RainRustDistancePass m_DistancePass;
         private RainRustRayTracingPass m_RainRustRayTracingPass;
