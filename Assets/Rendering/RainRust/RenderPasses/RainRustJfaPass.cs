@@ -1,8 +1,10 @@
 using System;
+using Core;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.RenderGraphModule;
 using UnityEngine.Rendering.Universal;
+using static UnityEngine.Rendering.RenderGraphModule.Util.RenderGraphUtils;
 
 namespace RainRust.Rendering
 {
@@ -29,7 +31,7 @@ namespace RainRust.Rendering
                 var shader = Shader.Find(k_JfaShaderName);
                 if (shader == null)
                 {
-                    Debug.LogError($"Shader not found: {k_JfaShaderName}");
+                    Core.Logger.LogError($"Shader not found: {k_JfaShaderName}", LogTag.Rendering);
                     return;
                 }
                 m_JfaMaterial = CoreUtils.CreateEngineMaterial(shader);
@@ -56,46 +58,21 @@ namespace RainRust.Rendering
                 float step = Mathf.Pow(2, iterations - 1 - i);
                 Vector2 stepSize = new(step / width, step / height);
 
-                using (
-                    var builder = renderGraph.AddRasterRenderPass<PassData>(
-                        "RainRust JFA Step " + i,
-                        out var passData
-                    )
-                )
-                {
-                    builder.AllowPassCulling(false);
+                BlitMaterialParameters blitParams = new(
+                    rainRustContextData.jfaRt.Previous(),
+                    rainRustContextData.jfaRt.Current(),
+                    m_JfaMaterial,
+                    0
+                );
 
-                    // Let's get the handles manually to be explicit
-                    TextureHandle source = rainRustContextData.jfaRt.Previous();
-                    TextureHandle destination = rainRustContextData.jfaRt.Current();
-                    rainRustContextData.jfaRt.Swap();
+                // Below isn't right
+                // m_JfaMaterial.SetVector("_StepSize", stepSize);
+                // m_JfaMaterial.SetVector("_Aspect", aspect);
+                // m_JfaMaterial.SetTexture("_SeedTex", rainRustContextData.jfaRt.Previous());
 
-                    passData.material = m_JfaMaterial;
-                    passData.source = source;
-                    passData.stepSize = stepSize;
-                    passData.aspect = aspect;
+                renderGraph.AddBlitPass(blitParams, "RainRust JFA Step " + i);
 
-                    builder.UseTexture(source, AccessFlags.Read);
-                    builder.SetRenderAttachment(destination, 0, AccessFlags.Write);
-
-                    builder.SetRenderFunc(
-                        static (PassData data, RasterGraphContext context) =>
-                        {
-                            data.material.SetVector("_StepSize", data.stepSize);
-                            data.material.SetVector("_Aspect", data.aspect);
-                            data.material.SetTexture("_SeedTex", data.source);
-
-                            // Full screen blit
-                            Blitter.BlitTexture(
-                                context.cmd,
-                                data.source,
-                                new Vector4(1, 1, 0, 0),
-                                data.material,
-                                0
-                            );
-                        }
-                    );
-                }
+                rainRustContextData.jfaRt.Swap();
             }
         }
 

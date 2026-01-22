@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.RenderGraphModule;
+using UnityEngine.Rendering.RenderGraphModule.Util;
 using UnityEngine.Rendering.Universal;
 
 namespace RainRust.Rendering
@@ -27,9 +28,6 @@ namespace RainRust.Rendering
             if (rainRustData == null)
                 return;
 
-            TextureHandle source = rainRustData.mainRt;
-            TextureHandle destination = rainRustData.jfaRt.Current();
-
             if (m_JfaInitMaterial == null)
             {
                 var shader = Shader.Find(k_ShaderName);
@@ -37,47 +35,13 @@ namespace RainRust.Rendering
                     m_JfaInitMaterial = CoreUtils.CreateEngineMaterial(shader);
             }
 
-            using (
-                var builder = renderGraph.AddRasterRenderPass<PassData>(
-                    "RainRust JFA Init",
-                    out var passData
-                )
-            )
-            {
-                builder.AllowPassCulling(false);
-
-                passData.src = source;
-                builder.UseTexture(source, AccessFlags.Read);
-                builder.SetRenderAttachment(destination, 0);
-
-                var material = m_JfaInitMaterial;
-
-                builder.SetRenderFunc(
-                    (PassData data, RasterGraphContext context) =>
-                    {
-                        if (material != null)
-                        {
-                            Blitter.BlitTexture(
-                                context.cmd,
-                                data.src,
-                                new Vector4(1, 1, 0, 0),
-                                material,
-                                0
-                            );
-                        }
-                        else
-                        {
-                            Blitter.BlitTexture(
-                                context.cmd,
-                                data.src,
-                                new Vector4(1, 1, 0, 0),
-                                0,
-                                false
-                            );
-                        }
-                    }
-                );
-            }
+            renderGraph.AddBlitPass(
+                rainRustData.mainRt,
+                rainRustData.jfaRt.Current(),
+                Vector2.one,
+                Vector2.zero,
+                passName: "RainRust JFA Init"
+            );
 
             // Swap after initialization so next pass reads from the initialized texture
             rainRustData.jfaRt.Swap();
