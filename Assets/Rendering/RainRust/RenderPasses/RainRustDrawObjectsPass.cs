@@ -39,7 +39,8 @@ namespace RainRust.Rendering
                 out TextureHandle mainRtHandle,
                 out TextureHandle jfaFirstRtHandle,
                 out TextureHandle jfaSecondRtHandle,
-                out TextureHandle distanceRtHandle
+                out TextureHandle distanceRtHandle,
+                out TextureHandle lightingRtHandle
             );
 
             // Store the texture handle in the context data so subsequent passes can use it
@@ -47,6 +48,7 @@ namespace RainRust.Rendering
             rainRustData.mainRt = mainRtHandle;
             rainRustData.jfaRt = new TextureHandlePingPong(jfaFirstRtHandle, jfaSecondRtHandle);
             rainRustData.distanceRt = distanceRtHandle;
+            rainRustData.lightingRt = lightingRtHandle;
 
             // 3. Update keywords and other shader params
             SetupKeywordsAndParameters(ref m_CurrentRrSettings, ref cameraData);
@@ -148,7 +150,8 @@ namespace RainRust.Rendering
             out TextureHandle mainRtHandle,
             out TextureHandle jfaFirstRtHandle,
             out TextureHandle jfaSecondRtHandle,
-            out TextureHandle distanceRtHandle
+            out TextureHandle distanceRtHandle,
+            out TextureHandle lightingRtHandle
         )
         {
             RenderTextureDescriptor textureDescriptor;
@@ -190,6 +193,14 @@ namespace RainRust.Rendering
                 renderGraph,
                 textureDescriptor,
                 "RainRust Distance Texture",
+                false,
+                FilterMode.Bilinear,
+                TextureWrapMode.Clamp
+            );
+            lightingRtHandle = UniversalRenderer.CreateRenderGraphTexture(
+                renderGraph,
+                textureDescriptor,
+                "RainRust Lighting Texture",
                 false,
                 FilterMode.Bilinear,
                 TextureWrapMode.Clamp

@@ -25,14 +25,14 @@ namespace RainRust.Rendering
         public TextureHandle mainRt;
         public TextureHandlePingPong jfaRt;
         public TextureHandle distanceRt;
-        public TextureHandle giRt;
+        public TextureHandle lightingRt;
 
         public override void Reset()
         {
             mainRt = TextureHandle.nullHandle;
             jfaRt = new TextureHandlePingPong(TextureHandle.nullHandle, TextureHandle.nullHandle);
             distanceRt = TextureHandle.nullHandle;
-            giRt = TextureHandle.nullHandle;
+            lightingRt = TextureHandle.nullHandle;
         }
     }
 }

@@ -14,22 +14,22 @@ namespace RainRust.Rendering
 
         class RainRustRayTracingPassData
         {
-            public Material material;
-            public TextureHandle mainRtHandle;
-            public TextureHandle distanceRtHandle;
-            public Texture noiseTextureHandle;
-
-            public int rayCount;
-            public Vector4 aspect;
-            public Vector4 scale;
-            public Vector4 noiseTilingOffset;
-            public float intensity;
-            public float power;
+            internal Material material;
+            internal TextureHandle mainRtHandle;
+            internal TextureHandle distanceRtHandle;
+            internal TextureHandle distanceTex;
+            internal Texture noiseTextureHandle;
+            internal Vector2 offset;
+            internal Vector4 aspect;
+            internal Vector4 scale;
+            internal Vector4 noiseTilingOffset;
+            internal int rayCount;
+            internal float intensity;
+            internal float power;
         }
 
         public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
         {
-            // Ensure material is created
             if (m_RayTracingMaterial == null)
             {
                 var shader = Shader.Find(k_RayTracingShaderName);
@@ -51,40 +51,40 @@ namespace RainRust.Rendering
 
             using (
                 var builder = renderGraph.AddRasterRenderPass<RainRustRayTracingPassData>(
-                    "RainRust Distance Pass",
+                    "RainRust Ray Tracing Pass",
                     out var passData
                 )
             )
             {
                 builder.AllowPassCulling(false);
 
-                TextureHandle jfaResult = rainRustContextData.jfaRt.Previous(); // Final JFA result after all iterations
+                TextureHandle disResult = rainRustContextData.distanceRt;
 
-                // passData.material = m_RayTracingMaterial;
-                // passData.jfaTex = jfaResult;
-                // passData.offset = Vector2.zero;
-                // passData.aspect = aspect;
+                passData.material = m_RayTracingMaterial;
+                passData.distanceTex = disResult;
+                passData.offset = Vector2.zero;
+                passData.aspect = aspect;
 
-                // builder.UseTexture(jfaResult, AccessFlags.Read);
-                // builder.SetRenderAttachment(rainRustContextData.distanceRt, 0, AccessFlags.Write);
+                builder.UseTexture(disResult, AccessFlags.Read);
+                builder.SetRenderAttachment(rainRustContextData.lightingRt, 0, AccessFlags.Write);
 
-                // builder.SetRenderFunc(
-                //     static (RainRustRayTracingPassData data, RasterGraphContext context) =>
-                //     {
-                //         data.material.SetVector("_Offset", data.offset);
-                //         data.material.SetVector("_Aspect", data.aspect);
-                //         data.material.SetTexture("_JfaTex", data.jfaTex);
+                builder.SetRenderFunc(
+                    static (RainRustRayTracingPassData data, RasterGraphContext context) =>
+                    {
+                        data.material.SetVector("_Offset", data.offset);
+                        data.material.SetVector("_Aspect", data.aspect);
+                        data.material.SetTexture("_JfaTex", data.distanceTex);
 
-                //         // Full screen blit
-                //         Blitter.BlitTexture(
-                //             context.cmd,
-                //             data.jfaTex,
-                //             new Vector4(1, 1, 0, 0),
-                //             data.material,
-                //             0
-                //         );
-                //     }
-                // );
+                        // Full screen blit
+                        Blitter.BlitTexture(
+                            context.cmd,
+                            data.distanceTex,
+                            new Vector4(1, 1, 0, 0),
+                            data.material,
+                            0
+                        );
+                    }
+                );
             }
         }
 

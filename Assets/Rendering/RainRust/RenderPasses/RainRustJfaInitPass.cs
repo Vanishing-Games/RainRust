@@ -17,17 +17,13 @@ namespace RainRust.Rendering
 
         public RainRustJfaInitPass()
         {
-            renderPassEvent = RenderPassEvent.BeforeRenderingOpaques; // Same event as DrawObjects? Or slightly after?
-            // DrawObjects is BeforeRenderingOpaques.
-            // This should probably happen immediately after DrawObjects.
-            // Since we enqueue them in order in the Feature, same event is fine, or Feature handles sorting.
+            renderPassEvent = RenderPassEvent.BeforeRenderingOpaques;
         }
 
         public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
         {
             RainRustContextData rainRustData = frameData.Get<RainRustContextData>();
 
-            // Ensure data exists
             if (rainRustData == null)
                 return;
 
@@ -48,6 +44,8 @@ namespace RainRust.Rendering
                 )
             )
             {
+                builder.AllowPassCulling(false);
+
                 passData.src = source;
                 builder.UseTexture(source, AccessFlags.Read);
                 builder.SetRenderAttachment(destination, 0);
