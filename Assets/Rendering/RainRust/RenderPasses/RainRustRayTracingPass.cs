@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.RenderGraphModule;
 using UnityEngine.Rendering.Universal;
+using static UnityEngine.Rendering.RenderGraphModule.Util.RenderGraphUtils;
 
 namespace RainRust.Rendering
 {
@@ -49,43 +50,13 @@ namespace RainRust.Rendering
 
             Vector2 aspect = new(1f, (float)height / width);
 
-            using (
-                var builder = renderGraph.AddRasterRenderPass<RainRustRayTracingPassData>(
-                    "RainRust Ray Tracing Pass",
-                    out var passData
-                )
-            )
-            {
-                builder.AllowPassCulling(false);
-
-                TextureHandle disResult = rainRustContextData.distanceRt;
-
-                passData.material = m_RayTracingMaterial;
-                passData.distanceTex = disResult;
-                passData.offset = Vector2.zero;
-                passData.aspect = aspect;
-
-                builder.UseTexture(disResult, AccessFlags.Read);
-                builder.SetRenderAttachment(rainRustContextData.lightingRt, 0, AccessFlags.Write);
-
-                builder.SetRenderFunc(
-                    static (RainRustRayTracingPassData data, RasterGraphContext context) =>
-                    {
-                        data.material.SetVector("_Offset", data.offset);
-                        data.material.SetVector("_Aspect", data.aspect);
-                        data.material.SetTexture("_JfaTex", data.distanceTex);
-
-                        // Full screen blit
-                        Blitter.BlitTexture(
-                            context.cmd,
-                            data.distanceTex,
-                            new Vector4(1, 1, 0, 0),
-                            data.material,
-                            0
-                        );
-                    }
-                );
-            }
+            BlitMaterialParameters blitParams = new(
+                rainRustContextData.distanceRt,
+                rainRustContextData.lightingRt,
+                m_RayTracingMaterial,
+                0
+            );
+            renderGraph.AddBlitPass(blitParams, "RainRust Ray Tracing Pass");
         }
 
         private Material m_RayTracingMaterial;
