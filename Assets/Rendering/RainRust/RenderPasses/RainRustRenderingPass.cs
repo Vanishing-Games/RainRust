@@ -55,7 +55,7 @@ namespace RainRust.Rendering
                 passData.lightingRt = lightingRt;
 
                 builder.UseTexture(lightingRt, AccessFlags.Read);
-                builder.SetRenderAttachment(rainRustContextData.mainRt, 0, AccessFlags.Write);
+                builder.SetRenderAttachment(rainRustContextData.distanceRt, 0, AccessFlags.Write);
 
                 builder.SetRenderFunc(
                     static (RainRustRenderingPassData data, RasterGraphContext context) =>

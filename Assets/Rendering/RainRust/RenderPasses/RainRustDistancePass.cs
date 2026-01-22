@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.RenderGraphModule;
 using UnityEngine.Rendering.Universal;
+using static UnityEngine.Rendering.RenderGraphModule.Util.RenderGraphUtils;
 
 namespace RainRust.Rendering
 {
@@ -43,43 +44,13 @@ namespace RainRust.Rendering
 
             Vector2 aspect = new(1f, (float)height / width);
 
-            using (
-                var builder = renderGraph.AddRasterRenderPass<RainRustDistancePassData>(
-                    "RainRust Distance Pass",
-                    out var passData
-                )
-            )
-            {
-                builder.AllowPassCulling(false);
-
-                TextureHandle jfaResult = rainRustContextData.jfaRt.Previous(); // Final JFA result after all iterations
-
-                passData.material = m_DistanceMaterial;
-                passData.jfaTex = jfaResult;
-                passData.offset = Vector2.zero;
-                passData.aspect = aspect;
-
-                builder.UseTexture(jfaResult, AccessFlags.Read);
-                builder.SetRenderAttachment(rainRustContextData.distanceRt, 0, AccessFlags.Write);
-
-                builder.SetRenderFunc(
-                    static (RainRustDistancePassData data, RasterGraphContext context) =>
-                    {
-                        data.material.SetVector("_Offset", data.offset);
-                        data.material.SetVector("_Aspect", data.aspect);
-                        data.material.SetTexture("_JfaTex", data.jfaTex);
-
-                        // Full screen blit
-                        Blitter.BlitTexture(
-                            context.cmd,
-                            data.jfaTex,
-                            new Vector4(1, 1, 0, 0),
-                            data.material,
-                            0
-                        );
-                    }
-                );
-            }
+            BlitMaterialParameters blitParams = new(
+                rainRustContextData.jfaRt.Previous(),
+                rainRustContextData.distanceRt,
+                m_DistanceMaterial,
+                0
+            );
+            renderGraph.AddBlitPass(blitParams, "RainRust Distance Pass");
         }
 
         private Material m_DistanceMaterial;
