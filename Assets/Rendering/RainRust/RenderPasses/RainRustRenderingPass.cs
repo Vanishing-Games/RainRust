@@ -1,7 +1,9 @@
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.RenderGraphModule;
+using UnityEngine.Rendering.RenderGraphModule.Util;
 using UnityEngine.Rendering.Universal;
+using static UnityEngine.Rendering.RenderGraphModule.Util.RenderGraphUtils;
 
 namespace RainRust.Rendering
 {
@@ -21,7 +23,7 @@ namespace RainRust.Rendering
         public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
         {
             // Ensure material is created
-            if (m_DistanceMaterial == null)
+            if (m_RenderingMaterial == null)
             {
                 var shader = Shader.Find(k_DistanceShaderName);
                 if (shader == null)
@@ -29,7 +31,7 @@ namespace RainRust.Rendering
                     Debug.LogError($"Shader not found: {k_DistanceShaderName}");
                     return;
                 }
-                m_DistanceMaterial = CoreUtils.CreateEngineMaterial(shader);
+                m_RenderingMaterial = CoreUtils.CreateEngineMaterial(shader);
             }
 
             var rainRustContextData = frameData.Get<RainRustContextData>();
@@ -40,40 +42,16 @@ namespace RainRust.Rendering
 
             Vector2 aspect = new(1f, (float)height / width);
 
-            using (
-                var builder = renderGraph.AddRasterRenderPass<RainRustRenderingPassData>(
-                    "RainRust Rendering Pass",
-                    out var passData
-                )
-            )
-            {
-                builder.AllowPassCulling(false);
-
-                TextureHandle lightingRt = rainRustContextData.lightingRt; // Final JFA result after all iterations
-
-                passData.material = m_DistanceMaterial;
-                passData.lightingRt = lightingRt;
-
-                builder.UseTexture(lightingRt, AccessFlags.Read);
-                builder.SetRenderAttachment(rainRustContextData.distanceRt, 0, AccessFlags.Write);
-
-                builder.SetRenderFunc(
-                    static (RainRustRenderingPassData data, RasterGraphContext context) =>
-                    {
-                        // Full screen blit
-                        Blitter.BlitTexture(
-                            context.cmd,
-                            data.lightingRt,
-                            new Vector4(1, 1, 0, 0),
-                            data.material,
-                            0
-                        );
-                    }
-                );
-            }
+            BlitMaterialParameters blitParams = new(
+                rainRustContextData.lightingRt,
+                rainRustContextData.mainRt,
+                m_RenderingMaterial,
+                0
+            );
+            renderGraph.AddBlitPass(blitParams, "Rain Rust Rendering Pass");
         }
 
-        private Material m_DistanceMaterial;
+        private Material m_RenderingMaterial;
         private const string k_DistanceShaderName = "Hidden/RainRust/Distance";
     }
 }
