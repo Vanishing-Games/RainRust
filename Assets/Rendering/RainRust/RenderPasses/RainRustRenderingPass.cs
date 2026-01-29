@@ -35,7 +35,7 @@ namespace RainRust.Rendering
             }
 
             var rainRustContextData = frameData.Get<RainRustContextData>();
-            UniversalResourceData resourceData = frameData.Get<UniversalResourceData>();
+            var resourceData = frameData.Get<UniversalResourceData>();
 
             var desc = renderGraph.GetTextureDesc(rainRustContextData.jfaRt.Current());
             int width = desc.width;
