@@ -65,7 +65,7 @@ namespace RainRust.Rendering
                     0
                 );
 
-                // Below isn't right
+                // Below isn't right//
                 // m_JfaMaterial.SetVector("_StepSize", stepSize);
                 // m_JfaMaterial.SetVector("_Aspect", aspect);
                 // m_JfaMaterial.SetTexture("_SeedTex", rainRustContextData.jfaRt.Previous());

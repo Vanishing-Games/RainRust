@@ -35,6 +35,7 @@ namespace RainRust.Rendering
             }
 
             var rainRustContextData = frameData.Get<RainRustContextData>();
+            UniversalResourceData resourceData = frameData.Get<UniversalResourceData>();
 
             var desc = renderGraph.GetTextureDesc(rainRustContextData.jfaRt.Current());
             int width = desc.width;
@@ -44,7 +45,7 @@ namespace RainRust.Rendering
 
             BlitMaterialParameters blitParams = new(
                 rainRustContextData.lightingRt,
-                rainRustContextData.mainRt,
+                resourceData.cameraColor,
                 m_RenderingMaterial,
                 0
             );
