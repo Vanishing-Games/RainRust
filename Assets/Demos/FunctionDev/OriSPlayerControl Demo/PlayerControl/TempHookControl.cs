@@ -18,7 +18,7 @@ namespace PlayerControlByOris
         {
             if (isOnWall)
                 RopeCreate();
-            rb.velocity = rVelocity;
+            rb.linearVelocity = rVelocity;
         }
 
         public void DestroyThis()
