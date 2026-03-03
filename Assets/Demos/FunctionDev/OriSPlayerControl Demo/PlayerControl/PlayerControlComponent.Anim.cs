@@ -26,14 +26,13 @@ namespace PlayerControlByOris
             else
                 mAnim.SetBool("HorizontalFast", true);
 
-			if (MoveX * CtrlVelocity.x < -0.5f * MaxSpeedX)
-				mAnim.SetBool("MoveBack", true);
-			else
-				mAnim.SetBool("MoveBack", false);
+            if (MoveX * CtrlVelocity.x < -0.5f * MaxSpeedX)
+                mAnim.SetBool("MoveBack", true);
+            else
+                mAnim.SetBool("MoveBack", false);
 
-
-			mAnim.SetBool("IsGrab", CurrentState == PlayerStateMachine.GrabState);
-            mAnim.SetBool("IsCorner", IsCornerGrab);			
+            mAnim.SetBool("IsGrab", CurrentState == PlayerStateMachine.GrabState);
+            mAnim.SetBool("IsCorner", IsCornerGrab);
         }
     }
 }

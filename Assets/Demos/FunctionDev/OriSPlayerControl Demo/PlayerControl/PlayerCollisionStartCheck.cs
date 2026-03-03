@@ -50,7 +50,7 @@ namespace PlayerControlByOris
                 )
                 || mPCComponent.CurrentState == PlayerStateMachine.NormalState
             )
-                NormalGrabCheck(mPCComponent.mTranform.position, new Vector2(-0.5f,0));
+                NormalGrabCheck(mPCComponent.mTranform.position, new Vector2(-0.5f, 0));
         }
 
         private void CornerGrabCheck(Vector2 PlayerPosition, Vector2 Dir)
@@ -115,7 +115,9 @@ namespace PlayerControlByOris
         {
             Vector2 BoxRange = new Vector2(mPCComponent.GrabRangeX, mPCComponent.GrabRangeY);
             int count = Physics2D.OverlapBoxNonAlloc(
-                PlayerPosition + mPCComponent.GrabRangeOffset + HoldPosOffset * new Vector2(mPCComponent.FacingDir , 1),
+                PlayerPosition
+                    + mPCComponent.GrabRangeOffset
+                    + HoldPosOffset * new Vector2(mPCComponent.FacingDir, 1),
                 BoxRange,
                 0f,
                 ColliderHitResults,
@@ -129,7 +131,9 @@ namespace PlayerControlByOris
             {
                 Bounds GrabBounds = hitCollider.bounds;
                 float centerX = (float)GrabBounds.center.x;
-                Vector2 targetPoint = new Vector2(centerX, PlayerPosition.y) - HoldPosOffset * new Vector2(mPCComponent.FacingDir, 1);
+                Vector2 targetPoint =
+                    new Vector2(centerX, PlayerPosition.y)
+                    - HoldPosOffset * new Vector2(mPCComponent.FacingDir, 1);
                 GrabSet(targetPoint, false, false, new Vector2(-1 * mPCComponent.FacingDir, 0));
             }
             else if (
