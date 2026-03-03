@@ -1,6 +1,11 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Demos/FunctionDev/OriSPlayerControl Demo/TempHook/TempHook.prefab.meta
 guid: 0c3005ee9d8ee5f428bfd0d79fd3e630
 PrefabImporter:
+========
+guid: 91b0b4c77fdd1d24aa1af646e9d29960
+DefaultImporter:
+>>>>>>>> develop:Assets/Plugins/Zenject/OptionalExtras/ReflectionBaking/Zenject-ReflectionBaking.csproj.meta
   externalObjects: {}
   userData: 
   assetBundleName: 
