@@ -89,7 +89,7 @@ MonoBehaviour:
       Data: -1
     - Name: CornerGrabStartOffsetY
       Entry: 4
-      Data: 0.2
+      Data: -0.35
     - Name: CornerGrabOffsetY
       Entry: 4
       Data: 0.2

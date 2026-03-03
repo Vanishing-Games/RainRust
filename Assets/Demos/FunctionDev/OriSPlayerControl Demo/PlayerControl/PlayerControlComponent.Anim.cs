@@ -17,7 +17,7 @@ namespace PlayerControlByOris
             mAnim.SetBool("IsOnGround", IsOnGround);
             mAnim.SetBool("IsMove", MoveX != 0);
             mAnim.SetFloat("SpeedY", CtrlVelocity.y);
-            mAnim.SetFloat("SpeedX", CtrlVelocity.x);
+            mAnim.SetFloat("SpeedX", MathF.Abs(CtrlVelocity.x));
 
             if (MathF.Abs(CtrlVelocity.x) <= 0.5f * MaxSpeedX)
                 mAnim.SetBool("HorizontalFast", false);
@@ -26,8 +26,14 @@ namespace PlayerControlByOris
             else
                 mAnim.SetBool("HorizontalFast", true);
 
-            mAnim.SetBool("IsGrab", CurrentState == PlayerStateMachine.GrabState);
-            mAnim.SetBool("IsCorner", IsCornerGrab);
+			if (MoveX * CtrlVelocity.x < -0.5f * MaxSpeedX)
+				mAnim.SetBool("MoveBack", true);
+			else
+				mAnim.SetBool("MoveBack", false);
+
+
+			mAnim.SetBool("IsGrab", CurrentState == PlayerStateMachine.GrabState);
+            mAnim.SetBool("IsCorner", IsCornerGrab);			
         }
     }
 }
