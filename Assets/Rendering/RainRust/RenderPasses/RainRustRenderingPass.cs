@@ -25,10 +25,10 @@ namespace RainRust.Rendering
             // Ensure material is created
             if (m_RenderingMaterial == null)
             {
-                var shader = Shader.Find(k_DistanceShaderName);
+                var shader = Shader.Find(k_RenderingShaderName);
                 if (shader == null)
                 {
-                    Debug.LogError($"Shader not found: {k_DistanceShaderName}");
+                    Debug.LogError($"Shader not found: {k_RenderingShaderName}");
                     return;
                 }
                 m_RenderingMaterial = CoreUtils.CreateEngineMaterial(shader);
@@ -43,16 +43,22 @@ namespace RainRust.Rendering
 
             Vector2 aspect = new(1f, (float)height / width);
 
+            // Use Pass 2 (Blit) of RayTracing shader to copy lightingRt to cameraColor
             BlitMaterialParameters blitParams = new(
                 rainRustContextData.lightingRt,
                 resourceData.cameraColor,
                 m_RenderingMaterial,
-                0
+                2
             );
             renderGraph.AddBlitPass(blitParams, "Rain Rust Rendering Pass");
         }
 
+        public void Dispose()
+        {
+            CoreUtils.Destroy(m_RenderingMaterial);
+        }
+
         private Material m_RenderingMaterial;
-        private const string k_DistanceShaderName = "Hidden/RainRust/Distance";
+        private const string k_RenderingShaderName = "Hidden/RainRust/RayTracing";
     }
 }

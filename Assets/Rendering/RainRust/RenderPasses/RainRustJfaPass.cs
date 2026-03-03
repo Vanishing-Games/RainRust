@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Core;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -25,18 +26,6 @@ namespace RainRust.Rendering
 
         public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
         {
-            // Ensure material is created
-            if (m_JfaMaterial == null)
-            {
-                var shader = Shader.Find(k_JfaShaderName);
-                if (shader == null)
-                {
-                    Core.Logger.LogError($"Shader not found: {k_JfaShaderName}", LogTag.Rendering);
-                    return;
-                }
-                m_JfaMaterial = CoreUtils.CreateEngineMaterial(shader);
-            }
-
             // Get the shared data from the previous pass
             var rainRustContextData = frameData.Get<RainRustContextData>();
 
@@ -52,23 +41,27 @@ namespace RainRust.Rendering
 
             Vector2 aspect = new(1f, (float)height / width); // Matches shader's _Aspect usage
 
+            EnsureMaterials(iterations);
+
             for (int i = 0; i < iterations; i++)
             {
                 // JFA Step calculation: N/2, N/4, ... 1
                 float step = Mathf.Pow(2, iterations - 1 - i);
                 Vector2 stepSize = new(step / width, step / height);
 
+                var material = m_JfaMaterials[i];
+                if (material == null) continue;
+
+                material.SetVector("_StepSize", stepSize);
+                material.SetVector("_Aspect", aspect);
+                // material.SetTexture("_SeedTex", rainRustContextData.jfaRt.Previous()); // Handled by Blit inputs usually, but SetTexture is safe if needed.
+
                 BlitMaterialParameters blitParams = new(
                     rainRustContextData.jfaRt.Previous(),
                     rainRustContextData.jfaRt.Current(),
-                    m_JfaMaterial,
+                    material,
                     0
                 );
-
-                // Below isn't right//
-                // m_JfaMaterial.SetVector("_StepSize", stepSize);
-                // m_JfaMaterial.SetVector("_Aspect", aspect);
-                // m_JfaMaterial.SetTexture("_SeedTex", rainRustContextData.jfaRt.Previous());
 
                 renderGraph.AddBlitPass(blitParams, "RainRust JFA Step " + i);
 
@@ -76,7 +69,41 @@ namespace RainRust.Rendering
             }
         }
 
-        private Material m_JfaMaterial;
+        private void EnsureMaterials(int count)
+        {
+            if (m_JfaMaterials == null)
+                m_JfaMaterials = new List<Material>();
+
+            if (m_Shader == null)
+            {
+                m_Shader = Shader.Find(k_JfaShaderName);
+                if (m_Shader == null)
+                {
+                    Core.Logger.LogError($"Shader not found: {k_JfaShaderName}", LogTag.Rendering);
+                    return;
+                }
+            }
+
+            while (m_JfaMaterials.Count < count)
+            {
+                m_JfaMaterials.Add(CoreUtils.CreateEngineMaterial(m_Shader));
+            }
+        }
+
+        public void Dispose()
+        {
+            if (m_JfaMaterials != null)
+            {
+                foreach (var material in m_JfaMaterials)
+                {
+                    CoreUtils.Destroy(material);
+                }
+                m_JfaMaterials.Clear();
+            }
+        }
+
+        private List<Material> m_JfaMaterials;
+        private Shader m_Shader;
         private const string k_JfaShaderName = "Hidden/RainRust/JumpFloodAlgorithm";
     }
 }

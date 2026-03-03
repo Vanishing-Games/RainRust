@@ -40,7 +40,9 @@ namespace RainRust.Rendering
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
-            m_JfaInitPass.Dispose();
+            m_JfaInitPass?.Dispose();
+            m_JfaPass?.Dispose();
+            m_RainRustRenderingPass?.Dispose();
         }
 
         private RainRustDrawObjectsPass m_RainRustDrawObjectsPass;
