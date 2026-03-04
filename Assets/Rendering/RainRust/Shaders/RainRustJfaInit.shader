@@ -17,37 +17,41 @@ Shader "Hidden/RainRust/JfaInit"
             Cull Off
 
             HLSLPROGRAM
-            #pragma vertex Vert
-            #pragma fragment Frag
+            #include "Utils.hlsl"
 
-            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
-            #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Common.hlsl"
-            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Blit.hlsl"
+            #pragma vertex vert_default
+            #pragma fragment frag
 
-            half4 Frag (Varyings input) : SV_Target
+            sampler2D _MainTex;
+            float2    _StepSize;
+            float2    _Aspect;
+
+            float2 frag (const fragIn input) : SV_Target
             {
-                float2 uv = input.texcoord;
-                // Sample the source texture (MainRt)
-                // We access the texture via the _BlitTexture provided by Blitter if using the newer API, 
-                // or _MainTex if binding manually. Blitter.BlitTexture usually binds to _BlitTexture.
-                // Let's support _BlitTexture as per URP 17+ standards if possible, or fallback.
-                // In URP 14/15, it's often _MainTex or _BlitTexture.
-                
-                // Note: The prompt asks to output UV coordinates. 
-                // We assume we should only output UVs where there is an object.
-                // Since the instruction is brief, I'll output UVs based on input alpha/color.
-                
-                half4 col = SAMPLE_TEXTURE2D(_BlitTexture, sampler_LinearClamp, uv);
-                
-                // Simple threshold check. If alpha > 0, it's a seed.
-                if (col.a > 0.0)
+                float min_dist = 1;
+                float2 min_dist_uv = float2(0, 0);
+
+                [unroll]
+                for (int y = -1; y <= 1; y ++)
                 {
-                    return half4(uv.x, uv.y, 0.0, 1.0);
+                    [unroll]
+                    for (int x = -1; x <= 1; x ++)
+                    {
+                        const float2 peek = tex2D(_MainTex, input.uv + float2(x, y) * _StepSize).xy;
+                        if (all(peek))
+                        {
+                            const float2 dir = (peek - input.uv ) * _Aspect;
+                            const float dist = dot(dir, dir);
+                            if (dist < min_dist)
+                            {
+                                min_dist = dist;
+                                min_dist_uv = peek;
+                            }
+                        }
+                    }
                 }
-                
-                // Return a value indicating "empty". 
-                // For JFA, this is often a value outside [0,1].
-                return half4(-1.0, -1.0, 0.0, 0.0);
+
+                return min_dist_uv;
             }
             ENDHLSL
         }

@@ -50,7 +50,8 @@ namespace RainRust.Rendering
                 Vector2 stepSize = new(step / width, step / height);
 
                 var material = m_JfaMaterials[i];
-                if (material == null) continue;
+                if (material == null)
+                    continue;
 
                 material.SetVector("_StepSize", stepSize);
                 material.SetVector("_Aspect", aspect);
