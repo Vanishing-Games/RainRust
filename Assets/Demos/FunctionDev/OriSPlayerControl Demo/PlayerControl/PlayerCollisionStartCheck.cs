@@ -43,15 +43,89 @@ namespace PlayerControlByOris
                 CornerGrabCheck(mPCComponent.mTranform.position, Vector2.left);
             }
 
-            if (
-                (
-                    !mPCComponent.IsCornerGrab
-                    && mPCComponent.CurrentState == PlayerStateMachine.GrabState
-                )
-                || mPCComponent.CurrentState == PlayerStateMachine.NormalState
-            )
-                NormalGrabCheck(mPCComponent.mTranform.position, new Vector2(-0.5f, 0));
+			//左右贴墙判断
+			if (mPCComponent.CurrentState == PlayerStateMachine.NormalState)
+			{
+				ByWallCheck(mPCComponent.mTranform.position, Vector2.right);
+				ByWallCheck(mPCComponent.mTranform.position, Vector2.left);
+			}
+
+			if (
+				(
+					!mPCComponent.IsCornerGrab
+					&& mPCComponent.CurrentState == PlayerStateMachine.GrabState
+				)
+				|| mPCComponent.CurrentState == PlayerStateMachine.NormalState
+			)
+				NormalGrabCheck(mPCComponent.mTranform.position, new Vector2(-0.5f, 0));
         }
+
+		private void ByWallCheck(Vector2 PlayerPosition, Vector2 Dir)
+		{
+			
+			Vector2 FootStartPoint =
+				PlayerPosition
+				+ PlayerColliderOffsetX * Dir
+				+ new Vector2(0, PlayerFootColliderOffsetY);
+
+			RaycastHit2D hitDown = Physics2D.Raycast(
+				FootStartPoint,
+				Dir,
+				mPCComponent.ByWallCheckDistanceX,
+				LayerMask.GetMask("Wall")
+				);
+
+			Debug.DrawRay(
+				FootStartPoint,
+				Dir * mPCComponent.ByWallCheckDistanceX,
+				Color.red
+			);
+
+			Vector2 HeadStartPoint =
+				PlayerPosition
+				+ PlayerColliderOffsetX * Dir
+				+ new Vector2(0, PlayerColliderOffsetUpY);
+
+			RaycastHit2D hitUp = Physics2D.Raycast(
+				HeadStartPoint - new Vector2(0, VerticalDistance),
+				Dir,
+				mPCComponent.ByWallCheckDistanceX,
+				LayerMask.GetMask("Wall")
+				);
+
+			//左右是否靠墙判断
+			if (hitUp.collider != null || hitDown.collider != null)
+			{
+				if (Dir == Vector2.left)
+					mPCComponent.IsByWallLeft = true;
+				else if (Dir == Vector2.right)
+					mPCComponent.IsByWallRight = true;
+			}
+			else
+			{
+				if (Dir == Vector2.left)
+					mPCComponent.IsByWallLeft = false;
+				else if (Dir == Vector2.right)
+					mPCComponent.IsByWallRight = false;
+			}
+
+			if (hitUp.collider != null)
+			{
+				//滑墙可行性判断
+				if (Dir == Vector2.left)
+					mPCComponent.LeftSlideCheck = true;
+				else if (Dir == Vector2.right)
+					mPCComponent.RightSlideCheck = true;
+			}
+			else
+			{
+				if (Dir == Vector2.left)
+					mPCComponent.LeftSlideCheck = false;
+				else if (Dir == Vector2.right)
+					mPCComponent.RightSlideCheck = false;
+			}
+			
+		}
 
         private void CornerGrabCheck(Vector2 PlayerPosition, Vector2 Dir)
         {
@@ -81,7 +155,7 @@ namespace PlayerControlByOris
             }
             else
             {
-                return;
+				return;
             }
 
             Vector2 DownStartPoint =
@@ -167,9 +241,17 @@ namespace PlayerControlByOris
             && mPCComponent.CtrlVelocity.y < mPCComponent.GrabThresholdSpeedY;
 
         private float PlayerColliderOffsetX => mPCComponent.mBoxCollider.size.x * 0.5f;
-        private float PlayerColliderOffsetUpY =>
-            mPCComponent.mBoxCollider.size.y * 0.5f
-            + mPCComponent.mBoxCollider.offset.y
+
+		private float PlayerHeadColliderOffsetY =>
+			mPCComponent.mBoxCollider.size.y * 0.5f
+			+ mPCComponent.mBoxCollider.offset.y;
+
+		private float PlayerFootColliderOffsetY =>
+			mPCComponent.mBoxCollider.size.y * 0.5f * -1f
+			+ mPCComponent.mBoxCollider.offset.y;
+
+		private float PlayerColliderOffsetUpY =>
+            PlayerHeadColliderOffsetY
             + mPCComponent.CornerGrabStartOffsetY;
 
         private float HorizontalDistance => mPCComponent.CornerGrabOffsetX;

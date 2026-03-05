@@ -81,6 +81,24 @@ MonoBehaviour:
     - Name: CoyoteJumpInputTime
       Entry: 3
       Data: 6
+    - Name: LeftSlideCheck
+      Entry: 5
+      Data: false
+    - Name: RightSlideCheck
+      Entry: 5
+      Data: false
+    - Name: WallDir
+      Entry: 3
+      Data: 1
+    - Name: ByWallCheckDistanceX
+      Entry: 4
+      Data: 0.15
+    - Name: WallJumpForceTime
+      Entry: 3
+      Data: 4
+    - Name: WallCoyoteJumpInputTime
+      Entry: 3
+      Data: 6
     - Name: GrabStayTime
       Entry: 3
       Data: 60

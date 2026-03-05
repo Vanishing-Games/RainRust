@@ -24,6 +24,7 @@ namespace PlayerControlByOris
             velocity.x += MoveX * JumpBoostSpeedX;
             mPCComponent.CtrlVelocity = velocity;
 
+			Debug.Log(velocity.x);
             mPCComponent.CoyoteJumpInputRevTimer = 0;
         }
 
@@ -57,6 +58,23 @@ namespace PlayerControlByOris
                 return true;
             else if (CoyoteJumpCheck())
                 return true;
+			else if (WallJumpCheck())
+			{
+				//强制转向
+				mPCComponent.ForceMoveXRevTimer = mPCComponent.WallJumpForceTime;
+				if (mPCComponent.IsByWallLeft)
+					mPCComponent.ForceMoveX = 1;
+				else if (mPCComponent.IsByWallRight)
+					mPCComponent.ForceMoveX = -1;
+				else
+					mPCComponent.ForceMoveX = mPCComponent.WallDir;
+				mPCComponent.MoveX = mPCComponent.ForceMoveX;
+				//给予反墙初始速度
+				Vector2 velocity = mPCComponent.CtrlVelocity;
+				velocity.x = mPCComponent.ForceMoveX * mPCComponent.MaxSpeedX;
+				mPCComponent.CtrlVelocity = velocity;
+				return true;
+			}			
             else if (IsJumping)
                 return true;
             else
@@ -87,5 +105,13 @@ namespace PlayerControlByOris
             && mPCComponent.PreJumpInputTimer > 0
             && mPCComponent.PreJumpInputTimer < PreJumpInputTime
             && mPCComponent.CoyoteJumpInputRevTimer > 0;
-    }
+
+		protected bool WallJumpCheck() =>
+			!IsOnGround			
+			&& mPCComponent.PreJumpInputTimer > 0
+			&& mPCComponent.PreJumpInputTimer < PreJumpInputTime
+			&& ((mPCComponent.IsByWallLeft || mPCComponent.IsByWallRight) || mPCComponent.WallCoyoteJumpInputRevTimer > 0)
+			&& !mPCComponent.IsCornerGrab
+			&& mPCComponent.CtrlVelocity.y < 0;
+	}
 }

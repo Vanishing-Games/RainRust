@@ -23,6 +23,7 @@ namespace PlayerControlByOris
         protected override void OnActivate()
         {
             mPCComponent.IsJumping = true;
+			mPCComponent.IsCornerGrab = false;
             SetStateMachine(PlayerStateMachine.NormalState, EccTag.NormalState);
             Vector2 Velocity = mPCComponent.CtrlVelocity;
             Velocity.x = MoveX * MaxSpeedX;

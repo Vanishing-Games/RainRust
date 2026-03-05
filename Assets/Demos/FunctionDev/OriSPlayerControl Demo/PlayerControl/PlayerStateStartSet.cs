@@ -42,7 +42,7 @@ namespace PlayerControlByOris
             if (MoveX != 0 && mPCComponent.CurrentState == PlayerStateMachine.NormalState)
                 mPCComponent.FacingDir = mPCComponent.MoveX * -1;
 
-            //角色是否能投掷
+            //角色是否能投掷 --
             if (mPCComponent.CurrentState == PlayerStateMachine.NormalState && IsOnGround)
                 mPCComponent.IsCanThrow = true;
 
@@ -61,10 +61,21 @@ namespace PlayerControlByOris
                 mPCComponent.CoyoteJumpInputRevTimer = CoyoteJumpInputTime;
             else if (mPCComponent.CoyoteJumpInputRevTimer > 0)
                 mPCComponent.CoyoteJumpInputRevTimer--;
-            //滑落计时器
-            if (mPCComponent.CurrentState != PlayerStateMachine.GrabState)
+			//墙跳土狼计时器
+			if (mPCComponent.IsByWallLeft || mPCComponent.IsByWallRight)
+			{
+				mPCComponent.WallCoyoteJumpInputRevTimer = mPCComponent.WallCoyoteJumpInputTime;
+				if (mPCComponent.IsByWallLeft)
+					mPCComponent.WallDir = 1;
+				else
+					mPCComponent.WallDir = -1;
+			}				
+			else if (mPCComponent.WallCoyoteJumpInputRevTimer > 0)
+				mPCComponent.WallCoyoteJumpInputRevTimer--;
+			//滑落计时器
+			if (mPCComponent.CurrentState != PlayerStateMachine.GrabState)
                 mPCComponent.GrabStayRevTimer = mPCComponent.GrabStayTime;
-            //投掷cd计时器
+            //投掷cd计时器 --
             if (
                 (
                     mPCComponent.CurrentState != PlayerStateMachine.ThrowState

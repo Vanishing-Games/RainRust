@@ -28,8 +28,16 @@ namespace PlayerControlByOris
         protected override void OnTick(float deltaTime)
         {
             var velocity = mPCComponent.CtrlVelocity;
-            float mult = LowGravMultCheck(velocity);
-            velocity.y = Approach(velocity.y, -1 * MaxFallSpeedY, mult * GravityAccY);
+			//滑墙判断
+			if (WallSlideCheck())
+			{
+				velocity.y = Approach(velocity.y, -1 * mPCComponent.SlideFallSpeedY, GravityAccY);
+			}
+			else
+			{
+				float mult = LowGravMultCheck(velocity);
+				velocity.y = Approach(velocity.y, -1 * MaxFallSpeedY, mult * GravityAccY);
+			}          
             mPCComponent.CtrlVelocity = velocity;
         }
 
@@ -37,5 +45,10 @@ namespace PlayerControlByOris
             (Mathf.Abs(velocity.y) < LowGravThresholdSpeedY && mPCComponent.InputJump)
                 ? LowGravMult
                 : 1f;
-    }
+
+		public bool WallSlideCheck() =>
+				(mPCComponent.LeftSlideCheck && mPCComponent.InputX < 0)
+				|| (mPCComponent.RightSlideCheck && mPCComponent.InputX > 0);
+	}
+
 }

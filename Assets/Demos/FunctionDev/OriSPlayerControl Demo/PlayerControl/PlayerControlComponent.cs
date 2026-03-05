@@ -36,7 +36,16 @@ namespace PlayerControlByOris
         [BoxGroup("状态变量信息"), Tooltip("是否跳跃状态判断"), ShowInInspector, ReadOnly]
         public bool IsJumping { get; set; }
 
-        [BoxGroup("状态变量信息"), Tooltip("是否抓墙角判断"), ShowInInspector, ReadOnly]
+		[BoxGroup("状态变量信息"), Tooltip("是否左侧靠墙判断"), ShowInInspector, ReadOnly]
+		public bool IsByWallLeft { get; set; }
+
+		[BoxGroup("状态变量信息"), Tooltip("是否左侧靠墙判断"), ShowInInspector, ReadOnly]
+		public bool IsByWallRight { get; set; }
+
+		[BoxGroup("状态变量信息"), Tooltip("是否靠墙下滑判断"), ShowInInspector, ReadOnly]
+		public bool IsWallSlide { get; set; }
+
+		[BoxGroup("状态变量信息"), Tooltip("是否抓墙角判断"), ShowInInspector, ReadOnly]
         public bool IsCornerGrab { get; set; }
 
         [BoxGroup("状态变量信息"), Tooltip("是否抓稳定点判断"), ShowInInspector, ReadOnly]
@@ -107,7 +116,15 @@ namespace PlayerControlByOris
         ]
         public int CoyoteJumpInputRevTimer { get; set; } = 0;
 
-        [BoxGroup("角色输入计时器"), Tooltip("投掷预输入计时器"), ShowInInspector, ReadOnly]
+		[
+			BoxGroup("角色输入计时器"),
+			Tooltip("土狼跳输入窗口计时器（单位：帧）"),
+			ShowInInspector,
+			ReadOnly
+		]
+		public int WallCoyoteJumpInputRevTimer { get; set; } = 0;
+
+		[BoxGroup("角色输入计时器"), Tooltip("投掷预输入计时器"), ShowInInspector, ReadOnly]
         public int PreThrowInputTimer { get; set; } = 0;
 
         [BoxGroup("角色输入计时器"), Tooltip("投掷输入cd计时器"), ShowInInspector, ReadOnly]
@@ -253,16 +270,36 @@ namespace PlayerControlByOris
 
         [BoxGroup("跳跃相关"), Tooltip("角色土狼跳的输入窗口"), ShowInInspector, OdinSerialize]
         public int CoyoteJumpInputTime { get; set; }
-        #endregion
+		#endregion
 
-        #region 抓住相关
-        [BoxGroup("抓住相关"), Tooltip("抓住暂留的时长"), ShowInInspector, OdinSerialize]
+		#region 反墙相关
+		[BoxGroup("反墙相关"), Tooltip("靠墙判定的范围x"), ReadOnly, OdinSerialize]
+		public bool LeftSlideCheck { get; set; }
+		[BoxGroup("反墙相关"), Tooltip("靠墙判定的范围x"), ReadOnly, OdinSerialize]
+		public bool RightSlideCheck { get; set; }
+
+		[BoxGroup("反墙相关"), Tooltip("反墙的方向"), ReadOnly, OdinSerialize]
+		public int WallDir { get; set; }
+
+		[BoxGroup("反墙相关"), Tooltip("靠墙判定的范围x"), ShowInInspector, OdinSerialize]
+		public float ByWallCheckDistanceX {  get; set; }
+
+		[BoxGroup("反墙相关"), Tooltip("反墙跳强制朝向时间"), ShowInInspector, OdinSerialize]
+		public int WallJumpForceTime { get; set; }
+
+		[BoxGroup("反墙相关"), Tooltip("反墙跳土狼时间窗口"), ShowInInspector, OdinSerialize]
+		public int WallCoyoteJumpInputTime { get; set; }
+
+		#endregion
+
+		#region 抓住相关
+		[BoxGroup("抓住相关"), Tooltip("抓住暂留的时长"), ShowInInspector, OdinSerialize]
         public int GrabStayTime { get; set; }
 
-        [BoxGroup("抓住相关"), Tooltip("抓住暂留的时长"), ShowInInspector, OdinSerialize]
+        [BoxGroup("抓住相关"), Tooltip("抓住速度阈值"), ShowInInspector, OdinSerialize]
         public int GrabThresholdSpeedY { get; set; }
 
-        [BoxGroup("抓住相关"), Tooltip("抓住拐角的起点(基于头顶)y"), ShowInInspector, OdinSerialize]
+        [BoxGroup("抓住相关"), Tooltip("抓住拐角的手部偏移(基于头顶)y"), ShowInInspector, OdinSerialize]
         public float CornerGrabStartOffsetY { get; set; }
 
         [BoxGroup("抓住相关"), Tooltip("抓住拐角的范围y"), ShowInInspector, OdinSerialize]
