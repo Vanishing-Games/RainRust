@@ -33,6 +33,20 @@ namespace PlayerControlByOris
 
             mAnim.SetBool("IsGrab", CurrentState == PlayerStateMachine.GrabState);
             mAnim.SetBool("IsCorner", IsCornerGrab);
+
+			mAnim.SetBool("ThrowBegin", ThrowStartTimer > 0);
+
+			mAnim.SetBool("Throwing", ThrowMoveTimer > 0 && ThrowStartTimer == 0);
+
+			mAnim.SetBool("DashBefore", DashWaitTimer > 0);
+
+			mAnim.SetBool("Dashing", DashTimer > 0 && DashWaitTimer == 0);
+
+			mAnim.SetBool("WhistleBefore", WhistleBeforeTimer > 0);
+
+			mAnim.SetBool("WhistleStay", WhistleBeforeTimer == 0 && WhistleStayTimer > 0);
+
+			mAnim.SetBool("WhistleAfter", WhistleStayTimer == 0 && WhistleAfterTimer > 0 && !InputAct2);
         }
     }
 }

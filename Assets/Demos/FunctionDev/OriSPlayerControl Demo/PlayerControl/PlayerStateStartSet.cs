@@ -46,6 +46,12 @@ namespace PlayerControlByOris
             if (mPCComponent.CurrentState == PlayerStateMachine.NormalState && IsOnGround)
                 mPCComponent.IsCanThrow = true;
 
+			//角色口哨预输入时间
+			if (mPCComponent.InputAct2 && mPCComponent.PreWhistleInputTimer > 0)
+				mPCComponent.PreWhistleInputTimer--;
+			else if (!mPCComponent.InputAct2)
+				mPCComponent.PreWhistleInputTimer = mPCComponent.PreWhistleInputTime;
+
             //角色跳跃输入计时器
             if (InputJump && mPCComponent.PreJumpInputTimer > 0)
                 mPCComponent.PreJumpInputTimer--;

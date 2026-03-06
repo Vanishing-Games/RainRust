@@ -13,6 +13,7 @@ namespace PlayerControlByOris
     {
         NormalState,
         GrabState,
+		WhistleState,
         ThrowState,
         DashState,
         DeathState,
@@ -69,11 +70,14 @@ namespace PlayerControlByOris
 
         [BoxGroup("按键输入信息"), Tooltip("特殊能力按键输入"), ShowInInspector, ReadOnly]
         public bool InputAct { get; set; }
-        #endregion
 
-        #region 角色基本属性
+		[BoxGroup("按键输入信息"), Tooltip("特殊能力按键2输入"), ShowInInspector, ReadOnly]
+		public bool InputAct2 { get; set; }
+		#endregion
 
-        [BoxGroup("角色基本属性"), Tooltip("角色面朝方向"), ShowInInspector, ReadOnly]
+		#region 角色基本属性
+
+		[BoxGroup("角色基本属性"), Tooltip("角色面朝方向"), ShowInInspector, ReadOnly]
         public int FacingDir { get; set; } = 1;
 
         [BoxGroup("角色基本属性"), Tooltip("角色将要移动方向"), ShowInInspector, ReadOnly]
@@ -130,10 +134,13 @@ namespace PlayerControlByOris
         [BoxGroup("角色输入计时器"), Tooltip("投掷输入cd计时器"), ShowInInspector, ReadOnly]
         public int ThrowCdInputTimer { get; set; } = 0;
 
-        #endregion
+		[BoxGroup("角色输入计时器"), Tooltip("口哨预输入按键计时器"), ShowInInspector, ReadOnly]
+		public int PreWhistleInputTimer { get; set; }
 
-        #region 角色运行计时器
-        [
+		#endregion
+
+		#region 角色运行计时器
+		[
             BoxGroup("角色运行计时器"),
             Tooltip("跳跃保持计时器（单位：帧）"),
             ShowInInspector,
@@ -168,11 +175,21 @@ namespace PlayerControlByOris
 
         [BoxGroup("角色运行计时器"), Tooltip("拉动冲刺计时器"), ShowInInspector, ReadOnly]
         public int DashWaitTimer { get; set; }
-        #endregion
 
-        #region 重力相关
+		[BoxGroup("角色运行计时器"), Tooltip("口哨前摇计时器"), ShowInInspector, ReadOnly]
+		public int WhistleBeforeTimer { get; set; }
 
-        [BoxGroup("重力相关"), Tooltip("角色的正常最大下落速度"), ShowInInspector, OdinSerialize]
+		[BoxGroup("角色运行计时器"), Tooltip("口哨前摇计时器"), ShowInInspector, ReadOnly]
+		public int WhistleStayTimer { get; set; }
+
+		[BoxGroup("角色运行计时器"), Tooltip("口哨后摇计时器"), ShowInInspector, ReadOnly]
+		public int WhistleAfterTimer { get; set; }
+
+		#endregion
+
+		#region 重力相关
+
+		[BoxGroup("重力相关"), Tooltip("角色的正常最大下落速度"), ShowInInspector, OdinSerialize]
         public float MaxFallSpeedY { get; set; }
 
         [
@@ -316,10 +333,25 @@ namespace PlayerControlByOris
 
         [BoxGroup("抓住相关"), Tooltip("抓住的范围的起点偏移点"), ShowInInspector, OdinSerialize]
         public Vector2 GrabRangeOffset { get; set; }
-        #endregion
+		#endregion
 
-        #region 投掷与拉动相关
-        [BoxGroup("投掷与拉动相关"), Tooltip("预输入投掷的时间"), ShowInInspector, OdinSerialize]
+		#region 口哨相关		
+		[BoxGroup("口哨相关"), Tooltip("口哨预输入时间"), ShowInInspector, OdinSerialize]
+		public int PreWhistleInputTime { get; set; }
+
+		[BoxGroup("口哨相关"), Tooltip("口哨前摇时间"), ShowInInspector, OdinSerialize]
+		public int WhistleBeforeTime { get; set; }
+
+		[BoxGroup("口哨相关"), Tooltip("口哨最小维持时间"), ShowInInspector, OdinSerialize]
+		public int WhistleStayTime { get; set; }
+
+		[BoxGroup("口哨相关"), Tooltip("口哨后摇时间"), ShowInInspector, OdinSerialize]
+		public int WhistleAfterTime { get; set; }
+
+		#endregion
+
+		#region 投掷与拉动相关
+		[BoxGroup("投掷与拉动相关"), Tooltip("预输入投掷的时间"), ShowInInspector, OdinSerialize]
         public int PreThrowTime { get; set; }
 
         [BoxGroup("投掷与拉动相关"), Tooltip("投掷未命中的cd"), ShowInInspector, OdinSerialize]
@@ -340,7 +372,7 @@ namespace PlayerControlByOris
         [BoxGroup("投掷与拉动相关"), Tooltip("拉动冲刺的速度"), ShowInInspector, OdinSerialize]
         public float DashSpeed { get; set; }
 
-        [BoxGroup("投掷与拉动相关"), Tooltip("拉动冲刺的时间"), ShowInInspector, OdinSerialize]
+        [BoxGroup("投掷与拉动相关"), Tooltip("拉动冲刺前的暂停时间"), ShowInInspector, OdinSerialize]
         public int DashWaitTime { get; set; }
 
         [BoxGroup("投掷与拉动相关"), Tooltip("拉动冲刺的时间"), ShowInInspector, OdinSerialize]
