@@ -12,13 +12,31 @@ Shader "Hidden/RainRust/JumpFloodAlgorithm"
 
             HLSLPROGRAM
             #include "Utils.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             
-            #pragma vertex vert_default
+            #pragma vertex vert
             #pragma fragment frag
 
-            sampler2D _SeedTex;
+            // AddBlitPass 自动绑定
+            TEXTURE2D(_BlitTexture);
+            SAMPLER(sampler_BlitTexture);
             float2    _StepSize;
             float2    _Aspect;
+
+            fragIn vert(uint vertexID : SV_VertexID)
+            {
+                fragIn o;
+            
+                float2 uv = float2(
+                    (vertexID << 1) & 2,
+                    vertexID & 2
+                );
+                
+                o.uv = uv;
+                o.vertex = float4(uv * 2.0 - 1.0, 0.0, 1.0);
+                
+                return o;
+            }
 
             // =======================================================================
             float2 frag(const fragIn i) : SV_Target
@@ -32,7 +50,7 @@ Shader "Hidden/RainRust/JumpFloodAlgorithm"
                     [unroll]
                     for (int x = -1; x <= 1; x ++)
                     {
-                        const float2 peek = tex2D(_SeedTex, i.uv + float2(x, y) * _StepSize).xy;
+                        const float2 peek = SAMPLE_TEXTURE2D(_BlitTexture, sampler_BlitTexture, i.uv + float2(x, y) * _StepSize).xy;
                         if (all(peek))
                         {
                             const float2 dir = (peek - i.uv ) * _Aspect;
