@@ -9,7 +9,7 @@ Shader "Hidden/RainRust/RayTracing"
     {
         Cull Off // No culling
         ZWrite Off // No depth writing
-        ZTest Always // Always pass depth test
+        ZTest Off // No depth testing
 
         Pass    // 0
         {
@@ -18,26 +18,30 @@ Shader "Hidden/RainRust/RayTracing"
 
             HLSLPROGRAM
             #include "Utils.hlsl"
+
+            // =======================================================================
             
+            // 随机数生成方式 shader内生成随机数, 从纹理采样随机数, 无随机
             #pragma multi_compile_local FRAGMENT_RANDOM TEXTURE_RANDOM _
+            // 输出alpha通道方式 全部为1, 使用对象遮罩, 颜色归一化后最大值
             #pragma multi_compile_local ONE_ALPHA OBJECTS_MASK_ALPHA NORMALIZED_ALPHA
 
             #pragma vertex vert
             #pragma fragment frag
 
-            sampler2D _ColorTex;
-            sampler2D _DistTex;
-            sampler2D _NoiseTex;
+            sampler2D _ColorTex; // 存储场景颜色的纹理, 可以认为是所有光源
+            sampler2D _DistTex; // 存储场景距离的纹理, 每个像素存储到最近光源的距离
+            sampler2D _NoiseTex; // 存储随机数的纹理, 用于打散采样
 
-            float  _Samples;
             float4 _Aspect;
-            float4 _Scale;
             float4 _NoiseTilingOffset;
-
+            
+            float  _Samples;
             float _Intensity;
             float _Power;
 
             // =======================================================================
+
             struct fragIn_gi
             {
                 float4 vertex : SV_POSITION;
@@ -48,26 +52,15 @@ Shader "Hidden/RainRust/RayTracing"
             };
 
             // =======================================================================
-            fragIn_gi vert(vertIn v)
+
+            float3 trace(const float2 uv, const float2 dir) // Ray Marching
             {
-                fragIn_gi o;
-                o.vertex = v.vertex * _Scale;
-                o.uv = v.uv;
+                float2 uvPos = uv; // uv坐标空间的射线位置, 从uv出发沿dir方向前进
 
-#if defined(FRAGMENT_RANDOM) || defined(TEXTURE_RANDOM)
-                o.noise_uv = v.uv * _NoiseTilingOffset.xy + _NoiseTilingOffset.zw;
-#endif
-                return o;
-            }
-
-            float3 trace(const float2 uv, const float2 dir)
-            {
-                float2 uvPos = uv;
-
-                // simple ray trace
-                const float4 col = tex2D(_ColorTex, uv).rgba;
-                if (col.a > 0)
-                    return col.rgb / col.a;
+                // 采样点在光源上, 直接返回颜色
+                const float4 color = tex2D(_ColorTex, uv).rgba;
+                if (color.a > 0)
+                    return color.rgb / color.a;
                 
                 uvPos += dir * tex2D(_DistTex, uvPos).rr;
                 if (notUVSpace(uvPos))
@@ -76,9 +69,9 @@ Shader "Hidden/RainRust/RayTracing"
                 [unroll]
                 for (int n = 1; n < STEPS; n++)
                 {
-                    const float4 col = tex2D(_ColorTex, uvPos).rgba;
-                    if (col.a > 0)
-                        return col.rgb * falloff((uv - uvPos) * _Aspect.xy, _Power * col.a);
+                    const float4 color = tex2D(_ColorTex, uvPos).rgba;
+                    if (color.a > 0)
+                        return color.rgb * falloff((uv - uvPos) * _Aspect.xy, _Power * color.a);
 
                     uvPos += dir * tex2D(_DistTex, uvPos).rr;
                     if (notUVSpace(uvPos))
@@ -86,6 +79,31 @@ Shader "Hidden/RainRust/RayTracing"
                 }
                 
                 return AMBIENT;
+            }
+
+            // =======================================================================
+            fragIn_gi vert(uint vertexID : SV_VertexID)
+            {
+                fragIn_gi o;
+            
+                // 生成 fullscreen triangle 的 uv
+                float2 uv = float2(
+                    (vertexID << 1) & 2,
+                    vertexID & 2
+                );
+                
+                o.uv = uv;
+                
+                // clip space position
+                float2 pos = uv * 2.0 - 1.0;
+                
+                o.vertex = float4(pos, 0.0, 1.0);
+                
+            #if defined(FRAGMENT_RANDOM) || defined(TEXTURE_RANDOM)
+                o.noise_uv = uv * _NoiseTilingOffset.xy + _NoiseTilingOffset.zw;
+            #endif
+                
+                return o;
             }
 
             float4 frag(fragIn_gi i) : SV_Target

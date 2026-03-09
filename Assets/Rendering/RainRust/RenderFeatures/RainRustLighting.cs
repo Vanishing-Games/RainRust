@@ -15,12 +15,12 @@ namespace RainRust.Rendering
         public override void Create()
         {
             // csharpier-ignore-start
-            m_RainRustDrawObjectsPass = new RainRustDrawObjectsPass();
-            m_JfaInitPass             = new RainRustJfaInitPass();
-            m_JfaPass                 = new RainRustJfaPass();
-            m_DistancePass            = new RainRustDistancePass();
-            m_RainRustRayTracingPass  = new RainRustRayTracingPass();
-            m_RainRustRenderingPass   = new RainRustRenderingPass();
+            m_RainRustDrawObjectsPass = new RainRustDrawObjectsPass(); // 绘制所有光源, 用于后续光场计算
+            m_JfaInitPass             = new RainRustJfaInitPass(); // 从光源数据获得JFA初始种子
+            m_JfaPass                 = new RainRustJfaPass(); // Jump Flood Algorithm
+            m_DistancePass            = new RainRustDistancePass(); // JFA -> Distance Field
+            m_RainRustRayTracingPass  = new RainRustRayTracingPass(); // 通过光场与光源颜色进行屏幕空间Ray Tracing, 获得光照信息
+            m_RainRustRenderingPass   = new RainRustRenderingPass(); // 渲染最终结果
             // csharpier-ignore-end
         }
 

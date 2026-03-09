@@ -2,7 +2,6 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.RenderGraphModule;
 using UnityEngine.Rendering.Universal;
-using static UnityEngine.Rendering.RenderGraphModule.Util.RenderGraphUtils;
 
 namespace RainRust.Rendering
 {
@@ -18,11 +17,9 @@ namespace RainRust.Rendering
             internal Material material;
             internal TextureHandle mainRtHandle;
             internal TextureHandle distanceRtHandle;
-            internal TextureHandle distanceTex;
+            internal TextureHandle lightingRtHandle;
             internal Texture noiseTextureHandle;
-            internal Vector2 offset;
             internal Vector4 aspect;
-            internal Vector4 scale;
             internal Vector4 noiseTilingOffset;
             internal int rayCount;
             internal float intensity;
@@ -50,13 +47,49 @@ namespace RainRust.Rendering
 
             Vector2 aspect = new(1f, (float)height / width);
 
-            BlitMaterialParameters blitParams = new(
-                rainRustContextData.distanceRt,
-                rainRustContextData.lightingRt,
-                m_RayTracingMaterial,
-                0
-            );
-            renderGraph.AddBlitPass(blitParams, "RainRust Ray Tracing Pass");
+            using (
+                var builder = renderGraph.AddRasterRenderPass<RainRustRayTracingPassData>(
+                    "RainRust Ray Tracing Pass",
+                    out var passData
+                )
+            )
+            {
+                passData.material = m_RayTracingMaterial;
+                passData.mainRtHandle = rainRustContextData.mainRt;
+                passData.distanceRtHandle = rainRustContextData.distanceRt;
+                passData.lightingRtHandle = rainRustContextData.lightingRt;
+                // passData.noiseTextureHandle = frameData.Get<UniversalResourceData>()
+
+                builder.UseTexture(passData.mainRtHandle);
+                builder.UseTexture(passData.distanceRtHandle);
+
+                builder.SetRenderAttachment(passData.lightingRtHandle, 0);
+
+                passData.material.DisableKeyword("FRAGMENT_RANDOM");
+                passData.material.DisableKeyword("TEXTURE_RANDOM");
+                passData.material.EnableKeyword("ONE_ALPHA");
+                passData.material.DisableKeyword("OBJECTS_MASK_ALPHA");
+                passData.material.DisableKeyword("NORMALIZED_ALPHA");
+
+                builder.SetRenderFunc(
+                    static (RainRustRayTracingPassData data, RasterGraphContext context) =>
+                    {
+                        var cmd = context.cmd;
+
+                        data.material.SetTexture("_ColorTex", data.mainRtHandle);
+                        data.material.SetTexture("_DistTex", data.distanceRtHandle);
+                        data.material.SetTexture("_NoiseTex", data.noiseTextureHandle);
+                        data.material.SetVector("_Aspect", new Vector4(1, 0.5625f, 0, 0));
+                        data.material.SetVector("_NoiseTilingOffset", data.noiseTilingOffset);
+
+                        data.material.SetFloat("_Samples", 3);
+                        data.material.SetFloat("_Intensity", 1);
+                        data.material.SetFloat("_Power", 1);
+
+                        CoreUtils.DrawFullScreen(cmd, data.material);
+                    }
+                );
+            }
         }
 
         private Material m_RayTracingMaterial;
