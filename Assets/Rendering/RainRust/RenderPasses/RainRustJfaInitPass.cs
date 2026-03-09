@@ -10,7 +10,7 @@ namespace RainRust.Rendering
     public class RainRustJfaInitPass : ScriptableRenderPass
     {
         private Material m_JfaInitMaterial;
-        private const string k_ShaderName = "Hidden/RainRust/JfaUvSeed";
+        private const string k_ShaderName = "Hidden/RainRust/JfaSeedInit";
 
         class PassData
         {

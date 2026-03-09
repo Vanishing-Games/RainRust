@@ -1,4 +1,4 @@
-Shader "Hidden/RainRust/JfaUvSeed"
+Shader "Hidden/RainRust/JfaSeedInit"
 {
     Properties
     {
