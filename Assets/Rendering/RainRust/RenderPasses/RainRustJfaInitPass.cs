@@ -3,13 +3,14 @@ using UnityEngine.Rendering;
 using UnityEngine.Rendering.RenderGraphModule;
 using UnityEngine.Rendering.RenderGraphModule.Util;
 using UnityEngine.Rendering.Universal;
+using static UnityEngine.Rendering.RenderGraphModule.Util.RenderGraphUtils;
 
 namespace RainRust.Rendering
 {
     public class RainRustJfaInitPass : ScriptableRenderPass
     {
         private Material m_JfaInitMaterial;
-        private const string k_ShaderName = "Hidden/RainRust/JfaInit";
+        private const string k_ShaderName = "Hidden/RainRust/JfaUvSeed";
 
         class PassData
         {
@@ -35,13 +36,14 @@ namespace RainRust.Rendering
                     m_JfaInitMaterial = CoreUtils.CreateEngineMaterial(shader);
             }
 
-            renderGraph.AddBlitPass(
+            BlitMaterialParameters blitParams = new(
                 rainRustData.mainRt,
                 rainRustData.jfaRt.Current(),
-                Vector2.one,
-                Vector2.zero,
-                passName: "RainRust JFA Init"
+                m_JfaInitMaterial,
+                0
             );
+
+            renderGraph.AddBlitPass(blitParams, passName: "RainRust JFA Init");
 
             // Swap after initialization so next pass reads from the initialized texture
             rainRustData.jfaRt.Swap();
