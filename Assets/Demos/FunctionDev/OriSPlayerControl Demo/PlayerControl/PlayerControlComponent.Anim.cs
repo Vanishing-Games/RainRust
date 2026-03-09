@@ -47,6 +47,16 @@ namespace PlayerControlByOris
 			mAnim.SetBool("WhistleStay", WhistleBeforeTimer == 0 && WhistleStayTimer > 0);
 
 			mAnim.SetBool("WhistleAfter", WhistleStayTimer == 0 && WhistleAfterTimer > 0 && !InputAct2);
+
+			mAnim.SetBool("IsSlide", WallSlideCheck());
+
+			mAnim.SetBool("IsNormalSt", CurrentState == PlayerStateMachine.NormalState);
         }
-    }
+
+		public bool WallSlideCheck() =>
+				(LeftSlideCheck && InputX < 0)
+				|| (RightSlideCheck && InputX > 0);
+
+
+	}
 }

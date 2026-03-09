@@ -51,7 +51,7 @@ MonoBehaviour:
       Data: 0.6
     - Name: SlideFallSpeedY
       Entry: 4
-      Data: 2
+      Data: 4
     - Name: MaxSpeedX
       Entry: 4
       Data: 8
@@ -144,7 +144,7 @@ MonoBehaviour:
       Data: 6
     - Name: WhistleAfterTime
       Entry: 3
-      Data: 10
+      Data: 18
     - Name: PreThrowTime
       Entry: 3
       Data: 6
@@ -156,7 +156,7 @@ MonoBehaviour:
       Data: 12
     - Name: ThrowMoveTime
       Entry: 3
-      Data: 10
+      Data: 9
     - Name: ThrowMoveVelocity
       Entry: 7
       Data: UnityEngine.Vector2, UnityEngine.CoreModule
@@ -165,7 +165,7 @@ MonoBehaviour:
       Data: 12
     - Name: 
       Entry: 4
-      Data: 5
+      Data: 4
     - Name: 
       Entry: 8
       Data: 
@@ -186,7 +186,7 @@ MonoBehaviour:
       Data: 18
     - Name: DashWaitTime
       Entry: 3
-      Data: 6
+      Data: 10
     - Name: DashTime
       Entry: 3
       Data: 10
