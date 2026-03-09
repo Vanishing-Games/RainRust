@@ -34,6 +34,9 @@ Shader "Hidden/RainRust/JumpFloodAlgorithm"
                 
                 o.uv = uv;
                 o.vertex = float4(uv * 2.0 - 1.0, 0.0, 1.0);
+#if UNITY_UV_STARTS_AT_TOP
+                o.vertex.y = -o.vertex.y;
+#endif
                 
                 return o;
             }

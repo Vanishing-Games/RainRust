@@ -43,12 +43,12 @@ namespace RainRust.Rendering
 
             Vector2 aspect = new(1f, (float)height / width);
 
-            // Use Pass 2 (Blit) of RayTracing shader to copy lightingRt to cameraColor
+            // Use URP Blit shader to copy lightingRt to cameraColor
             BlitMaterialParameters blitParams = new(
                 rainRustContextData.lightingRt,
                 resourceData.cameraColor,
                 m_RenderingMaterial,
-                2
+                0 // Use Pass 0 of the standard Blit shader
             );
             renderGraph.AddBlitPass(blitParams, "Rain Rust Rendering Pass");
         }
@@ -59,6 +59,7 @@ namespace RainRust.Rendering
         }
 
         private Material m_RenderingMaterial;
-        private const string k_RenderingShaderName = "Hidden/RainRust/RayTracing";
+        // Use Unity's built-in URP Blit shader instead of the custom RayTracing shader
+        private const string k_RenderingShaderName = "Hidden/Universal Render Pipeline/Blit";
     }
 }

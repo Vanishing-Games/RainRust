@@ -2,7 +2,7 @@ Shader "Hidden/RainRust/RayTracing"
 {
     Properties 
     { 
-	    SrcMode ("SrcMode", Float) = 0
+	    SrcMode ("SrcMode", Float) = 1
 	    DstMode ("DstMode", Float) = 0
     } 
     SubShader
@@ -18,6 +18,7 @@ Shader "Hidden/RainRust/RayTracing"
 
             HLSLPROGRAM
             #include "Utils.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 
             // =======================================================================
             
@@ -98,6 +99,9 @@ Shader "Hidden/RainRust/RayTracing"
                 float2 pos = uv * 2.0 - 1.0;
                 
                 o.vertex = float4(pos, 0.0, 1.0);
+#if UNITY_UV_STARTS_AT_TOP
+                o.vertex.y = -o.vertex.y;
+#endif
                 
             #if defined(FRAGMENT_RANDOM) || defined(TEXTURE_RANDOM)
                 o.noise_uv = uv * _NoiseTilingOffset.xy + _NoiseTilingOffset.zw;
@@ -144,63 +148,6 @@ Shader "Hidden/RainRust/RayTracing"
                 float norm = max(result.r, max(result.g, result.b));
                 return float4(result / norm, norm);
 #endif
-            }
-            ENDHLSL
-        }
-        
-        
-        Pass    // 1
-        {
-            name "Overlay"
-            HLSLPROGRAM
-            
-            #include "Utils.hlsl"
-            
-            #pragma vertex vert_default
-            #pragma fragment frag
-
-            sampler2D _OverlayTex;
-            float     _Intensity;
-
-            // =======================================================================            
-            float4 frag(fragIn i) : SV_Target
-            {
-                const float4 overlay = tex2D(_OverlayTex, i.uv);
-
-                if (overlay.a != 1)
-                    discard;
-                
-                return overlay * _Intensity;
-            }
-            ENDHLSL
-        }
-        
-        Pass    // 2
-        {
-            name "Blit"
-            HLSLPROGRAM
-            
-            #include "Utils.hlsl"
-            
-            #pragma vertex vert
-            #pragma fragment frag
-
-            sampler2D _MainTex;
-            float4    _Scale;
-
-            // =======================================================================
-            fragIn vert(vertIn v)
-            {
-                fragIn o;
-                o.vertex = v.vertex * _Scale;
-                o.uv = v.uv;
-
-                return o;
-            }
-            
-            float4 frag(fragIn i) : SV_Target
-            {
-                return tex2D(_MainTex, i.uv);
             }
             ENDHLSL
         }
