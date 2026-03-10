@@ -6,24 +6,25 @@ namespace RainRust.Rendering
 {
     public class TextureHandlePingPong
     {
-        private TextureHandle now;
-        private TextureHandle pre;
+        private TextureHandle odd;
+        private TextureHandle even;
 
         public TextureHandlePingPong(TextureHandle first, TextureHandle second)
         {
-            now = first;
-            pre = second;
+            odd = first;
+            even = second;
         }
 
-        public TextureHandle Current() => now;
-        public TextureHandle Previous() => pre;
-        public void Swap() => (pre, now) = (now, pre);
+        public TextureHandle OddSource() => odd;
+        public TextureHandle EvenSource() => even;
+        public TextureHandle GetByStep(int step) => (step % 2 == 0) ? even : odd;
     }
 
     public class RainRustContextData : ContextItem
     {
         public TextureHandle mainRt;
         public TextureHandlePingPong jfaRt;
+        public TextureHandle finalJfaRt;
         public TextureHandle distanceRt;
         public TextureHandle lightingRt;
 
@@ -31,6 +32,7 @@ namespace RainRust.Rendering
         {
             mainRt = TextureHandle.nullHandle;
             jfaRt = new TextureHandlePingPong(TextureHandle.nullHandle, TextureHandle.nullHandle);
+            finalJfaRt = TextureHandle.nullHandle;
             distanceRt = TextureHandle.nullHandle;
             lightingRt = TextureHandle.nullHandle;
         }

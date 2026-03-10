@@ -38,14 +38,8 @@ namespace RainRust.Rendering
 
             var rainRustContextData = frameData.Get<RainRustContextData>();
 
-            var desc = renderGraph.GetTextureDesc(rainRustContextData.jfaRt.Current());
-            int width = desc.width;
-            int height = desc.height;
-
-            Vector2 aspect = new(1f, (float)height / width);
-
             BlitMaterialParameters blitParams = new(
-                rainRustContextData.jfaRt.Previous(),
+                rainRustContextData.finalJfaRt,
                 rainRustContextData.distanceRt,
                 m_DistanceMaterial,
                 0

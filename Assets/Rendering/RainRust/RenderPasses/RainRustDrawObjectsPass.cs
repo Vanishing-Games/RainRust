@@ -21,6 +21,7 @@ namespace RainRust.Rendering
             public UniversalLightData lightData;
             public UniversalResourceData resourceData;
             public TextureHandle rrMainRt;
+            public TextureHandle rrMainDepthRt;
             public RendererListHandle rendererListHandle;
         }
 
@@ -37,6 +38,7 @@ namespace RainRust.Rendering
                 renderGraph,
                 cameraData,
                 out TextureHandle mainRtHandle,
+                out TextureHandle mainDepthRtHandle,
                 out TextureHandle jfaFirstRtHandle,
                 out TextureHandle jfaSecondRtHandle,
                 out TextureHandle distanceRtHandle,
@@ -72,9 +74,11 @@ namespace RainRust.Rendering
                     ref passData
                 );
                 passData.rrMainRt = mainRtHandle;
+                passData.rrMainDepthRt = mainDepthRtHandle;
 
                 // 2. Setup render targets
-                builder.SetRenderAttachment(mainRtHandle, 0);
+                builder.SetRenderAttachment(mainRtHandle, 0, AccessFlags.Write);
+                builder.SetRenderAttachmentDepth(mainDepthRtHandle, AccessFlags.Write);
 
                 // 3. Declare input textures
                 // builder.UseTexture(passData.rrMainRt, AccessFlags.ReadWrite); // this is used by attachment
@@ -148,6 +152,7 @@ namespace RainRust.Rendering
             RenderGraph renderGraph,
             UniversalCameraData cameraData,
             out TextureHandle mainRtHandle,
+            out TextureHandle mainDepthRtHandle,
             out TextureHandle jfaFirstRtHandle,
             out TextureHandle jfaSecondRtHandle,
             out TextureHandle distanceRtHandle,
@@ -167,8 +172,21 @@ namespace RainRust.Rendering
                 renderGraph,
                 textureDescriptor,
                 "RainRust Main Texture",
-                false,
+                true,
                 FilterMode.Bilinear,
+                TextureWrapMode.Clamp
+            );
+
+            RenderTextureDescriptor depthDescriptor = textureDescriptor;
+            depthDescriptor.colorFormat = RenderTextureFormat.Depth;
+            depthDescriptor.depthStencilFormat = GraphicsFormat.D24_UNorm_S8_UInt;
+
+            mainDepthRtHandle = UniversalRenderer.CreateRenderGraphTexture(
+                renderGraph,
+                depthDescriptor,
+                "RainRust Main Depth Texture",
+                true,
+                FilterMode.Point,
                 TextureWrapMode.Clamp
             );
 
@@ -177,7 +195,7 @@ namespace RainRust.Rendering
                 renderGraph,
                 textureDescriptor,
                 "RainRust Jfa Texture 0",
-                false,
+                true,
                 FilterMode.Bilinear,
                 TextureWrapMode.Clamp
             );
@@ -185,7 +203,7 @@ namespace RainRust.Rendering
                 renderGraph,
                 textureDescriptor,
                 "RainRust Jfa Texture 1",
-                false,
+                true,
                 FilterMode.Bilinear,
                 TextureWrapMode.Clamp
             );
@@ -193,7 +211,7 @@ namespace RainRust.Rendering
                 renderGraph,
                 textureDescriptor,
                 "RainRust Distance Texture",
-                false,
+                true,
                 FilterMode.Bilinear,
                 TextureWrapMode.Clamp
             );
@@ -201,7 +219,7 @@ namespace RainRust.Rendering
                 renderGraph,
                 textureDescriptor,
                 "RainRust Lighting Texture",
-                false,
+                true,
                 FilterMode.Bilinear,
                 TextureWrapMode.Clamp
             );
@@ -213,9 +231,6 @@ namespace RainRust.Rendering
         )
         {
             var cmd = context.cmd;
-
-            // Clear render target
-            cmd.ClearRenderTarget(true, true, Color.white * 0.03f);
 
             // Draw the objects in the list
             cmd.DrawRendererList(data.rendererListHandle);

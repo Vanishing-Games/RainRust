@@ -33,7 +33,7 @@ namespace RainRust.Rendering
             // So rainRustContextData.jfaRt.Previous() holds the initial seed data.
 
             // Resolution and JFA steps
-            var desc = renderGraph.GetTextureDesc(rainRustContextData.jfaRt.Current());
+            var desc = renderGraph.GetTextureDesc(rainRustContextData.jfaRt.OddSource());
             int width = desc.width;
             int height = desc.height;
             int maxDimension = Math.Max(width, height);
@@ -57,17 +57,16 @@ namespace RainRust.Rendering
                 material.SetVector("_Aspect", aspect);
                 // material.SetTexture("_SeedTex", rainRustContextData.jfaRt.Previous()); // Handled by Blit inputs usually, but SetTexture is safe if needed.
 
-                BlitMaterialParameters blitParams = new(
-                    rainRustContextData.jfaRt.Previous(),
-                    rainRustContextData.jfaRt.Current(),
-                    material,
-                    0
-                );
+                var source = rainRustContextData.jfaRt.GetByStep(i);
+                var destination = rainRustContextData.jfaRt.GetByStep(i + 1);
+
+                BlitMaterialParameters blitParams = new(source, destination, material, 0);
 
                 renderGraph.AddBlitPass(blitParams, "RainRust JFA Step " + i);
-
-                rainRustContextData.jfaRt.Swap();
             }
+
+            // The final result is in GetByStep(iterations)
+            rainRustContextData.finalJfaRt = rainRustContextData.jfaRt.GetByStep(iterations);
         }
 
         private void EnsureMaterials(int count)

@@ -38,15 +38,12 @@ namespace RainRust.Rendering
 
             BlitMaterialParameters blitParams = new(
                 rainRustData.mainRt,
-                rainRustData.jfaRt.Current(),
+                rainRustData.jfaRt.EvenSource(), // jfa 从 step 0 开始
                 m_JfaInitMaterial,
                 0
             );
 
             renderGraph.AddBlitPass(blitParams, passName: "RainRust JFA Init");
-
-            // Swap after initialization so next pass reads from the initialized texture
-            rainRustData.jfaRt.Swap();
         }
 
         public void Dispose()
