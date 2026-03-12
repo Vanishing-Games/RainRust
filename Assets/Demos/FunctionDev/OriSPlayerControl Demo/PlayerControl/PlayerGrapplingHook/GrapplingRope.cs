@@ -44,7 +44,7 @@ namespace PlayerControlByOris
         /// <returns></returns>
         bool ShouldDrawRope()
         {
-            return !m_PlayerControlComponent.IsThrowing();
+            return m_PlayerControlComponent.IsThrowing();
         }
 
         void DrawRope()
