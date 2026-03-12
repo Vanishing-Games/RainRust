@@ -55,6 +55,10 @@ namespace PlayerControlByOris
                 m_Spring.Reset();
                 if (m_LineRenderer.positionCount > 0)
                     m_LineRenderer.positionCount = 0;
+
+#if UNITY_EDITOR
+                Time.timeScale = 1f;
+#endif
                 return;
             }
 
@@ -98,6 +102,8 @@ namespace PlayerControlByOris
             }
 
 #if UNITY_EDITOR
+            Time.timeScale = debug_TimeScale;
+
             debug_RopeStartPosition = roapTipPosition;
             debug_RopeEndPosition = grapplePoint;
             debug_CurrentAnimGrapplePosition = m_CurrentAnimGrapplePosition;
@@ -129,6 +135,9 @@ namespace PlayerControlByOris
 
         [ShowInInspector, ReadOnly, LabelText("绳子动画终点位置")]
         public Vector3 debug_CurrentAnimGrapplePosition;
+
+        [ShowInInspector, LabelText("绳子启动时的时间缩放"), Range(0.01f, 1f)]
+        public float debug_TimeScale = 1f;
 #endif
     }
 }
