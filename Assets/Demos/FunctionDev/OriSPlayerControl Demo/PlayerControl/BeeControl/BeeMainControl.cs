@@ -19,6 +19,8 @@ namespace PlayerControlByOris
 			player = GameObject.FindWithTag("Player").transform;
 			rb = GetComponent<Rigidbody2D>();
 			ts = GetComponent<Transform>();
+			bc = GetComponent<BoxCollider2D>();
+			sr = GetComponent<SpriteRenderer>();
         }
 
         // Update is called once per frame
@@ -43,7 +45,7 @@ namespace PlayerControlByOris
 			}
 		}
 
-		void ChangeState(BeeState toState)
+		public void ChangeState(BeeState toState)
 		{
 			OnExitState(currentState);
 
@@ -92,7 +94,7 @@ namespace PlayerControlByOris
 		//跟随状态管理
 		void FollowStEnter()
 		{
-
+			bc.enabled = false;
 		}
 
 		void FollowStUpdate()
@@ -121,7 +123,7 @@ namespace PlayerControlByOris
 
 		void FollowStExit()
 		{
-
+			bc.enabled = true;
 		}
 
 		//悬挂状态管理
@@ -138,6 +140,34 @@ namespace PlayerControlByOris
 		void StayStExit()
 		{
 
+		}
+
+		//外部调用
+		public void BeeThrow(Vector2 ThrowVelocity, bool isFaceRight)
+		{
+			sr.enabled = true;
+			ChangeState(BeeState.ThrowedSt);
+			rb.linearVelocity = ThrowVelocity;
+			FaceDirSet(isFaceRight);
+		}
+
+		public void FaceDirSet(bool isFaceRight)
+		{
+			if (isFaceRight)
+				ts.localScale = new Vector3(-1, 1, 1);
+			else
+				ts.localScale = new Vector3(1, 1, 1);
+		}
+
+		public void FlashToPosition(Vector3 positon, bool isHidden)
+		{
+			//这里在原地留下闪烁特效
+
+			this.transform.position = positon;
+			if (isHidden)
+				sr.enabled = false;
+			else
+				sr.enabled = true;
 		}
 
 		//其他函数
@@ -195,9 +225,31 @@ namespace PlayerControlByOris
 			return centerPoint + new Vector3(x, y, 0f);
 		}
 
+		private void OnCollisionEnter2D(Collision2D collision)
+		{
+			if (currentState == BeeState.ThrowedSt)
+			{
+				for (int i = 0, len = collision.contactCount; i < len; i++)
+				{
+					Vector2 normal = collision.GetContact(i).normal;
+					if (normal.x <= -0.9f && Mathf.Abs(normal.y) < 0.1f)
+					{
+						ChangeState(BeeState.StaySt);
+					}
+					else if (normal.x >= 0.9f && Mathf.Abs(normal.y) < 0.1f)
+					{
+						ChangeState(BeeState.StaySt);
+					}
+				}
+			}
+		}
+
+
 		public BeeState currentState;
+		private SpriteRenderer sr;
 		private Rigidbody2D rb;
-		private Transform ts;
+		private BoxCollider2D bc;
+		public Transform ts;
 		private Transform player;
 		private Vector2 PlayerPosition;
 		public float targetDistance() => Vector3.Distance(this.transform.position, FollowPoint);

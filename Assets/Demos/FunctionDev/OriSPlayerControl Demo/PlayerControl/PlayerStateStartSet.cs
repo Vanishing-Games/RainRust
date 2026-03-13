@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using Core;
@@ -43,8 +44,10 @@ namespace PlayerControlByOris
                 mPCComponent.FacingDir = mPCComponent.MoveX * -1;
 
             //角色是否能投掷 --
-            if (mPCComponent.CurrentState == PlayerStateMachine.NormalState && IsOnGround)
-                mPCComponent.IsCanThrow = true;
+            if (PreThrowInputTimer > 0
+				&& PreThrowInputTimer < mPCComponent.PreThrowTime
+				&& mPCComponent.CurrentState == PlayerStateMachine.NormalState)
+                mPCComponent.IsCanThrow = CanThrowCheck();
 
 			//角色口哨预输入时间
 			if (mPCComponent.InputAct2 && mPCComponent.PreWhistleInputTimer > 0)
@@ -93,5 +96,40 @@ namespace PlayerControlByOris
 
 
         }
+
+		bool CanThrowCheck()
+		{
+			//BeeMainControl BeeToThrow = mPCComponent.AllBees.FirstOrDefault
+			//	(f => {
+			//		bool isMatch = (f.currentState == BeeState.FollowSt);
+			//		Debug.Log($"检查飞虫 {f.name}，是否匹配: {isMatch}");
+			//		return isMatch;
+			//	});
+			BeeMainControl BeeToThrow = null;
+
+			for (int i = 0; i < mPCComponent.AllBees.Count; i++)
+			{
+				Debug.Log(mPCComponent.AllBees[i].GetComponent<BeeMainControl>().currentState);
+				if (mPCComponent.AllBees[i].GetComponent<BeeMainControl>().currentState == BeeState.FollowSt)
+				{
+					BeeToThrow = mPCComponent.AllBees[i].GetComponent<BeeMainControl>();
+					break;
+				}
+			}
+
+			
+
+			if (BeeToThrow != null)
+			{
+				mPCComponent.BeeToThrow = BeeToThrow;
+				return true;
+			}
+			else
+			{
+				mPCComponent.BeeToThrow = null;
+				return false;
+			}
+		}
+
     }
 }

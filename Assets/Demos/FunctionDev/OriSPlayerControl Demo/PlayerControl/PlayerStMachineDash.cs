@@ -21,7 +21,7 @@ namespace PlayerControlByOris
         protected override void OnActivate()
         {
             DashDir = (
-                mPCComponent.ThrownHook.transform.position - mPCComponent.mTranform.position
+                mPCComponent.BeeToThrow.ts.position - DashPlayerOffsetPos
             ).normalized;
             mPCComponent.DashTimer = mPCComponent.DashTime;
             mPCComponent.DashWaitTimer = mPCComponent.DashWaitTime;
@@ -64,6 +64,8 @@ namespace PlayerControlByOris
             }
         }
 
-        private Vector2 DashDir;
+
+		private Vector3 DashPlayerOffsetPos => mPCComponent.mTranform.position - mPCComponent.ThrowStartOffset;
+		private Vector2 DashDir;
     }
 }

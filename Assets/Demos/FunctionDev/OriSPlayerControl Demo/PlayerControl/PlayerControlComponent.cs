@@ -27,8 +27,13 @@ namespace PlayerControlByOris
         [BoxGroup("预制体"), Tooltip("投出的勾绳"), ShowInInspector, OdinSerialize]
         public GameObject PreHook;
 
-        #region 状态变量信息
-        [BoxGroup("状态变量信息"), Tooltip("角色状态机"), ShowInInspector, ReadOnly]
+		[BoxGroup("飞虫管理"), Tooltip("存储的飞虫"), ShowInInspector, OdinSerialize]
+		public List<GameObject> AllBees { get; set; }
+		[BoxGroup("飞虫管理"), Tooltip("将要被投掷的飞虫"), ShowInInspector, OdinSerialize]
+		public BeeMainControl BeeToThrow { get; set; }
+
+		#region 状态变量信息
+		[BoxGroup("状态变量信息"), Tooltip("角色状态机"), ShowInInspector, ReadOnly]
         public PlayerStateMachine CurrentState { get; set; }
 
         [BoxGroup("状态变量信息"), Tooltip("是否在地面状态判断"), ShowInInspector, ReadOnly]
@@ -383,6 +388,9 @@ namespace PlayerControlByOris
 
         [BoxGroup("投掷与拉动相关"), Tooltip("减速的倍率"), ShowInInspector, OdinSerialize]
         public float EndSlowMult { get; set; }
-        #endregion
-    }
+
+		[BoxGroup("投掷与拉动相关"), Tooltip("投掷起始位置的偏移"), ShowInInspector, OdinSerialize]
+		public Vector3 ThrowStartOffset { get; set; }
+		#endregion
+	}
 }
