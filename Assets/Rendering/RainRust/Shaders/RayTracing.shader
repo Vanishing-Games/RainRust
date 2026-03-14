@@ -34,12 +34,12 @@ Shader "Hidden/RainRust/RayTracing"
             sampler2D _DistTex; // 场景距离纹理 (SDF)
             sampler2D _NoiseTex; // 随机噪声纹理
 
-            float4 _Aspect;
-            float4 _NoiseTilingOffset;
+            float2 _Aspect; // 16:9 为 (1, 0.5625)
+            float4 _NoiseTilingOffset; // 噪声纹理的缩放和偏移 (tiling.x, tiling.y, offset.x, offset.y)
             
-            float  _Samples;
-            float _Intensity;
-            float _Power;
+            float  _Samples; // 光线采样数
+            float _Intensity; // 光照强度
+            float _Falloff; // 距离衰减幂指数
 
             // =======================================================================
 
@@ -54,7 +54,7 @@ Shader "Hidden/RainRust/RayTracing"
 
             // =======================================================================
 
-            float3 Trace(const float2 uv, const float2 dir) // 光线步进
+            float3 Trace(const float2 uv, const float2 dir) // Ray Marching
             {
                 float2 uvPos = uv; // 当前采样坐标
 
@@ -73,7 +73,7 @@ Shader "Hidden/RainRust/RayTracing"
                 {
                     const float4 color = tex2D(_ColorTex, uvPos).rgba;
                     if (color.a > 0)
-                        return color.rgb * Falloff((uv - uvPos) * _Aspect.xy, _Power * color.a);
+                        return color.rgb * Falloff((uv - uvPos) * _Aspect.xy, _Falloff * color.a);
 
                     uvPos += dir * tex2D(_DistTex, uvPos).rr;
                     if (NotUVSpace(uvPos))
@@ -128,7 +128,7 @@ Shader "Hidden/RainRust/RayTracing"
                 // 发射光线
                 for (float f = 0.; f < _Samples; f++)
                 {
-                    const float t = (f + rand) / _Samples * float(3.1415 * 2.);
+                    const float t = (f + rand) / _Samples * float(3.1415 * 2.); // 均匀分布在圆周上
                     result += Trace(i.uv, float2(cos(t), sin(t)) / _Aspect.xy);
                 }
 

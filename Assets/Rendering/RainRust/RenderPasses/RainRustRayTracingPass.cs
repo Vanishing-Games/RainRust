@@ -79,12 +79,12 @@ namespace RainRust.Rendering
                         data.material.SetTexture("_ColorTex", data.mainRtHandle);
                         data.material.SetTexture("_DistTex", data.distanceRtHandle);
                         data.material.SetTexture("_NoiseTex", data.noiseTextureHandle);
-                        data.material.SetVector("_Aspect", new Vector4(1, 0.5625f, 0, 0));
+                        data.material.SetVector("_Aspect", new Vector2(1, 0.5625f));
                         data.material.SetVector("_NoiseTilingOffset", data.noiseTilingOffset);
 
                         data.material.SetFloat("_Samples", 256);
                         data.material.SetFloat("_Intensity", 1);
-                        data.material.SetFloat("_Power", 1);
+                        data.material.SetFloat("_Falloff", 0.5f);
 
                         CoreUtils.DrawFullScreen(cmd, data.material);
                     }
