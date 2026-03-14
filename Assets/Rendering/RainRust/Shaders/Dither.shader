@@ -13,23 +13,26 @@ Shader "Custom/Dither"
         Pass
         {
             HLSLPROGRAM
-
-            #pragma vertex vert
-            #pragma fragment frag
-
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 
-            struct Attributes
+            #pragma vertex Vert
+            #pragma fragment Frag
+
+            // =======================================================================
+
+            struct VertInput
             {
                 float4 positionOS : POSITION;
                 float2 uv : TEXCOORD0;
             };
 
-            struct Varyings
+            struct FragInput
             {
                 float4 positionHCS : SV_POSITION;
                 float2 uv : TEXCOORD0;
             };
+
+            // =======================================================================
 
             TEXTURE2D(_BaseMap);
             SAMPLER(sampler_BaseMap);
@@ -39,17 +42,19 @@ Shader "Custom/Dither"
                 float4 _BaseMap_ST;
             CBUFFER_END
 
-            Varyings vert(Attributes IN)
+            // =======================================================================
+
+            FragInput Vert(VertInput v)
             {
-                Varyings OUT;
-                OUT.positionHCS = TransformObjectToHClip(IN.positionOS.xyz);
-                OUT.uv = TRANSFORM_TEX(IN.uv, _BaseMap);
-                return OUT;
+                FragInput o;
+                o.positionHCS = TransformObjectToHClip(v.positionOS.xyz);
+                o.uv = TRANSFORM_TEX(v.uv, _BaseMap);
+                return o;
             }
 
-            half4 frag(Varyings IN) : SV_Target
+            half4 Frag(FragInput i) : SV_Target
             {
-                half4 color = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, IN.uv) * _BaseColor;
+                half4 color = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, i.uv) * _BaseColor;
                 return color;
             }
             ENDHLSL

@@ -7,13 +7,13 @@ Shader "Hidden/RainRust/RayTracing"
     } 
     SubShader
     {
-        Cull Off // No culling
-        ZWrite Off // No depth writing
-        ZTest Off // No depth testing
+        Cull Off // 不剔除
+        ZWrite Off // 不写入深度
+        ZTest Off // 不进行深度测试
 
         Pass    // 0
         {
-            name "RayTracing"
+            Name "RayTracing"
 	        Blend [SrcMode] [DstMode]
 
             HLSLPROGRAM
@@ -22,17 +22,17 @@ Shader "Hidden/RainRust/RayTracing"
 
             // =======================================================================
             
-            // 随机数生成方式 shader内生成随机数, 从纹理采样随机数, 无随机
+            // 随机数生成方式: shader内生成随机数, 从纹理采样随机数, 无随机
             #pragma multi_compile_local FRAGMENT_RANDOM TEXTURE_RANDOM _
-            // 输出alpha通道方式 全部为1, 使用对象遮罩, 颜色归一化后最大值
+            // 输出alpha通道方式: 全部为1, 使用对象遮罩, 颜色归一化后最大值
             #pragma multi_compile_local ONE_ALPHA OBJECTS_MASK_ALPHA NORMALIZED_ALPHA
 
-            #pragma vertex vert
-            #pragma fragment frag
+            #pragma vertex Vert
+            #pragma fragment Frag
 
-            sampler2D _ColorTex; // 存储场景颜色的纹理, 可以认为是所有光源
-            sampler2D _DistTex; // 存储场景距离的纹理, 每个像素存储到最近光源的距离
-            sampler2D _NoiseTex; // 存储随机数的纹理, 用于打散采样
+            sampler2D _ColorTex; // 场景颜色纹理
+            sampler2D _DistTex; // 场景距离纹理 (SDF)
+            sampler2D _NoiseTex; // 随机噪声纹理
 
             float4 _Aspect;
             float4 _NoiseTilingOffset;
@@ -43,7 +43,7 @@ Shader "Hidden/RainRust/RayTracing"
 
             // =======================================================================
 
-            struct fragIn_gi
+            struct FragInputGI
             {
                 float4 vertex : SV_POSITION;
                 float2 uv : TEXCOORD0;
@@ -54,17 +54,18 @@ Shader "Hidden/RainRust/RayTracing"
 
             // =======================================================================
 
-            float3 trace(const float2 uv, const float2 dir) // Ray Marching
+            float3 Trace(const float2 uv, const float2 dir) // 光线步进
             {
-                float2 uvPos = uv; // uv坐标空间的射线位置, 从uv出发沿dir方向前进
+                float2 uvPos = uv; // 当前采样坐标
 
-                // 采样点在光源上, 直接返回颜色
+                // 若起始点已在光源上, 直接返回颜色
                 const float4 color = tex2D(_ColorTex, uv).rgba;
                 if (color.a > 0)
                     return color.rgb / color.a;
                 
+                // 步进
                 uvPos += dir * tex2D(_DistTex, uvPos).rr;
-                if (notUVSpace(uvPos))
+                if (NotUVSpace(uvPos))
                     return AMBIENT;
                 
                 [unroll]
@@ -72,10 +73,10 @@ Shader "Hidden/RainRust/RayTracing"
                 {
                     const float4 color = tex2D(_ColorTex, uvPos).rgba;
                     if (color.a > 0)
-                        return color.rgb * falloff((uv - uvPos) * _Aspect.xy, _Power * color.a);
+                        return color.rgb * Falloff((uv - uvPos) * _Aspect.xy, _Power * color.a);
 
                     uvPos += dir * tex2D(_DistTex, uvPos).rr;
-                    if (notUVSpace(uvPos))
+                    if (NotUVSpace(uvPos))
                         return AMBIENT;
                 }
                 
@@ -83,11 +84,12 @@ Shader "Hidden/RainRust/RayTracing"
             }
 
             // =======================================================================
-            fragIn_gi vert(uint vertexID : SV_VertexID)
+
+            FragInputGI Vert(uint vertexID : SV_VertexID)
             {
-                fragIn_gi o;
+                FragInputGI o;
             
-                // 生成 fullscreen triangle 的 uv
+                // 生成全屏三角形 UV
                 float2 uv = float2(
                     (vertexID << 1) & 2,
                     vertexID & 2
@@ -95,7 +97,7 @@ Shader "Hidden/RainRust/RayTracing"
                 
                 o.uv = uv;
                 
-                // clip space position
+                // 裁剪空间位置
                 float2 pos = uv * 2.0 - 1.0;
                 
                 o.vertex = float4(pos, 0.0, 1.0);
@@ -110,32 +112,32 @@ Shader "Hidden/RainRust/RayTracing"
                 return o;
             }
 
-            float4 frag(fragIn_gi i) : SV_Target
+            float4 Frag(FragInputGI i) : SV_Target
             {
                 float3 result = AMBIENT;
 
-                // take random value
+                // 获取随机值
 #if defined(FRAGMENT_RANDOM)
-                const float rand = random(i.noise_uv);
+                const float rand = Random(i.noise_uv);
 #elif defined(TEXTURE_RANDOM)
                 const float rand = tex2D(_NoiseTex, i.noise_uv).r * float(3.1415) * 2;
 #else
                 const float rand = 0;
 #endif
 
-                // emmit rays
+                // 发射光线
                 for (float f = 0.; f < _Samples; f++)
                 {
                     const float t = (f + rand) / _Samples * float(3.1415 * 2.);
-                    result += trace(i.uv, float2(cos(t), sin(t)) / _Aspect.xy);
+                    result += Trace(i.uv, float2(cos(t), sin(t)) / _Aspect.xy);
                 }
 
                 result /= _Samples;
 
-                // color adjustments
+                // 亮度调节
                 result *= _Intensity;
 
-                // alpha channel output
+                // Alpha 通道处理
 #if   defined(ONE_ALPHA)
                 return float4(result, 1);
                 
@@ -144,7 +146,7 @@ Shader "Hidden/RainRust/RayTracing"
                 return float4(result, mask);
                 
 #elif defined(NORMALIZED_ALPHA)
-                // normalize color, alpha as opacity
+                // 颜色归一化, Alpha 作为不透明度
                 float norm = max(result.r, max(result.g, result.b));
                 return float4(result / norm, norm);
 #endif

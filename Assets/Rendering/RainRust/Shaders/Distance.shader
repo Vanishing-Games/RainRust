@@ -14,17 +14,21 @@ Shader "Hidden/RainRust/Distance"
             #include "Utils.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 
-            #pragma vertex vert
-            #pragma fragment frag
+            #pragma vertex Vert
+            #pragma fragment Frag
             
+            // =======================================================================
+
             TEXTURE2D(_BlitTexture);
             SAMPLER(sampler_BlitTexture);
             
-            float2    _Aspect; 
+            float2 _Aspect; 
 
-            fragIn vert(uint vertexID : SV_VertexID)
+            // =======================================================================
+
+            FragInput Vert(uint vertexID : SV_VertexID)
             {
-                fragIn o;
+                FragInput o;
             
                 // 生成全屏三角形 UV
                 float2 uv = float2(
@@ -42,15 +46,12 @@ Shader "Hidden/RainRust/Distance"
                 return o;
             }
 
-            float frag(fragIn i) : SV_Target
+            float Frag(FragInput i) : SV_Target
             {
                 float4 jfaData = SAMPLE_TEXTURE2D(_BlitTexture, sampler_BlitTexture, i.uv);
                 float2 sampledUV = jfaData.xy;
-                float found = jfaData.z;
-                
-                if (found < 0.5)
-                    return 1.0;
 
+                // 计算到最近种子的距离
                 float2 diff = (sampledUV - i.uv) * _Aspect;
                 return length(diff);
             }
