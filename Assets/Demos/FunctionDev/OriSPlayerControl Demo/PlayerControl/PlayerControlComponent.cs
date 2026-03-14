@@ -24,8 +24,12 @@ namespace PlayerControlByOris
         [HideInInspector]
         public GameObject ThrownHook;
 
+
+
         [BoxGroup("预制体"), Tooltip("投出的勾绳"), ShowInInspector, OdinSerialize]
         public GameObject PreHook;
+		[BoxGroup("预制体"), Tooltip("口哨的波纹"), ShowInInspector, OdinSerialize]
+		public GameObject PreWave;
 
 		[BoxGroup("飞虫管理"), Tooltip("存储的飞虫"), ShowInInspector, OdinSerialize]
 		public List<GameObject> AllBees { get; set; }

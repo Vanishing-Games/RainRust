@@ -57,7 +57,11 @@ namespace PlayerControlByOris
 				)
 				|| mPCComponent.CurrentState == PlayerStateMachine.NormalState
 			)
-				NormalGrabCheck(mPCComponent.mTranform.position, new Vector2(-0.5f, 0));
+			{
+				NormalGrabCheck(mPCComponent.mTranform.position, LayerMask.GetMask("VerticalGrab"));
+				NormalSafeGrabCheck(mPCComponent.mTranform.position, LayerMask.GetMask("Hook"));
+			}
+				
         }
 
 		private void ByWallCheck(Vector2 PlayerPosition, Vector2 Dir)
@@ -185,17 +189,16 @@ namespace PlayerControlByOris
             }
         }
 
-        private void NormalGrabCheck(Vector2 PlayerPosition, Vector2 HoldPosOffset)
+        private void NormalGrabCheck(Vector2 PlayerPosition, LayerMask noSafeLayer)
         {
             Vector2 BoxRange = new Vector2(mPCComponent.GrabRangeX, mPCComponent.GrabRangeY);
             int count = Physics2D.OverlapBoxNonAlloc(
                 PlayerPosition
-                    + mPCComponent.GrabRangeOffset
-                    + HoldPosOffset * new Vector2(mPCComponent.FacingDir, 1),
+                    + mPCComponent.GrabRangeOffset * new Vector2(mPCComponent.FacingDir, 1),
                 BoxRange,
                 0f,
                 ColliderHitResults,
-                LayerMask.GetMask("VerticalGrab")
+                noSafeLayer
             );
 
             Collider2D hitCollider = ColliderHitResults[0];
@@ -207,19 +210,46 @@ namespace PlayerControlByOris
                 float centerX = (float)GrabBounds.center.x;
                 Vector2 targetPoint =
                     new Vector2(centerX, PlayerPosition.y)
-                    - HoldPosOffset * new Vector2(mPCComponent.FacingDir, 1);
+                    - new Vector2(mPCComponent.FacingDir * mPCComponent.GrabRangeOffset.x, mPCComponent.GrabRangeOffset.y);
                 GrabSet(targetPoint, false, false, new Vector2(-1 * mPCComponent.FacingDir, 0));
             }
             else if (
                 hitCollider == null
                 && mPCComponent.CurrentState == PlayerStateMachine.GrabState
+				&& mPCComponent.IsSafeGrab == false
             )
             {
                 SetStateMachine(PlayerStateMachine.NormalState, EccTag.NormalState);
             }
         }
 
-        private void GrabSet(Vector2 targetPoint, bool IsCorner, bool IsSafe, Vector2 dir)
+		private void NormalSafeGrabCheck(Vector2 PlayerPosition, LayerMask SafeLayer)
+		{
+			Vector2 BoxRange = new Vector2(mPCComponent.GrabRangeX, mPCComponent.GrabRangeY);
+			int count = Physics2D.OverlapBoxNonAlloc(
+				PlayerPosition
+					+ mPCComponent.GrabRangeOffset * new Vector2(mPCComponent.FacingDir, 1),
+				BoxRange,
+				0f,
+				ColliderHitResults,
+				SafeLayer
+			);
+
+			Collider2D hitCollider = ColliderHitResults[0];
+			ColliderHitResults[0] = default;
+
+			if (hitCollider != null && IsCanGrab())
+			{
+				Bounds GrabBounds = hitCollider.bounds;
+				float centerX = (float)GrabBounds.center.x;
+				Vector2 targetPoint =
+					new Vector2(centerX, PlayerPosition.y)
+					- new Vector2(mPCComponent.FacingDir * mPCComponent.GrabRangeOffset.x, mPCComponent.GrabRangeOffset.y);
+				GrabSet(targetPoint, false, true, new Vector2(-1 * mPCComponent.FacingDir, 0));
+			}		
+		}
+
+		private void GrabSet(Vector2 targetPoint, bool IsCorner, bool IsSafe, Vector2 dir)
         {
             SetStateMachine(PlayerStateMachine.GrabState, EccTag.GrabState);
             mPCComponent.CurrentState = PlayerStateMachine.GrabState;

@@ -51,8 +51,19 @@ namespace PlayerControlByOris
 
 			//条件待修改
 			if (!mPCComponent.InputAct2 && mPCComponent.WhistleStayTimer == 0)
+			{
+				//只在第一帧生成一次
+				if (mPCComponent.WhistleAfterTimer == mPCComponent.WhistleAfterTime)
+					CreateWave();
 				mPCComponent.WhistleAfterTimer--;
+			}				
 		}
+
+		void CreateWave()
+		{
+			Object.Instantiate(mPCComponent.PreWave, mPCComponent.mTranform.position, Quaternion.identity);
+		}
+
 
 		private bool CanWhistleCheck() =>
 			IsOnGround

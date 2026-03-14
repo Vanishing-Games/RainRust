@@ -23,8 +23,6 @@ namespace PlayerControlByOris
             Vector2 velocity = mPCComponent.CtrlVelocity;
             velocity.x += MoveX * JumpBoostSpeedX;
             mPCComponent.CtrlVelocity = velocity;
-
-			Debug.Log(velocity.x);
             mPCComponent.CoyoteJumpInputRevTimer = 0;
         }
 

@@ -48,6 +48,8 @@ namespace PlayerControlByOris
 				&& PreThrowInputTimer < mPCComponent.PreThrowTime
 				&& mPCComponent.CurrentState == PlayerStateMachine.NormalState)
                 mPCComponent.IsCanThrow = CanThrowCheck();
+			else
+				mPCComponent.IsCanThrow = false;
 
 			//角色口哨预输入时间
 			if (mPCComponent.InputAct2 && mPCComponent.PreWhistleInputTimer > 0)
@@ -115,9 +117,7 @@ namespace PlayerControlByOris
 					BeeToThrow = mPCComponent.AllBees[i].GetComponent<BeeMainControl>();
 					break;
 				}
-			}
-
-			
+			}		
 
 			if (BeeToThrow != null)
 			{

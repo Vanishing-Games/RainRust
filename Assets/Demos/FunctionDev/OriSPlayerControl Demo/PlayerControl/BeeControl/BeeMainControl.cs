@@ -43,6 +43,7 @@ namespace PlayerControlByOris
 					FollowStUpdate();
 					break;
 			}
+			currentSpeed = rb.linearVelocity.magnitude;
 		}
 
 		public void ChangeState(BeeState toState)
@@ -72,7 +73,18 @@ namespace PlayerControlByOris
 
 		void OnEnterState(BeeState state)
 		{
-
+			switch (currentState)
+			{
+				case BeeState.StaySt:
+					StayStEnter();
+					break;
+				case BeeState.ThrowedSt:
+					ThrowedStEnter();
+					break;
+				case BeeState.FollowSt:
+					FollowStEnter();
+					break;
+			}
 		}
 
 		//投出状态管理
@@ -129,7 +141,7 @@ namespace PlayerControlByOris
 		//悬挂状态管理
 		void StayStEnter()
 		{
-
+			gameObject.layer = LayerMask.GetMask("Hook");
 		}
 
 		void StayStUpdate()
@@ -139,7 +151,7 @@ namespace PlayerControlByOris
 
 		void StayStExit()
 		{
-
+			//gameObject.layer = LayerMask.GetMask("Bee");
 		}
 
 		//外部调用
@@ -227,7 +239,7 @@ namespace PlayerControlByOris
 
 		private void OnCollisionEnter2D(Collision2D collision)
 		{
-			if (currentState == BeeState.ThrowedSt)
+			if (currentState == BeeState.ThrowedSt && collision.transform.CompareTag("Wall"))
 			{
 				for (int i = 0, len = collision.contactCount; i < len; i++)
 				{
@@ -244,6 +256,13 @@ namespace PlayerControlByOris
 			}
 		}
 
+		private void OnTriggerEnter2D(Collider2D collision)
+		{
+			if (currentState == BeeState.StaySt && collision.transform.CompareTag("Wave"))
+			{
+				ChangeState(BeeState.FollowSt);
+			}
+		}
 
 		public BeeState currentState;
 		private SpriteRenderer sr;
@@ -262,7 +281,7 @@ namespace PlayerControlByOris
 
 		public float FollowSpeedMult;
 
-		public Vector2 CtrlVelocity;
+		public float currentSpeed;
 
     }
 }
