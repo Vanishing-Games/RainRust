@@ -37,6 +37,13 @@ namespace RainRust.Rendering
             }
 
             var rainRustContextData = frameData.Get<RainRustContextData>();
+            var cameraData = frameData.Get<UniversalCameraData>();
+
+            float width = cameraData.cameraTargetDescriptor.width;
+            float height = cameraData.cameraTargetDescriptor.height;
+            Vector2 aspect = new(1f, height / width);
+
+            m_DistanceMaterial.SetVector("_Aspect", aspect);
 
             BlitMaterialParameters blitParams = new(
                 rainRustContextData.finalJfaRt,

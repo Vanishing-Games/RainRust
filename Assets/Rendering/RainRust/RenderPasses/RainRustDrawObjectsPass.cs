@@ -190,7 +190,7 @@ namespace RainRust.Rendering
                 TextureWrapMode.Clamp
             );
 
-            textureDescriptor.colorFormat = RenderTextureFormat.RG16;
+            textureDescriptor.colorFormat = RenderTextureFormat.ARGBFloat;
             jfaFirstRtHandle = UniversalRenderer.CreateRenderGraphTexture(
                 renderGraph,
                 textureDescriptor,

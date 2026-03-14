@@ -41,8 +41,10 @@ Shader "Hidden/RainRust/JfaSeedInit"
                 
                 o.uv = uv;
                 o.vertex = float4(uv * 2.0 - 1.0, 0.0, 1.0);
+                
+                // 修正：在一些平台上需要处理 UV 翻转
 #if UNITY_UV_STARTS_AT_TOP
-                o.vertex.y = -o.vertex.y;
+                o.uv.y = 1.0 - o.uv.y;
 #endif
                 
                 return o;
@@ -52,12 +54,13 @@ Shader "Hidden/RainRust/JfaSeedInit"
             {
                 float alpha = SAMPLE_TEXTURE2D(_BlitTexture, sampler_BlitTexture, i.uv).a;
 
+                // 使用 Z 通道作为种子标记 (1.0 表示是种子, 0.0 表示不是)
                 if (alpha > 0.001)
                 {
-                    return float4(i.uv, 0, 1);
+                    return float4(i.uv, 1, 1);
                 }
 
-                return float4(0,0,0,0);
+                return float4(0, 0, 0, 0);
             }
 
             ENDHLSL

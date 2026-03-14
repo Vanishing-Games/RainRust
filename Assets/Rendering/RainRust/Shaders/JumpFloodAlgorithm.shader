@@ -34,18 +34,20 @@ Shader "Hidden/RainRust/JumpFloodAlgorithm"
                 
                 o.uv = uv;
                 o.vertex = float4(uv * 2.0 - 1.0, 0.0, 1.0);
+
 #if UNITY_UV_STARTS_AT_TOP
-                o.vertex.y = -o.vertex.y;
+                o.uv.y = 1.0 - o.uv.y;
 #endif
                 
                 return o;
             }
 
             // =======================================================================
-            float2 frag(const fragIn i) : SV_Target
+            float4 frag(const fragIn i) : SV_Target
             {
-                float min_dist = 1;
+                float min_dist = 2e10; // 调大初始值
                 float2 min_dist_uv = float2(0, 0);
+                float found = 0;
 
                 [unroll]
                 for (int y = -1; y <= 1; y ++)
@@ -53,21 +55,23 @@ Shader "Hidden/RainRust/JumpFloodAlgorithm"
                     [unroll]
                     for (int x = -1; x <= 1; x ++)
                     {
-                        const float2 peek = SAMPLE_TEXTURE2D(_BlitTexture, sampler_BlitTexture, i.uv + float2(x, y) * _StepSize).xy;
-                        if (all(peek))
+                        const float4 peek = SAMPLE_TEXTURE2D(_BlitTexture, sampler_BlitTexture, i.uv + float2(x, y) * _StepSize);
+                        // 利用 Z 通道判断是否为有效种子
+                        if (peek.z > 0.5)
                         {
-                            const float2 dir = (peek - i.uv ) * _Aspect;
+                            const float2 dir = (peek.xy - i.uv ) * _Aspect;
                             const float dist = dot(dir, dir);
                             if (dist < min_dist)
                             {
                                 min_dist = dist;
-                                min_dist_uv = peek;
+                                min_dist_uv = peek.xy;
+                                found = 1.0;
                             }
                         }
                     }
                 }
 
-                return min_dist_uv;
+                return float4(min_dist_uv, found, 1.0);
             }
             ENDHLSL
         }
