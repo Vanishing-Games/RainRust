@@ -120,7 +120,7 @@ Shader "Hidden/RainRust/RayTracing"
 #if defined(FRAGMENT_RANDOM)
                 const float rand = Random(i.noise_uv);
 #elif defined(TEXTURE_RANDOM)
-                const float rand = tex2D(_NoiseTex, i.noise_uv).r * float(3.1415) * 2;
+                const float rand = tex2D(_NoiseTex, i.noise_uv).r;
 #else
                 const float rand = 0;
 #endif
@@ -128,7 +128,7 @@ Shader "Hidden/RainRust/RayTracing"
                 // 发射光线
                 for (float f = 0.; f < _Samples; f++)
                 {
-                    const float t = (f + rand) / _Samples * float(3.1415 * 2.); // 均匀分布在圆周上
+                    const float t = (f + rand) / _Samples * float(3.1415926 * 2.0); // 均匀分布在圆周上
                     result += Trace(i.uv, float2(cos(t), sin(t)) / _Aspect.xy);
                 }
 

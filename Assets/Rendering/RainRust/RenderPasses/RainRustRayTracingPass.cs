@@ -1,3 +1,4 @@
+using Core;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.RenderGraphModule;
@@ -58,18 +59,13 @@ namespace RainRust.Rendering
                 passData.mainRtHandle = rainRustContextData.mainRt;
                 passData.distanceRtHandle = rainRustContextData.distanceRt;
                 passData.lightingRtHandle = rainRustContextData.lightingRt;
+                passData.aspect = aspect;
                 // passData.noiseTextureHandle = frameData.Get<UniversalResourceData>()
 
                 builder.UseTexture(passData.mainRtHandle);
                 builder.UseTexture(passData.distanceRtHandle);
 
                 builder.SetRenderAttachment(passData.lightingRtHandle, 0, AccessFlags.Write);
-
-                passData.material.EnableKeyword("FRAGMENT_RANDOM");
-                passData.material.DisableKeyword("TEXTURE_RANDOM");
-                passData.material.EnableKeyword("ONE_ALPHA");
-                passData.material.DisableKeyword("OBJECTS_MASK_ALPHA");
-                passData.material.DisableKeyword("NORMALIZED_ALPHA");
 
                 builder.SetRenderFunc(
                     static (RainRustRayTracingPassData data, RasterGraphContext context) =>
@@ -78,13 +74,69 @@ namespace RainRust.Rendering
 
                         data.material.SetTexture("_ColorTex", data.mainRtHandle);
                         data.material.SetTexture("_DistTex", data.distanceRtHandle);
-                        data.material.SetTexture("_NoiseTex", data.noiseTextureHandle);
-                        data.material.SetVector("_Aspect", new Vector2(1, 0.5625f));
-                        data.material.SetVector("_NoiseTilingOffset", data.noiseTilingOffset);
+                        data.material.SetVector("_Aspect", data.aspect);
 
-                        data.material.SetFloat("_Samples", 256);
-                        data.material.SetFloat("_Intensity", 1);
-                        data.material.SetFloat("_Falloff", 0.5f);
+                        var stack = VolumeManager.instance.stack.GetComponent<RainRustVolume>();
+                        data.material.SetFloat("_Samples", stack.lightSamples.value);
+                        data.material.SetFloat("_Intensity", stack.lightIntensity.value);
+                        data.material.SetFloat("_Falloff", stack.lightFalloff.value);
+
+                        switch (stack.noiseMode.value)
+                        {
+                            case RainRustNoiseMode.None:
+                                data.material.DisableKeyword("TEXTURE_RANDOM");
+                                data.material.DisableKeyword("FRAGMENT_RANDOM");
+                                data.material.SetVector("_NoiseTilingOffset", Vector4.zero);
+                                break;
+                            case RainRustNoiseMode.Texture:
+                                if (stack.noiseTexture.value != null)
+                                {
+                                    data.material.SetTexture("_NoiseTex", stack.noiseTexture.value);
+                                    data.material.EnableKeyword("TEXTURE_RANDOM");
+                                    data.material.DisableKeyword("FRAGMENT_RANDOM");
+                                    data.material.SetVector(
+                                        "_NoiseTilingOffset",
+                                        stack.noiseTilingOffset.value
+                                    );
+                                }
+                                else
+                                {
+                                    data.material.DisableKeyword("TEXTURE_RANDOM");
+                                    data.material.DisableKeyword("FRAGMENT_RANDOM");
+                                    Core.Logger.LogWarn(
+                                        "Noise mode set to Texture but no noise texture assigned.",
+                                        LogTag.Rendering
+                                    );
+                                }
+                                break;
+                            case RainRustNoiseMode.Shader:
+                                data.material.DisableKeyword("TEXTURE_RANDOM");
+                                data.material.EnableKeyword("FRAGMENT_RANDOM");
+                                data.material.SetVector(
+                                    "_NoiseTilingOffset",
+                                    new Vector4(1, 1, 0, 0)
+                                );
+                                break;
+                        }
+
+                        switch (stack.alphaMode.value)
+                        {
+                            case RainRustAlphaMode.OneAlpha:
+                                data.material.EnableKeyword("ONE_ALPHA");
+                                data.material.DisableKeyword("OBJECTS_MASK_ALPHA");
+                                data.material.DisableKeyword("NORMALIZED_ALPHA");
+                                break;
+                            case RainRustAlphaMode.ObjectsMaskAlpha:
+                                data.material.DisableKeyword("ONE_ALPHA");
+                                data.material.EnableKeyword("OBJECTS_MASK_ALPHA");
+                                data.material.DisableKeyword("NORMALIZED_ALPHA");
+                                break;
+                            case RainRustAlphaMode.NormalizedAlpha:
+                                data.material.DisableKeyword("ONE_ALPHA");
+                                data.material.DisableKeyword("OBJECTS_MASK_ALPHA");
+                                data.material.EnableKeyword("NORMALIZED_ALPHA");
+                                break;
+                        }
 
                         CoreUtils.DrawFullScreen(cmd, data.material);
                     }
