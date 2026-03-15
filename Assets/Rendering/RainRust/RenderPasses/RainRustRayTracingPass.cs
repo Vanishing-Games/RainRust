@@ -81,6 +81,11 @@ namespace RainRust.Rendering
                         data.material.SetFloat("_Intensity", stack.lightIntensity.value);
                         data.material.SetFloat("_Falloff", stack.lightFalloff.value);
 
+                        data.material.SetFloat("_NoiseScale", stack.noiseScale.value);
+                        data.material.SetFloat("_NoiseIntensity", stack.noiseIntensity.value);
+                        data.material.SetVector("_NoiseVelocity", stack.noiseVelocity.value);
+                        data.material.SetInt("_NoiseType", (int)stack.noiseType.value);
+
                         switch (stack.noiseMode.value)
                         {
                             case RainRustNoiseMode.None:
@@ -114,7 +119,7 @@ namespace RainRust.Rendering
                                 data.material.EnableKeyword("FRAGMENT_RANDOM");
                                 data.material.SetVector(
                                     "_NoiseTilingOffset",
-                                    new Vector4(1, 1, 0, 0)
+                                    stack.noiseTilingOffset.value
                                 );
                                 break;
                         }

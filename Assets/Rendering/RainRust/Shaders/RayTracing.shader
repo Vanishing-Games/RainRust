@@ -18,6 +18,7 @@ Shader "Hidden/RainRust/RayTracing"
 
             HLSLPROGRAM
             #include "Utils.hlsl"
+            #include "Noise.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 
             // =======================================================================
@@ -40,6 +41,12 @@ Shader "Hidden/RainRust/RayTracing"
             float  _Samples; // 光线采样数
             float _Intensity; // 光照强度
             float _Falloff; // 距离衰减幂指数
+
+            // 噪声相关参数
+            float _NoiseScale;
+            float _NoiseIntensity;
+            float2 _NoiseVelocity;
+            int _NoiseType;
 
             // =======================================================================
 
@@ -112,13 +119,26 @@ Shader "Hidden/RainRust/RayTracing"
                 return o;
             }
 
+            float GetShaderNoise(float2 uv)
+            {
+                float2 noiseUV = uv * _NoiseScale + _NoiseVelocity * _Time.y;
+                float n = 0;
+                
+                if (_NoiseType == 0) n = value_noise(noiseUV);
+                else if (_NoiseType == 1) n = perlin_noise(noiseUV);
+                else if (_NoiseType == 2) n = simplex_noise(noiseUV);
+                else if (_NoiseType == 3) n = voronoi_noise(noiseUV);
+                
+                return n * _NoiseIntensity;
+            }
+
             float4 Frag(FragInputGI i) : SV_Target
             {
                 float3 result = AMBIENT;
 
                 // 获取随机值
 #if defined(FRAGMENT_RANDOM)
-                const float rand = Random(i.noise_uv);
+                const float rand = GetShaderNoise(i.noise_uv);
 #elif defined(TEXTURE_RANDOM)
                 const float rand = tex2D(_NoiseTex, i.noise_uv).r;
 #else
