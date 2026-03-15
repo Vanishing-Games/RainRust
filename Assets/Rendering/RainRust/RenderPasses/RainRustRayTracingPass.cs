@@ -79,7 +79,8 @@ namespace RainRust.Rendering
                         var stack = VolumeManager.instance.stack.GetComponent<RainRustVolume>();
                         data.material.SetFloat("_Samples", stack.lightSamples.value);
                         data.material.SetFloat("_Intensity", stack.lightIntensity.value);
-                        data.material.SetFloat("_Falloff", stack.lightFalloff.value);
+                        data.material.SetFloat("_LightFalloffAlpha", stack.lightFalloffAlpha.value);
+                        data.material.SetFloat("_LightFalloffGamma", stack.lightFalloffGamma.value);
 
                         data.material.SetFloat("_NoiseScale", stack.noiseScale.value);
                         data.material.SetFloat("_NoiseIntensity", stack.noiseIntensity.value);

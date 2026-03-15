@@ -46,11 +46,6 @@ FragInput VertDefault(VertInput v)
     return o;
 }
 
-float Falloff(const in float2 dist, const in float factor)
-{
-    return 1 - clamp(length(dist) / factor, 0, 1);
-}
-
 bool NotUVSpace(const in float2 uv)
 {
     const float2 uvAbs = abs(uv - float2(.5, .5));

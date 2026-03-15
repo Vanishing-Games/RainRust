@@ -40,7 +40,8 @@ Shader "Hidden/RainRust/RayTracing"
             
             float  _Samples; // 光线采样数
             float _Intensity; // 光照强度
-            float _Falloff; // 距离衰减幂指数
+            float _LightFalloffAlpha; // GTR 衰减 alpha 参数
+            float _LightFalloffGamma; // GTR 衰减 gamma 参数
 
             // 噪声相关参数
             float _NoiseScale; // 噪声缩放
@@ -61,6 +62,12 @@ Shader "Hidden/RainRust/RayTracing"
 
             // =======================================================================
 
+            float GTRAttenuation(float2 dist, float alpha, float gamma)
+            {
+                float x = length(dist);
+                return 1.0 / pow(1.0 + pow(x / alpha, 2.0), gamma);
+            }
+
             float3 Trace(const float2 uv, const float2 dir) // Ray Marching
             {
                 float2 uvPos = uv; // 当前采样坐标
@@ -80,7 +87,11 @@ Shader "Hidden/RainRust/RayTracing"
                 {
                     const float4 color = tex2D(_ColorTex, uvPos).rgba;
                     if (color.a > 0)
-                        return color.rgb * Falloff((uv - uvPos) * _Aspect.xy, _Falloff * color.a);
+                    {
+                        // 使用 GTR 衰减
+                        float attenuation = GTRAttenuation((uv - uvPos) * _Aspect.xy, _LightFalloffAlpha * color.a, _LightFalloffGamma);
+                        return color.rgb * attenuation;
+                    }
 
                     uvPos += dir * tex2D(_DistTex, uvPos).rr;
                     if (NotUVSpace(uvPos))

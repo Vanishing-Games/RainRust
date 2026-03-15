@@ -19,7 +19,8 @@ public class RainRustVolume : VolumeComponent, IPostProcessComponent
     public ClampedFloatParameter noiseIntensity = new(1.0f, 0f, 10f);
     public IntParameter lightSamples = new(16);
     public ClampedFloatParameter lightIntensity = new(0f, 0f, 10f);
-    public ClampedFloatParameter lightFalloff = new(0.5f, 0f, 1f);
+    public ClampedFloatParameter lightFalloffAlpha = new(0.1f, 0.001f, 1f);
+    public ClampedFloatParameter lightFalloffGamma = new(2.0f, 0.001f, 10f);
 
     public bool IsActive() => isEnabled.value;
 
