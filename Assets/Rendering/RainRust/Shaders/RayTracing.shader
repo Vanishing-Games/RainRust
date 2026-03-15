@@ -43,10 +43,10 @@ Shader "Hidden/RainRust/RayTracing"
             float _Falloff; // 距离衰减幂指数
 
             // 噪声相关参数
-            float _NoiseScale;
-            float _NoiseIntensity;
-            float2 _NoiseVelocity;
-            int _NoiseType;
+            float _NoiseScale; // 噪声缩放
+            float _NoiseIntensity; // 噪声强度
+            float2 _NoiseVelocity; // 噪声移动速度
+            int _NoiseType; // 噪声类型: 0-Value, 1-Perlin, 2-Simplex, 3-Voronoi
 
             // =======================================================================
 
@@ -136,7 +136,6 @@ Shader "Hidden/RainRust/RayTracing"
             {
                 float3 result = AMBIENT;
 
-                // 获取随机值
 #if defined(FRAGMENT_RANDOM)
                 const float rand = GetShaderNoise(i.noise_uv);
 #elif defined(TEXTURE_RANDOM)
