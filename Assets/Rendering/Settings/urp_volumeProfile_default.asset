@@ -336,6 +336,59 @@ MonoBehaviour:
   m_Blur:
     m_OverrideState: 1
     m_Value: 0
+--- !u!114 &-1312557634942864787
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 554b97ecd49ba6a468b601574f7d1558, type: 3}
+  m_Name: RainRustVolume
+  m_EditorClassIdentifier: RainRust.Rendering::RainRustVolume
+  active: 1
+  isEnabled:
+    m_OverrideState: 1
+    m_Value: 1
+  noiseMode:
+    m_OverrideState: 1
+    m_Value: 1
+  noiseType:
+    m_OverrideState: 1
+    m_Value: 1
+  alphaMode:
+    m_OverrideState: 1
+    m_Value: 0
+  noiseTexture:
+    m_OverrideState: 1
+    m_Value: {fileID: 0}
+    dimension: 1
+  noiseTilingOffset:
+    m_OverrideState: 1
+    m_Value: {x: 1, y: 1, z: 1, w: 1}
+  noiseVelocity:
+    m_OverrideState: 1
+    m_Value: {x: 0, y: 0}
+  noiseScale:
+    m_OverrideState: 1
+    m_Value: 10
+  noiseIntensity:
+    m_OverrideState: 1
+    m_Value: 1
+  lightSamples:
+    m_OverrideState: 1
+    m_Value: 16
+  lightIntensity:
+    m_OverrideState: 1
+    m_Value: 0
+  lightFalloffAlpha:
+    m_OverrideState: 1
+    m_Value: 0.1
+  lightFalloffGamma:
+    m_OverrideState: 1
+    m_Value: 2
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -368,7 +421,7 @@ MonoBehaviour:
   - {fileID: 6953875436991687345}
   - {fileID: -7655882033765373336}
   - {fileID: -2229080203895651130}
-  - {fileID: -2003229725613761247}
+  - {fileID: -1312557634942864787}
 --- !u!114 &371180526040359883
 MonoBehaviour:
   m_ObjectHideFlags: 3
