@@ -40,7 +40,7 @@ namespace PlayerControlByOris
             else
             {
                 SetStateMachine(PlayerStateMachine.NormalState, EccTag.NormalState);
-				BeeToThrow.ChangeState(BeeState.FollowSt);
+                BeeToThrow.ChangeState(BeeState.FollowSt);
             }
         }
 
@@ -50,12 +50,15 @@ namespace PlayerControlByOris
             {
                 mPCComponent.ThrowStartTimer--;
                 ThrowStartGoing();
-				BeeToThrow.FlashToPosition(ThrowStartPosition, true);
+                BeeToThrow.FlashToPosition(ThrowStartPosition, true);
             }
 
             if (ThrowStartTimer == 0 && ThrowMoveTimer == mPCComponent.ThrowMoveTime)
             {
-				BeeToThrow.BeeThrow(mPCComponent.ThrowHookVelocity * mPCComponent.FacingDir * -1, mPCComponent.FacingDir < 0);
+                BeeToThrow.BeeThrow(
+                    mPCComponent.ThrowHookVelocity * mPCComponent.FacingDir * -1,
+                    mPCComponent.FacingDir < 0
+                );
             }
 
             if (ThrowStartTimer == 0 && ThrowMoveTimer > 0)
@@ -65,11 +68,8 @@ namespace PlayerControlByOris
             }
         }
 
-		//飞虫投掷
-		private void BeeThrow()
-		{
-
-		}
+        //飞虫投掷
+        private void BeeThrow() { }
 
         private void CreateHook()
         {
@@ -104,8 +104,9 @@ namespace PlayerControlByOris
             && mPCComponent.IsCanThrow
             && mPCComponent.ThrowCdInputTimer == 0;
 
-		private BeeMainControl BeeToThrow => mPCComponent.BeeToThrow;
-		private Vector3 ThrowStartPosition => mPCComponent.mTranform.position - mPCComponent.ThrowStartOffset;
+        private BeeMainControl BeeToThrow => mPCComponent.BeeToThrow;
+        private Vector3 ThrowStartPosition =>
+            mPCComponent.mTranform.position - mPCComponent.ThrowStartOffset;
         private TempHookControl TempHC;
         private bool IsHookThing;
     }
