@@ -1,0 +1,15 @@
+OVDF v1.0
+PipelineSetter, RainRustRenderPipeline.Scripts
+
+# $LrutjXJsDfJTzASDyz5GH3
+Position: $root:2
++ [Sirenix.OdinInspector.HorizontalGroupAttribute]
+
+# mUrpRenderPipelineAsset
+Position: $LrutjXJsDfJTzASDyz5GH3:0
+
+# mCustomRenderPipelineAsset
+Position: $LrutjXJsDfJTzASDyz5GH3:1
+
+# UseCustomPipeline
+Position: $root:3
