@@ -474,7 +474,9 @@ jobs:
             echo "✅ 在指定路径下无 .cs 文件变更。"
             echo "status=skipped" >> $GITHUB_OUTPUT
             echo "files_count=0" >> $GITHUB_OUTPUT
-            echo "failed_files=''" >> $GITHUB_OUTPUT 
+            echo "failed_files=" >> $GITHUB_OUTPUT
+            echo "checked_files_list=" >> $GITHUB_OUTPUT
+            echo "csharpier_raw=" >> $GITHUB_OUTPUT
             exit 0
           fi
                   
