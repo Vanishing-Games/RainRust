@@ -51,6 +51,10 @@ namespace PlayerControlByOris
                     if (CtrlVelocity.y < 0)
                         CtrlVelocity = new Vector2(CtrlVelocity.x, 0);
                 }
+                else if (IsNormalLeft(normal) || IsNormalRight(normal))
+                {
+                    DashEndCheck();
+                }
             }
         }
 
@@ -96,6 +100,12 @@ namespace PlayerControlByOris
         {
             if (collision.transform.CompareTag("Wall"))
                 IsOnGround = false;
+        }
+
+        void DashEndCheck()
+        {
+            if (CurrentState == PlayerStateMachine.DashState && DashTimer > 0 && DashWaitTimer == 0)
+                DashTimer = 0;
         }
 
         private bool IsNormalUp(Vector2 normal) => normal.y >= 0.9f && Mathf.Abs(normal.x) < 0.1f;

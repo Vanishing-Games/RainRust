@@ -73,6 +73,7 @@ namespace PlayerControlByOris
         {
             EccTag.NormalState,
             EccTag.GrabState,
+            EccTag.WhistleState,
             EccTag.ThrowState,
             EccTag.DashState,
             EccTag.DeathState,
