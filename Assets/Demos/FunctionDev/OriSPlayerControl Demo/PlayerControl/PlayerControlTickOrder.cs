@@ -5,7 +5,7 @@ namespace PlayerControlByOris
         InitialSet,
         CollisionStartCheck,
         StateStartSet,
-		WhistleControl,
+        WhistleControl,
         ThrowControl,
         DashControl,
         HorizontalControl,

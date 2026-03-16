@@ -43,93 +43,86 @@ namespace PlayerControlByOris
                 CornerGrabCheck(mPCComponent.mTranform.position, Vector2.left);
             }
 
-			//左右贴墙判断
-			if (mPCComponent.CurrentState == PlayerStateMachine.NormalState)
-			{
-				ByWallCheck(mPCComponent.mTranform.position, Vector2.right);
-				ByWallCheck(mPCComponent.mTranform.position, Vector2.left);
-			}
+            //左右贴墙判断
+            if (mPCComponent.CurrentState == PlayerStateMachine.NormalState)
+            {
+                ByWallCheck(mPCComponent.mTranform.position, Vector2.right);
+                ByWallCheck(mPCComponent.mTranform.position, Vector2.left);
+            }
 
-			if (
-				(
-					!mPCComponent.IsCornerGrab
-					&& mPCComponent.CurrentState == PlayerStateMachine.GrabState
-				)
-				|| mPCComponent.CurrentState == PlayerStateMachine.NormalState
-			)
-			{
-				NormalGrabCheck(mPCComponent.mTranform.position, LayerMask.GetMask("VerticalGrab"));
-				NormalSafeGrabCheck(mPCComponent.mTranform.position, LayerMask.GetMask("Hook"));
-			}
-				
+            if (
+                (
+                    !mPCComponent.IsCornerGrab
+                    && mPCComponent.CurrentState == PlayerStateMachine.GrabState
+                )
+                || mPCComponent.CurrentState == PlayerStateMachine.NormalState
+            )
+            {
+                NormalGrabCheck(mPCComponent.mTranform.position, LayerMask.GetMask("VerticalGrab"));
+                NormalSafeGrabCheck(mPCComponent.mTranform.position, LayerMask.GetMask("Hook"));
+            }
         }
 
-		private void ByWallCheck(Vector2 PlayerPosition, Vector2 Dir)
-		{
-			
-			Vector2 FootStartPoint =
-				PlayerPosition
-				+ PlayerColliderOffsetX * Dir
-				+ new Vector2(0, PlayerFootColliderOffsetY);
+        private void ByWallCheck(Vector2 PlayerPosition, Vector2 Dir)
+        {
+            Vector2 FootStartPoint =
+                PlayerPosition
+                + PlayerColliderOffsetX * Dir
+                + new Vector2(0, PlayerFootColliderOffsetY);
 
-			RaycastHit2D hitDown = Physics2D.Raycast(
-				FootStartPoint,
-				Dir,
-				mPCComponent.ByWallCheckDistanceX,
-				LayerMask.GetMask("Wall")
-				);
+            RaycastHit2D hitDown = Physics2D.Raycast(
+                FootStartPoint,
+                Dir,
+                mPCComponent.ByWallCheckDistanceX,
+                LayerMask.GetMask("Wall")
+            );
 
-			Debug.DrawRay(
-				FootStartPoint,
-				Dir * mPCComponent.ByWallCheckDistanceX,
-				Color.red
-			);
+            Debug.DrawRay(FootStartPoint, Dir * mPCComponent.ByWallCheckDistanceX, Color.red);
 
-			Vector2 HeadStartPoint =
-				PlayerPosition
-				+ PlayerColliderOffsetX * Dir
-				+ new Vector2(0, PlayerColliderOffsetUpY);
+            Vector2 HeadStartPoint =
+                PlayerPosition
+                + PlayerColliderOffsetX * Dir
+                + new Vector2(0, PlayerColliderOffsetUpY);
 
-			RaycastHit2D hitUp = Physics2D.Raycast(
-				HeadStartPoint - new Vector2(0, VerticalDistance),
-				Dir,
-				mPCComponent.ByWallCheckDistanceX,
-				LayerMask.GetMask("Wall")
-				);
+            RaycastHit2D hitUp = Physics2D.Raycast(
+                HeadStartPoint - new Vector2(0, VerticalDistance),
+                Dir,
+                mPCComponent.ByWallCheckDistanceX,
+                LayerMask.GetMask("Wall")
+            );
 
-			//左右是否靠墙判断
-			if (hitUp.collider != null || hitDown.collider != null)
-			{
-				if (Dir == Vector2.left)
-					mPCComponent.IsByWallLeft = true;
-				else if (Dir == Vector2.right)
-					mPCComponent.IsByWallRight = true;
-			}
-			else
-			{
-				if (Dir == Vector2.left)
-					mPCComponent.IsByWallLeft = false;
-				else if (Dir == Vector2.right)
-					mPCComponent.IsByWallRight = false;
-			}
+            //左右是否靠墙判断
+            if (hitUp.collider != null || hitDown.collider != null)
+            {
+                if (Dir == Vector2.left)
+                    mPCComponent.IsByWallLeft = true;
+                else if (Dir == Vector2.right)
+                    mPCComponent.IsByWallRight = true;
+            }
+            else
+            {
+                if (Dir == Vector2.left)
+                    mPCComponent.IsByWallLeft = false;
+                else if (Dir == Vector2.right)
+                    mPCComponent.IsByWallRight = false;
+            }
 
-			if (hitUp.collider != null)
-			{
-				//滑墙可行性判断
-				if (Dir == Vector2.left)
-					mPCComponent.LeftSlideCheck = true;
-				else if (Dir == Vector2.right)
-					mPCComponent.RightSlideCheck = true;
-			}
-			else
-			{
-				if (Dir == Vector2.left)
-					mPCComponent.LeftSlideCheck = false;
-				else if (Dir == Vector2.right)
-					mPCComponent.RightSlideCheck = false;
-			}
-			
-		}
+            if (hitUp.collider != null)
+            {
+                //滑墙可行性判断
+                if (Dir == Vector2.left)
+                    mPCComponent.LeftSlideCheck = true;
+                else if (Dir == Vector2.right)
+                    mPCComponent.RightSlideCheck = true;
+            }
+            else
+            {
+                if (Dir == Vector2.left)
+                    mPCComponent.LeftSlideCheck = false;
+                else if (Dir == Vector2.right)
+                    mPCComponent.RightSlideCheck = false;
+            }
+        }
 
         private void CornerGrabCheck(Vector2 PlayerPosition, Vector2 Dir)
         {
@@ -159,7 +152,7 @@ namespace PlayerControlByOris
             }
             else
             {
-				return;
+                return;
             }
 
             Vector2 DownStartPoint =
@@ -210,46 +203,52 @@ namespace PlayerControlByOris
                 float centerX = (float)GrabBounds.center.x;
                 Vector2 targetPoint =
                     new Vector2(centerX, PlayerPosition.y)
-                    - new Vector2(mPCComponent.FacingDir * mPCComponent.GrabRangeOffset.x, mPCComponent.GrabRangeOffset.y);
+                    - new Vector2(
+                        mPCComponent.FacingDir * mPCComponent.GrabRangeOffset.x,
+                        mPCComponent.GrabRangeOffset.y
+                    );
                 GrabSet(targetPoint, false, false, new Vector2(-1 * mPCComponent.FacingDir, 0));
             }
             else if (
                 hitCollider == null
                 && mPCComponent.CurrentState == PlayerStateMachine.GrabState
-				&& mPCComponent.IsSafeGrab == false
+                && mPCComponent.IsSafeGrab == false
             )
             {
                 SetStateMachine(PlayerStateMachine.NormalState, EccTag.NormalState);
             }
         }
 
-		private void NormalSafeGrabCheck(Vector2 PlayerPosition, LayerMask SafeLayer)
-		{
-			Vector2 BoxRange = new Vector2(mPCComponent.GrabRangeX, mPCComponent.GrabRangeY);
-			int count = Physics2D.OverlapBoxNonAlloc(
-				PlayerPosition
-					+ mPCComponent.GrabRangeOffset * new Vector2(mPCComponent.FacingDir, 1),
-				BoxRange,
-				0f,
-				ColliderHitResults,
-				SafeLayer
-			);
+        private void NormalSafeGrabCheck(Vector2 PlayerPosition, LayerMask SafeLayer)
+        {
+            Vector2 BoxRange = new Vector2(mPCComponent.GrabRangeX, mPCComponent.GrabRangeY);
+            int count = Physics2D.OverlapBoxNonAlloc(
+                PlayerPosition
+                    + mPCComponent.GrabRangeOffset * new Vector2(mPCComponent.FacingDir, 1),
+                BoxRange,
+                0f,
+                ColliderHitResults,
+                SafeLayer
+            );
 
-			Collider2D hitCollider = ColliderHitResults[0];
-			ColliderHitResults[0] = default;
+            Collider2D hitCollider = ColliderHitResults[0];
+            ColliderHitResults[0] = default;
 
-			if (hitCollider != null && IsCanGrab())
-			{
-				Bounds GrabBounds = hitCollider.bounds;
-				float centerX = (float)GrabBounds.center.x;
-				Vector2 targetPoint =
-					new Vector2(centerX, PlayerPosition.y)
-					- new Vector2(mPCComponent.FacingDir * mPCComponent.GrabRangeOffset.x, mPCComponent.GrabRangeOffset.y);
-				GrabSet(targetPoint, false, true, new Vector2(-1 * mPCComponent.FacingDir, 0));
-			}		
-		}
+            if (hitCollider != null && IsCanGrab())
+            {
+                Bounds GrabBounds = hitCollider.bounds;
+                float centerX = (float)GrabBounds.center.x;
+                Vector2 targetPoint =
+                    new Vector2(centerX, PlayerPosition.y)
+                    - new Vector2(
+                        mPCComponent.FacingDir * mPCComponent.GrabRangeOffset.x,
+                        mPCComponent.GrabRangeOffset.y
+                    );
+                GrabSet(targetPoint, false, true, new Vector2(-1 * mPCComponent.FacingDir, 0));
+            }
+        }
 
-		private void GrabSet(Vector2 targetPoint, bool IsCorner, bool IsSafe, Vector2 dir)
+        private void GrabSet(Vector2 targetPoint, bool IsCorner, bool IsSafe, Vector2 dir)
         {
             SetStateMachine(PlayerStateMachine.GrabState, EccTag.GrabState);
             mPCComponent.CurrentState = PlayerStateMachine.GrabState;
@@ -272,17 +271,14 @@ namespace PlayerControlByOris
 
         private float PlayerColliderOffsetX => mPCComponent.mBoxCollider.size.x * 0.5f;
 
-		private float PlayerHeadColliderOffsetY =>
-			mPCComponent.mBoxCollider.size.y * 0.5f
-			+ mPCComponent.mBoxCollider.offset.y;
+        private float PlayerHeadColliderOffsetY =>
+            mPCComponent.mBoxCollider.size.y * 0.5f + mPCComponent.mBoxCollider.offset.y;
 
-		private float PlayerFootColliderOffsetY =>
-			mPCComponent.mBoxCollider.size.y * 0.5f * -1f
-			+ mPCComponent.mBoxCollider.offset.y;
+        private float PlayerFootColliderOffsetY =>
+            mPCComponent.mBoxCollider.size.y * 0.5f * -1f + mPCComponent.mBoxCollider.offset.y;
 
-		private float PlayerColliderOffsetUpY =>
-            PlayerHeadColliderOffsetY
-            + mPCComponent.CornerGrabStartOffsetY;
+        private float PlayerColliderOffsetUpY =>
+            PlayerHeadColliderOffsetY + mPCComponent.CornerGrabStartOffsetY;
 
         private float HorizontalDistance => mPCComponent.CornerGrabOffsetX;
         private float VerticalDistance => mPCComponent.CornerGrabOffsetY;

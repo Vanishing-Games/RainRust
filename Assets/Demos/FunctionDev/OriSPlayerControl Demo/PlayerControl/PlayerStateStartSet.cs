@@ -1,7 +1,7 @@
 using System;
-using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Core;
 using UnityEngine;
 using VanishingGames.ECC.Runtime;
@@ -44,18 +44,20 @@ namespace PlayerControlByOris
                 mPCComponent.FacingDir = mPCComponent.MoveX * -1;
 
             //角色是否能投掷 --
-            if (PreThrowInputTimer > 0
-				&& PreThrowInputTimer < mPCComponent.PreThrowTime
-				&& mPCComponent.CurrentState == PlayerStateMachine.NormalState)
+            if (
+                PreThrowInputTimer > 0
+                && PreThrowInputTimer < mPCComponent.PreThrowTime
+                && mPCComponent.CurrentState == PlayerStateMachine.NormalState
+            )
                 mPCComponent.IsCanThrow = CanThrowCheck();
-			else
-				mPCComponent.IsCanThrow = false;
+            else
+                mPCComponent.IsCanThrow = false;
 
-			//角色口哨预输入时间
-			if (mPCComponent.InputAct2 && mPCComponent.PreWhistleInputTimer > 0)
-				mPCComponent.PreWhistleInputTimer--;
-			else if (!mPCComponent.InputAct2)
-				mPCComponent.PreWhistleInputTimer = mPCComponent.PreWhistleInputTime;
+            //角色口哨预输入时间
+            if (mPCComponent.InputAct2 && mPCComponent.PreWhistleInputTimer > 0)
+                mPCComponent.PreWhistleInputTimer--;
+            else if (!mPCComponent.InputAct2)
+                mPCComponent.PreWhistleInputTimer = mPCComponent.PreWhistleInputTime;
 
             //角色跳跃输入计时器
             if (InputJump && mPCComponent.PreJumpInputTimer > 0)
@@ -72,19 +74,19 @@ namespace PlayerControlByOris
                 mPCComponent.CoyoteJumpInputRevTimer = CoyoteJumpInputTime;
             else if (mPCComponent.CoyoteJumpInputRevTimer > 0)
                 mPCComponent.CoyoteJumpInputRevTimer--;
-			//墙跳土狼计时器
-			if (mPCComponent.IsByWallLeft || mPCComponent.IsByWallRight)
-			{
-				mPCComponent.WallCoyoteJumpInputRevTimer = mPCComponent.WallCoyoteJumpInputTime;
-				if (mPCComponent.IsByWallLeft)
-					mPCComponent.WallDir = 1;
-				else
-					mPCComponent.WallDir = -1;
-			}				
-			else if (mPCComponent.WallCoyoteJumpInputRevTimer > 0)
-				mPCComponent.WallCoyoteJumpInputRevTimer--;
-			//滑落计时器
-			if (mPCComponent.CurrentState != PlayerStateMachine.GrabState)
+            //墙跳土狼计时器
+            if (mPCComponent.IsByWallLeft || mPCComponent.IsByWallRight)
+            {
+                mPCComponent.WallCoyoteJumpInputRevTimer = mPCComponent.WallCoyoteJumpInputTime;
+                if (mPCComponent.IsByWallLeft)
+                    mPCComponent.WallDir = 1;
+                else
+                    mPCComponent.WallDir = -1;
+            }
+            else if (mPCComponent.WallCoyoteJumpInputRevTimer > 0)
+                mPCComponent.WallCoyoteJumpInputRevTimer--;
+            //滑落计时器
+            if (mPCComponent.CurrentState != PlayerStateMachine.GrabState)
                 mPCComponent.GrabStayRevTimer = mPCComponent.GrabStayTime;
             //投掷cd计时器 --
             if (
@@ -95,41 +97,41 @@ namespace PlayerControlByOris
                 && mPCComponent.ThrowCdInputTimer > 0
             )
                 mPCComponent.ThrowCdInputTimer--;
-
-
         }
 
-		bool CanThrowCheck()
-		{
-			//BeeMainControl BeeToThrow = mPCComponent.AllBees.FirstOrDefault
-			//	(f => {
-			//		bool isMatch = (f.currentState == BeeState.FollowSt);
-			//		Debug.Log($"检查飞虫 {f.name}，是否匹配: {isMatch}");
-			//		return isMatch;
-			//	});
-			BeeMainControl BeeToThrow = null;
+        bool CanThrowCheck()
+        {
+            //BeeMainControl BeeToThrow = mPCComponent.AllBees.FirstOrDefault
+            //	(f => {
+            //		bool isMatch = (f.currentState == BeeState.FollowSt);
+            //		Debug.Log($"检查飞虫 {f.name}，是否匹配: {isMatch}");
+            //		return isMatch;
+            //	});
+            BeeMainControl BeeToThrow = null;
 
-			for (int i = 0; i < mPCComponent.AllBees.Count; i++)
-			{
-				Debug.Log(mPCComponent.AllBees[i].GetComponent<BeeMainControl>().currentState);
-				if (mPCComponent.AllBees[i].GetComponent<BeeMainControl>().currentState == BeeState.FollowSt)
-				{
-					BeeToThrow = mPCComponent.AllBees[i].GetComponent<BeeMainControl>();
-					break;
-				}
-			}		
+            for (int i = 0; i < mPCComponent.AllBees.Count; i++)
+            {
+                Debug.Log(mPCComponent.AllBees[i].GetComponent<BeeMainControl>().currentState);
+                if (
+                    mPCComponent.AllBees[i].GetComponent<BeeMainControl>().currentState
+                    == BeeState.FollowSt
+                )
+                {
+                    BeeToThrow = mPCComponent.AllBees[i].GetComponent<BeeMainControl>();
+                    break;
+                }
+            }
 
-			if (BeeToThrow != null)
-			{
-				mPCComponent.BeeToThrow = BeeToThrow;
-				return true;
-			}
-			else
-			{
-				mPCComponent.BeeToThrow = null;
-				return false;
-			}
-		}
-
+            if (BeeToThrow != null)
+            {
+                mPCComponent.BeeToThrow = BeeToThrow;
+                return true;
+            }
+            else
+            {
+                mPCComponent.BeeToThrow = null;
+                return false;
+            }
+        }
     }
 }

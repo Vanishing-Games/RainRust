@@ -39,7 +39,7 @@ namespace PlayerControlByOris
             mPCComponent.InputY = UnityEngine.Input.GetAxisRaw("Vertical");
             mPCComponent.InputJump = UnityEngine.Input.GetButton("Jump");
             mPCComponent.InputAct = UnityEngine.Input.GetButton("Act");
-			mPCComponent.InputAct2 = UnityEngine.Input.GetButton("Act2");
+            mPCComponent.InputAct2 = UnityEngine.Input.GetButton("Act2");
         }
 
         protected PlayerControlComponent mPCComponent;

@@ -34,29 +34,29 @@ namespace PlayerControlByOris
             mAnim.SetBool("IsGrab", CurrentState == PlayerStateMachine.GrabState);
             mAnim.SetBool("IsCorner", IsCornerGrab);
 
-			mAnim.SetBool("ThrowBegin", ThrowStartTimer > 0);
+            mAnim.SetBool("ThrowBegin", ThrowStartTimer > 0);
 
-			mAnim.SetBool("Throwing", ThrowMoveTimer > 0 && ThrowStartTimer == 0);
+            mAnim.SetBool("Throwing", ThrowMoveTimer > 0 && ThrowStartTimer == 0);
 
-			mAnim.SetBool("DashBefore", DashWaitTimer > 0);
+            mAnim.SetBool("DashBefore", DashWaitTimer > 0);
 
-			mAnim.SetBool("Dashing", DashTimer > 0 && DashWaitTimer == 0);
+            mAnim.SetBool("Dashing", DashTimer > 0 && DashWaitTimer == 0);
 
-			mAnim.SetBool("WhistleBefore", WhistleBeforeTimer > 0);
+            mAnim.SetBool("WhistleBefore", WhistleBeforeTimer > 0);
 
-			mAnim.SetBool("WhistleStay", WhistleBeforeTimer == 0 && WhistleStayTimer > 0);
+            mAnim.SetBool("WhistleStay", WhistleBeforeTimer == 0 && WhistleStayTimer > 0);
 
-			mAnim.SetBool("WhistleAfter", WhistleStayTimer == 0 && WhistleAfterTimer > 0 && !InputAct2);
+            mAnim.SetBool(
+                "WhistleAfter",
+                WhistleStayTimer == 0 && WhistleAfterTimer > 0 && !InputAct2
+            );
 
-			mAnim.SetBool("IsSlide", WallSlideCheck());
+            mAnim.SetBool("IsSlide", WallSlideCheck());
 
-			mAnim.SetBool("IsNormalSt", CurrentState == PlayerStateMachine.NormalState);
+            mAnim.SetBool("IsNormalSt", CurrentState == PlayerStateMachine.NormalState);
         }
 
-		public bool WallSlideCheck() =>
-				(LeftSlideCheck && InputX < 0)
-				|| (RightSlideCheck && InputX > 0);
-
-
-	}
+        public bool WallSlideCheck() =>
+            (LeftSlideCheck && InputX < 0) || (RightSlideCheck && InputX > 0);
+    }
 }
