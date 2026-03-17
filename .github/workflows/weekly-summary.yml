@@ -1,0 +1,84 @@
+name: "每周任务总结 📊"
+
+on:
+  schedule:
+    - cron: '0 0 * * 1' # 每周一凌晨 00:00 运行
+  workflow_dispatch:
+
+jobs:
+  summary:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 生成上周统计报表
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.PROJECT_PAT }}
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.name;
+            const lastWeek = new Date();
+            lastWeek.setDate(lastWeek.getDate() - 7);
+
+            // 获取过去一周内更新过的所有 Issue
+            const issues = await github.paginate(github.rest.issues.listForRepo, {
+              owner, repo, state: 'all', since: lastWeek.toISOString()
+            });
+
+            const stats = {};
+            const overdueDetails = [];
+
+            for (const issue of issues) {
+              if (issue.pull_request) continue;
+
+              // 检查该 Issue 在过去一周内是否有“奶茶提醒”评论
+              const comments = await github.rest.issues.listComments({
+                owner, repo, issue_number: issue.number, since: lastWeek.toISOString()
+              });
+
+              const hasOverdueComment = comments.data.some(c => c.body.includes('奶茶喝了'));
+
+              if (hasOverdueComment) {
+                const assignees = issue.assignees.map(a => a.login);
+                const target = assignees.length > 0 ? assignees : ['未分配人员'];
+                
+                target.forEach(name => {
+                  stats[name] = (stats[name] || 0) + 1;
+                });
+
+                overdueDetails.push(`| [#${issue.number}](${issue.html_url}) | ${issue.title} | ${target.join(', ')} |`);
+              }
+            }
+
+            // 构建报表
+            let reportBody = `## 📊 上周 DDL 逾期统计报告 \n\n`;
+            reportBody += `> 统计周期: ${lastWeek.toLocaleDateString()} - ${new Date().toLocaleDateString()} \n\n`;
+            
+            reportBody += `### 🥛 奶茶欠账榜 (本周新增) \n`;
+            reportBody += `| 负责人 | 本周逾期次数 | 应请奶茶 (杯) | \n`;
+            reportBody += `| --- | --- | --- | \n`;
+            
+            let totalCups = 0;
+            const sortedStats = Object.entries(stats).sort((a, b) => b[1] - a[1]);
+            for (const [name, count] of sortedStats) {
+              reportBody += `| @${name} | ${count} | ${count} 🥤 | \n`;
+              totalCups += count;
+            }
+            reportBody += `| **总计** | **-** | **${totalCups} 🥤** | \n\n`;
+
+            if (overdueDetails.length > 0) {
+              reportBody += `### 🔗 逾期清单 \n`;
+              reportBody += `| Issue | 标题 | 负责人 | \n`;
+              reportBody += `| --- | --- | --- | \n`;
+              reportBody += overdueDetails.join('\n') + `\n\n`;
+            } else {
+              reportBody += `🎉 **太棒了！上周没有任何人逾期。** \n\n`;
+            }
+
+            reportBody += `--- \n *此报表由 GitHub Action 自动生成。*`;
+
+            await github.rest.issues.create({
+              owner, repo,
+              title: `📅 每周工作总结及奶茶统计 (${new Date().toISOString().split('T')[0]})`,
+              body: reportBody,
+              labels: ['summary']
+            });
