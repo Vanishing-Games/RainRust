@@ -3,6 +3,7 @@ name: Add Issue to Project
 on:
   issues:
     types: [opened]
+  workflow_dispatch:
 
 jobs:
   add-to-project:
@@ -83,11 +84,23 @@ jobs:
           script: |
             const issueNodeId = context.payload.issue.node_id;
             const issueNumber = context.payload.issue.number;
+            const opener = context.payload.issue.user.login;
             const repoName = context.payload.repository.name;
+            const { owner, repo } = context.repo;
             const projectId = "${{ steps.get_project.outputs.project_id }}";
             const priorityFieldId = "${{ steps.get_project.outputs.priority_field_id }}";
             const p2OptionId = "${{ steps.get_project.outputs.p2_option_id }}";
             const ddlFieldId = "${{ steps.get_project.outputs.ddl_field_id }}";
+
+            // --- 0. 自动分配负责人 (如果为空) ---
+            let assignedTo = context.payload.issue.assignees.map(a => a.login);
+            if (assignedTo.length === 0) {
+              await github.rest.issues.addAssignees({
+                owner, repo, issue_number: issueNumber, assignees: [opener]
+              });
+              assignedTo = [opener];
+              console.log(`Issue #${issueNumber} 无负责人，已自动分配给创建者 @${opener}`);
+            }
 
             // 添加 Issue 到 ProjectV2
             const addItem = await github.graphql(`

@@ -101,6 +101,12 @@ jobs:
               const assignees = item.content.assignees.nodes.map(a => `@${a.login}`).join(' ') || '未分配人员';
               const titlePrefix = `Issue #${issueNumber} DDL 提醒[Action自动生成]`;
               const currentLabels = item.content.labels.nodes.map(l => l.name);
+              
+              if (currentLabels.includes('Milk Tea')) {
+                console.log(`Issue #${issueNumber}: 跳过奶茶请客任务。`);
+                continue;
+              }
+
               const ddlField = item.fieldValues.nodes.find(f => f.field?.id === ddlFieldId);
               const issueUrl = `https://github.com/${owner}/${repo}/issues/${issueNumber}`;
               
