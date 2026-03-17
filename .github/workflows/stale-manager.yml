@@ -49,7 +49,6 @@ jobs:
                         content {
                           ... on Issue {
                             number
-                            node_id
                           }
                         }
                         fieldValues(first: 20) {
