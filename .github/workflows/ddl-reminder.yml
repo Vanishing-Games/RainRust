@@ -93,7 +93,7 @@ jobs:
             const summaryRows = [];
 
             for (const item of result.node.items.nodes) {
-              if (!item.content || item.content.state === "CLOSED") continue;
+              if (!item.content || item.content.state === "CLOSED" || !item.content.repository) continue;
 
               const owner = item.content.repository.owner.login;
               const repo = item.content.repository.name;
