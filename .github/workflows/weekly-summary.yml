@@ -79,7 +79,7 @@ jobs:
               owner, repo,
               title: `📅 每周工作总结及奶茶统计 (${new Date().toISOString().split('T')[0]})`,
               body: reportBody,
-              labels: ['summary']
+              labels: ['summary', 'Milk Tea']
             });
 
             const summaryNumber = summaryIssue.data.number;

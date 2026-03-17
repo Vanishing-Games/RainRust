@@ -36,11 +36,6 @@ jobs:
                 continue;
               }
               
-              if (labels.includes('Milk Tea')) {
-                console.log(`Issue #${issueNumber}: 跳过 Milk Tea 任务。`);
-                continue;
-              }
-
               // --- 2. 总结 Issue 自我维护逻辑 ---
               if (labels.includes('summary')) {
                 summary.summary_checked++;
@@ -72,6 +67,11 @@ jobs:
                     continue; // 处理完总结 Issue 后跳过后续逻辑
                   }
                 }
+              }
+
+              if (labels.includes('Milk Tea')) {
+                console.log(`Issue #${issueNumber}: 跳过 Milk Tea 任务。`);
+                continue;
               }
 
               summary.checked++;
