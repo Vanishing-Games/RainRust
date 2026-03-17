@@ -1,0 +1,60 @@
+using System;
+using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.RenderGraphModule;
+using UnityEngine.Rendering.Universal;
+using static UnityEngine.Rendering.RenderGraphModule.Util.RenderGraphUtils;
+
+namespace RainRust.Rendering
+{
+    public class RainRustDistancePass : ScriptableRenderPass
+    {
+        public RainRustDistancePass()
+        {
+            renderPassEvent = RenderPassEvent.BeforeRenderingOpaques;
+        }
+
+        class RainRustDistancePassData
+        {
+            public Material material;
+            public TextureHandle jfaTex;
+            public Vector2 offset;
+            public Vector2 aspect;
+        }
+
+        public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
+        {
+            // Ensure material is created
+            if (m_DistanceMaterial == null)
+            {
+                var shader = Shader.Find(k_DistanceShaderName);
+                if (shader == null)
+                {
+                    Debug.LogError($"Shader not found: {k_DistanceShaderName}");
+                    return;
+                }
+                m_DistanceMaterial = CoreUtils.CreateEngineMaterial(shader);
+            }
+
+            var rainRustContextData = frameData.Get<RainRustContextData>();
+            var cameraData = frameData.Get<UniversalCameraData>();
+
+            float width = cameraData.cameraTargetDescriptor.width;
+            float height = cameraData.cameraTargetDescriptor.height;
+            Vector2 aspect = new(1f, height / width);
+
+            m_DistanceMaterial.SetVector("_Aspect", aspect);
+
+            BlitMaterialParameters blitParams = new(
+                rainRustContextData.finalJfaRt,
+                rainRustContextData.distanceRt,
+                m_DistanceMaterial,
+                0
+            );
+            renderGraph.AddBlitPass(blitParams, "RainRust Distance Pass");
+        }
+
+        private Material m_DistanceMaterial;
+        private const string k_DistanceShaderName = "Hidden/RainRust/Distance";
+    }
+}

@@ -1,0 +1,94 @@
+name: "任务清理与回收 (全生命周期兜底)"
+
+on:
+  schedule:
+    - cron: '0 10 * * *'
+  workflow_dispatch:
+
+jobs:
+  stale-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 精准检测逾期或无 DDL 任务
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.PROJECT_PAT }}
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.name;
+
+            // 1. 获取仓库中所有打开的 Issue
+            const issues = await github.paginate(github.rest.issues.listForRepo, {
+              owner,
+              repo,
+              state: 'open'
+            });
+
+            const now = new Date();
+
+            for (const issue of issues) {
+              const issueNumber = issue.number;
+              if (issue.pull_request) continue;
+
+              const isOverdue = issue.labels.some(l => l.name === 'ddl: overdue');
+              const isMissingDdl = issue.labels.some(l => l.name === 'needs: ddl');
+              const hasStaleLabel = issue.labels.some(l => l.name === 'stale');
+
+              // --- 核心逻辑变更 ---
+              // 只有“已逾期”或“缺失 DDL”的任务才进入检测范围
+              const shouldTrack = isOverdue || isMissingDdl;
+
+              if (!shouldTrack) {
+                // 如果任务状态转为正常（补了 DDL 或延了期），自动移除之前的 stale 标签
+                if (hasStaleLabel) {
+                  await github.rest.issues.removeLabel({
+                    owner, repo, issue_number: issueNumber, name: 'stale'
+                  }).catch(() => {});
+                  console.log(`Issue #${issueNumber} 状态已恢复正常，自动移除 stale 标签。`);
+                }
+                continue; 
+              }
+
+              // 2. 针对问题任务，检查最后的人类活动
+              const comments = await github.rest.issues.listComments({
+                owner, repo, issue_number: issueNumber, per_page: 50
+              });
+
+              const humanComments = comments.data.filter(c => !c.body.includes('[Action自动生成]'));
+              const lastHumanActiveDate = humanComments.length > 0 
+                ? new Date(humanComments[humanComments.length - 1].created_at)
+                : new Date(issue.created_at);
+
+              const silentDays = Math.floor((now - lastHumanActiveDate) / 86400000);
+
+              console.log(`Issue #${issueNumber}: [状态异常] 沉默:${silentDays}天`);
+
+              // 3. 状态机逻辑
+              if (hasStaleLabel && silentDays >= 10) {
+                // 标记后又给了 3 天缓冲期
+                await github.rest.issues.createComment({
+                  owner, repo, issue_number: issueNumber,
+                  body: `🛑 **任务回收通知** \n 此任务因状态异常（逾期或缺失 DDL）且人类沉默超过 10 天，现执行自动关闭。`
+                });
+                await github.rest.issues.update({
+                  owner, repo, issue_number: issueNumber, state: 'closed'
+                });
+              } 
+              else if (!hasStaleLabel && silentDays >= 7) {
+                // 首次触发 stale
+                const reason = isOverdue ? "任务已逾期" : "任务缺失 DDL";
+                await github.rest.issues.addLabels({
+                  owner, repo, issue_number: issueNumber, labels: ['stale']
+                });
+                await github.rest.issues.createComment({
+                  owner, repo, issue_number: issueNumber,
+                  body: `⚠️ **活跃度预警 [Action自动生成]** \n 检测到此任务 (${reason}) 且人类回复已中断 7 天。现已标记为 \`stale\`。如果 3 天内无人类干预，将自动关闭。`
+                });
+              }
+              else if (hasStaleLabel && silentDays < 7) {
+                // 人类活跃了，自动移除标记
+                await github.rest.issues.removeLabel({
+                  owner, repo, issue_number: issueNumber, name: 'stale'
+                }).catch(() => {});
+              }
+            }

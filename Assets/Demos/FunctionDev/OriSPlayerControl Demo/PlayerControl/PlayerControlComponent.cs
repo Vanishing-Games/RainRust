@@ -13,6 +13,7 @@ namespace PlayerControlByOris
     {
         NormalState,
         GrabState,
+        WhistleState,
         ThrowState,
         DashState,
         DeathState,
@@ -26,6 +27,15 @@ namespace PlayerControlByOris
         [BoxGroup("预制体"), Tooltip("投出的勾绳"), ShowInInspector, OdinSerialize]
         public GameObject PreHook;
 
+        [BoxGroup("预制体"), Tooltip("口哨的波纹"), ShowInInspector, OdinSerialize]
+        public GameObject PreWave;
+
+        [BoxGroup("飞虫管理"), Tooltip("存储的飞虫"), ShowInInspector, OdinSerialize]
+        public List<GameObject> AllBees { get; set; }
+
+        [BoxGroup("飞虫管理"), Tooltip("将要被投掷的飞虫"), ShowInInspector, OdinSerialize]
+        public BeeMainControl BeeToThrow { get; set; }
+
         #region 状态变量信息
         [BoxGroup("状态变量信息"), Tooltip("角色状态机"), ShowInInspector, ReadOnly]
         public PlayerStateMachine CurrentState { get; set; }
@@ -35,6 +45,15 @@ namespace PlayerControlByOris
 
         [BoxGroup("状态变量信息"), Tooltip("是否跳跃状态判断"), ShowInInspector, ReadOnly]
         public bool IsJumping { get; set; }
+
+        [BoxGroup("状态变量信息"), Tooltip("是否左侧靠墙判断"), ShowInInspector, ReadOnly]
+        public bool IsByWallLeft { get; set; }
+
+        [BoxGroup("状态变量信息"), Tooltip("是否左侧靠墙判断"), ShowInInspector, ReadOnly]
+        public bool IsByWallRight { get; set; }
+
+        [BoxGroup("状态变量信息"), Tooltip("是否靠墙下滑判断"), ShowInInspector, ReadOnly]
+        public bool IsWallSlide { get; set; }
 
         [BoxGroup("状态变量信息"), Tooltip("是否抓墙角判断"), ShowInInspector, ReadOnly]
         public bool IsCornerGrab { get; set; }
@@ -60,6 +79,9 @@ namespace PlayerControlByOris
 
         [BoxGroup("按键输入信息"), Tooltip("特殊能力按键输入"), ShowInInspector, ReadOnly]
         public bool InputAct { get; set; }
+
+        [BoxGroup("按键输入信息"), Tooltip("特殊能力按键2输入"), ShowInInspector, ReadOnly]
+        public bool InputAct2 { get; set; }
         #endregion
 
         #region 角色基本属性
@@ -107,11 +129,22 @@ namespace PlayerControlByOris
         ]
         public int CoyoteJumpInputRevTimer { get; set; } = 0;
 
+        [
+            BoxGroup("角色输入计时器"),
+            Tooltip("土狼跳输入窗口计时器（单位：帧）"),
+            ShowInInspector,
+            ReadOnly
+        ]
+        public int WallCoyoteJumpInputRevTimer { get; set; } = 0;
+
         [BoxGroup("角色输入计时器"), Tooltip("投掷预输入计时器"), ShowInInspector, ReadOnly]
         public int PreThrowInputTimer { get; set; } = 0;
 
         [BoxGroup("角色输入计时器"), Tooltip("投掷输入cd计时器"), ShowInInspector, ReadOnly]
         public int ThrowCdInputTimer { get; set; } = 0;
+
+        [BoxGroup("角色输入计时器"), Tooltip("口哨预输入按键计时器"), ShowInInspector, ReadOnly]
+        public int PreWhistleInputTimer { get; set; }
 
         #endregion
 
@@ -151,6 +184,16 @@ namespace PlayerControlByOris
 
         [BoxGroup("角色运行计时器"), Tooltip("拉动冲刺计时器"), ShowInInspector, ReadOnly]
         public int DashWaitTimer { get; set; }
+
+        [BoxGroup("角色运行计时器"), Tooltip("口哨前摇计时器"), ShowInInspector, ReadOnly]
+        public int WhistleBeforeTimer { get; set; }
+
+        [BoxGroup("角色运行计时器"), Tooltip("口哨前摇计时器"), ShowInInspector, ReadOnly]
+        public int WhistleStayTimer { get; set; }
+
+        [BoxGroup("角色运行计时器"), Tooltip("口哨后摇计时器"), ShowInInspector, ReadOnly]
+        public int WhistleAfterTimer { get; set; }
+
         #endregion
 
         #region 重力相关
@@ -255,14 +298,40 @@ namespace PlayerControlByOris
         public int CoyoteJumpInputTime { get; set; }
         #endregion
 
+        #region 反墙相关
+        [BoxGroup("反墙相关"), Tooltip("靠墙判定的范围x"), ReadOnly, OdinSerialize]
+        public bool LeftSlideCheck { get; set; }
+
+        [BoxGroup("反墙相关"), Tooltip("靠墙判定的范围x"), ReadOnly, OdinSerialize]
+        public bool RightSlideCheck { get; set; }
+
+        [BoxGroup("反墙相关"), Tooltip("反墙的方向"), ReadOnly, OdinSerialize]
+        public int WallDir { get; set; }
+
+        [BoxGroup("反墙相关"), Tooltip("靠墙判定的范围x"), ShowInInspector, OdinSerialize]
+        public float ByWallCheckDistanceX { get; set; }
+
+        [BoxGroup("反墙相关"), Tooltip("反墙跳强制朝向时间"), ShowInInspector, OdinSerialize]
+        public int WallJumpForceTime { get; set; }
+
+        [BoxGroup("反墙相关"), Tooltip("反墙跳土狼时间窗口"), ShowInInspector, OdinSerialize]
+        public int WallCoyoteJumpInputTime { get; set; }
+
+        #endregion
+
         #region 抓住相关
         [BoxGroup("抓住相关"), Tooltip("抓住暂留的时长"), ShowInInspector, OdinSerialize]
         public int GrabStayTime { get; set; }
 
-        [BoxGroup("抓住相关"), Tooltip("抓住暂留的时长"), ShowInInspector, OdinSerialize]
+        [BoxGroup("抓住相关"), Tooltip("抓住速度阈值"), ShowInInspector, OdinSerialize]
         public int GrabThresholdSpeedY { get; set; }
 
-        [BoxGroup("抓住相关"), Tooltip("抓住拐角的起点(基于头顶)y"), ShowInInspector, OdinSerialize]
+        [
+            BoxGroup("抓住相关"),
+            Tooltip("抓住拐角的手部偏移(基于头顶)y"),
+            ShowInInspector,
+            OdinSerialize
+        ]
         public float CornerGrabStartOffsetY { get; set; }
 
         [BoxGroup("抓住相关"), Tooltip("抓住拐角的范围y"), ShowInInspector, OdinSerialize]
@@ -279,6 +348,21 @@ namespace PlayerControlByOris
 
         [BoxGroup("抓住相关"), Tooltip("抓住的范围的起点偏移点"), ShowInInspector, OdinSerialize]
         public Vector2 GrabRangeOffset { get; set; }
+        #endregion
+
+        #region 口哨相关
+        [BoxGroup("口哨相关"), Tooltip("口哨预输入时间"), ShowInInspector, OdinSerialize]
+        public int PreWhistleInputTime { get; set; }
+
+        [BoxGroup("口哨相关"), Tooltip("口哨前摇时间"), ShowInInspector, OdinSerialize]
+        public int WhistleBeforeTime { get; set; }
+
+        [BoxGroup("口哨相关"), Tooltip("口哨最小维持时间"), ShowInInspector, OdinSerialize]
+        public int WhistleStayTime { get; set; }
+
+        [BoxGroup("口哨相关"), Tooltip("口哨后摇时间"), ShowInInspector, OdinSerialize]
+        public int WhistleAfterTime { get; set; }
+
         #endregion
 
         #region 投掷与拉动相关
@@ -303,7 +387,12 @@ namespace PlayerControlByOris
         [BoxGroup("投掷与拉动相关"), Tooltip("拉动冲刺的速度"), ShowInInspector, OdinSerialize]
         public float DashSpeed { get; set; }
 
-        [BoxGroup("投掷与拉动相关"), Tooltip("拉动冲刺的时间"), ShowInInspector, OdinSerialize]
+        [
+            BoxGroup("投掷与拉动相关"),
+            Tooltip("拉动冲刺前的暂停时间"),
+            ShowInInspector,
+            OdinSerialize
+        ]
         public int DashWaitTime { get; set; }
 
         [BoxGroup("投掷与拉动相关"), Tooltip("拉动冲刺的时间"), ShowInInspector, OdinSerialize]
@@ -314,6 +403,9 @@ namespace PlayerControlByOris
 
         [BoxGroup("投掷与拉动相关"), Tooltip("减速的倍率"), ShowInInspector, OdinSerialize]
         public float EndSlowMult { get; set; }
+
+        [BoxGroup("投掷与拉动相关"), Tooltip("投掷起始位置的偏移"), ShowInInspector, OdinSerialize]
+        public Vector3 ThrowStartOffset { get; set; }
         #endregion
     }
 }

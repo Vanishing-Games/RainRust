@@ -33,6 +33,8 @@ namespace Core
         public static readonly LogTag Addressables = new("Addressables");
         public static readonly LogTag Test = new("Test");
         public static readonly LogTag Command = new("Command");
+        public static readonly LogTag Rendering = new("Rendering");
+        public static readonly LogTag Game = new("Game");
 
         // ========== Second Tags ==========
         public static readonly LogTag CodeUnfucker = new("CodeUnfucker", Editor.Path);
@@ -44,6 +46,7 @@ namespace Core
             "VgLoadProgressManager",
             Loading.Path
         );
+        public static readonly LogTag PlayerControl = new("PlayerControl", Game.Path);
 
         // ========== Third Tags ==========
         public static readonly LogTag CodeUnfucker_3_Sample = new("Save", CodeUnfucker.Path); // MAX depth = 3
