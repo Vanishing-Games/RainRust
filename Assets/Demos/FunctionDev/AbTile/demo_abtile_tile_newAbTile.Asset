@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 90c25fc8c4e26b346aae6bd97854a5a1, type: 3}
-  m_Name: New AbTile
+  m_Name: demo_abtile_tile_newAbTile
   m_EditorClassIdentifier: Core::Core.Scene.AbTile
   m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
