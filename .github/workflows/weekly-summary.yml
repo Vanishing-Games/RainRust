@@ -14,8 +14,7 @@ jobs:
         with:
           github-token: ${{ secrets.PROJECT_PAT }}
           script: |
-            const owner = context.repo.owner;
-            const repo = context.repo.name;
+            const { owner, repo } = context.repo;
             const lastWeek = new Date();
             lastWeek.setDate(lastWeek.getDate() - 7);
 
