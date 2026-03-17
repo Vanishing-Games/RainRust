@@ -9,137 +9,197 @@ jobs:
   stale-check:
     runs-on: ubuntu-latest
     steps:
-      - name: 精准检测逾期或无 DDL 任务
+      - name: 获取 Project 及 Issue 状态
+        id: get_data
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.PROJECT_PAT }}
+          script: |
+            const org = "Vanishing-Games";
+            const projectName = "创似我算了";
+            
+            // 1. 获取 Project 字段 ID
+            const projectRes = await github.graphql(`
+              query {
+                organization(login: "${org}") {
+                  projectsV2(first: 20) {
+                    nodes {
+                      id
+                      title
+                      fields(first: 20) {
+                        nodes {
+                          ... on ProjectV2FieldCommon { id name }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            `);
+            const project = projectRes.organization.projectsV2.nodes.find(p => p.title === projectName);
+            const ddlField = project.fields.nodes.find(f => f.name === "DDL");
+            
+            // 2. 获取带有 DDL 信息的 Project Items
+            const itemsRes = await github.graphql(`
+              query($projectId: ID!) {
+                node(id: $projectId) {
+                  ... on ProjectV2 {
+                    items(first: 100) {
+                      nodes {
+                        content {
+                          ... on Issue {
+                            number
+                            node_id
+                          }
+                        }
+                        fieldValues(first: 20) {
+                          nodes {
+                            ... on ProjectV2ItemFieldDateValue {
+                              date
+                              field { ... on ProjectV2FieldCommon { id } }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            `, { projectId: project.id });
+
+            const ddlMap = {};
+            itemsRes.node.items.nodes.forEach(item => {
+              if (item.content?.number) {
+                const ddlValue = item.fieldValues.nodes.find(f => f.field?.id === ddlField.id);
+                if (ddlValue?.date) ddlMap[item.content.number] = ddlValue.date;
+              }
+            });
+
+            return { ddlMap };
+
+      - name: 精准执行清理逻辑
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.PROJECT_PAT }}
           script: |
             const { owner, repo } = context.repo;
-
-            // 1. 获取仓库中所有打开的 Issue
+            const ddlMap = ${{ steps.get_data.outputs.result }}.ddlMap;
+            const now = new Date();
+            
             const issues = await github.paginate(github.rest.issues.listForRepo, {
-              owner,
-              repo,
-              state: 'open'
+              owner, repo, state: 'open'
             });
 
-            const now = new Date();
-            const summary = { checked: 0, stale: 0, closed: 0, recovered: 0, skipped_pr: 0, summary_checked: 0, summary_closed: 0 };
+            const stats = { checked: 0, stale_added: 0, closed: 0, recovered: 0, ignored: 0 };
+            const details = [];
 
             for (const issue of issues) {
-              const issueNumber = issue.number;
+              if (issue.pull_request) continue;
+              
               const labels = issue.labels.map(l => l.name);
-
-              // --- 1. 特殊 Issue 过滤 ---
-              if (issue.pull_request) {
-                summary.skipped_pr++;
+              if (labels.includes('Milk Tea') || labels.includes('summary')) {
+                stats.ignored++;
                 continue;
               }
+
+              stats.checked++;
+              const issueNumber = issue.number;
+              const ddlStr = ddlMap[issueNumber];
+              const hasStale = labels.includes('stale');
               
-              // --- 2. 总结 Issue 自我维护逻辑 ---
-              if (labels.includes('summary')) {
-                summary.summary_checked++;
-                // 查找正文中的所有 Issue 引用 (形如 #123)
-                const childIssueMatches = issue.body.match(/#(\d+)/g);
-                if (childIssueMatches) {
-                  const childNumbers = childIssueMatches.map(m => parseInt(m.substring(1)));
-                  let allClosed = true;
+              // --- 1. 计算沉默时间 (最近的人类活动) ---
+              const comments = await github.rest.issues.listComments({
+                owner, repo, issue_number: issueNumber, per_page: 50
+              });
+              const lastHumanComment = comments.data.reverse().find(c => !c.body.includes('[Action自动生成]'));
+              const lastActiveDate = lastHumanComment ? new Date(lastHumanComment.created_at) : new Date(issue.created_at);
+              const silentDays = Math.floor((now - lastActiveDate) / 86400000);
+
+              // --- 2. 计算 DDL 逾期时间 ---
+              let overdueDays = -1;
+              if (ddlStr) {
+                const ddlDate = new Date(ddlStr);
+                ddlDate.setHours(0,0,0,0);
+                overdueDays = Math.floor((now - ddlDate) / 86400000);
+              }
+
+              // --- 3. Stale 判定逻辑 ---
+              // 条件1: 有DDL, 逾期 >= 3天 且 沉默 >= 3天
+              // 条件2: 无DDL, 沉默 >= 3天
+              const shouldBeStale = ddlStr 
+                ? (overdueDays >= 3 && silentDays >= 3) 
+                : (silentDays >= 3);
+
+              let actionTaken = "保持现状";
+
+              if (hasStale) {
+                if (!shouldBeStale && silentDays < 3) {
+                  // 人类活跃了或DDL更新了，移除标记
+                  await github.rest.issues.removeLabel({ owner, repo, issue_number: issueNumber, name: 'stale' }).catch(() => {});
+                  stats.recovered++;
+                  actionTaken = "✅ 恢复活跃 (移除 Stale)";
+                } else {
+                  // 检查 stale 标签添加了多久 (需要满足 1 天)
+                  const events = await github.rest.issues.listEvents({ owner, repo, issue_number: issueNumber });
+                  const staleEvent = events.data.reverse().find(e => e.event === 'labeled' && e.label?.name === 'stale');
                   
-                  for (const num of childNumbers) {
-                    try {
-                      const child = await github.rest.issues.get({ owner, repo, issue_number: num });
-                      if (child.data.state === 'open') {
-                        allClosed = false;
-                        break;
-                      }
-                    } catch (e) {
-                      console.log(`无法获取子 Issue #${num}, 跳过检查。`);
+                  if (staleEvent) {
+                    const staleAddedTime = new Date(staleEvent.created_at);
+                    const staleDurationHours = Math.floor((now - staleAddedTime) / 3600000);
+                    
+                    if (staleDurationHours >= 24) {
+                      await github.rest.issues.createComment({
+                        owner, repo, issue_number: issueNumber,
+                        body: `🛑 **任务自动回收** \n 此任务已标记 \`stale\` 超过 24 小时且无干预，现执行关闭。`
+                      });
+                      await github.rest.issues.update({ owner, repo, issue_number: issueNumber, state: 'closed' });
+                      stats.closed++;
+                      actionTaken = "🗑️ 自动关闭 (已标记 >24h)";
+                    } else {
+                      actionTaken = `⏳ 等待中 (已标记 ${staleDurationHours}h)`;
                     }
                   }
-
-                  if (allClosed) {
-                    await github.rest.issues.createComment({
-                      owner, repo, issue_number: issueNumber,
-                      body: `🎉 **所有奶茶任务已结清！** \n 检测到本总结关联的所有请客任务均已完成，现自动关闭此总结。`
-                    });
-                    await github.rest.issues.update({ owner, repo, issue_number: issueNumber, state: 'closed' });
-                    summary.summary_closed++;
-                    continue; // 处理完总结 Issue 后跳过后续逻辑
-                  }
                 }
+              } else if (shouldBeStale) {
+                const reason = ddlStr ? `逾期 ${overdueDays} 天且沉默 ${silentDays} 天` : `缺失 DDL 且沉默 ${silentDays} 天`;
+                await github.rest.issues.addLabels({ owner, repo, issue_number: issueNumber, labels: ['stale'] });
+                await github.rest.issues.createComment({
+                  owner, repo, issue_number: issueNumber,
+                  body: `⚠️ **活跃度预警 [Action自动生成]** \n 检测到此任务 **${reason}**。现已标记为 \`stale\`。 \n **1 天内**若无人类活动或 DDL 更新，将自动关闭。`
+                });
+                stats.stale_added++;
+                actionTaken = "⚠️ 标记为 Stale";
               }
 
-              if (labels.includes('Milk Tea')) {
-                console.log(`Issue #${issueNumber}: 跳过 Milk Tea 任务。`);
-                continue;
-              }
-
-              summary.checked++;
-              const isOverdue = labels.includes('ddl: overdue');
-              const isMissingDdl = labels.includes('needs: ddl');
-              const hasStaleLabel = labels.includes('stale');
-
-              // 3. 检查最后的人类活动
-              const comments = await github.rest.issues.listComments({
-                owner, repo, issue_number: issueNumber, 
-                per_page: 20,
-                sort: 'created',
-                direction: 'desc'
+              details.push({
+                num: issueNumber,
+                title: issue.title,
+                silent: `${silentDays}d`,
+                overdue: ddlStr ? `${overdueDays}d` : "N/A",
+                status: actionTaken
               });
-
-              const humanComments = comments.data.filter(c => !c.body.includes('[Action自动生成]'));
-              const lastHumanActiveDate = humanComments.length > 0 
-                ? new Date(humanComments[0].created_at)
-                : new Date(issue.created_at);
-
-              const silentDays = Math.floor((now - lastHumanActiveDate) / 86400000);
-
-              console.log(`Issue #${issueNumber}: 沉默:${silentDays}天, Overdue:${isOverdue}, NoDDL:${isMissingDdl}`);
-
-              // 4. 状态机逻辑
-              if (hasStaleLabel && silentDays >= 4) {
-                // 标记后又给了 1 天缓冲期 (3+1)
-                await github.rest.issues.createComment({
-                  owner, repo, issue_number: issueNumber,
-                  body: `🛑 **任务回收通知** \n 此任务因长期未活跃（人类沉默超过 4 天），现执行自动关闭。`
-                });
-                await github.rest.issues.update({
-                  owner, repo, issue_number: issueNumber, state: 'closed'
-                });
-                summary.closed++;
-              } 
-              else if (!hasStaleLabel && silentDays >= 3) {
-                // 首次触发 stale
-                const reason = isOverdue ? "任务已逾期" : (isMissingDdl ? "任务缺失 DDL" : "任务长期无进展");
-                await github.rest.issues.addLabels({
-                  owner, repo, issue_number: issueNumber, labels: ['stale']
-                });
-                await github.rest.issues.createComment({
-                  owner, repo, issue_number: issueNumber,
-                  body: `⚠️ **活跃度预警 [Action自动生成]** \n 检测到此任务 (${reason}) 且人类回复已中断 3 天。现已标记为 \`stale\`。如果 1 天内无人类干预，将自动关闭。`
-                });
-                summary.stale++;
-              }
-              else if (hasStaleLabel && silentDays < 3) {
-                // 人类活跃了，自动移除标记
-                await github.rest.issues.removeLabel({
-                  owner, repo, issue_number: issueNumber, name: 'stale'
-                }).catch(() => {});
-                summary.recovered++;
-              }
             }
 
-            // 输出 Summary
-            await core.summary
-              .addHeading('🧹 任务维护与回收执行报告')
-              .addTable([
-                ['指标', '数值'],
-                ['检测正常 Issue', summary.checked.toString()],
-                ['忽略 (PR/奶茶)', summary.skipped_pr.toString()],
-                ['总结 Issue 自检', summary.summary_checked.toString()],
-                ['自动关闭总结', summary.summary_closed.toString()],
-                ['新增 Stale 标记', summary.stale.toString()],
-                ['执行自动关闭', summary.closed.toString()],
-                ['活跃恢复 (移除标记)', summary.recovered.toString()]
-              ])
-              .write();
+            // --- 4. 增强 Summary 输出 ---
+            const summary = core.summary.addHeading('🧹 任务维护与回收详细报告');
+            
+            summary.addTable([
+              ['项目', '数量'],
+              ['扫描 Issue 总数', stats.checked.toString()],
+              ['新增 Stale 标记', stats.stale_added.toString()],
+              ['执行自动关闭', stats.closed.toString()],
+              ['标记移除 (恢复)', stats.recovered.toString()],
+              ['跳过 (PR/奶茶/总结)', stats.ignored.toString()]
+            ]);
+
+            if (details.length > 0) {
+              summary.addHeading('📝 详细执行清单', 3);
+              summary.addTable([
+                ['Issue', '标题', '沉默时间', '逾期时间', '处理动作'],
+                ...details.map(d => [`#${d.num}`, d.title, d.silent, d.overdue, d.status])
+              ]);
+            } else {
+              summary.addRaw('✅ 本次运行未发现需要处理的任务。');
+            }
+
+            await summary.write();
