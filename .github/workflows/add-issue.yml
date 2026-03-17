@@ -159,10 +159,12 @@ jobs:
 
             core.summary
               .addHeading('✅ Issue 已关联到 Project')
-              .addList([
-                `仓库: ${repoName}`,
-                `Issue #${issueNumber} 已添加到 Project "${projectId}"`,
-                `优先级: ${priorityValue && priorityValue.singleSelectOption ? priorityValue.singleSelectOption.name : "已设置 P2"}`,
-                `DDL: ${ddlValue && ddlValue.date ? ddlValue.date : "已设置 3天后"}`
+              .addTable([
+                ['属性', '值'],
+                ['仓库', repoName],
+                ['Issue', `#${issueNumber}`],
+                ['Project ID', projectId],
+                ['设置优先级', priorityValue && priorityValue.singleSelectOption ? priorityValue.singleSelectOption.name : "自动分配 P2"],
+                ['设置 DDL', ddlValue && ddlValue.date ? ddlValue.date : "自动分配 3天后"]
               ])
               .write();
