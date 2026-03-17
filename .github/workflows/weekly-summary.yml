@@ -75,9 +75,20 @@ jobs:
 
             reportBody += `--- \n *此报表由 GitHub Action 自动生成。*`;
 
-            await github.rest.issues.create({
+            const newIssue = await github.rest.issues.create({
               owner, repo,
               title: `📅 每周工作总结及奶茶统计 (${new Date().toISOString().split('T')[0]})`,
               body: reportBody,
               labels: ['summary']
             });
+
+            // 输出 Summary
+            await core.summary
+              .addHeading('📊 每周统计任务执行报告')
+              .addRaw(`已成功生成上周统计报表：[Issue #${newIssue.data.number}](${newIssue.data.html_url})`)
+              .addTable([
+                ['负责人', '逾期次数'],
+                ...sortedStats.map(([name, count]) => [name, count.toString()])
+              ])
+              .addRaw(`\n**总逾期次数**: ${totalCups} 🥤`)
+              .write();

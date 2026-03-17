@@ -152,3 +152,15 @@ jobs:
                 summaryRows.push(`| [#${issueNumber}](${issueUrl}) | ${repo} | ${message.split('\n')[1].trim()} |`);
               }
             }
+
+            // 输出 Summary
+            const summary = core.summary.addHeading('⏰ DDL 提醒执行报告');
+            if (summaryRows.length > 0) {
+              summary.addTable([
+                ['Issue', '仓库', '提醒内容'],
+                ...summaryRows.map(row => row.split('|').filter(s => s.trim()).map(s => s.trim()))
+              ]);
+            } else {
+              summary.addRaw('✅ 今日无 DDL 紧急提醒。');
+            }
+            await summary.write();

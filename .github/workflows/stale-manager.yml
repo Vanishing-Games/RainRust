@@ -24,8 +24,10 @@ jobs:
             });
 
             const now = new Date();
+            const summary = { checked: 0, stale: 0, closed: 0, recovered: 0 };
 
             for (const issue of issues) {
+              summary.checked++;
               const issueNumber = issue.number;
               if (issue.pull_request) continue;
 
@@ -44,6 +46,7 @@ jobs:
                     owner, repo, issue_number: issueNumber, name: 'stale'
                   }).catch(() => {});
                   console.log(`Issue #${issueNumber} 状态已恢复正常，自动移除 stale 标签。`);
+                  summary.recovered++;
                 }
                 continue; 
               }
@@ -72,6 +75,7 @@ jobs:
                 await github.rest.issues.update({
                   owner, repo, issue_number: issueNumber, state: 'closed'
                 });
+                summary.closed++;
               } 
               else if (!hasStaleLabel && silentDays >= 3) {
                 // 首次触发 stale
@@ -83,11 +87,25 @@ jobs:
                   owner, repo, issue_number: issueNumber,
                   body: `⚠️ **活跃度预警 [Action自动生成]** \n 检测到此任务 (${reason}) 且人类回复已中断 3 天。现已标记为 \`stale\`。如果 1 天内无人类干预，将自动关闭。`
                 });
+                summary.stale++;
               }
               else if (hasStaleLabel && silentDays < 3) {
                 // 人类活跃了，自动移除标记
                 await github.rest.issues.removeLabel({
                   owner, repo, issue_number: issueNumber, name: 'stale'
                 }).catch(() => {});
+                summary.recovered++;
               }
             }
+
+            // 输出 Summary
+            await core.summary
+              .addHeading('🧹 任务清理与回收执行报告')
+              .addTable([
+                ['指标', '数值'],
+                ['检测 Issue 总数', summary.checked.toString()],
+                ['标记为 Stale', summary.stale.toString()],
+                ['自动关闭 (回收)', summary.closed.toString()],
+                ['活跃恢复 (自动移除标记)', summary.recovered.toString()]
+              ])
+              .write();
