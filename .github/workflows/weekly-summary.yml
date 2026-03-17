@@ -75,20 +75,46 @@ jobs:
 
             reportBody += `--- \n *此报表由 GitHub Action 自动生成。*`;
 
-            const newIssue = await github.rest.issues.create({
+            const summaryIssue = await github.rest.issues.create({
               owner, repo,
               title: `📅 每周工作总结及奶茶统计 (${new Date().toISOString().split('T')[0]})`,
               body: reportBody,
               labels: ['summary']
             });
 
+            const summaryNumber = summaryIssue.data.number;
+            const milkTeaIssues = [];
+
+            // 为每个欠账的人创建子 Issue
+            for (const [name, count] of sortedStats) {
+              if (name === '未分配人员') continue;
+              
+              const milkTeaIssue = await github.rest.issues.create({
+                owner, repo,
+                title: `[Milk Tea] 请喝奶茶任务 - @${name}`,
+                body: `🥤 **奶茶请客任务** \n\n 负责人: @${name} \n 欠账杯数: ${count} 🥤 \n 来源总结: #${summaryNumber} \n\n 请在请客完成后手动关闭此 Issue。`,
+                labels: ['Milk Tea'],
+                assignees: [name]
+              });
+              milkTeaIssues.push(`- [ ] @${name} 的奶茶任务: #${milkTeaIssue.data.number}`);
+            }
+
+            // 如果有子任务，更新周总结的正文，加上 Checkbox 清单
+            if (milkTeaIssues.length > 0) {
+              const newBody = reportBody + `\n\n### 🛠️ 任务跟踪 (自动维护) \n` + milkTeaIssues.join('\n');
+              await github.rest.issues.update({
+                owner, repo, issue_number: summaryNumber,
+                body: newBody
+              });
+            }
+
             // 输出 Summary
             await core.summary
               .addHeading('📊 每周统计任务执行报告')
-              .addRaw(`已成功生成上周统计报表：[Issue #${newIssue.data.number}](${newIssue.data.html_url})`)
+              .addRaw(`已成功生成上周统计报表：[Issue #${summaryNumber}](${summaryIssue.data.html_url})`)
               .addTable([
                 ['负责人', '逾期次数'],
                 ...sortedStats.map(([name, count]) => [name, count.toString()])
               ])
-              .addRaw(`\n**总逾期次数**: ${totalCups} 🥤`)
+              .addRaw(`\n**子任务创建数量**: ${milkTeaIssues.length}`)
               .write();

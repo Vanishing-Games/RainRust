@@ -24,22 +24,62 @@ jobs:
             });
 
             const now = new Date();
-            const summary = { checked: 0, stale: 0, closed: 0, recovered: 0, skipped_pr: 0 };
+            const summary = { checked: 0, stale: 0, closed: 0, recovered: 0, skipped_pr: 0, summary_checked: 0, summary_closed: 0 };
 
             for (const issue of issues) {
               const issueNumber = issue.number;
+              const labels = issue.labels.map(l => l.name);
+
+              // --- 1. 特殊 Issue 过滤 ---
               if (issue.pull_request) {
                 summary.skipped_pr++;
                 continue;
               }
               
+              if (labels.includes('Milk Tea')) {
+                console.log(`Issue #${issueNumber}: 跳过 Milk Tea 任务。`);
+                continue;
+              }
+
+              // --- 2. 总结 Issue 自我维护逻辑 ---
+              if (labels.includes('summary')) {
+                summary.summary_checked++;
+                // 查找正文中的所有 Issue 引用 (形如 #123)
+                const childIssueMatches = issue.body.match(/#(\d+)/g);
+                if (childIssueMatches) {
+                  const childNumbers = childIssueMatches.map(m => parseInt(m.substring(1)));
+                  let allClosed = true;
+                  
+                  for (const num of childNumbers) {
+                    try {
+                      const child = await github.rest.issues.get({ owner, repo, issue_number: num });
+                      if (child.data.state === 'open') {
+                        allClosed = false;
+                        break;
+                      }
+                    } catch (e) {
+                      console.log(`无法获取子 Issue #${num}, 跳过检查。`);
+                    }
+                  }
+
+                  if (allClosed) {
+                    await github.rest.issues.createComment({
+                      owner, repo, issue_number: issueNumber,
+                      body: `🎉 **所有奶茶任务已结清！** \n 检测到本总结关联的所有请客任务均已完成，现自动关闭此总结。`
+                    });
+                    await github.rest.issues.update({ owner, repo, issue_number: issueNumber, state: 'closed' });
+                    summary.summary_closed++;
+                    continue; // 处理完总结 Issue 后跳过后续逻辑
+                  }
+                }
+              }
+
               summary.checked++;
+              const isOverdue = labels.includes('ddl: overdue');
+              const isMissingDdl = labels.includes('needs: ddl');
+              const hasStaleLabel = labels.includes('stale');
 
-              const isOverdue = issue.labels.some(l => l.name === 'ddl: overdue');
-              const isMissingDdl = issue.labels.some(l => l.name === 'needs: ddl');
-              const hasStaleLabel = issue.labels.some(l => l.name === 'stale');
-
-              // 2. 检查最后的人类活动 (直接取最新的评论)
+              // 3. 检查最后的人类活动
               const comments = await github.rest.issues.listComments({
                 owner, repo, issue_number: issueNumber, 
                 per_page: 20,
@@ -56,7 +96,7 @@ jobs:
 
               console.log(`Issue #${issueNumber}: 沉默:${silentDays}天, Overdue:${isOverdue}, NoDDL:${isMissingDdl}`);
 
-              // 3. 状态机逻辑
+              // 4. 状态机逻辑
               if (hasStaleLabel && silentDays >= 4) {
                 // 标记后又给了 1 天缓冲期 (3+1)
                 await github.rest.issues.createComment({
@@ -91,11 +131,13 @@ jobs:
 
             // 输出 Summary
             await core.summary
-              .addHeading('🧹 任务清理与回收执行报告')
+              .addHeading('🧹 任务维护与回收执行报告')
               .addTable([
                 ['指标', '数值'],
-                ['检测 Issue 总数', summary.checked.toString()],
-                ['忽略 Pull Requests', summary.skipped_pr.toString()],
+                ['检测正常 Issue', summary.checked.toString()],
+                ['忽略 (PR/奶茶)', summary.skipped_pr.toString()],
+                ['总结 Issue 自检', summary.summary_checked.toString()],
+                ['自动关闭总结', summary.summary_closed.toString()],
                 ['新增 Stale 标记', summary.stale.toString()],
                 ['执行自动关闭', summary.closed.toString()],
                 ['活跃恢复 (移除标记)', summary.recovered.toString()]
