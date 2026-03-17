@@ -14,7 +14,9 @@ jobs:
   add-to-project:
     runs-on: ubuntu-latest
     steps:
-      # ... (第一步 get_project 保持不变) ...
+      # -------------------------------
+      # 1️⃣ 获取 Project 相关 ID
+      # -------------------------------
       - name: 获取 Project 相关 ID
         id: get_project
         uses: actions/github-script@v7
@@ -189,84 +191,6 @@ jobs:
               .addTable([
                 ['属性', '值'],
                 ['仓库', repo],
-                ['Issue', `#${issueNumber}`],
-                ['Project ID', projectId],
-                ['设置优先级', priorityValue && priorityValue.singleSelectOption ? priorityValue.singleSelectOption.name : "自动分配 P2"],
-                ['设置 DDL', ddlValue && ddlValue.date ? ddlValue.date : "自动分配 3天后"]
-              ])
-              .write();
-
-              mutation($projectId: ID!, $contentId: ID!) {
-                addProjectV2ItemById(input: { projectId: $projectId, contentId: $contentId }) {
-                  item { id }
-                }
-              }
-            `, { projectId, contentId: issueNodeId });
-
-            const itemId = addItem.addProjectV2ItemById.item.id;
-
-            // 查询当前 Item 的字段值
-            const itemQuery = await github.graphql(`
-              query($itemId: ID!, $priorityFieldId: ID!, $ddlFieldId: ID!) {
-                node(id: $itemId) {
-                  ... on ProjectV2Item {
-                    fieldValues(first: 10) {
-                      nodes {
-                        field { id name __typename }
-                        ... on ProjectV2ItemFieldSingleSelectValue {
-                          singleSelectOption { id name }
-                        }
-                        ... on ProjectV2ItemFieldDateValue {
-                          date
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            `, { itemId, priorityFieldId, ddlFieldId });
-
-            const fieldValues = itemQuery.node.fieldValues.nodes;
-
-            // 检查 Priority 是否已设置
-            const priorityValue = fieldValues.find(f => f.field.id === priorityFieldId);
-            if (!priorityValue || !priorityValue.singleSelectOption) {
-              await github.graphql(`
-                mutation {
-                  updateProjectV2ItemFieldValue(input: {
-                    projectId: "${projectId}"
-                    itemId: "${itemId}"
-                    fieldId: "${priorityFieldId}"
-                    value: { singleSelectOptionId: "${p2OptionId}" }
-                  }) { projectV2Item { id } }
-                }
-              `);
-            }
-
-            // 检查 DDL 是否已设置
-            const ddlValue = fieldValues.find(f => f.field.id === ddlFieldId);
-            if (!ddlValue || !ddlValue.date) {
-              const threeDaysLater = new Date();
-              threeDaysLater.setDate(threeDaysLater.getDate() + 3);
-              const ddlDateStr = threeDaysLater.toISOString().split("T")[0];
-
-              await github.graphql(`
-                mutation {
-                  updateProjectV2ItemFieldValue(input: {
-                    projectId: "${projectId}"
-                    itemId: "${itemId}"
-                    fieldId: "${ddlFieldId}"
-                    value: { date: "${ddlDateStr}" }
-                  }) { projectV2Item { id } }
-                }
-              `);
-            }
-
-            core.summary
-              .addHeading('✅ Issue 已关联到 Project')
-              .addTable([
-                ['属性', '值'],
-                ['仓库', repoName],
                 ['Issue', `#${issueNumber}`],
                 ['Project ID', projectId],
                 ['设置优先级', priorityValue && priorityValue.singleSelectOption ? priorityValue.singleSelectOption.name : "自动分配 P2"],
