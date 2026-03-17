@@ -85,19 +85,22 @@ jobs:
             const summaryNumber = summaryIssue.data.number;
             const milkTeaIssues = [];
 
-            // 为每个欠账的人创建子 Issue
+            // 为每个欠账的人创建子 Issue (欠几杯建几个)
             for (const [name, count] of sortedStats) {
               if (name === '未分配人员') continue;
-              
-              const milkTeaIssue = await github.rest.issues.create({
-                owner, repo,
-                title: `[Milk Tea] 请喝奶茶任务 - @${name}`,
-                body: `🥤 **奶茶请客任务** \n\n 负责人: @${name} \n 欠账杯数: ${count} 🥤 \n 来源总结: #${summaryNumber} \n\n 请在请客完成后手动关闭此 Issue。`,
-                labels: ['Milk Tea'],
-                assignees: [name]
-              });
-              milkTeaIssues.push(`- [ ] @${name} 的奶茶任务: #${milkTeaIssue.data.number}`);
+
+              for (let i = 1; i <= count; i++) {
+                const milkTeaIssue = await github.rest.issues.create({
+                  owner, repo,
+                  title: `[Milk Tea] 请喝奶茶任务 (${i}/${count}) - @${name}`,
+                  body: `🥤 **奶茶请客任务** \n\n 负责人: @${name} \n 欠账序号: ${i} / ${count} \n 来源总结: #${summaryNumber} \n\n 请在请客完成后手动关闭此 Issue。`,
+                  labels: ['Milk Tea'],
+                  assignees: [name]
+                });
+                milkTeaIssues.push(`- [ ] @${name} 的奶茶任务 (${i}/${count}): #${milkTeaIssue.data.number}`);
+              }
             }
+
 
             // 如果有子任务，更新周总结的正文，加上 Checkbox 清单
             if (milkTeaIssues.length > 0) {
