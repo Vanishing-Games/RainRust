@@ -1,4 +1,4 @@
-name: "任务清理与回收 (全生命周期兜底)"
+name: "任务清理与回收"
 
 on:
   schedule:
@@ -14,8 +14,7 @@ jobs:
         with:
           github-token: ${{ secrets.PROJECT_PAT }}
           script: |
-            const owner = context.repo.owner;
-            const repo = context.repo.name;
+            const { owner, repo } = context.repo;
 
             // 1. 获取仓库中所有打开的 Issue
             const issues = await github.paginate(github.rest.issues.listForRepo, {
@@ -64,17 +63,17 @@ jobs:
               console.log(`Issue #${issueNumber}: [状态异常] 沉默:${silentDays}天`);
 
               // 3. 状态机逻辑
-              if (hasStaleLabel && silentDays >= 10) {
-                // 标记后又给了 3 天缓冲期
+              if (hasStaleLabel && silentDays >= 4) {
+                // 标记后又给了 1 天缓冲期 (3+1)
                 await github.rest.issues.createComment({
                   owner, repo, issue_number: issueNumber,
-                  body: `🛑 **任务回收通知** \n 此任务因状态异常（逾期或缺失 DDL）且人类沉默超过 10 天，现执行自动关闭。`
+                  body: `🛑 **任务回收通知** \n 此任务因状态异常（逾期或缺失 DDL）且人类沉默超过 4 天，现执行自动关闭。`
                 });
                 await github.rest.issues.update({
                   owner, repo, issue_number: issueNumber, state: 'closed'
                 });
               } 
-              else if (!hasStaleLabel && silentDays >= 7) {
+              else if (!hasStaleLabel && silentDays >= 3) {
                 // 首次触发 stale
                 const reason = isOverdue ? "任务已逾期" : "任务缺失 DDL";
                 await github.rest.issues.addLabels({
@@ -82,10 +81,10 @@ jobs:
                 });
                 await github.rest.issues.createComment({
                   owner, repo, issue_number: issueNumber,
-                  body: `⚠️ **活跃度预警 [Action自动生成]** \n 检测到此任务 (${reason}) 且人类回复已中断 7 天。现已标记为 \`stale\`。如果 3 天内无人类干预，将自动关闭。`
+                  body: `⚠️ **活跃度预警 [Action自动生成]** \n 检测到此任务 (${reason}) 且人类回复已中断 3 天。现已标记为 \`stale\`。如果 1 天内无人类干预，将自动关闭。`
                 });
               }
-              else if (hasStaleLabel && silentDays < 7) {
+              else if (hasStaleLabel && silentDays < 3) {
                 // 人类活跃了，自动移除标记
                 await github.rest.issues.removeLabel({
                   owner, repo, issue_number: issueNumber, name: 'stale'
