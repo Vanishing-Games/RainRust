@@ -69,7 +69,7 @@ jobs:
                           ... on Issue {
                             number
                             state
-                            node_id
+                            id
                             labels(first: 20) { nodes { name } }
                             repository { owner { login } name }
                             assignees(first: 10) { nodes { login } }
