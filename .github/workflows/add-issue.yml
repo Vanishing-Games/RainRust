@@ -93,13 +93,17 @@ jobs:
             const details = [];
 
             for (const issue of targetIssues) {
-              if (issue.pull_request) {
+              const issueNumber = issue.number;
+              const issueNodeId = issue.node_id;
+              const labels = issue.labels.map(l => l.name);
+
+              // --- 步骤 0: 过滤 ---
+              if (issue.pull_request || labels.includes('Milk Tea') || labels.includes('summary')) {
                 stats.skipped++;
+                console.log(`Issue #${issueNumber}: 跳过 (PR 或 奶茶/总结任务)`);
                 continue;
               }
 
-              const issueNumber = issue.number;
-              const issueNodeId = issue.node_id;
               let currentAction = { num: issueNumber, title: issue.title, steps: [] };
 
               try {
@@ -133,7 +137,8 @@ jobs:
                             __typename
                             ... on ProjectV2ItemFieldSingleSelectValue {
                               field { ... on ProjectV2FieldCommon { id name } }
-                              option { id name }
+                              name
+                              optionId
                             }
                             ... on ProjectV2ItemFieldDateValue {
                               field { ... on ProjectV2FieldCommon { id name } }
@@ -150,7 +155,7 @@ jobs:
 
                 // 检查 Priority
                 const priorityValue = fieldValues.find(f => f.field?.id === priorityFieldId);
-                if (!priorityValue || !priorityValue.option) {
+                if (!priorityValue || !priorityValue.name) {
                   await github.graphql(`
                     mutation {
                       updateProjectV2ItemFieldValue(input: {
@@ -191,7 +196,7 @@ jobs:
             // 3. 输出强化 Summary
             await core.summary
               .addHeading(context.eventName === 'workflow_dispatch' ? '🚀 批量 Issue 初始化报告' : '✅ 新 Issue 初始化报告')
-              .addRaw(`本次任务处理了 **${stats.total}** 个项目（忽略了 ${stats.skipped} 个 PR）。`)
+              .addRaw(`本次任务处理了 **${stats.total}** 个项目（忽略了 ${stats.skipped} 个 PR/奶茶/总结任务）。`)
               .addTable([
                 ['指标名称', '处理数量'],
                 ['👤 自动分配负责人', stats.assigned.toString()],
