@@ -3,14 +3,12 @@ name: DDL 来了😰 DDL 来啦😰
 on:
   schedule:
     - cron: '0 9 * * *' # 每天 09:00 UTC
+  workflow_dispatch:
 
 jobs:
   reminder:
     runs-on: ubuntu-latest
     steps:
-      # -------------------------------
-      # 1️⃣ 获取 Project 相关 ID
-      # -------------------------------
       - name: 获取 Project 相关 ID
         id: get_project
         uses: actions/github-script@v7
@@ -19,7 +17,6 @@ jobs:
           script: |
             const org = "Vanishing-Games";
             const projectName = "创似我算了";
-
             const result = await github.graphql(`
               query {
                 organization(login: "${org}") {
@@ -39,45 +36,17 @@ jobs:
                 }
               }
             `);
-
             const project = result.organization.projectsV2.nodes.find(p => p.title === projectName);
             if (!project) throw new Error("未找到目标 Project: " + projectName);
-
             const fields = project.fields.nodes.map(f => ({
               id: f.id,
               name: f.name,
               options: f.__typename === "ProjectV2SingleSelectField" ? f.options : []
             }));
-
-            const priorityField = fields.find(f => f.name === "优先级");
             const ddlField = fields.find(f => f.name === "DDL");
-            const p2Option = priorityField.options.find(o => o.name === "P2");
-
-            if (!priorityField) throw new Error("未找到优先级字段");
-            if (!ddlField) throw new Error("未找到DDL字段");
-            if (!p2Option) throw new Error("未找到 P2 选项");
-
-            // 设置 step outputs
             core.setOutput("project_id", project.id);
-            core.setOutput("priority_field_id", priorityField.id);
-            core.setOutput("p2_option_id", p2Option.id);
             core.setOutput("ddl_field_id", ddlField.id);
 
-            // 输出到 GitHub Summary
-            core.summary
-              .addHeading('📌 获取到的 Project 相关信息')
-              .addList([
-                `Project 名称: ${project.title}`,
-                `Project ID: ${project.id}`,
-                `优先级字段 ID: ${priorityField.id}`,
-                `P2 选项 ID: ${p2Option.id}`,
-                `DDL 字段 ID: ${ddlField.id}`
-              ])
-              .write();
-
-      # -------------------------------
-      # 2️⃣ 检查 DDL 并发送提醒
-      # -------------------------------
       - name: 检查 DDL 并发送提醒
         uses: actions/github-script@v7
         with:
@@ -89,7 +58,6 @@ jobs:
             const today = new Date();
             today.setHours(0,0,0,0);
 
-            // 查询 ProjectV2 Items
             const result = await github.graphql(`
               query {
                 node(id: "${projectId}") {
@@ -101,6 +69,8 @@ jobs:
                           ... on Issue {
                             number
                             state
+                            node_id
+                            labels(first: 20) { nodes { name } }
                             repository { owner { login } name }
                             assignees(first: 10) { nodes { login } }
                           }
@@ -123,58 +93,62 @@ jobs:
             const summaryRows = [];
 
             for (const item of result.node.items.nodes) {
-              if (!item.content) continue;
-              if (item.content.state === "CLOSED") continue; // ✅ 已关闭的 Issue 跳过
+              if (!item.content || item.content.state === "CLOSED") continue;
 
-              // 找到 DDL 字段值
+              const owner = item.content.repository.owner.login;
+              const repo = item.content.repository.name;
+              const issueNumber = item.content.number;
+              const assignees = item.content.assignees.nodes.map(a => `@${a.login}`).join(' ') || '未分配人员';
+              const titlePrefix = `Issue #${issueNumber} DDL 提醒[Action自动生成]`;
+              const currentLabels = item.content.labels.nodes.map(l => l.name);
               const ddlField = item.fieldValues.nodes.find(f => f.field?.id === ddlFieldId);
-              if (!ddlField?.date) continue;
+              const issueUrl = `https://github.com/${owner}/${repo}/issues/${issueNumber}`;
+              
+              // --- 1. 标签自愈与缺失检查 ---
+              if (ddlField?.date) {
+                if (currentLabels.includes('needs: ddl')) {
+                  await github.rest.issues.removeLabel({ owner, repo, issue_number: issueNumber, name: 'needs: ddl' }).catch(() => {});
+                }
+              } else {
+                if (!currentLabels.includes('needs: ddl')) {
+                  await github.rest.issues.addLabels({ owner, repo, issue_number: issueNumber, labels: ['needs: ddl'] });
+                  await github.rest.issues.createComment({ owner, repo, issue_number: issueNumber, 
+                    body: `${titlePrefix} \n ${assignees} ⚠️ 尚未设置 DDL，请补全以纳入监控。` 
+                  });
+                }
+                continue;
+              }
 
+              // --- 2. 核心 DDL 检查 ---
               const ddl = new Date(ddlField.date);
               ddl.setHours(0,0,0,0);
               const diffDays = Math.floor((ddl - today) / 86400000);
-
-              const assignees = item.content.assignees.nodes.map(a => `@${a.login}`).join(' ') || '未分配人员';
               let message = null;
+              let isOverdue = diffDays < 0;
 
-              title = `Issue #${item.content.number} DDL 提醒[Action自动生成] \n`;
-
-              if (diffDays < 0) {
-                message = `${title} ${assignees} 🚨💥 **DDL到此为止了**！💀🛑\n@${coreTeam} 🍵🧋有**奶茶**喝了🥤🎉`;
-              } else if (diffDays === 0) {
-                message = `${title} ${assignees} ⏰⚡️ **沟槽**的**DDL**要**结束**了‼️🔥💨`;
-              } else if ([7,3,1].includes(diffDays)) {
-                message = `${title} ${assignees} ⏳📝 DDL **${diffDays}** 天 📅⚠️💪`;
+              // 自愈：已延期任务移除逾期标签
+              if (!isOverdue && currentLabels.includes('ddl: overdue')) {
+                await github.rest.issues.removeLabel({ owner, repo, issue_number: issueNumber, name: 'ddl: overdue' }).catch(() => {});
               }
 
-              if (!message) continue;
+              if (isOverdue) {
+                const comments = await github.rest.issues.listComments({ owner, repo, issue_number: issueNumber, per_page: 50 });
+                const alreadyNotified = comments.data.some(c => c.body.includes('奶茶喝了'));
 
-              await github.rest.issues.createComment({
-                owner: item.content.repository.owner.login,
-                repo: item.content.repository.name,
-                issue_number: item.content.number,
-                body: message
-              });
+                if (!alreadyNotified) {
+                  message = `${titlePrefix} \n ${assignees} 🚨💥 **DDL到此为止了**！💀🛑\n@${coreTeam} 🍵🧋有**奶茶**喝了🥤🎉`;
+                }
+                if (!currentLabels.includes('ddl: overdue')) {
+                  await github.rest.issues.addLabels({ owner, repo, issue_number: issueNumber, labels: ['ddl: overdue'] });
+                }
+              } else if (diffDays === 0) {
+                message = `${titlePrefix} \n ${assignees} ⏰⚡️ **沟槽**的**DDL**要**结束**了‼️🔥💨`;
+              } else if ([7,3,1].includes(diffDays)) {
+                message = `${titlePrefix} \n ${assignees} ⏳📝 DDL **${diffDays}** 天 📅⚠️💪`;
+              }
 
-              const issueUrl = `https://github.com/${item.content.repository.owner.login}/${item.content.repository.name}/issues/${item.content.number}`;
-              summaryRows.push(`| [#${item.content.number}](${issueUrl}) | ${item.content.repository.name} | ${message} |`);
-            }
-
-            // 输出到 GitHub Summary
-            if (summaryRows.length === 0) {
-              core.summary.addRaw('✅ 今日没有需要提醒的任务').write();
-            } else {
-              // 将每行内容中的换行符替换为 <br>
-              const safeRows = summaryRows.map(row => row.replace(/\n/g, '<br>'));
-                    
-              const tableContent = `
-            | Issue | 仓库 | 提醒内容 |
-            | --- | --- | --- |
-            ${safeRows.join('\n')}
-            `;
-                    
-              core.summary
-                .addHeading('📣 DDL 提醒发送情况')
-                .addRaw(tableContent)
-                .write();
+              if (message) {
+                await github.rest.issues.createComment({ owner, repo, issue_number: issueNumber, body: message });
+                summaryRows.push(`| [#${issueNumber}](${issueUrl}) | ${repo} | ${message.split('\n')[1].trim()} |`);
+              }
             }
