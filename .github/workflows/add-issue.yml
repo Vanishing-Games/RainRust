@@ -4,20 +4,16 @@ on:
   issues:
     types: [opened]
   workflow_dispatch:
-    inputs:
-      issue_number:
-        description: '手动指定要处理的 Issue 编号'
-        required: true
-        type: string
+    # 手动触发不再需要输入，自动处理所有 open 的 issue
 
 jobs:
   add-to-project:
     runs-on: ubuntu-latest
     steps:
       # -------------------------------
-      # 1️⃣ 获取 Project 相关 ID
+      # 1️⃣ 获取 Project 相关配置信息
       # -------------------------------
-      - name: 获取 Project 相关 ID
+      - name: 获取 Project 配置
         id: get_project
         uses: actions/github-script@v7
         with:
@@ -57,32 +53,21 @@ jobs:
 
             const priorityField = fields.find(f => f.name === "优先级");
             const ddlField = fields.find(f => f.name === "DDL");
-            const p2Option = priorityField.options.find(o => o.name === "P2");
+            const p2Option = priorityField?.options.find(o => o.name === "P2");
 
-            if (!priorityField) throw new Error("未找到优先级字段");
-            if (!ddlField) throw new Error("未找到DDL字段");
-            if (!p2Option) throw new Error("未找到 P2 选项");
+            if (!priorityField || !ddlField || !p2Option) {
+              throw new Error("Project 字段配置不完整，请检查‘优先级’、‘DDL’字段及‘P2’选项是否存在。");
+            }
 
             core.setOutput("project_id", project.id);
             core.setOutput("priority_field_id", priorityField.id);
             core.setOutput("p2_option_id", p2Option.id);
             core.setOutput("ddl_field_id", ddlField.id);
 
-            core.summary
-              .addHeading('📌 获取到的 Project 相关信息')
-              .addList([
-                `Project 名称: ${project.title}`,
-                `Project ID: ${project.id}`,
-                `优先级字段 ID: ${priorityField.id}`,
-                `P2 选项 ID: ${p2Option.id}`,
-                `DDL 字段 ID: ${ddlField.id}`
-              ])
-              .write();
-
       # -------------------------------
-      # 2️⃣ 关联 Issue 到 Project 并设置 Priority / DDL（仅在无值时设置）
+      # 2️⃣ 批量处理逻辑
       # -------------------------------
-      - name: 关联 Issue 到 Project
+      - name: 批量处理 Issue
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.PROJECT_PAT }}
@@ -93,109 +78,130 @@ jobs:
             const p2OptionId = "${{ steps.get_project.outputs.p2_option_id }}";
             const ddlFieldId = "${{ steps.get_project.outputs.ddl_field_id }}";
 
-            // 自动判断数据来源
-            let issue;
+            // 1. 确定目标 Issue 列表
+            let targetIssues = [];
             if (context.eventName === 'workflow_dispatch') {
-              const res = await github.rest.issues.get({
-                owner, repo, issue_number: parseInt(context.payload.inputs.issue_number)
+              console.log("手动触发：拉取所有打开的 Issue...");
+              targetIssues = await github.paginate(github.rest.issues.listForRepo, {
+                owner, repo, state: 'open'
               });
-              issue = res.data;
             } else {
-              issue = context.payload.issue;
+              targetIssues = [context.payload.issue];
             }
 
-            const issueNodeId = issue.node_id;
-            const issueNumber = issue.number;
-            const opener = issue.user.login;
+            const stats = { total: targetIssues.length, assigned: 0, linked: 0, priority_set: 0, ddl_set: 0, skipped: 0 };
+            const details = [];
 
-            // --- 0. 自动分配负责人 (如果为空) ---
-            let assignedTo = issue.assignees.map(a => a.login);
-            if (assignedTo.length === 0) {
-              await github.rest.issues.addAssignees({
-                owner, repo, issue_number: issueNumber, assignees: [opener]
-              });
-              assignedTo = [opener];
-              console.log(`Issue #${issueNumber} 无负责人，已自动分配给创建者 @${opener}`);
-            }
-
-            // 添加 Issue 到 ProjectV2
-            const addItem = await github.graphql(`
-              mutation($projectId: ID!, $contentId: ID!) {
-                addProjectV2ItemById(input: { projectId: $projectId, contentId: $contentId }) {
-                  item { id }
-                }
+            for (const issue of targetIssues) {
+              if (issue.pull_request) {
+                stats.skipped++;
+                continue;
               }
-            `, { projectId, contentId: issueNodeId });
 
-            const itemId = addItem.addProjectV2ItemById.item.id;
+              const issueNumber = issue.number;
+              const issueNodeId = issue.node_id;
+              let currentAction = { num: issueNumber, title: issue.title, steps: [] };
 
-            // 查询当前 Item 的字段值
-            const itemQuery = await github.graphql(`
-              query($itemId: ID!) {
-                node(id: $itemId) {
-                  ... on ProjectV2Item {
-                    fieldValues(first: 20) {
-                      nodes {
-                        __typename
-                        ... on ProjectV2ItemFieldSingleSelectValue {
-                          field { ... on ProjectV2FieldCommon { id name } }
-                          option { id name }
-                        }
-                        ... on ProjectV2ItemFieldDateValue {
-                          field { ... on ProjectV2FieldCommon { id name } }
-                          date
+              try {
+                // --- 步骤 A: 自动分配负责人 ---
+                if (issue.assignees.length === 0) {
+                  const opener = issue.user.login;
+                  await github.rest.issues.addAssignees({ owner, repo, issue_number: issueNumber, assignees: [opener] });
+                  stats.assigned++;
+                  currentAction.steps.push("👤 已分配创建者");
+                }
+
+                // --- 步骤 B: 关联到 Project ---
+                const addItem = await github.graphql(`
+                  mutation($projectId: ID!, $contentId: ID!) {
+                    addProjectV2ItemById(input: { projectId: $projectId, contentId: $contentId }) {
+                      item { id }
+                    }
+                  }
+                `, { projectId, contentId: issueNodeId });
+                const itemId = addItem.addProjectV2ItemById.item.id;
+                stats.linked++;
+                currentAction.steps.push("🔗 已关联 Project");
+
+                // --- 步骤 C: 检查并设置字段 ---
+                const itemQuery = await github.graphql(`
+                  query($itemId: ID!) {
+                    node(id: $itemId) {
+                      ... on ProjectV2Item {
+                        fieldValues(first: 20) {
+                          nodes {
+                            __typename
+                            ... on ProjectV2ItemFieldSingleSelectValue {
+                              field { ... on ProjectV2FieldCommon { id name } }
+                              option { id name }
+                            }
+                            ... on ProjectV2ItemFieldDateValue {
+                              field { ... on ProjectV2FieldCommon { id name } }
+                              date
+                            }
+                          }
                         }
                       }
                     }
                   }
+                `, { itemId });
+
+                const fieldValues = itemQuery.node.fieldValues.nodes;
+
+                // 检查 Priority
+                const priorityValue = fieldValues.find(f => f.field?.id === priorityFieldId);
+                if (!priorityValue || !priorityValue.option) {
+                  await github.graphql(`
+                    mutation {
+                      updateProjectV2ItemFieldValue(input: {
+                        projectId: "${projectId}", itemId: "${itemId}", fieldId: "${priorityFieldId}",
+                        value: { singleSelectOptionId: "${p2OptionId}" }
+                      }) { projectV2Item { id } }
+                    }
+                  `);
+                  stats.priority_set++;
+                  currentAction.steps.push("🚩 已设 P2");
                 }
+
+                // 检查 DDL
+                const ddlValue = fieldValues.find(f => f.field?.id === ddlFieldId);
+                if (!ddlValue || !ddlValue.date) {
+                  const threeDaysLater = new Date();
+                  threeDaysLater.setDate(threeDaysLater.getDate() + 3);
+                  const ddlDateStr = threeDaysLater.toISOString().split("T")[0];
+                  await github.graphql(`
+                    mutation {
+                      updateProjectV2ItemFieldValue(input: {
+                        projectId: "${projectId}", itemId: "${itemId}", fieldId: "${ddlFieldId}",
+                        value: { date: "${ddlDateStr}" }
+                      }) { projectV2Item { id } }
+                    }
+                  `);
+                  stats.ddl_set++;
+                  currentAction.steps.push("📅 已设 3天DDL");
+                }
+
+                details.push([`#${issueNumber}`, issue.title, currentAction.steps.join(' | ') || "✅ 无需更改"]);
+              } catch (e) {
+                console.error(`处理 Issue #${issueNumber} 出错:`, e);
+                details.push([`#${issueNumber}`, issue.title, `❌ 失败: ${e.message}`]);
               }
-            `, { itemId });
-
-            const fieldValues = itemQuery.node.fieldValues.nodes;
-
-            // 检查 Priority 是否已设置
-            const priorityValue = fieldValues.find(f => f.field?.id === priorityFieldId);
-            if (!priorityValue || !priorityValue.option) {
-              await github.graphql(`
-                mutation {
-                  updateProjectV2ItemFieldValue(input: {
-                    projectId: "${projectId}"
-                    itemId: "${itemId}"
-                    fieldId: "${priorityFieldId}"
-                    value: { singleSelectOptionId: "${p2OptionId}" }
-                  }) { projectV2Item { id } }
-                }
-              `);
             }
 
-            // 检查 DDL 是否已设置
-            const ddlValue = fieldValues.find(f => f.field?.id === ddlFieldId);
-            if (!ddlValue || !ddlValue.date) {
-              const threeDaysLater = new Date();
-              threeDaysLater.setDate(threeDaysLater.getDate() + 3);
-              const ddlDateStr = threeDaysLater.toISOString().split("T")[0];
-
-              await github.graphql(`
-                mutation {
-                  updateProjectV2ItemFieldValue(input: {
-                    projectId: "${projectId}"
-                    itemId: "${itemId}"
-                    fieldId: "${ddlFieldId}"
-                    value: { date: "${ddlDateStr}" }
-                  }) { projectV2Item { id } }
-                }
-              `);
-            }
-
-            core.summary
-              .addHeading('✅ Issue 已关联到 Project')
+            // 3. 输出强化 Summary
+            await core.summary
+              .addHeading(context.eventName === 'workflow_dispatch' ? '🚀 批量 Issue 初始化报告' : '✅ 新 Issue 初始化报告')
+              .addRaw(`本次任务处理了 **${stats.total}** 个项目（忽略了 ${stats.skipped} 个 PR）。`)
               .addTable([
-                ['属性', '值'],
-                ['仓库', repo],
-                ['Issue', `#${issueNumber}`],
-                ['Project ID', projectId],
-                ['设置优先级', priorityValue && priorityValue.option ? priorityValue.option.name : "自动分配 P2"],
-                ['设置 DDL', ddlValue && ddlValue.date ? ddlValue.date : "自动分配 3天后"]
+                ['指标名称', '处理数量'],
+                ['👤 自动分配负责人', stats.assigned.toString()],
+                ['🔗 关联 Project', stats.linked.toString()],
+                ['🚩 补全 P2 优先级', stats.priority_set.toString()],
+                ['📅 设置默认 DDL', stats.ddl_set.toString()]
+              ])
+              .addHeading('📝 处理详情清单', 3)
+              .addTable([
+                ['Issue', '标题', '执行操作'],
+                ...details
               ])
               .write();
