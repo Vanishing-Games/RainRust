@@ -17,6 +17,7 @@ public class RainRustVolume : VolumeComponent, IPostProcessComponent
     public Vector2Parameter noiseVelocity = new(Vector2.zero);
     public FloatParameter noiseScale = new(10.0f);
     public ClampedFloatParameter noiseIntensity = new(1.0f, 0f, 10f);
+    public ClampedFloatParameter resolutionScalar = new(1.0f, 0.1f, 1.0f);
     public IntParameter lightSamples = new(16);
     public ClampedFloatParameter lightIntensity = new(0f, 0f, 10f);
     public ClampedFloatParameter lightFalloffAlpha = new(0.1f, 0.001f, 1f);
