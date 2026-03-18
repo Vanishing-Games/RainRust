@@ -159,9 +159,14 @@ namespace RainRust.Rendering
             out TextureHandle lightingRtHandle
         )
         {
+            var stack = VolumeManager.instance.stack.GetComponent<RainRustVolume>();
+            float scalar = stack.resolutionScalar.value;
+
             RenderTextureDescriptor textureDescriptor;
             {
                 textureDescriptor = cameraData.cameraTargetDescriptor;
+                textureDescriptor.width = Mathf.Max(1, (int)(textureDescriptor.width * scalar));
+                textureDescriptor.height = Mathf.Max(1, (int)(textureDescriptor.height * scalar));
                 textureDescriptor.colorFormat = RenderTextureFormat.ARGB32;
                 textureDescriptor.depthStencilFormat = GraphicsFormat.None;
                 textureDescriptor.msaaSamples = 1;
