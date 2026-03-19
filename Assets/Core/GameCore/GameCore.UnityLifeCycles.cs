@@ -17,6 +17,11 @@ namespace Core
             {
                 new GameEntryInitCommand().Execute();
             });
+
+            m_QuickStartEventSubscription = MessageBroker.Global.Subscribe<GameQuickStartEvent>(_ =>
+            {
+                new GameQuickStartCommand().Execute();
+            });
         }
 
         protected async void Start()
@@ -30,7 +35,7 @@ namespace Core
                 return;
             }
 
-            // 检查当前场景，仅在 GameEntry 下启动初始化流程
+            // 检查当前场景，根据场景决定启动策略
             if (SceneManager.GetActiveScene().name == "GameEntry")
             {
                 Logger.LogInfo(
@@ -42,9 +47,10 @@ namespace Core
             else
             {
                 Logger.LogInfo(
-                    $"[GameCore] Current Scene is {SceneManager.GetActiveScene().name}, skip entry initialization.",
+                    $"[GameCore] Current Scene is {SceneManager.GetActiveScene().name}, Publishing GameQuickStartEvent...",
                     LogTag.GameCoreStart
                 );
+                MessageBroker.Global.Publish(new GameQuickStartEvent());
             }
         }
 
@@ -56,8 +62,10 @@ namespace Core
         {
             Logger.LogInfo("[GameCore] OnDestroy...", LogTag.GameCoreDestroy);
             m_InitEventSubscription?.Dispose();
+            m_QuickStartEventSubscription?.Dispose();
         }
 
         private IDisposable m_InitEventSubscription;
+        private IDisposable m_QuickStartEventSubscription;
     }
 }

@@ -28,6 +28,12 @@ namespace Core
         : CoreModuleManagerBase<VgLoadProgressManager, ProgressBarLoadInfo, ProgressBarLoader>,
             IDisposable
     {
+        public override void RegisterLoadEvent()
+        {
+            base.RegisterLoadEvent();
+            Hide();
+        }
+
         public void Init()
         {
             if (m_Inited)
@@ -37,7 +43,7 @@ namespace Core
                 FindObjectsInactive.Include,
                 FindObjectsSortMode.None
             );
-            foreach (var progressable in progressables)
+            foreach (var progressable in m_Progressables)
                 m_Progressables.Add(progressable);
 
             StringBuilder sb = new();

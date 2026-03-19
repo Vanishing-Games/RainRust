@@ -46,6 +46,7 @@ namespace Core
             "VgLoadProgressManager",
             Loading.Path
         );
+        public static readonly LogTag VgCameraManager = new("VgCameraManager", CoreModule.Path);
         public static readonly LogTag PlayerControl = new("PlayerControl", Game.Path);
         public static readonly LogTag LdtkProcessor = new("LDtkProcessor", Editor.Path);
 
