@@ -27,7 +27,9 @@ namespace GameMain.Editor
 
             room.BorderBounds = level.BorderBounds;
 
-            var virtualCamera = levelGo.AddComponent<CinemachineCamera>();
+            var virtualCameraGo = new GameObject(level.name + "_VirtualCamera");
+            virtualCameraGo.transform.SetParent(levelGo.transform);
+            var virtualCamera = virtualCameraGo.AddComponent<CinemachineCamera>();
 
             if (room.CameraMode == CameraMode.Fixed)
             {
