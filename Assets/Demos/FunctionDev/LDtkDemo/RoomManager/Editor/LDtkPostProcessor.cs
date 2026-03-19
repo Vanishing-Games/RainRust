@@ -10,12 +10,17 @@ namespace Demos.LDtkDemo.Editor
         {
             Debug.Log($"Post process LDtk project: {root.name}");
             LDtkComponentProject project = root.GetComponent<LDtkComponentProject>();
+            if (project == null || project.Worlds == null) return;
+
             foreach (LDtkComponentWorld world in project.Worlds)
             {
+                if (world == null || world.Levels == null) continue;
                 foreach (LDtkComponentLevel level in world.Levels)
                 {
+                    if (level == null || level.LayerInstances == null) continue;
                     foreach (LDtkComponentLayer layer in level.LayerInstances)
                     {
+                        if (layer == null) continue;
                         LDtkComponentLayerTilesetTiles tiles = layer.GridTiles;
                         //access tile data!
 

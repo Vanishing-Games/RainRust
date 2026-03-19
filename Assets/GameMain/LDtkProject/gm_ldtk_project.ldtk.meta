@@ -13,7 +13,7 @@ ScriptedImporter:
     type: 3}
   _pixelsPerUnit: 128
   _customLevelPrefab: {instanceID: 0}
-  _intGridValueColorsVisible: 0
+  _intGridValueColorsVisible: 1
   _useCompositeCollider: 1
   _geometryType: 0
   _createBackgroundColor: 1
