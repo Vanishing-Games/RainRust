@@ -12,7 +12,7 @@ namespace GameMain.Editor
     {
         protected override void OnPostprocessLevel(GameObject root, LdtkJson projectJson)
         {
-            Core.Logger.LogInfo($"Post process LDtk level: {root.name}", LogTag.LdtkProcessor);
+            Core.Logger.LogInfo($"Post process LDtk level: {root.name}", LogTag.LdtkRoomProcessor);
             LDtkComponentLevel level = root.GetComponent<LDtkComponentLevel>();
             OnProcessRoomCamera(level);
         }

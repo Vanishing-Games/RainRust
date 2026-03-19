@@ -10,7 +10,10 @@ namespace GameMain.Editor
     {
         protected override void OnPostprocessLevel(GameObject root, LdtkJson projectJson)
         {
-            Debug.Log($"Post process LDtk level: {root.name}");
+            Core.Logger.LogInfo(
+                $"Post process LDtk level: {root.name}",
+                LogTag.LDtkTransitionProcessor
+            );
             LDtkComponentLevel level = root.GetComponent<LDtkComponentLevel>();
             foreach (LDtkComponentLayer layer in level.LayerInstances)
             {
@@ -22,7 +25,6 @@ namespace GameMain.Editor
                     if (entity != null && entity.Identifier == LDtkIdentifiers.LevelTransition)
                     {
                         var transitionGo = entity.gameObject;
-                        var pos = entity.transform.localPosition;
                         var size = entity.Size;
 
                         var collider = transitionGo.AddComponent<BoxCollider2D>();
