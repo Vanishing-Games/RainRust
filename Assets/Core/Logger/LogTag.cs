@@ -46,10 +46,21 @@ namespace Core
             "VgLoadProgressManager",
             Loading.Path
         );
+        public static readonly LogTag VgCameraManager = new("VgCameraManager", CoreModule.Path);
         public static readonly LogTag PlayerControl = new("PlayerControl", Game.Path);
+        public static readonly LogTag LdtkProcessor = new("LDtkProcessor", Editor.Path);
 
         // ========== Third Tags ==========
         public static readonly LogTag CodeUnfucker_3_Sample = new("Save", CodeUnfucker.Path); // MAX depth = 3
         public static readonly LogTag GameRunCheck = new("GameSystem", GameCoreStart.Path);
+        public static readonly LogTag LdtkRoomProcessor = new("RoomProcessor", LdtkProcessor.Path);
+        public static readonly LogTag LdtkLogicMapProcessor = new(
+            "LogicMapProcessor",
+            LdtkProcessor.Path
+        );
+        public static readonly LogTag LDtkTransitionProcessor = new(
+            "LevelTransitionProcessor",
+            LdtkProcessor.Path
+        );
     }
 }
