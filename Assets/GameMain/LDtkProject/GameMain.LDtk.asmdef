@@ -1,11 +1,7 @@
 {
-    "name": "GameMain.RunTime",
-    "rootNamespace": "GameMain.RunTime",
-    "references": [
-        "GUID:bf7e815dd89b4164880b6713ec250d60",
-        "GUID:198f161f050714b85981e87f526d009e",
-        "GUID:4307f53044263cf4b835bd812fc161a4"
-    ],
+    "name": "GameMain.LDtk",
+    "rootNamespace": "",
+    "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

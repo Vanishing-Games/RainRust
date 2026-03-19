@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 2d23e55058cec23419acf376f269ad34
+guid: 1356fc0ad58936547870f19dc7e71fa0
 ScriptedImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -9,18 +9,23 @@ ScriptedImporter:
   assetBundleVariant: 
   script: {fileID: 11500000, guid: aaa16bfc62c086f4fb45da87b6acf9b1, type: 3}
   _reimportOnDependencyChange: 1
-  _jsonFile: {instanceID: 0}
-  _pixelsPerUnit: 16
+  _jsonFile: {fileID: -164016180542632921, guid: 1356fc0ad58936547870f19dc7e71fa0,
+    type: 3}
+  _pixelsPerUnit: 128
   _customLevelPrefab: {instanceID: 0}
   _intGridValueColorsVisible: 0
   _useCompositeCollider: 1
   _geometryType: 0
   _createBackgroundColor: 1
-  _createLevelBoundsTrigger: 0
+  _createLevelBoundsTrigger: 1
   _useParallax: 1
   _scaleEntities: 1
-  _intGridValues: []
-  _entities: []
-  _enumGenerate: 0
-  _enumPath: 
-  _enumNamespace: 
+  _intGridValues:
+  - _key: LogicMap_1
+    _asset: {instanceID: 0}
+  _entities:
+  - _key: LevelTransition
+    _asset: {instanceID: 0}
+  _enumGenerate: 1
+  _enumPath: gm_ldtk_project/GmLDtkEnums.cs
+  _enumNamespace: GameMain.LDtk

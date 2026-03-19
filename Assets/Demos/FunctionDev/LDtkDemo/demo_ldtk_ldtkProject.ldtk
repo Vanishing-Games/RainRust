@@ -189,12 +189,12 @@
 		}
 	], "entities": [
 		{
-			"identifier": "Transition",
+			"identifier": "RoomTransition",
 			"uid": 12,
 			"tags": [],
 			"exportToToc": false,
 			"allowOutOfBounds": false,
-			"doc": null,
+			"doc": "关卡出入口",
 			"width": 256,
 			"height": 256,
 			"resizableX": false,
@@ -397,7 +397,7 @@
 						"gridTiles": [],
 						"entityInstances": [
 							{
-								"__identifier": "Transition",
+								"__identifier": "RoomTransition",
 								"__grid": [24,11],
 								"__pivot": [0,0],
 								"__tags": [],
@@ -741,7 +741,7 @@
 						"gridTiles": [],
 						"entityInstances": [
 							{
-								"__identifier": "Transition",
+								"__identifier": "RoomTransition",
 								"__grid": [0,11],
 								"__pivot": [0,0],
 								"__tags": [],
