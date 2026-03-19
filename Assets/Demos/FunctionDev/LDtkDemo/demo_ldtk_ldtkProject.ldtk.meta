@@ -17,7 +17,7 @@ ScriptedImporter:
   _useCompositeCollider: 1
   _geometryType: 0
   _createBackgroundColor: 1
-  _createLevelBoundsTrigger: 0
+  _createLevelBoundsTrigger: 1
   _useParallax: 1
   _scaleEntities: 1
   _intGridValues:
@@ -25,7 +25,9 @@ ScriptedImporter:
     _asset: {instanceID: 0}
   - _key: Level_2
     _asset: {instanceID: 0}
-  _entities: []
-  _enumGenerate: 0
-  _enumPath: 
-  _enumNamespace: 
+  _entities:
+  - _key: Transition
+    _asset: {instanceID: 0}
+  _enumGenerate: 1
+  _enumPath: demo_ldtk_ldtkProject/demo_ldtk_ldtkEnum.cs
+  _enumNamespace: demo_ldtk_enum
