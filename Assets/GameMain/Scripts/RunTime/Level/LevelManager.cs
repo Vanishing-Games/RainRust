@@ -4,10 +4,17 @@ namespace GameMain.RunTime
 {
     public class LevelManager : MonoBehaviour
     {
-        // Start is called once before the first execution of Update after the MonoBehaviour is created
-        void Start() { }
+        public void EnterLevel(string chapter, string level, uint levelSpawnPointIndex) { }
 
-        // Update is called once per frame
-        void Update() { }
+        public void ExitLevel() { }
+
+        private void InitLevelManager()
+        {
+            
+        }
+
+        private LDtkComponentProject m_LdtkProject;
     }
 }
+            
+        

@@ -49,6 +49,7 @@ namespace Core
         public static readonly LogTag VgCameraManager = new("VgCameraManager", CoreModule.Path);
         public static readonly LogTag PlayerControl = new("PlayerControl", Game.Path);
         public static readonly LogTag LdtkProcessor = new("LDtkProcessor", Editor.Path);
+        public static readonly LogTag PlayerManager = new("PlayerManager", Game.Path);
 
         // ========== Third Tags ==========
         public static readonly LogTag CodeUnfucker_3_Sample = new("Save", CodeUnfucker.Path); // MAX depth = 3
