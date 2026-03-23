@@ -156,6 +156,29 @@ namespace GameMain.RunTime
                 : transitionsList[levelSpawnPointIndex].GetComponent<LevelTransition>();
         }
 
+        /// <summary>
+        /// 切换到指定关卡 (用于无缝切换)
+        /// </summary>
+        /// <param name="targetTransition"></param>
+        public void SwitchLevel(LevelTransition targetTransition)
+        {
+            var level = targetTransition.GetComponentInParent<LDtkComponentLevel>();
+            if (level == null)
+            {
+                CLogger.LogError("LevelTransition is not in a level", LogTag.LevelManager);
+                return;
+            }
+
+            if (m_CurrentLevel == level)
+                return;
+
+            m_CurrentLevel = level;
+            m_CurrentLevelTransition = targetTransition;
+            m_CurrentWorld = level.GetComponentInParent<LDtkComponentWorld>();
+
+            CLogger.LogInfo($"Switched to Level: {level.Identifier}", LogTag.LevelManager);
+        }
+
         private LevelTransition m_CurrentLevelTransition = null;
         private LDtkComponentLevel m_CurrentLevel = null;
         private LDtkComponentWorld m_CurrentWorld = null;
