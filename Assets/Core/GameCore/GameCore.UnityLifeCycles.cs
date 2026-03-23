@@ -18,9 +18,19 @@ namespace Core
                 new GameEntryInitCommand().Execute();
             });
 
-            m_QuickStartEventSubscription = MessageBroker.Global.Subscribe<GameQuickStartEvent>(_ =>
+            m_StartEventSubscription = MessageBroker.Global.Subscribe<GameStartInitEvent>(_ =>
             {
-                new GameQuickStartCommand().Execute();
+                // TODO: Handle GameStartInitEvent if needed
+            });
+
+            m_LevelEventSubscription = MessageBroker.Global.Subscribe<GameLevelInitEvent>(_ =>
+            {
+                // TODO: Handle GameLevelInitEvent if needed
+            });
+
+            m_EndEventSubscription = MessageBroker.Global.Subscribe<GameEndInitEvent>(_ =>
+            {
+                // TODO: Handle GameEndInitEvent if needed
             });
         }
 
@@ -34,24 +44,6 @@ namespace Core
                 await QuitGame();
                 return;
             }
-
-            // 检查当前场景，根据场景决定启动策略
-            if (SceneManager.GetActiveScene().name == "GameEntry")
-            {
-                CLogger.LogInfo(
-                    "[GameCore] In GameEntry, Publishing GameEntryInitEvent...",
-                    LogTag.GameCoreStart
-                );
-                MessageBroker.Global.Publish(new GameEntryInitEvent());
-            }
-            else
-            {
-                CLogger.LogInfo(
-                    $"[GameCore] Current Scene is {SceneManager.GetActiveScene().name}, Publishing GameQuickStartEvent...",
-                    LogTag.GameCoreStart
-                );
-                MessageBroker.Global.Publish(new GameQuickStartEvent());
-            }
         }
 
         private void FixedUpdate() { }
@@ -62,10 +54,14 @@ namespace Core
         {
             CLogger.LogInfo("[GameCore] OnDestroy...", LogTag.GameCoreDestroy);
             m_InitEventSubscription?.Dispose();
-            m_QuickStartEventSubscription?.Dispose();
+            m_StartEventSubscription?.Dispose();
+            m_LevelEventSubscription?.Dispose();
+            m_EndEventSubscription?.Dispose();
         }
 
         private IDisposable m_InitEventSubscription;
-        private IDisposable m_QuickStartEventSubscription;
+        private IDisposable m_StartEventSubscription;
+        private IDisposable m_LevelEventSubscription;
+        private IDisposable m_EndEventSubscription;
     }
 }
