@@ -12,6 +12,10 @@ namespace Core
         Camera,
         #endregion
 
+        #region GameMain Assembly Define
+        LevelLoader,
+        #endregion
+
         #region Core.Save Assembly Define
         SaveLoader,
         #endregion

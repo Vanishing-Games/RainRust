@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Core;
 using LDtkUnity;
@@ -5,8 +6,15 @@ using UnityEngine;
 
 namespace GameMain.RunTime
 {
-    public class LevelManager : MonoBehaviour
+    public class LevelManager : CoreModuleManagerBase<LevelManager, LevelLoadInfo, LevelLoader>
     {
+        protected override LoaderType GetLoaderType() => LoaderType.LevelLoader;
+
+        protected override void OnLoadingError(Exception exception)
+        {
+            CLogger.LogError($"Level Load Error: {exception.Message}", LogTag.LevelManager);
+        }
+
         /// <summary>
         /// 进入指定关卡
         /// </summary>
@@ -38,6 +46,9 @@ namespace GameMain.RunTime
 
             if (ldtkProjects.Length == 0)
                 CLogger.LogError("No LDtk Project was found", LogTag.LevelManager);
+
+            if (ldtkProjects.Length > 0)
+                m_LdtkProject = ldtkProjects[0];
         }
 
         private void SetUp(string chapterId, string levelId, int levelSpawnPointIndex)
@@ -125,7 +136,7 @@ namespace GameMain.RunTime
                 }
             }
 
-            if (levelSpawnPointIndex > transitionsList.Count)
+            if (levelSpawnPointIndex >= transitionsList.Count)
             {
                 CLogger.LogWarn(
                     "Spawn Id is bigger than level's spawn point count",
