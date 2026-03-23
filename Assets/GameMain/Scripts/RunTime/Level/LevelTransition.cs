@@ -45,12 +45,14 @@ namespace GameMain.RunTime
             }
         }
 
+        private static readonly HashSet<LevelTransition> s_CurrentTransitions = new();
+
+        [LabelText("目标位置")]
         [SerializeField]
         public LevelTransition Target;
 
+        [LabelText("索引 (Index)")]
         [SerializeField]
         public int? Index;
-
-        private static readonly HashSet<LevelTransition> s_CurrentTransitions = new();
     }
 }

@@ -49,11 +49,11 @@ namespace GameMain.RunTime
             }
 
             InitLevelManager();
-            
+
             m_CurrentLevel = level;
             m_CurrentLevelTransition = transition;
             m_CurrentWorld = level.GetComponentInParent<LDtkComponentWorld>();
-            
+
             StartLevelInternal();
         }
 
@@ -61,7 +61,35 @@ namespace GameMain.RunTime
         {
             SetUpPlayer();
             ActivateRoom(m_CurrentLevel);
+
+#if UNITY_EDITOR
+            UpdateDebugUI();
+#endif
         }
+
+#if UNITY_EDITOR
+
+        private void LateUpdate()
+        {
+            UpdateDebugUI();
+        }
+
+        private void UpdateDebugUI()
+        {
+            DebugUIManager.Log(
+                "Chapter",
+                m_CurrentWorld != null ? m_CurrentWorld.Identifier : "None"
+            );
+            DebugUIManager.Log(
+                "Level",
+                m_CurrentLevel != null ? m_CurrentLevel.Identifier : "None"
+            );
+            DebugUIManager.Log(
+                "Transition",
+                m_CurrentLevelTransition != null ? m_CurrentLevelTransition.name : "None"
+            );
+        }
+#endif
 
         /// <summary>
         /// 退出关卡
@@ -176,7 +204,10 @@ namespace GameMain.RunTime
                         if (transition != null)
                         {
                             // Priority 1: Match by the explicit Index property
-                            if (transition.Index.HasValue && transition.Index.Value == levelSpawnPointIndex)
+                            if (
+                                transition.Index.HasValue
+                                && transition.Index.Value == levelSpawnPointIndex
+                            )
                             {
                                 return transition;
                             }
@@ -200,7 +231,10 @@ namespace GameMain.RunTime
                 return transitionsList[levelSpawnPointIndex];
             }
 
-            CLogger.LogError($"No transition found in level {m_CurrentLevel.Identifier}", LogTag.LevelManager);
+            CLogger.LogError(
+                $"No transition found in level {m_CurrentLevel.Identifier}",
+                LogTag.LevelManager
+            );
             return null;
         }
 
@@ -225,8 +259,12 @@ namespace GameMain.RunTime
             m_CurrentWorld = level.GetComponentInParent<LDtkComponentWorld>();
 
             CLogger.LogInfo($"Switched to Level: {level.Identifier}", LogTag.LevelManager);
-            
+
             ActivateRoom(level);
+
+#if UNITY_EDITOR
+            UpdateDebugUI();
+#endif
         }
 
         private void ActivateRoom(LDtkComponentLevel level)
@@ -240,9 +278,12 @@ namespace GameMain.RunTime
             if (m_CurrentRoom != null)
             {
                 m_CurrentRoom.SetActive(true);
-                
+
                 // If it's follow mode, ensure the player is being followed
-                if (m_CurrentRoom.CameraMode == CameraMode.Follow && m_CurrentRoom.VirtualCamera != null)
+                if (
+                    m_CurrentRoom.CameraMode == CameraMode.Follow
+                    && m_CurrentRoom.VirtualCamera != null
+                )
                 {
                     var player = GameMain.GetPlayer();
                     if (player != null)
