@@ -2,7 +2,7 @@ using Core;
 using FMODUnity;
 using IngameDebugConsole;
 using UnityEngine;
-using CLogger = Core.CLogger;
+using CLogger = CLogger;
 
 public enum FmodOperation
 {

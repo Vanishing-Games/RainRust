@@ -11,7 +11,7 @@ namespace GameMain.RunTime
 
             if (m_Player == null)
             {
-                Core.CLogger.LogError(
+                CLogger.LogError(
                     "Player GameObject not found in the scene. Please make sure there is a GameObject tagged 'Player'.",
                     LogTag.PlayerManager
                 );
@@ -29,7 +29,7 @@ namespace GameMain.RunTime
                 return;
 
             if (players.Length > 0)
-                Core.CLogger.LogError(
+                CLogger.LogError(
                     "Something went wrong, there should be only one player in the scene, but found "
                         + players.Length,
                     LogTag.PlayerManager

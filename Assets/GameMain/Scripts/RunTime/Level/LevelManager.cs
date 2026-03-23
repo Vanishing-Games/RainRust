@@ -6,7 +6,24 @@ namespace GameMain.RunTime
 {
     public class LevelManager : MonoBehaviour
     {
-        public void EnterLevel(string chapter, string level, uint levelSpawnPointIndex) { }
+        public void EnterLevel(string chapterId, string levelId, uint levelSpawnPointIndex)
+        {
+            InitLevelManager();
+
+            m_CurrentWorld = GetChapeter(chapterId);
+            if (m_CurrentWorld == null)
+            {
+                CLogger.LogError("Can't Find Chapter: " + chapterId, LogTag.LevelManager);
+                return;
+            }
+
+            m_CurrentLevel = GetLevel(levelId);
+            if (m_CurrentLevel == null)
+            {
+                CLogger.LogError("Can't Find Level: " + levelId, LogTag.LevelManager);
+                return;
+            }
+        }
 
         public void ExitLevel() { }
 
@@ -25,6 +42,48 @@ namespace GameMain.RunTime
                 CLogger.LogError("No LDtk Project was found", LogTag.LevelManager);
         }
 
-        private LDtkComponentProject m_LdtkProject;
+        private LDtkComponentWorld GetChapeter(string chapterId)
+        {
+            var chapters = m_LdtkProject.Worlds;
+            LDtkComponentWorld targetChapeter = null;
+
+            foreach (var chapter in chapters)
+            {
+                if (chapter.Identifier == chapterId)
+                {
+                    targetChapeter = chapter;
+                    break;
+                }
+            }
+
+            return targetChapeter;
+        }
+
+        private LDtkComponentLevel GetLevel(string levelId)
+        {
+            var levels = m_CurrentWorld.Levels;
+            LDtkComponentLevel targetLevel = null;
+
+            foreach (var level in levels)
+            {
+                if (level.Identifier == levelId)
+                {
+                    targetLevel = level;
+                    break;
+                }
+            }
+
+            return targetLevel;
+        }
+
+        // private LevelTransition GetLevelTransition(int)
+        // {
+            
+        // }
+
+        private LevelTransition m_CurrentLevelTransition = null;
+        private LDtkComponentLevel m_CurrentLevel = null;
+        private LDtkComponentWorld m_CurrentWorld = null;
+        private LDtkComponentProject m_LdtkProject = null;
     }
 }

@@ -10,7 +10,7 @@ namespace GameMain.Editor
     {
         protected override void OnPostprocessLevel(GameObject root, LdtkJson projectJson)
         {
-            Core.CLogger.LogInfo(
+            CLogger.LogInfo(
                 $"Post process LDtk level: {root.name}",
                 LogTag.LDtkTransitionProcessor
             );
@@ -33,7 +33,25 @@ namespace GameMain.Editor
                         // We assume the pivot is at the top-left corner, thus we need to adjust the position to center the collider
                         collider.offset = new Vector2(size.x / 2f, -size.y / 2f);
                         collider.size = size;
-                        transitionGo.AddComponent<LevelTransition>();
+
+                        var transition = transitionGo.AddComponent<LevelTransition>();
+                        LDtkFields fields = entity.GetComponent<LDtkFields>();
+
+                        var targetRef = fields.GetEntityReference("Target");
+
+                        if (targetRef != null)
+                        {
+                            LDtkIid targetIidComponent = LDtkIidComponentBank.GetByIid(
+                                targetRef.EntityIid
+                            );
+
+                            if (targetIidComponent != null)
+                            {
+                                GameObject targetTransitionGo = targetIidComponent.gameObject;
+                                transition.Target =
+                                    targetTransitionGo.GetComponent<LevelTransition>();
+                            }
+                        }
                     }
                 }
             }

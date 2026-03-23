@@ -79,7 +79,7 @@ namespace RainRust.Rendering
                 m_Shader = Shader.Find(k_JfaShaderName);
                 if (m_Shader == null)
                 {
-                    Core.CLogger.LogError($"Shader not found: {k_JfaShaderName}", LogTag.Rendering);
+                    CLogger.LogError($"Shader not found: {k_JfaShaderName}", LogTag.Rendering);
                     return;
                 }
             }
