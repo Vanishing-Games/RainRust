@@ -1,4 +1,3 @@
-using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.RenderGraphModule;
 
@@ -16,7 +15,9 @@ namespace RainRust.Rendering
         }
 
         public TextureHandle OddSource() => odd;
+
         public TextureHandle EvenSource() => even;
+
         public TextureHandle GetByStep(int step) => (step % 2 == 0) ? even : odd;
     }
 
