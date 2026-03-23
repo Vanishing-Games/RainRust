@@ -15,7 +15,7 @@ namespace GameMain.RunTime
             var player = GetPlayer();
             var collider = player.GetComponent<BoxCollider2D>();
             float yOffset = collider.offset.y - collider.size.y / 2;
-            feetPos += new Vector3(0,yOffset,0);
+            feetPos += new Vector3(0, yOffset, 0);
 
             player.transform.position = feetPos;
         }

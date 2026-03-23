@@ -57,9 +57,12 @@ namespace GameMain.Editor
                                 CLogger.LogError(
                                     "关卡出入口: "
                                         + entity.name
-                                        + " 有设置对应的目标, 但却无法获取Go",
+                                        + " 有设置对应的目标, 但却无法获取Go"
+                                        + "\n关卡:"
+                                        + level.name,
                                     LogTag.LDtkTransitionProcessor
                                 );
+                                transition.Target = null;
                             }
                         }
                         else
@@ -68,9 +71,12 @@ namespace GameMain.Editor
                                 "关卡出入口: "
                                     + entity.name
                                     + " 没有设置对应的目标, 请确认这是否正确\n Fields如下:"
-                                    + fields,
+                                    + fields
+                                    + "\n关卡:"
+                                    + level.name,
                                 LogTag.LDtkTransitionProcessor
                             );
+                            transition.Target = null;
                         }
                     }
                 }
