@@ -81,7 +81,7 @@ namespace GameMain.RunTime
         private void SetUpPlayer()
         {
             var player = GameMain.GetPlayer();
-            player.transform.position = m_CurrentLevelTransition.GetPlayerSpawnPoint();
+            player.transform.position = m_CurrentLevelTransition.GetPlayerFeetSpawnPoint();
         }
 
         private LDtkComponentWorld GetChapeter(string chapterId)

@@ -9,7 +9,7 @@ namespace GameMain.RunTime
         [ShowInInspector]
         public LevelTransition Target { get; set; }
 
-        internal Vector3 GetPlayerSpawnPoint()
+        internal Vector3 GetPlayerFeetSpawnPoint()
         {
             return transform.position;
         }

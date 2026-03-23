@@ -26,6 +26,7 @@ namespace GameMain.Editor
                     {
                         var transitionGo = entity.gameObject;
                         var size = entity.Size;
+                        transitionGo.transform.localScale = Vector3.one;
 
                         var collider = transitionGo.AddComponent<BoxCollider2D>();
                         collider.isTrigger = true;
@@ -51,6 +52,25 @@ namespace GameMain.Editor
                                 transition.Target =
                                     targetTransitionGo.GetComponent<LevelTransition>();
                             }
+                            else
+                            {
+                                CLogger.LogError(
+                                    "关卡出入口: "
+                                        + entity.name
+                                        + " 有设置对应的目标, 但却无法获取Go",
+                                    LogTag.LDtkTransitionProcessor
+                                );
+                            }
+                        }
+                        else
+                        {
+                            CLogger.LogWarn(
+                                "关卡出入口: "
+                                    + entity.name
+                                    + " 没有设置对应的目标, 请确认这是否正确\n Fields如下:"
+                                    + fields,
+                                LogTag.LDtkTransitionProcessor
+                            );
                         }
                     }
                 }
