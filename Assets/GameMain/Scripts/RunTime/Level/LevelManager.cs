@@ -13,7 +13,7 @@ namespace GameMain.RunTime
             
         }
 
-        private LDtkComponentProject m_LdtkProject;
+        // private LDtkComponentProject m_LdtkProject;
     }
 }
             
