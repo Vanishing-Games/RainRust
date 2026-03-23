@@ -2649,7 +2649,7 @@
 								"px": [0,1920],
 								"fieldInstances": [
 									{ "__identifier": "Target", "__type": "EntityRef", "__value": null, "__tile": null, "defUid": 7, "realEditorValues": [] },
-									{ "__identifier": "Index", "__type": "Int", "__value": null, "__tile": null, "defUid": 92, "realEditorValues": [] }
+									{ "__identifier": "Index", "__type": "Int", "__value": 0, "__tile": null, "defUid": 92, "realEditorValues": [{ "id": "V_Int", "params": [0] }] }
 								],
 								"__worldX": -5888,
 								"__worldY": 3200

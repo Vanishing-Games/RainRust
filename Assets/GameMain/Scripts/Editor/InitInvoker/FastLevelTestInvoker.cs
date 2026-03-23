@@ -17,6 +17,14 @@ namespace GameMain.Editor
         [LabelText("出生点 Index")]
         public int SpawnIndex = 0;
 
+        [HideIf("AutoFindNearest")]
+        [LabelText("关卡Id")]
+        public string levelId;
+
+        [HideIf("AutoFindNearest")]
+        [LabelText("章节Id")]
+        public string chapterId;
+
         private void Start()
         {
             if (AutoFindNearest)
@@ -25,7 +33,7 @@ namespace GameMain.Editor
             }
             else
             {
-                new ManualFastLevelTestCommand(transform.position, SpawnIndex).Execute();
+                new ManualFastLevelTestCommand(transform.position, chapterId, levelId, SpawnIndex).Execute();
             }
         }
     }
