@@ -2,7 +2,7 @@ name: "每周任务总结 📊"
 
 on:
   schedule:
-    - cron: '0 0 * * 1' # 每周一凌晨 00:00 运行
+    - cron: '0 1 * * 1' # 每周一北京时间 09:00 运行
   workflow_dispatch:
 
 jobs:

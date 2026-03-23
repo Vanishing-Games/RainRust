@@ -2,7 +2,7 @@ name: "任务清理与回收"
 
 on:
   schedule:
-    - cron: '0 10 * * *'
+    - cron: '30 0 * * *' # 每天 0-:30 UTC - 每天 8:30 北京时间
   workflow_dispatch:
 
 jobs:

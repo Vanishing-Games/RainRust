@@ -2,7 +2,7 @@ name: DDL 来了😰 DDL 来啦😰
 
 on:
   schedule:
-    - cron: '0 9 * * *' # 每天 09:00 UTC
+    - cron: '0 0 * * *' # 每天 0-:00 UTC - 每天 8:00 北京时间
   workflow_dispatch:
 
 jobs:
