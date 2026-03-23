@@ -1,3 +1,4 @@
+using System;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -7,5 +8,10 @@ namespace GameMain.RunTime
     {
         [ShowInInspector]
         public LevelTransition Target { get; set; }
+
+        internal Vector3 GetPlayerSpawnPoint()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

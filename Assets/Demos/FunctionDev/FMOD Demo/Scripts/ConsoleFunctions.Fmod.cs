@@ -2,8 +2,6 @@ using Core;
 using FMODUnity;
 using IngameDebugConsole;
 using UnityEngine;
-using CLogger = CLogger;
-
 public enum FmodOperation
 {
     PlayEvent,

@@ -33,7 +33,7 @@ namespace GameMain.Editor
             );
             sb.AppendLine("using UnityEngine;");
             sb.AppendLine("");
-            sb.AppendLine("namespace GameMain.Editor");
+            sb.AppendLine("namespace GameMain.RunTime");
             sb.AppendLine("{");
             sb.AppendLine("    public static class LDtkIdentifiers");
             sb.AppendLine("    {");
@@ -100,8 +100,7 @@ namespace GameMain.Editor
             sb.AppendLine("    }");
             sb.AppendLine("}");
 
-            string filePath =
-                "Assets/GameMain/Scripts/Editor/Level/LDtkPostProcessor/LDtkIdentifiers.cs";
+            string filePath = "Assets/GameMain/Scripts/RunTime/Level/LDtkIdentifiers.cs";
 
             // Only write if changed to avoid unnecessary re-imports
             if (File.Exists(filePath))
