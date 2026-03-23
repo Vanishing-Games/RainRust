@@ -35,7 +35,15 @@ namespace GameMain.Editor
                         collider.offset = new Vector2(size.x / 2f, -size.y / 2f);
                         collider.size = size;
 
-                        transitionGo.AddComponent<LevelTransition>();
+                        var levelTransition = transitionGo.AddComponent<LevelTransition>();
+                        LDtkFields fields = transitionGo.GetComponent<LDtkFields>();
+                        if (fields != null)
+                        {
+                            if (fields.TryGetInt("Index", out var index))
+                            {
+                                levelTransition.Index = index;
+                            }
+                        }
                     }
                 }
             }

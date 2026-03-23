@@ -6,11 +6,6 @@ namespace GameMain.RunTime
 {
     public class LevelTransition : MonoBehaviour
     {
-        [SerializeField]
-        public LevelTransition Target;
-
-        private static readonly HashSet<LevelTransition> s_CurrentTransitions = new HashSet<LevelTransition>();
-
         internal Vector3 GetPlayerFeetSpawnPoint()
         {
             return transform.position;
@@ -40,10 +35,22 @@ namespace GameMain.RunTime
 
         private void CheckTransition()
         {
-            if (Target != null && s_CurrentTransitions.Contains(Target))
+            if (
+                Target != null
+                && s_CurrentTransitions.Contains(Target)
+                && this == LevelManager.Instance.GetCurrentTransition()
+            )
             {
                 LevelManager.Instance.SwitchLevel(this);
             }
         }
+
+        [SerializeField]
+        public LevelTransition Target;
+
+        [SerializeField]
+        public int? Index;
+
+        private static readonly HashSet<LevelTransition> s_CurrentTransitions = new();
     }
 }

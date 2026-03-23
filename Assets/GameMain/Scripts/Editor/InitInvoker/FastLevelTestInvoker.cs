@@ -1,3 +1,4 @@
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace GameMain.Editor
@@ -8,9 +9,24 @@ namespace GameMain.Editor
     /// </summary>
     public class FastLevelTestInvoker : MonoBehaviour
     {
+        [Title("快速关卡测试配置")]
+        [LabelText("自动寻找最近出生点")]
+        public bool AutoFindNearest = true;
+
+        [HideIf("AutoFindNearest")]
+        [LabelText("出生点 Index")]
+        public int SpawnIndex = 0;
+
         private void Start()
         {
-            new FastLevelTestCommand(transform.position).Execute();
+            if (AutoFindNearest)
+            {
+                new FastLevelTestCommand(transform.position).Execute();
+            }
+            else
+            {
+                new ManualFastLevelTestCommand(transform.position, SpawnIndex).Execute();
+            }
         }
     }
 }

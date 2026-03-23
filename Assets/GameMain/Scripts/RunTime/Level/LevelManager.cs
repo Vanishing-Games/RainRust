@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Core;
 using LDtkUnity;
 using UnityEngine;
+using CameraMode = GameMain.LDtk.CameraMode;
 
 namespace GameMain.RunTime
 {
@@ -16,7 +17,7 @@ namespace GameMain.RunTime
         }
 
         /// <summary>
-        /// 进入指定关卡
+        /// 进入指定关卡 (通过 Index)
         /// </summary>
         /// <param name="chapterId"></param>
         /// <param name="levelId"></param>
@@ -25,7 +26,41 @@ namespace GameMain.RunTime
         {
             InitLevelManager();
             SetUp(chapterId, levelId, levelSpawnPointIndex);
+            StartLevelInternal();
+        }
+
+        /// <summary>
+        /// 进入指定关卡 (直接通过 LevelTransition)
+        /// </summary>
+        /// <param name="transition"></param>
+        public void StartLevel(LevelTransition transition)
+        {
+            if (transition == null)
+            {
+                CLogger.LogError("StartLevel: Transition is null", LogTag.LevelManager);
+                return;
+            }
+
+            var level = transition.GetComponentInParent<LDtkComponentLevel>();
+            if (level == null)
+            {
+                CLogger.LogError("StartLevel: Transition is not in a level", LogTag.LevelManager);
+                return;
+            }
+
+            InitLevelManager();
+            
+            m_CurrentLevel = level;
+            m_CurrentLevelTransition = transition;
+            m_CurrentWorld = level.GetComponentInParent<LDtkComponentWorld>();
+            
+            StartLevelInternal();
+        }
+
+        private void StartLevelInternal()
+        {
             SetUpPlayer();
+            ActivateRoom(m_CurrentLevel);
         }
 
         /// <summary>
@@ -123,9 +158,10 @@ namespace GameMain.RunTime
             if (levelSpawnPointIndex < 0)
             {
                 CLogger.LogError("Transition Id shouldn't below 0", LogTag.LevelManager);
+                return null;
             }
 
-            List<LDtkComponentEntity> transitionsList = new();
+            List<LevelTransition> transitionsList = new();
 
             foreach (var layer in m_CurrentLevel.LayerInstances)
             {
@@ -135,25 +171,37 @@ namespace GameMain.RunTime
                 foreach (LDtkComponentEntity entity in layer.EntityInstances)
                 {
                     if (entity != null && entity.Identifier == LDtkIdentifiers.LevelTransition)
-                        transitionsList.Add(entity);
+                    {
+                        var transition = entity.GetComponent<LevelTransition>();
+                        if (transition != null)
+                        {
+                            // Priority 1: Match by the explicit Index property
+                            if (transition.Index.HasValue && transition.Index.Value == levelSpawnPointIndex)
+                            {
+                                return transition;
+                            }
+                            transitionsList.Add(transition);
+                        }
+                    }
                 }
             }
 
-            if (levelSpawnPointIndex >= transitionsList.Count)
+            // Priority 2: Fallback to list order if no exact Index match was found
+            if (transitionsList.Count > 0)
             {
-                CLogger.LogWarn(
-                    "Spawn Id is bigger than level's spawn point count",
-                    LogTag.LevelManager
-                );
-                levelSpawnPointIndex %= transitionsList.Count;
+                if (levelSpawnPointIndex >= transitionsList.Count)
+                {
+                    CLogger.LogWarn(
+                        $"Spawn Index {levelSpawnPointIndex} not found by ID, and is bigger than level's transition count. Falling back to modulo.",
+                        LogTag.LevelManager
+                    );
+                    levelSpawnPointIndex %= transitionsList.Count;
+                }
+                return transitionsList[levelSpawnPointIndex];
             }
 
-            if (transitionsList.Count == 0)
-                CLogger.LogError("No transition waw found in level", LogTag.LevelManager);
-
-            return transitionsList.Count == 0
-                ? null
-                : transitionsList[levelSpawnPointIndex].GetComponent<LevelTransition>();
+            CLogger.LogError($"No transition found in level {m_CurrentLevel.Identifier}", LogTag.LevelManager);
+            return null;
         }
 
         /// <summary>
@@ -177,8 +225,40 @@ namespace GameMain.RunTime
             m_CurrentWorld = level.GetComponentInParent<LDtkComponentWorld>();
 
             CLogger.LogInfo($"Switched to Level: {level.Identifier}", LogTag.LevelManager);
+            
+            ActivateRoom(level);
         }
 
+        private void ActivateRoom(LDtkComponentLevel level)
+        {
+            if (m_CurrentRoom != null)
+            {
+                m_CurrentRoom.SetActive(false);
+            }
+
+            m_CurrentRoom = level.GetComponent<LevelRoom>();
+            if (m_CurrentRoom != null)
+            {
+                m_CurrentRoom.SetActive(true);
+                
+                // If it's follow mode, ensure the player is being followed
+                if (m_CurrentRoom.CameraMode == CameraMode.Follow && m_CurrentRoom.VirtualCamera != null)
+                {
+                    var player = GameMain.GetPlayer();
+                    if (player != null)
+                    {
+                        m_CurrentRoom.VirtualCamera.Follow = player.transform;
+                    }
+                }
+            }
+        }
+
+        internal LevelTransition GetCurrentTransition()
+        {
+            return m_CurrentLevelTransition;
+        }
+
+        private LevelRoom m_CurrentRoom = null;
         private LevelTransition m_CurrentLevelTransition = null;
         private LDtkComponentLevel m_CurrentLevel = null;
         private LDtkComponentWorld m_CurrentWorld = null;
