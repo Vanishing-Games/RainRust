@@ -10,59 +10,82 @@ namespace GameMain.Editor
 {
     public class LDtkRoomProcessor : LDtkPostprocessor
     {
-        protected override void OnPostprocessLevel(GameObject root, LdtkJson projectJson)
+        private class RoomContext
         {
-            Core.Logger.LogInfo($"Post process LDtk level: {root.name}", LogTag.LdtkRoomProcessor);
-            LDtkComponentLevel level = root.GetComponent<LDtkComponentLevel>();
-            OnProcessRoomCamera(level);
+            public LDtkComponentLevel Level;
+            public LevelRoom Room;
+            public CinemachineCamera VCam = null;
+
+            public RoomContext(LDtkComponentLevel level, LevelRoom levelRoom)
+            {
+                Level = level;
+                Room = levelRoom;
+            }
         }
 
-        private void OnProcessRoomCamera(LDtkComponentLevel level)
+        protected override void OnPostprocessLevel(GameObject root, LdtkJson projectJson) =>
+            Result
+                .Success(root)
+                .Tap(r =>
+                    Core.Logger.LogInfo(
+                        $"Post process LDtk level: {r.name}",
+                        LogTag.LdtkRoomProcessor
+                    )
+                )
+                .Map(r => r.GetComponent<LDtkComponentLevel>())
+                .Tap(OnProcessRoomCamera);
+
+        private void OnProcessRoomCamera(LDtkComponentLevel level) =>
+            Result
+                .Success(new RoomContext(level, level.gameObject.AddComponent<LevelRoom>()))
+                .Tap(ctx => ctx.Room.BorderBounds = ctx.Level.BorderBounds)
+                .Tap(ApplyCameraModeFields)
+                .Map(CreateVirtualCamera)
+                .Tap(ApplyCameraFollow)
+                .Tap(ApplyFixedCameraSettings)
+                .Tap(ApplyConfinerSettings);
+
+        private void ApplyCameraModeFields(RoomContext ctx) =>
+            ctx.Room.CameraMode = ctx.Level.TryGetComponent<LDtkFields>(out var fields)
+                ? fields.GetEnum<CameraMode>("CameraMode")
+                : ctx.Room.CameraMode;
+
+        private RoomContext CreateVirtualCamera(RoomContext ctx)
         {
-            var levelGo = level.gameObject;
-            var room = level.gameObject.AddComponent<LevelRoom>();
+            var vCam = new GameObject(
+                $"{ctx.Level.name}_VirtualCamera"
+            ).AddComponent<CinemachineCamera>();
+            vCam.transform.SetParent(ctx.Level.transform);
+            ctx.VCam = vCam;
+            return ctx;
+        }
 
-            if (levelGo.TryGetComponent<LDtkFields>(out var fields))
-                room.CameraMode = fields.GetEnum<CameraMode>("CameraMode");
+        private void ApplyCameraFollow(RoomContext ctx) =>
+            ctx.VCam.Follow =
+                ctx.Room.CameraMode == CameraMode.Fixed
+                    ? null
+                    : RunTime.GameMain.GetPlayer()?.transform;
 
-            room.BorderBounds = level.BorderBounds;
+        private void ApplyFixedCameraSettings(RoomContext ctx)
+        {
+            if (ctx.Room.CameraMode != CameraMode.Fixed)
+                return;
 
-            var virtualCameraGo = new GameObject(level.name + "_VirtualCamera");
-            virtualCameraGo.transform.SetParent(levelGo.transform);
-            var virtualCamera = virtualCameraGo.AddComponent<CinemachineCamera>();
+            var bounds = ctx.Room.BorderBounds;
 
-            if (room.CameraMode == CameraMode.Fixed)
-            {
-                virtualCamera.Follow = null;
-                virtualCamera.transform.position = room.BorderBounds.center + Vector3.back * 10f;
+            ctx.VCam.transform.position = bounds.center + Vector3.back * 10f;
+            ctx.VCam.Lens.ModeOverride = LensSettings.OverrideModes.Orthographic;
+            ctx.VCam.Lens.OrthographicSize = 11.25f;
+            ctx.VCam.Lens.NearClipPlane = 0.1f;
+            ctx.VCam.Lens.FarClipPlane = 5000f;
+        }
 
-                float roomAspect = room.BorderBounds.size.x / room.BorderBounds.size.y;
-                float screenAspect = (float)Screen.width / Screen.height;
-                float targetOrthoSize = room.BorderBounds.size.y / 2f / 100f;
-
-                if (roomAspect > screenAspect)
-                {
-                    targetOrthoSize = room.BorderBounds.size.x / screenAspect / 2f / 100f;
-                }
-
-                virtualCamera.Lens.OrthographicSize = targetOrthoSize;
-            }
-            else
-            {
-                virtualCamera.Follow = RunTime.GameMain.GetPlayer()?.transform;
-            }
-
-            var confiner = levelGo.AddComponent<CinemachineConfiner2D>();
-            if (confiner != null)
-            {
-                if (!levelGo.TryGetComponent<PolygonCollider2D>(out var poly))
-                    poly = levelGo.GetComponentInChildren<PolygonCollider2D>();
-
-                if (poly != null)
-                {
-                    confiner.BoundingShape2D = poly;
-                }
-            }
+        private void ApplyConfinerSettings(RoomContext ctx)
+        {
+            var confiner = ctx.Level.gameObject.AddComponent<CinemachineConfiner2D>();
+            confiner.BoundingShape2D = ctx.Level.TryGetComponent<PolygonCollider2D>(out var poly)
+                ? poly
+                : ctx.Level.GetComponentInChildren<PolygonCollider2D>();
         }
     }
 }
