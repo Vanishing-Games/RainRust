@@ -14,11 +14,11 @@
     "enumTags": [
 
     ],
-    "identifier": "Art_tilemap_A",
+    "identifier": "Tilemap_B",
     "padding": 0,
     "pxHei": 512,
     "pxWid": 1536,
-    "relPath": "../../Arts/TileSet/art_tilemap_A.png",
+    "relPath": "../../Arts/TileSet/art_tilemap_B.png",
     "savedSelections": [
 
     ],
@@ -28,6 +28,6 @@
     ],
     "tagsSourceEnumUid": null,
     "tileGridSize": 128,
-    "uid": 16
+    "uid": 10
   }
 }

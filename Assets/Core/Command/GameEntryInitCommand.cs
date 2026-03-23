@@ -17,7 +17,7 @@ namespace Core
 
         public async UniTask<bool> ExecuteAsync()
         {
-            Logger.LogInfo("[GameEntryInitCommand] Initiating Game...", LogTag.GameCoreStart);
+            CLogger.LogInfo("[GameEntryInitCommand] Initiating Game...", LogTag.GameCoreStart);
 
             await InitProgressBar();
 
@@ -48,13 +48,13 @@ namespace Core
                 loadCompleted = true;
             }
 
-            Logger.LogInfo("[GameEntryInitCommand] Initiating Game Done", LogTag.GameCoreStart);
+            CLogger.LogInfo("[GameEntryInitCommand] Initiating Game Done", LogTag.GameCoreStart);
             return true;
         }
 
         private async UniTask InitProgressBar()
         {
-            Logger.LogInfo(
+            CLogger.LogInfo(
                 "[GameEntryInitCommand] Initiating ProgressBar...",
                 LogTag.GameCoreStart
             );
@@ -65,7 +65,7 @@ namespace Core
 
             await loadProgressBar.ExecuteAsync();
 
-            Logger.LogInfo(
+            CLogger.LogInfo(
                 "[GameEntryInitCommand] Initiating ProgressBar Done",
                 LogTag.GameCoreStart
             );

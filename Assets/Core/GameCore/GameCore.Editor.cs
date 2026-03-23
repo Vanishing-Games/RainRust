@@ -38,7 +38,7 @@ namespace Core
 
             if (hasUnityLifecycleMethods)
             {
-                Logger.LogError(
+                CLogger.LogError(
                     $"Game Running Condition failed, beacause unity lifecycle methods are found in class inherit from CoreModuleManagerBase",
                     LogTag.GameRunCheck
                 );

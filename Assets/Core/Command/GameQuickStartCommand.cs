@@ -17,11 +17,11 @@ namespace Core
 
         public async UniTask<bool> ExecuteAsync()
         {
-            Logger.LogInfo(
+            CLogger.LogInfo(
                 "[GameQuickStartCommand] Quick Starting Core Systems...",
                 LogTag.GameCoreStart
             );
-            Logger.LogInfo("[GameQuickStartCommand] Quick Start Done", LogTag.GameCoreStart);
+            CLogger.LogInfo("[GameQuickStartCommand] Quick Start Done", LogTag.GameCoreStart);
             return await UniTask.FromResult(true);
         }
     }

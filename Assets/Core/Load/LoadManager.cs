@@ -20,12 +20,12 @@ namespace Core
             {
                 sb.AppendLine($"  {loadInfo.GetNeededLoaderType()}");
             }
-            Logger.LogInfo(sb.ToString(), LogTag.Loading);
+            CLogger.LogInfo(sb.ToString(), LogTag.Loading);
         }
 
         public void RegisterLoader(ILoader newLoader)
         {
-            Logger.LogVerbose(
+            CLogger.LogVerbose(
                 $"Registering loader {newLoader.GetLoaderType()}",
                 LogTag.Loading
             );
@@ -42,7 +42,7 @@ namespace Core
 
             if (!isLoaderNeeded)
             {
-                Logger.LogWarn(
+                CLogger.LogWarn(
                     $"Loader {newLoader.GetLoaderType()} is not needed",
                     LogTag.Loading
                 );
@@ -53,7 +53,7 @@ namespace Core
             {
                 if (loader.GetLoaderType() == newLoader.GetLoaderType())
                 {
-                    Logger.LogWarn(
+                    CLogger.LogWarn(
                         $"Loader {loader.GetLoaderType()} already registed",
                         LogTag.Loading
                     );
@@ -62,11 +62,11 @@ namespace Core
             }
 
             m_Loaders.Add(newLoader);
-            Logger.LogInfo($"Registed loader {newLoader.GetLoaderType()}", LogTag.Loading);
+            CLogger.LogInfo($"Registed loader {newLoader.GetLoaderType()}", LogTag.Loading);
 
             if (m_Loaders.Count == m_LoadInfos.Count)
             {
-                Logger.LogInfo("All loaders registered, starting loading", LogTag.Loading);
+                CLogger.LogInfo("All loaders registered, starting loading", LogTag.Loading);
                 Load();
             }
         }
@@ -131,7 +131,7 @@ namespace Core
             }
             catch (Exception ex)
             {
-                Logger.LogError(
+                CLogger.LogError(
                     $"Loading failed with exception: \n {ex.Message}",
                     LogTag.Loading
                 );
@@ -153,12 +153,12 @@ namespace Core
 
         private void OnLoadRequestComplete(R3.Result result)
         {
-            Logger.LogInfo("LoadRequestComplete", LogTag.Loading);
+            CLogger.LogInfo("LoadRequestComplete", LogTag.Loading);
         }
 
         private void OnLoadRequestError(Exception exception)
         {
-            Logger.LogError("LoadRequestError", LogTag.Loading);
+            CLogger.LogError("LoadRequestError", LogTag.Loading);
         }
 
         private void OnLoadRequest(LoadRequestEvent loadEvent)
@@ -178,7 +178,7 @@ namespace Core
                     var ex = new TimeoutException(
                         $"Loading timeout after {waitMs} ms for '{loadEvent.m_LoadDesc}'. Registered loaders: {m_Loaders.Count}/{m_LoadInfos.Count}"
                     );
-                    Logger.LogError(ex.Message, LogTag.Loading);
+                    CLogger.LogError(ex.Message, LogTag.Loading);
 
                     MessageBroker.Global.PublishErrorStop<LoadRequestEvent>(this, ex);
                     Reset();

@@ -3,7 +3,7 @@
  * Copyright (c) 2025 Vanishing Games. All Rights Reserved.
  * @Author: VanishXiao
  * @Date: 2025-10-30 16:25:39
- * @LastEditTime: 2025-12-03 19:17:50
+ * @LastEditTime: 2026-03-24 02:58:20
  * --------------------------------------------------------------------------------
  */
 using System.Collections.Generic;
@@ -37,7 +37,7 @@ namespace Core
     /// - ENABLE_RELEASE_LOG: Release 构建，仅输出 Warning/Error
     /// - 如果都没定义，则不输出任何日志（Production 模式）
     /// </summary>
-    public static class Logger
+    public static class CLogger
     {
         // ========== 对外 API ==========
 
@@ -237,7 +237,7 @@ namespace Core
                 if (declaringType == null)
                     continue;
 
-                if (declaringType == typeof(Logger))
+                if (declaringType == typeof(CLogger))
                     continue;
 
                 var assembly = declaringType.Assembly;

@@ -10,7 +10,7 @@ namespace GameMain.Editor
     {
         protected override void OnPostprocessLevel(GameObject root, LdtkJson projectJson)
         {
-            Core.Logger.LogInfo(
+            Core.CLogger.LogInfo(
                 $"Post process LDtk level: {root.name}",
                 LogTag.LDtkTransitionProcessor
             );

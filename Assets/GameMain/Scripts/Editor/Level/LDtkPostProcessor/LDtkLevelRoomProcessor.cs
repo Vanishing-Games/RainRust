@@ -27,7 +27,7 @@ namespace GameMain.Editor
             Result
                 .Success(root)
                 .Tap(r =>
-                    Core.Logger.LogInfo(
+                    Core.CLogger.LogInfo(
                         $"Post process LDtk level: {r.name}",
                         LogTag.LdtkRoomProcessor
                     )

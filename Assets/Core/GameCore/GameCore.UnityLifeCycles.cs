@@ -26,11 +26,11 @@ namespace Core
 
         protected async void Start()
         {
-            Logger.LogInfo("[GameCore] Start...", LogTag.GameCoreStart);
+            CLogger.LogInfo("[GameCore] Start...", LogTag.GameCoreStart);
 
             if (!GameRunCheck())
             {
-                Logger.LogInfo("[GameCore] Game Check Failed, Quit Game...", LogTag.GameRunCheck);
+                CLogger.LogInfo("[GameCore] Game Check Failed, Quit Game...", LogTag.GameRunCheck);
                 await QuitGame();
                 return;
             }
@@ -38,7 +38,7 @@ namespace Core
             // 检查当前场景，根据场景决定启动策略
             if (SceneManager.GetActiveScene().name == "GameEntry")
             {
-                Logger.LogInfo(
+                CLogger.LogInfo(
                     "[GameCore] In GameEntry, Publishing GameEntryInitEvent...",
                     LogTag.GameCoreStart
                 );
@@ -46,7 +46,7 @@ namespace Core
             }
             else
             {
-                Logger.LogInfo(
+                CLogger.LogInfo(
                     $"[GameCore] Current Scene is {SceneManager.GetActiveScene().name}, Publishing GameQuickStartEvent...",
                     LogTag.GameCoreStart
                 );
@@ -60,7 +60,7 @@ namespace Core
 
         private void OnDestroy()
         {
-            Logger.LogInfo("[GameCore] OnDestroy...", LogTag.GameCoreDestroy);
+            CLogger.LogInfo("[GameCore] OnDestroy...", LogTag.GameCoreDestroy);
             m_InitEventSubscription?.Dispose();
             m_QuickStartEventSubscription?.Dispose();
         }

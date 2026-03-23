@@ -40,7 +40,7 @@ namespace Core
 
             initialized = true;
 
-            Logger.LogInfo("VgInput system initialized with New Input System.", LogTag.Input);
+            CLogger.LogInfo("VgInput system initialized with New Input System.", LogTag.Input);
         }
 
         public static void Update()

@@ -39,16 +39,16 @@ namespace Core
             switch (change)
             {
                 case InputDeviceChange.Added:
-                    Logger.LogInfo($"Input device added: {device.displayName}", LogTag.Input);
+                    CLogger.LogInfo($"Input device added: {device.displayName}", LogTag.Input);
                     break;
                 case InputDeviceChange.Removed:
-                    Logger.LogInfo($"Input device removed: {device.displayName}", LogTag.Input);
+                    CLogger.LogInfo($"Input device removed: {device.displayName}", LogTag.Input);
                     break;
                 case InputDeviceChange.Reconnected:
-                    Logger.LogInfo($"Input device reconnected: {device.displayName}", LogTag.Input);
+                    CLogger.LogInfo($"Input device reconnected: {device.displayName}", LogTag.Input);
                     break;
                 case InputDeviceChange.Disconnected:
-                    Logger.LogInfo(
+                    CLogger.LogInfo(
                         $"Input device disconnected: {device.displayName}",
                         LogTag.Input
                     );
@@ -113,7 +113,7 @@ namespace Core
                 // Debug logging for troubleshooting
                 if (Input.GetKeyDown(KeyCode.F1))
                 {
-                    Logger.LogInfo(
+                    CLogger.LogInfo(
                         $"Debug Input Status:\n"
                             + $"Movement Vector: {movementVector}\n"
                             + $"Jump State: Pressed={inputActionStates[InputAction.Jump].isPressed}, Held={inputActionStates[InputAction.Jump].isHeld}\n"
@@ -124,7 +124,7 @@ namespace Core
             }
             catch (System.Exception e)
             {
-                Logger.LogError($"Error in UpdateDebugDisplay: {e.Message}", LogTag.Input);
+                CLogger.LogError($"Error in UpdateDebugDisplay: {e.Message}", LogTag.Input);
             }
         }
 
