@@ -22,8 +22,10 @@ namespace GameMain.Editor
 
         public bool Execute()
         {
-            CLogger.LogInfo("[FastLevelTestCommand] Executing fast level test...", LogTag.LevelManager);
-
+            CLogger.LogInfo(
+                "[FastLevelTestCommand] Executing fast level test...",
+                LogTag.LevelManager
+            );
 
             // 查找当前位置所在的 Level
             LDtkComponentLevel currentLevel = null;
@@ -49,7 +51,7 @@ namespace GameMain.Editor
             List<LevelTransition> transitions = new();
             foreach (var layer in currentLevel.LayerInstances)
             {
-                if(layer == null)
+                if (layer == null)
                     continue;
 
                 foreach (var entity in layer.EntityInstances)

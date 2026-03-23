@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using Cysharp.Threading.Tasks;
 using System.Text;
+using Cysharp.Threading.Tasks;
 
 namespace Core
 {
@@ -25,10 +25,7 @@ namespace Core
 
         public void RegisterLoader(ILoader newLoader)
         {
-            CLogger.LogVerbose(
-                $"Registering loader {newLoader.GetLoaderType()}",
-                LogTag.Loading
-            );
+            CLogger.LogVerbose($"Registering loader {newLoader.GetLoaderType()}", LogTag.Loading);
 
             bool isLoaderNeeded = false;
             foreach (var loadInfo in m_LoadInfos)
@@ -131,10 +128,7 @@ namespace Core
             }
             catch (Exception ex)
             {
-                CLogger.LogError(
-                    $"Loading failed with exception: \n {ex.Message}",
-                    LogTag.Loading
-                );
+                CLogger.LogError($"Loading failed with exception: \n {ex.Message}", LogTag.Loading);
                 Reset();
 
                 MessageBroker.Global.PublishErrorStop<LoadProgressEvent>(this, ex);

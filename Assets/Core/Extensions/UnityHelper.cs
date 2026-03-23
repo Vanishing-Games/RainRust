@@ -2,8 +2,5 @@ using UnityEngine;
 
 namespace Core
 {
-    public static class UnityHelper
-    {
-        
-    }
+    public static class UnityHelper { }
 }

@@ -2,6 +2,7 @@ using Core;
 using FMODUnity;
 using IngameDebugConsole;
 using UnityEngine;
+
 public enum FmodOperation
 {
     PlayEvent,

@@ -45,7 +45,10 @@ namespace Core
                     CLogger.LogInfo($"Input device removed: {device.displayName}", LogTag.Input);
                     break;
                 case InputDeviceChange.Reconnected:
-                    CLogger.LogInfo($"Input device reconnected: {device.displayName}", LogTag.Input);
+                    CLogger.LogInfo(
+                        $"Input device reconnected: {device.displayName}",
+                        LogTag.Input
+                    );
                     break;
                 case InputDeviceChange.Disconnected:
                     CLogger.LogInfo(

@@ -8,7 +8,10 @@ namespace GameMain.RunTime
     {
         private void Start()
         {
-            CLogger.LogInfo("[GameLevelInvoker] Start, Publishing GameLevelInitEvent...", LogTag.GameCoreStart);
+            CLogger.LogInfo(
+                "[GameLevelInvoker] Start, Publishing GameLevelInitEvent...",
+                LogTag.GameCoreStart
+            );
             MessageBroker.Global.Publish(new GameLevelInitEvent());
         }
     }

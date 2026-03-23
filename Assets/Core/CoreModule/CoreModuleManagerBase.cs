@@ -86,10 +86,7 @@ namespace Core
                 OnLoadingEnd
             );
 
-            CLogger.LogVerbose(
-                $"SystemMonoModule: {GetType()} RegisterLoadEvent",
-                LogTag.Loading
-            );
+            CLogger.LogVerbose($"SystemMonoModule: {GetType()} RegisterLoadEvent", LogTag.Loading);
         }
 
         public virtual void UnregisterLoadEvent()

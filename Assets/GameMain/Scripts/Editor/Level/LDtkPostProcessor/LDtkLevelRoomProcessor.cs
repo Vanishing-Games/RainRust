@@ -27,10 +27,7 @@ namespace GameMain.Editor
             Result
                 .Success(root)
                 .Tap(r =>
-                    CLogger.LogInfo(
-                        $"Post process LDtk level: {r.name}",
-                        LogTag.LdtkRoomProcessor
-                    )
+                    CLogger.LogInfo($"Post process LDtk level: {r.name}", LogTag.LdtkRoomProcessor)
                 )
                 .Map(r => r.GetComponent<LDtkComponentLevel>())
                 .Tap(OnProcessRoomCamera);

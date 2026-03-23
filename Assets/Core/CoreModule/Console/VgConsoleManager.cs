@@ -5,5 +5,5 @@ using UnityEngine;
 
 namespace Core
 {
-    public class VgConsoleManager {}
+    public class VgConsoleManager { }
 }

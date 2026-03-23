@@ -9,7 +9,10 @@ namespace Core
             if (lineNormal.sqrMagnitude <= Mathf.Epsilon)
             {
 #if UNITY_EDITOR
-                CLogger.LogWarn("ProjectOnLine: lineNormal is zero. Returning original vector.",LogTag.Math);
+                CLogger.LogWarn(
+                    "ProjectOnLine: lineNormal is zero. Returning original vector.",
+                    LogTag.Math
+                );
 #endif
                 return v;
             }
