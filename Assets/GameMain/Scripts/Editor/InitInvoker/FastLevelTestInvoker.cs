@@ -4,8 +4,13 @@ namespace GameMain.Editor
 {
     /// <summary>
     /// 快速关卡测试
-    /// 只将Player放置到editor中目前位置的对应关卡的最近出生点
-    /// 然后开启关卡.
+    /// 将逻辑封装在 FastLevelTestCommand 中执行
     /// </summary>
-    public class FastLevelTestInvoker : MonoBehaviour { }
+    public class FastLevelTestInvoker : MonoBehaviour
+    {
+        private void Start()
+        {
+            new FastLevelTestCommand(transform.position).Execute();
+        }
+    }
 }

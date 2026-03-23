@@ -11,7 +11,7 @@ namespace GameMain.RunTime
 
         internal Vector3 GetPlayerSpawnPoint()
         {
-            throw new NotImplementedException();
+            return transform.position;
         }
     }
 }

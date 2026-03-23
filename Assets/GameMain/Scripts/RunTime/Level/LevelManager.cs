@@ -129,6 +129,9 @@ namespace GameMain.RunTime
 
             foreach (var layer in m_CurrentLevel.LayerInstances)
             {
+                if (layer == null)
+                    continue;
+
                 foreach (LDtkComponentEntity entity in layer.EntityInstances)
                 {
                     if (entity != null && entity.Identifier == LDtkIdentifiers.LevelTransition)
