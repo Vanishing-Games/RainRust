@@ -139,7 +139,8 @@ jobs:
 
               if (isOverdue) {
                 const comments = await github.rest.issues.listComments({ owner, repo, issue_number: issueNumber, per_page: 50 });
-                const alreadyNotified = comments.data.some(c => c.body.includes('奶茶喝了'));
+                // 使用更稳健的匹配方式，忽略 markdown 加粗
+                const alreadyNotified = comments.data.some(c => c.body.includes('奶茶喝了') || c.body.includes('有**奶茶**喝了'));
 
                 if (!alreadyNotified) {
                   message = `${titlePrefix} \n ${assignees} 🚨💥 **DDL到此为止了**！💀🛑\n@${coreTeam} 🍵🧋有**奶茶**喝了🥤🎉`;
