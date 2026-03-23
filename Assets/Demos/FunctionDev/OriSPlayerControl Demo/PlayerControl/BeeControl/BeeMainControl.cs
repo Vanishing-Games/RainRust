@@ -131,7 +131,7 @@ namespace PlayerControlByOris
         //悬挂状态管理
         void StayStEnter()
         {
-            gameObject.layer = LayerMask.GetMask("Hook");
+            //gameObject.layer = LayerMask.GetMask("Hook");
         }
 
         void StayStUpdate() { }
