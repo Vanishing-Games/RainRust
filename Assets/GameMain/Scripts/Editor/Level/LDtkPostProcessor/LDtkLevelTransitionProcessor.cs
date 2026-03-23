@@ -35,50 +35,63 @@ namespace GameMain.Editor
                         collider.offset = new Vector2(size.x / 2f, -size.y / 2f);
                         collider.size = size;
 
-                        var transition = transitionGo.AddComponent<LevelTransition>();
-                        LDtkFields fields = entity.GetComponent<LDtkFields>();
+                        transitionGo.AddComponent<LevelTransition>();
+                    }
+                }
+            }
+        }
 
-                        var targetRef = fields.GetEntityReference("Target");
+        protected override void OnPostprocessProject(GameObject root)
+        {
+            CLogger.LogInfo(
+                $"Post process LDtk project: {root.name}",
+                LogTag.LDtkTransitionProcessor
+            );
 
-                        if (targetRef != null)
+            // Find all LevelTransition components in the project to link them
+            LevelTransition[] allTransitions = root.GetComponentsInChildren<LevelTransition>();
+
+            foreach (var transition in allTransitions)
+            {
+                LDtkFields fields = transition.GetComponent<LDtkFields>();
+                var targetRef = fields.GetEntityReference("Target");
+
+                if (targetRef != null)
+                {
+                    LDtkIid targetIidComponent = LDtkIidComponentBank.GetByIid(targetRef.EntityIid);
+
+                    if (targetIidComponent != null)
+                    {
+                        GameObject targetTransitionGo = targetIidComponent.gameObject;
+                        var targetComp = targetTransitionGo.GetComponent<LevelTransition>();
+                        if (targetComp != null)
                         {
-                            LDtkIid targetIidComponent = LDtkIidComponentBank.GetByIid(
-                                targetRef.EntityIid
-                            );
-
-                            if (targetIidComponent != null)
-                            {
-                                GameObject targetTransitionGo = targetIidComponent.gameObject;
-                                transition.Target =
-                                    targetTransitionGo.GetComponent<LevelTransition>();
-                            }
-                            else
-                            {
-                                CLogger.LogError(
-                                    "关卡出入口: "
-                                        + entity.name
-                                        + " 有设置对应的目标, 但却无法获取Go"
-                                        + "\n关卡:"
-                                        + level.name,
-                                    LogTag.LDtkTransitionProcessor
-                                );
-                                transition.Target = null;
-                            }
+                            transition.Target = targetComp;
                         }
                         else
                         {
-                            CLogger.LogWarn(
-                                "关卡出入口: "
-                                    + entity.name
-                                    + " 没有设置对应的目标, 请确认这是否正确\n Fields如下:"
-                                    + fields
-                                    + "\n关卡:"
-                                    + level.name,
+                            CLogger.LogError(
+                                $"关卡出入口: {transition.name} 有设置对应的目标 {targetTransitionGo.name}, 但目标对象上缺少 LevelTransition 组件",
                                 LogTag.LDtkTransitionProcessor
                             );
-                            transition.Target = null;
                         }
                     }
+                    else
+                    {
+                        CLogger.LogError(
+                            $"关卡出入口: {transition.name} 有设置对应的目标 IID: {targetRef.EntityIid}, 但却无法在项目中获取目标对象",
+                            LogTag.LDtkTransitionProcessor
+                        );
+                        transition.Target = null;
+                    }
+                }
+                else
+                {
+                    CLogger.LogWarn(
+                        $"关卡出入口: {transition.name} 没有设置对应的目标, 请确认这是否正确",
+                        LogTag.LDtkTransitionProcessor
+                    );
+                    transition.Target = null;
                 }
             }
         }

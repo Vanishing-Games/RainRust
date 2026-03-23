@@ -6,8 +6,8 @@ namespace GameMain.RunTime
 {
     public class LevelTransition : MonoBehaviour
     {
-        [ShowInInspector]
-        public LevelTransition Target { get; set; }
+        [SerializeField]
+        public LevelTransition Target;
 
         internal Vector3 GetPlayerFeetSpawnPoint()
         {
