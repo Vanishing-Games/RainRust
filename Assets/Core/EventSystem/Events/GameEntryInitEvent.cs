@@ -10,4 +10,6 @@ namespace Core
     public class GameLevelInitEvent : IEvent { }
 
     public class GameEndInitEvent : IEvent { }
+
+    public abstract class GameCustomInitEvent : IEvent { }
 }

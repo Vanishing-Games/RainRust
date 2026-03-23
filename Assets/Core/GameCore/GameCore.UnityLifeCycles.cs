@@ -32,6 +32,11 @@ namespace Core
             {
                 // TODO: Handle GameEndInitEvent if needed
             });
+
+            m_CustomEventSubscription = MessageBroker.Global.Subscribe<GameCustomInitEvent>(_ =>
+            {
+                // TODO: Handle GameEndInitEvent if needed
+            });
         }
 
         protected async void Start()
@@ -63,5 +68,6 @@ namespace Core
         private IDisposable m_StartEventSubscription;
         private IDisposable m_LevelEventSubscription;
         private IDisposable m_EndEventSubscription;
+        private IDisposable m_CustomEventSubscription;
     }
 }
