@@ -68,12 +68,6 @@ namespace GameMain.RunTime
         }
 
 #if UNITY_EDITOR
-
-        private void LateUpdate()
-        {
-            UpdateDebugUI();
-        }
-
         private void UpdateDebugUI()
         {
             DebugUIManager.Log(
@@ -271,26 +265,26 @@ namespace GameMain.RunTime
         {
             if (m_CurrentRoom != null)
             {
-                m_CurrentRoom.SetActive(false);
+                // m_CurrentRoom.SetActive(false);
             }
 
             m_CurrentRoom = level.GetComponent<LevelRoom>();
-            if (m_CurrentRoom != null)
+            if (m_CurrentRoom != null && m_CurrentRoom.VirtualCamera != null)
             {
-                m_CurrentRoom.SetActive(true);
+                if (m_CurrentRoom.CameraMode == CameraMode.Follow)
+                    m_CurrentRoom.VirtualCamera.Follow = GameMain.GetPlayer().transform;
 
-                // If it's follow mode, ensure the player is being followed
-                if (
-                    m_CurrentRoom.CameraMode == CameraMode.Follow
-                    && m_CurrentRoom.VirtualCamera != null
-                )
-                {
-                    var player = GameMain.GetPlayer();
-                    if (player != null)
-                    {
-                        m_CurrentRoom.VirtualCamera.Follow = player.transform;
-                    }
-                }
+                m_CurrentRoom.VirtualCamera.Priority.Enabled = true;
+                m_CurrentRoom.VirtualCamera.Priority.Value = ++m_CurrentMaxPriority;
+            }
+            else
+            {
+                CLogger.LogError(
+                    "There's no LevelRoom Component in level: "
+                        + level.name
+                        + "\nOr There's no virtual camera setted",
+                    LogTag.LevelManager
+                );
             }
         }
 
@@ -299,6 +293,7 @@ namespace GameMain.RunTime
             return m_CurrentLevelTransition;
         }
 
+        private int m_CurrentMaxPriority = 0;
         private LevelRoom m_CurrentRoom = null;
         private LevelTransition m_CurrentLevelTransition = null;
         private LDtkComponentLevel m_CurrentLevel = null;

@@ -52,7 +52,6 @@ namespace GameMain.RunTime
         public LevelTransition Target;
 
         [LabelText("索引 (Index)")]
-        [SerializeField]
         public int? Index;
     }
 }
