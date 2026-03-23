@@ -23,6 +23,12 @@ namespace Core
         [Tooltip("边界处理模式 (仅水平方向)")]
         public ParallaxClampMode clampMode;
 
+        [Tooltip("模糊模式,0=Gaussian,1=Kawase"), Range(0, 1)]
+        public float blurMode;
+
+        [Tooltip("高斯模糊强度"), Range(0.001f, 10f)]
+        public float blurIntensity;
+
         [HideInInspector]
         public GameObject layerObject;
 
@@ -35,6 +41,11 @@ namespace Core
 
     public class ParallaxBackground : MonoBehaviour
     {
+        private static readonly int BlurIntensityProperty = Shader.PropertyToID("_BlurIntensity");
+        private static readonly int BlurModeProperty = Shader.PropertyToID("_BlurMode");
+        private MaterialPropertyBlock m_PropertyBlock;
+        private Material m_BlurMaterial;
+
         private void Start()
         {
             if (m_TargetCamera == null)
@@ -83,6 +94,13 @@ namespace Core
 
         private void InitializeLayers()
         {
+            if (m_BlurShader == null)
+            {
+                m_BlurShader = Shader.Find("Vanish/Sprite-Blur");
+            }
+
+            m_PropertyBlock ??= new MaterialPropertyBlock();
+
             for (int i = transform.childCount - 1; i >= 0; i--)
             {
                 if (Application.isPlaying)
@@ -111,7 +129,7 @@ namespace Core
 
                 for (int j = 0; j < count; j++)
                 {
-                    GameObject child = new GameObject($"Sprite_{j}");
+                    GameObject child = new($"Sprite_{j}");
                     child.transform.SetParent(container.transform);
 
                     float xPos =
@@ -124,13 +142,49 @@ namespace Core
                     sr.sprite = layer.sprite;
                     sr.sortingOrder = m_Layers.Count - i;
 
-                    if (layer.clampMode == ParallaxClampMode.Mirror)
-                    {
-                        int index = Mathf.RoundToInt(xPos / layer.textureWidth);
-                        sr.flipX = Mathf.Abs(index) % 2 != 0;
-                    }
-
                     layer.renderers[j] = sr;
+                }
+            }
+
+            UpdateLayerProperties();
+        }
+
+        private void UpdateLayerProperties()
+        {
+            m_PropertyBlock ??= new MaterialPropertyBlock();
+
+            if (m_BlurShader == null)
+            {
+                m_BlurShader = Shader.Find("Vanish/Sprite-Blur");
+            }
+
+            if (m_BlurShader != null && m_BlurMaterial == null)
+            {
+                m_BlurMaterial = new Material(m_BlurShader);
+            }
+
+            foreach (var layer in m_Layers)
+            {
+                if (layer.renderers == null)
+                    continue;
+
+                foreach (var sr in layer.renderers)
+                {
+                    if (sr == null)
+                        continue;
+
+                    if (layer.blurIntensity > 0 && m_BlurShader != null)
+                    {
+                        sr.sharedMaterial = m_BlurMaterial;
+                        sr.GetPropertyBlock(m_PropertyBlock);
+                        m_PropertyBlock.SetFloat(BlurIntensityProperty, layer.blurIntensity);
+                        m_PropertyBlock.SetFloat(BlurModeProperty, layer.blurMode);
+                        sr.SetPropertyBlock(m_PropertyBlock);
+                    }
+                    else
+                    {
+                        sr.sharedMaterial = null; // Use default sprite material
+                    }
                 }
             }
         }
@@ -172,18 +226,29 @@ namespace Core
         [SerializeField]
         private List<ParallaxLayer> m_Layers = new();
 
+        [SerializeField]
+        private Shader m_BlurShader;
+
         private Vector3 m_LastCameraPosition;
 
 #if UNITY_EDITOR
         private void OnValidate()
         {
-            if (m_Layers == null || m_Layers.Count <= 1)
+            if (m_Layers == null)
                 return;
 
-            m_Layers.Sort((a, b) => b.parallaxFactor.CompareTo(a.parallaxFactor));
+            if (m_Layers.Count > 1)
+            {
+                m_Layers.Sort((a, b) => b.parallaxFactor.CompareTo(a.parallaxFactor));
+            }
+
+            if (transform.childCount > 0)
+            {
+                UpdateLayerProperties();
+            }
         }
 
-        [ContextMenu("均匀分配视差系数")]
+        [ContextMenu("一键分配视差系数")]
         private void DistributeFactors()
         {
             if (m_Layers == null || m_Layers.Count == 0)
@@ -200,9 +265,23 @@ namespace Core
                 for (int i = 0; i < m_Layers.Count; i++)
                 {
                     m_Layers[i].parallaxFactor = 1.0f - ((float)i / (m_Layers.Count - 1));
+                    m_Layers[i].blurIntensity = Math.Clamp(
+                        (1.0f - m_Layers[i].parallaxFactor) * 10f,
+                        0.001f,
+                        10f
+                    );
+                    m_Layers[i].clampMode = ParallaxClampMode.Repeat;
                 }
             }
+
+            if (transform.childCount > 0)
+            {
+                UpdateLayerProperties();
+            }
         }
+
+        [ContextMenu("生成图层对象")]
+        private void GenerateLayerObjects() => Start();
 #endif
     }
 }
