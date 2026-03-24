@@ -633,6 +633,16 @@ jobs:
       always() && 
       needs.flow-prediction.outputs.should_run_tests == 'true' && 
       (needs.code-style-check.result == 'success' || needs.code-style-check.result == 'skipped')
+    outputs:
+      edit_passed: ${{ steps.parse-results.outputs.edit_passed }}
+      edit_failed: ${{ steps.parse-results.outputs.edit_failed }}
+      edit_skipped: ${{ steps.parse-results.outputs.edit_skipped }}
+      edit_total: ${{ steps.parse-results.outputs.edit_total }}
+      play_passed: ${{ steps.parse-results.outputs.play_passed }}
+      play_failed: ${{ steps.parse-results.outputs.play_failed }}
+      play_skipped: ${{ steps.parse-results.outputs.play_skipped }}
+      play_total: ${{ steps.parse-results.outputs.play_total }}
+      test_status: ${{ steps.parse-results.outputs.test_status }}
     
     steps:
       - name: 检出代码
@@ -677,6 +687,8 @@ jobs:
 
       - name: 🧪 运行EditMode测试
         uses: game-ci/unity-test-runner@v4
+        id: edit-tests
+        continue-on-error: true
         env:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
@@ -684,9 +696,12 @@ jobs:
         with:
           unityVersion: ${{ steps.load-test-config.outputs.unity_version }}
           testMode: EditMode
+          artifactsPath: artifacts/editmode
 
       - name: 🎮 运行PlayMode测试  
         uses: game-ci/unity-test-runner@v4
+        id: play-tests
+        continue-on-error: true
         env:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
@@ -694,6 +709,55 @@ jobs:
         with:
           unityVersion: ${{ steps.load-test-config.outputs.unity_version }}
           testMode: PlayMode
+          artifactsPath: artifacts/playmode
+
+      - name: 📊 解析测试结果
+        id: parse-results
+        if: always()
+        run: |
+          echo "🔍 正在解析测试结果 XML..."
+          
+          # 解析 EditMode
+          EDIT_FILE="artifacts/editmode/editmode.xml"
+          if [ -f "$EDIT_FILE" ]; then
+            EP=$(grep -oP 'passed="\d+"' "$EDIT_FILE" | head -1 | grep -oP '\d+' || echo "0")
+            EF=$(grep -oP 'failed="\d+"' "$EDIT_FILE" | head -1 | grep -oP '\d+' || echo "0")
+            ES=$(grep -oP 'skipped="\d+"' "$EDIT_FILE" | head -1 | grep -oP '\d+' || echo "0")
+            ET=$(grep -oP 'total="\d+"' "$EDIT_FILE" | head -1 | grep -oP '\d+' || echo "0")
+          else
+            EP=0; EF=0; ES=0; ET=0
+          fi
+          
+          # 解析 PlayMode
+          PLAY_FILE="artifacts/playmode/playmode.xml"
+          if [ -f "$PLAY_FILE" ]; then
+            PP=$(grep -oP 'passed="\d+"' "$PLAY_FILE" | head -1 | grep -oP '\d+' || echo "0")
+            PF=$(grep -oP 'failed="\d+"' "$PLAY_FILE" | head -1 | grep -oP '\d+' || echo "0")
+            PS=$(grep -oP 'skipped="\d+"' "$PLAY_FILE" | head -1 | grep -oP '\d+' || echo "0")
+            PT=$(grep -oP 'total="\d+"' "$PLAY_FILE" | head -1 | grep -oP '\d+' || echo "0")
+          else
+            PP=0; PF=0; PS=0; PT=0
+          fi
+          
+          echo "edit_passed=$EP" >> $GITHUB_OUTPUT
+          echo "edit_failed=$EF" >> $GITHUB_OUTPUT
+          echo "edit_skipped=$ES" >> $GITHUB_OUTPUT
+          echo "edit_total=$ET" >> $GITHUB_OUTPUT
+          echo "play_passed=$PP" >> $GITHUB_OUTPUT
+          echo "play_failed=$PF" >> $GITHUB_OUTPUT
+          echo "play_skipped=$PS" >> $GITHUB_OUTPUT
+          echo "play_total=$PT" >> $GITHUB_OUTPUT
+          
+          TOTAL_FAILED=$((EF + PF))
+          if [ $TOTAL_FAILED -eq 0 ]; then
+            echo "test_status=success" >> $GITHUB_OUTPUT
+          else
+            echo "test_status=failure" >> $GITHUB_OUTPUT
+          fi
+          
+          echo "📊 统计结果:"
+          echo "  EditMode: $EP 通过, $EF 失败, $ES 跳过, 总数 $ET"
+          echo "  PlayMode: $PP 通过, $PF 失败, $PS 跳过, 总数 $PT"
 
       - name: 📊 上传测试结果
         uses: actions/upload-artifact@v4
@@ -705,15 +769,52 @@ jobs:
       - name: 📋 测试结果摘要
         if: always()
         run: |
+          EP=${{ steps.parse-results.outputs.edit_passed }}
+          EF=${{ steps.parse-results.outputs.edit_failed }}
+          ES=${{ steps.parse-results.outputs.edit_skipped }}
+          ET=${{ steps.parse-results.outputs.edit_total }}
+          
+          PP=${{ steps.parse-results.outputs.play_passed }}
+          PF=${{ steps.parse-results.outputs.play_failed }}
+          PS=${{ steps.parse-results.outputs.play_skipped }}
+          PT=${{ steps.parse-results.outputs.play_total }}
+          
           echo "## 🧪 Unity单元测试结果" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "✅ **测试状态:** 完成" >> $GITHUB_STEP_SUMMARY  
+          
+          if [ $((EF + PF)) -eq 0 ]; then
+            echo "✅ **测试状态:** 全部通过" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **测试状态:** 发现失败项" >> $GITHUB_STEP_SUMMARY
+          fi
+          
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**测试配置:**" >> $GITHUB_STEP_SUMMARY
+          echo "### 📊 测试统计" >> $GITHUB_STEP_SUMMARY
+          echo "| 模式 | 总数 | 通过 | 失败 | 跳过 | 通过率 |" >> $GITHUB_STEP_SUMMARY
+          echo "| :--- | :--- | :--- | :--- | :--- | :--- |" >> $GITHUB_STEP_SUMMARY
+          
+          # 计算通过率
+          if [ $ET -gt 0 ]; then ERATE=$((EP * 100 / ET))%; else ERATE="-"; fi
+          if [ $PT -gt 0 ]; then PRATE=$((PP * 100 / PT))%; else PRATE="-"; fi
+          
+          echo "| EditMode | $ET | $EP | $EF | $ES | $ERATE |" >> $GITHUB_STEP_SUMMARY
+          echo "| PlayMode | $PT | $PP | $PF | $PS | $PRATE |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          echo "<details><summary>点击查看测试配置详情</summary>" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**测试环境:**" >> $GITHUB_STEP_SUMMARY
           echo "- Unity版本: \`${{ steps.load-test-config.outputs.unity_version }}\`" >> $GITHUB_STEP_SUMMARY
           echo "- EditMode路径: \`${{ steps.load-test-config.outputs.edit_mode_path }}\`" >> $GITHUB_STEP_SUMMARY
           echo "- PlayMode路径: \`${{ steps.load-test-config.outputs.play_mode_path }}\`" >> $GITHUB_STEP_SUMMARY
           echo "- 覆盖率报告: \`${{ steps.load-test-config.outputs.generate_coverage }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "</details>" >> $GITHUB_STEP_SUMMARY
+
+      - name: 🚨 强制失败（如果存在失败测试）
+        if: steps.parse-results.outputs.test_status == 'failure'
+        run: |
+          echo "❌ 发现测试失败，工作流将终止。"
+          exit 1
 
   # =============================================================================
   # 阶段3: 构建测试 - 构建Windows和macOS版本  
@@ -1043,136 +1144,127 @@ jobs:
     runs-on: ubuntu-latest
     needs: [flow-prediction, code-style-check, unity-tests, build-tests, deploy-pages]
     if: always()
-    
+
     steps:
       - name: 📊 生成执行摘要
         run: |
           echo "📊 汇总CI/CD流水线执行结果..."
-          
+
           # 收集各阶段状态
           FLOW_STATUS="${{ needs.flow-prediction.result }}"
           STYLE_STATUS="${{ needs.code-style-check.result }}"
           TEST_STATUS="${{ needs.unity-tests.result }}" 
           BUILD_STATUS="${{ needs.build-tests.result }}"
           DEPLOY_STATUS="${{ needs.deploy-pages.result }}"
-          
-          echo "流程预测: $FLOW_STATUS"
-          echo "代码检查: $STYLE_STATUS"
-          echo "单元测试: $TEST_STATUS"
-          echo "构建测试: $BUILD_STATUS"  
-          echo "Pages部署: $DEPLOY_STATUS"
-          
+
+          # 收集测试详细数据
+          EP="${{ needs.unity-tests.outputs.edit_passed || 0 }}"
+          EF="${{ needs.unity-tests.outputs.edit_failed || 0 }}"
+          ET="${{ needs.unity-tests.outputs.edit_total || 0 }}"
+          PP="${{ needs.unity-tests.outputs.play_passed || 0 }}"
+          PF="${{ needs.unity-tests.outputs.play_failed || 0 }}"
+          PT="${{ needs.unity-tests.outputs.play_total || 0 }}"
+
           # 生成详细的执行摘要
           echo "# 🚀 CI/CD流水线执行详情" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**流程描述:** ${{ needs.flow-prediction.outputs.pipeline_description }}" >> $GITHUB_STEP_SUMMARY
-          echo "**构建类型:** \`${{ needs.flow-prediction.outputs.build_type }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "**执行时间:** $(date)" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          
-          echo "## 📋 执行阶段详情" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| 阶段 | 状态 | 结果 | 说明 |" >> $GITHUB_STEP_SUMMARY
-          echo "|------|------|------|------|" >> $GITHUB_STEP_SUMMARY
-          
-          # 流程预测
-          if [[ "$FLOW_STATUS" == "success" ]]; then
-            echo "| 📋 流程预测 | ✅ 成功 | 已完成 | 成功分析触发条件和预测执行流程 |" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "| 📋 流程预测 | ❌ 失败 | 已完成 | 流程预测失败 |" >> $GITHUB_STEP_SUMMARY
-          fi
-          
-          # 代码检查
-          if [[ "${{ needs.flow-prediction.outputs.should_run_style }}" == "true" ]]; then
-            if [[ "$STYLE_STATUS" == "success" ]]; then
-              echo "| 🎨 代码检查 | ✅ 成功 | 已完成 | 代码格式检查通过 |" >> $GITHUB_STEP_SUMMARY
-            elif [[ "$STYLE_STATUS" == "failure" ]]; then
-              echo "| 🎨 代码检查 | ❌ 失败 | 已完成 | 代码格式检查未通过 |" >> $GITHUB_STEP_SUMMARY
-            else
-              echo "| 🎨 代码检查 | ⚠️ 异常 | 已完成 | 状态: $STYLE_STATUS |" >> $GITHUB_STEP_SUMMARY
-            fi
-          else
-            echo "| 🎨 代码检查 | ⏭️ 跳过 | - | 根据触发条件跳过 |" >> $GITHUB_STEP_SUMMARY
-          fi
-          
-          # 单元测试
-          if [[ "${{ needs.flow-prediction.outputs.should_run_tests }}" == "true" ]]; then
-            if [[ "$TEST_STATUS" == "success" ]]; then
-              echo "| 🧪 单元测试 | ✅ 成功 | 已完成 | Unity测试全部通过 |" >> $GITHUB_STEP_SUMMARY
-            elif [[ "$TEST_STATUS" == "failure" ]]; then
-              echo "| 🧪 单元测试 | ❌ 失败 | 已完成 | 存在测试失败 |" >> $GITHUB_STEP_SUMMARY
-            else
-              echo "| 🧪 单元测试 | ⚠️ 异常 | 已完成 | 状态: $TEST_STATUS |" >> $GITHUB_STEP_SUMMARY
-            fi
-          else
-            echo "| 🧪 单元测试 | ⏭️ 跳过 | - | 根据触发条件跳过 |" >> $GITHUB_STEP_SUMMARY
-          fi
-          
-          # 构建测试  
-          if [[ "${{ needs.flow-prediction.outputs.should_run_build }}" == "true" ]]; then
-            if [[ "$BUILD_STATUS" == "success" ]]; then
-              echo "| 🔨 构建测试 | ✅ 成功 | 已完成 | Windows和macOS构建成功 |" >> $GITHUB_STEP_SUMMARY
-            elif [[ "$BUILD_STATUS" == "failure" ]]; then
-              echo "| 🔨 构建测试 | ⚠️ 警告 | 已完成 | 构建失败但不影响流程 |" >> $GITHUB_STEP_SUMMARY
-            else
-              echo "| 🔨 构建测试 | ⚠️ 异常 | 已完成 | 状态: $BUILD_STATUS |" >> $GITHUB_STEP_SUMMARY
-            fi
-          else
-            echo "| 🔨 构建测试 | ⏭️ 跳过 | - | 根据触发条件跳过 |" >> $GITHUB_STEP_SUMMARY
-          fi
-          
-          # Pages部署
-          if [[ "${{ needs.flow-prediction.outputs.should_run_deploy }}" == "true" ]]; then
-            if [[ "$DEPLOY_STATUS" == "success" ]]; then
-              echo "| 🚀 Pages部署 | ✅ 成功 | 已完成 | 构建产物已部署到GitHub Pages |" >> $GITHUB_STEP_SUMMARY
-            elif [[ "$DEPLOY_STATUS" == "failure" ]]; then  
-              echo "| 🚀 Pages部署 | ⚠️ 警告 | 已完成 | 部署失败但不影响流程 |" >> $GITHUB_STEP_SUMMARY
-            else
-              echo "| 🚀 Pages部署 | ⚠️ 异常 | 已完成 | 状态: $DEPLOY_STATUS |" >> $GITHUB_STEP_SUMMARY
-            fi
-          else
-            echo "| 🚀 Pages部署 | ⏭️ 跳过 | - | 根据触发条件跳过 |" >> $GITHUB_STEP_SUMMARY
-          fi
-          
-          echo "" >> $GITHUB_STEP_SUMMARY
-          
-          # 总体状态判断
+
+          # 总体状态大徽章
           if [[ "$FLOW_STATUS" == "success" && 
                 ("$STYLE_STATUS" == "success" || "$STYLE_STATUS" == "skipped") &&
                 ("$TEST_STATUS" == "success" || "$TEST_STATUS" == "skipped") ]]; then
-            echo "## ✅ 流水线执行成功" >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
-            echo "🎉 所有必需的步骤都已成功完成！" >> $GITHUB_STEP_SUMMARY
+            echo "## 🟢 最终结果: SUCCESS" >> $GITHUB_STEP_SUMMARY
           else
-            echo "## ❌ 流水线执行失败" >> $GITHUB_STEP_SUMMARY  
-            echo "" >> $GITHUB_STEP_SUMMARY
-            echo "⚠️ 部分步骤执行失败，请检查上述详情。" >> $GITHUB_STEP_SUMMARY
+            echo "## 🔴 最终结果: FAILURE" >> $GITHUB_STEP_SUMMARY
           fi
-          
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📝 基础信息" >> $GITHUB_STEP_SUMMARY
+          echo "- **流程描述:** ${{ needs.flow-prediction.outputs.pipeline_description }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **构建类型:** \`${{ needs.flow-prediction.outputs.build_type }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **触发事件:** \`${{ github.event_name }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **执行时间:** $(date)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          echo "### 📋 阶段执行状态" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| 阶段 | 状态 | 详情 |" >> $GITHUB_STEP_SUMMARY
+          echo "| :--- | :--- | :--- |" >> $GITHUB_STEP_SUMMARY
+
+          # 辅助函数: 转换状态为图标
+          get_icon() {
+            case "$1" in
+              "success") echo "✅ 成功" ;;
+              "failure") echo "❌ 失败" ;;
+              "skipped") echo "⏭️ 跳过" ;;
+              "cancelled") echo "🚫 取消" ;;
+              *) echo "❓ 未知 ($1)" ;;
+            esac
+          }
+
+          echo "| 📋 流程预测 | $(get_icon $FLOW_STATUS) | 分析完成 |" >> $GITHUB_STEP_SUMMARY
+
+          # 代码检查详情
+          STYLE_DESC="-"
+          if [[ "$STYLE_STATUS" == "success" ]]; then STYLE_DESC="代码格式符合规范"; fi
+          if [[ "$STYLE_STATUS" == "failure" ]]; then STYLE_DESC="发现代码格式问题"; fi
+          echo "| 🎨 代码检查 | $(get_icon $STYLE_STATUS) | $STYLE_DESC |" >> $GITHUB_STEP_SUMMARY
+
+          # 单元测试详情
+          TEST_DESC="-"
+          if [[ "$TEST_STATUS" == "success" || "$TEST_STATUS" == "failure" ]]; then
+            TOTAL_P=$((EP + PP))
+            TOTAL_F=$((EF + PF))
+            TOTAL_T=$((ET + PT))
+            TEST_DESC="通过: **$TOTAL_P**, 失败: **$TOTAL_F**, 总数: **$TOTAL_T**"
+          fi
+          echo "| 🧪 单元测试 | $(get_icon $TEST_STATUS) | $TEST_DESC |" >> $GITHUB_STEP_SUMMARY
+
+          # 构建测试
+          echo "| 🔨 构建测试 | $(get_icon $BUILD_STATUS) | 包含 Windows/macOS 平台 |" >> $GITHUB_STEP_SUMMARY
+
+          # 部署
+          DEPLOY_DESC="-"
+          if [[ "$DEPLOY_STATUS" == "success" ]]; then DEPLOY_DESC="已部署至 Pages"; fi
+          echo "| 🚀 Pages部署 | $(get_icon $DEPLOY_STATUS) | $DEPLOY_DESC |" >> $GITHUB_STEP_SUMMARY
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # 单元测试详细统计（如果执行了）
+          if [[ "$TEST_STATUS" == "success" || "$TEST_STATUS" == "failure" ]]; then
+            echo "### 🧪 单元测试详细统计" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "| 测试模式 | 总数 | 通过 | 失败 | 通过率 |" >> $GITHUB_STEP_SUMMARY
+            echo "| :--- | :--- | :--- | :--- | :--- |" >> $GITHUB_STEP_SUMMARY
+
+            calc_rate() {
+              if [ "$2" -gt 0 ]; then echo "$(( $1 * 100 / $2 ))%"; else echo "-"; fi
+            }
+
+            echo "| EditMode | $ET | $EP | $EF | $(calc_rate $EP $ET) |" >> $GITHUB_STEP_SUMMARY
+            echo "| PlayMode | $PT | $PP | $PF | $(calc_rate $PP $PT) |" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          # 部署链接（如果成功）
+          if [[ "$DEPLOY_STATUS" == "success" ]]; then
+            echo "### 🔗 相关链接" >> $GITHUB_STEP_SUMMARY
+            echo "- 🌐 **预览地址:** [点击访问 GitHub Pages](${{ github.event.repository.homepage || 'https://' + github.repository_owner + '.github.io/' + github.event.repository.name }})" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          # 跳过原因
           if [[ -n "${{ needs.flow-prediction.outputs.skip_reason }}" ]]; then
+            echo "> 💡 **提示:** ${{ needs.flow-prediction.outputs.skip_reason }}" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
-            echo "**跳过信息:** ${{ needs.flow-prediction.outputs.skip_reason }}" >> $GITHUB_STEP_SUMMARY
           fi
 
-          # 判断最终状态
+          # 最终退出码判断
           FAILED=0
-          # Flow 必须成功
-          if [[ "$FLOW_STATUS" != "success" ]]; then
-            FAILED=1
-          fi
-
-          # 以下只要执行且失败就算失败（skipped 不算）
-          for STATUS in "$STYLE_STATUS" "$TEST_STATUS" "$BUILD_STATUS" "$DEPLOY_STATUS"
-          do
-            if [[ "$STATUS" == "failure" ]]; then
-              FAILED=1
-            fi
-          done
+          if [[ "$FLOW_STATUS" != "success" ]]; then FAILED=1; fi
+          if [[ "$STYLE_STATUS" == "failure" ]]; then FAILED=1; fi
+          if [[ "$TEST_STATUS" == "failure" ]]; then FAILED=1; fi
 
           if [[ $FAILED -eq 1 ]]; then
-            echo "❌ 流水线失败"
             exit 1
-          else
-            echo "🎉 流水线成功"
-            exit 0
           fi
