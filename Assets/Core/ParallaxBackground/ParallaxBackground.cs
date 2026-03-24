@@ -52,7 +52,7 @@ namespace Core
 
                 Vector3 movement = new(
                     cameraDelta.x * (1 - layer.parallaxFactor),
-                    cameraDelta.y,
+                    cameraDelta.y * (1 - layer.parallaxFactor),
                     0
                 );
 
@@ -92,7 +92,17 @@ namespace Core
 
                 GameObject container = new($"Layer_{i}_{layer.sprite.name}");
                 container.transform.SetParent(transform);
-                container.transform.localPosition = Vector3.zero;
+
+                if (m_TargetCamera != null && Application.isPlaying)
+                {
+                    Vector3 camPos = m_TargetCamera.transform.position;
+                    container.transform.position = new Vector3(camPos.x, camPos.y, transform.position.z);
+                }
+                else
+                {
+                    container.transform.localPosition = Vector3.zero;
+                }
+
                 layer.layerObject = container;
 
                 layer.textureWidth = layer.sprite.bounds.size.x;
