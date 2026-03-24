@@ -22,7 +22,7 @@ namespace Core
             var res = Resources.Load<T>(name);
 
             if (res == null)
-                Logger.LogError(
+                CLogger.LogError(
                     $"ResourceDirLoader: Failed to load resource '{name}'",
                     LogTag.Addressables
                 );
@@ -78,7 +78,7 @@ namespace Core
                     $"- Address: {location.PrimaryKey}, InternalId: {location.InternalId}, ProviderId: {location.ProviderId}"
                 );
             }
-            Logger.LogInfo(sb.ToString(), LogTag.Addressables);
+            CLogger.LogInfo(sb.ToString(), LogTag.Addressables);
         }
 
         private static bool sIsInitialized = false;

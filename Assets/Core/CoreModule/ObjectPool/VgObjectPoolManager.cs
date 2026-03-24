@@ -4,7 +4,5 @@ using UnityEngine;
 
 namespace Core
 {
-    public class VgObjectPoolManager : MonoBehaviour
-    {
-    }
+    public class VgObjectPoolManager : MonoBehaviour { }
 }

@@ -1,22 +1,33 @@
 using System.Collections.Generic;
-using UnityEngine;
-using FMODUnity;
 using FMOD.Studio;
+using FMODUnity;
+using UnityEngine;
 
 public class Man : MonoBehaviour
 {
     [Header("Movement")]
-    [SerializeField] private float moveSpeed = 5.0f;
-    [SerializeField] private float lookSensitivity = 1.5f;
-    [SerializeField] private bool lockAndHideCursor = true;
+    [SerializeField]
+    private float moveSpeed = 5.0f;
+
+    [SerializeField]
+    private float lookSensitivity = 1.5f;
+
+    [SerializeField]
+    private bool lockAndHideCursor = true;
 
     [Header("FMOD Event")]
-    [SerializeField] private EventReference ambienceEvent;
+    [SerializeField]
+    private EventReference ambienceEvent;
 
     [Header("Audio Parameters")]
-    [SerializeField] private float wallaMaxDistanceDefault = 20f;
-    [SerializeField] private float trafficRadius = 15f;
-    [SerializeField] private int trafficMaxCount = 10;
+    [SerializeField]
+    private float wallaMaxDistanceDefault = 20f;
+
+    [SerializeField]
+    private float trafficRadius = 15f;
+
+    [SerializeField]
+    private int trafficMaxCount = 10;
 
     private Camera playerCamera;
     private CharacterController characterController;
@@ -69,7 +80,8 @@ public class Man : MonoBehaviour
 
     private void HandleLook()
     {
-        if (playerCamera == null) return;
+        if (playerCamera == null)
+            return;
 
         float mouseX = Input.GetAxis("Mouse X") * lookSensitivity;
         float mouseY = Input.GetAxis("Mouse Y") * lookSensitivity;
@@ -101,7 +113,8 @@ public class Man : MonoBehaviour
 
     private void UpdateAudio()
     {
-        if (!fmodReady) return;
+        if (!fmodReady)
+            return;
 
         var attributes = RuntimeUtils.To3DAttributes(gameObject);
         ambienceInstance.set3DAttributes(attributes);
@@ -128,9 +141,11 @@ public class Man : MonoBehaviour
         for (int i = 0; i < Bar.Instances.Count; i++)
         {
             Bar bar = Bar.Instances[i];
-            if (bar == null) continue;
+            if (bar == null)
+                continue;
 
-            float radius = bar.wallaMaxDistance <= 0f ? wallaMaxDistanceDefault : bar.wallaMaxDistance;
+            float radius =
+                bar.wallaMaxDistance <= 0f ? wallaMaxDistanceDefault : bar.wallaMaxDistance;
             float distance = Vector3.Distance(position, bar.transform.position);
             float contribution = 1f - Mathf.Clamp01(distance / Mathf.Max(0.0001f, radius));
             if (contribution > maxContribution)

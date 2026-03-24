@@ -1,4 +1,5 @@
 using Core;
+
 public class SaveLoadInfo : ILoadInfo
 {
     public LoaderType GetNeededLoaderType()

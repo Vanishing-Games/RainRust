@@ -11,7 +11,7 @@ namespace Core
     {
         private bool GameRunCheck()
         {
-            Logger.LogInfo("[GameCore] Runing Game Check...", LogTag.GameRunCheck);
+            CLogger.LogInfo("[GameCore] Runing Game Check...", LogTag.GameRunCheck);
 
 #if UNITY_EDITOR
             if (!GameRunInEditorCheck())
@@ -39,7 +39,7 @@ namespace Core
             }
             catch (Exception ex)
             {
-                Logger.LogError($"Error during save operation: {ex.Message}", LogTag.GameQuit);
+                CLogger.LogError($"Error during save operation: {ex.Message}", LogTag.GameQuit);
             }
 
 #if UNITY_EDITOR

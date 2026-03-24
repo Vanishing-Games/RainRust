@@ -109,7 +109,7 @@ namespace RainRust.Rendering
                                 {
                                     data.material.DisableKeyword("TEXTURE_RANDOM");
                                     data.material.DisableKeyword("FRAGMENT_RANDOM");
-                                    Core.Logger.LogWarn(
+                                    CLogger.LogWarn(
                                         "Noise mode set to Texture but no noise texture assigned.",
                                         LogTag.Rendering
                                     );

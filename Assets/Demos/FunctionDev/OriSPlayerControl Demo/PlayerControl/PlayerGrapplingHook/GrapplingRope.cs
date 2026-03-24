@@ -19,7 +19,7 @@ namespace PlayerControlByOris
 
             if (m_Owner == null)
             {
-                Core.Logger.LogError(
+                CLogger.LogError(
                     "GrapplingRope:Can't Find EccSystem, Owner is null",
                     LogTag.PlayerControl
                 );
