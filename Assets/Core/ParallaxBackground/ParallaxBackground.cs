@@ -96,7 +96,11 @@ namespace Core
                 if (m_TargetCamera != null && Application.isPlaying)
                 {
                     Vector3 camPos = m_TargetCamera.transform.position;
-                    container.transform.position = new Vector3(camPos.x, camPos.y, transform.position.z);
+                    container.transform.position = new Vector3(
+                        camPos.x,
+                        camPos.y,
+                        transform.position.z
+                    );
                 }
                 else
                 {
@@ -263,11 +267,7 @@ namespace Core
                     float factor = 1.0f - ((float)i / (m_Layers.Count - 1));
                     m_Layers[i].parallaxFactorX = factor;
                     m_Layers[i].parallaxFactorY = factor;
-                    m_Layers[i].blurIntensity = Math.Clamp(
-                        (1.0f - factor) * 10f,
-                        0.001f,
-                        10f
-                    );
+                    m_Layers[i].blurIntensity = Math.Clamp((1.0f - factor) * 10f, 0.001f, 10f);
                     m_Layers[i].clampMode = ParallaxClampMode.Repeat;
                 }
             }
