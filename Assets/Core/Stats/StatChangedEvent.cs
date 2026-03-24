@@ -1,4 +1,4 @@
-namespace Core.Stats
+namespace Core
 {
     public struct StatChangedEvent : IEvent
     {

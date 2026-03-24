@@ -3,7 +3,7 @@ using UnityEngine;
 using System.IO;
 using System.Linq;
 
-namespace Core.Stats
+namespace Core
 {
     public class StatsManager : MonoBehaviour, ISavableClass<StatsSaveData>
     {

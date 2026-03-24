@@ -1,4 +1,4 @@
-namespace Core.Stats
+namespace Core
 {
     public static class StatKeys
     {
@@ -10,7 +10,7 @@ namespace Core.Stats
         public const string PlayerJump = "PlayerJump";
         public const string PlayerHook = "PlayerHook";
         public const string PlayerWhistle = "PlayerWhistle";
-        
+
         // Add more as needed...
     }
 }

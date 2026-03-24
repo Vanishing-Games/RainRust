@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Core.Stats
+namespace Core
 {
     [System.Serializable]
     public class StatsSaveData : ISaveData
