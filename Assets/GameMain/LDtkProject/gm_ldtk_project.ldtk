@@ -1990,7 +1990,7 @@
 		{
 			"__cWid": 12,
 			"__cHei": 4,
-			"identifier": "Tilemap_B",
+			"identifier": "Art_tilemap_B",
 			"uid": 10,
 			"relPath": "../../Arts/TileSet/art_tilemap_B.png",
 			"embedAtlas": null,
