@@ -9,6 +9,8 @@ namespace GameMain.Editor
 {
     public class LDtkIdentifiersProcessor : LDtkPostprocessor
     {
+        public override int GetPostprocessOrder() => 1;
+
         protected override void OnPostprocessProject(GameObject root)
         {
             if (!root.TryGetComponent<LDtkComponentProject>(out var projectComponent))
