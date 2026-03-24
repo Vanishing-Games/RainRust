@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using UnityEngine;
 using System.Linq;
 using Newtonsoft.Json.Linq;
+using UnityEngine;
 
 namespace Core
 {
@@ -55,7 +55,8 @@ namespace Core
 
         public void RestoreSaveData(StatsSaveData data)
         {
-            if (data?.Stats == null) return;
+            if (data?.Stats == null)
+                return;
 
             foreach (var record in data.Stats)
             {
@@ -138,15 +139,17 @@ namespace Core
 
                 if (publishEvent && oldValue != newValue)
                 {
-                    MessageBroker.Global.Publish(new StatChangedEvent(key, oldValue, newValue, stat.Type));
+                    MessageBroker.Global.Publish(
+                        new StatChangedEvent(key, oldValue, newValue, stat.Type)
+                    );
                 }
             }
         }
 
         private void CacheTimerKeys()
         {
-            m_CachedTimerKeys = m_Stats.Values
-                .Where(s => s.Type == StatType.Timer)
+            m_CachedTimerKeys = m_Stats
+                .Values.Where(s => s.Type == StatType.Timer)
                 .Select(s => s.Key)
                 .ToList();
         }
@@ -160,7 +163,7 @@ namespace Core
                     m_Instance = FindFirstObjectByType<StatsManager>();
                     if (m_Instance == null)
                     {
-                        GameObject go = new GameObject("StatsManager");
+                        GameObject go = new("StatsManager");
                         m_Instance = go.AddComponent<StatsManager>();
                     }
                 }

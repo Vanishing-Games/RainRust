@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
-using UnityEngine;
 using R3;
 using Sirenix.OdinInspector;
+using UnityEngine;
 
 namespace Core
 {
@@ -16,6 +16,7 @@ namespace Core
             Slot = slot;
             Success = success;
         }
+
         public string Slot { get; }
         public bool Success { get; }
     }
@@ -27,6 +28,7 @@ namespace Core
             Slot = slot;
             Success = success;
         }
+
         public string Slot { get; }
         public bool Success { get; }
     }
@@ -34,13 +36,13 @@ namespace Core
     public enum SaveMode
     {
         Editor,
-        Runtime
+        Runtime,
     }
 
     public enum RootPathType
     {
         PersistentDataPath,
-        DataPathRelative
+        DataPathRelative,
     }
 
     [Serializable]
@@ -49,6 +51,7 @@ namespace Core
         [TableColumnWidth(120, false)]
         [ReadOnly]
         public string Platform;
+
         [ReadOnly]
         public string Path;
 
@@ -102,7 +105,8 @@ namespace Core
         [BoxGroup("Actions/New Save")]
         public void SaveNew(string newSlotName, string displayName = "")
         {
-            if (string.IsNullOrEmpty(newSlotName)) return;
+            if (string.IsNullOrEmpty(newSlotName))
+                return;
             Save(newSlotName, displayName);
             m_SelectedSlot = newSlotName;
         }
@@ -117,9 +121,11 @@ namespace Core
                 var container = new SaveContainer();
                 container.Meta = new SaveMeta(slotName)
                 {
-                    DisplayName = string.IsNullOrEmpty(displayName) ? $"Save_{slotName}" : displayName,
+                    DisplayName = string.IsNullOrEmpty(displayName)
+                        ? $"Save_{slotName}"
+                        : displayName,
                     LastSavedTime = DateTime.Now,
-                    PlayTimeInSeconds = StatsManager.GetValue(StatKeys.GameDuration)
+                    PlayTimeInSeconds = StatsManager.GetValue(StatKeys.GameDuration),
                 };
 
                 foreach (var savable in m_Savables)
@@ -131,28 +137,31 @@ namespace Core
                 {
                     Formatting = Formatting.Indented,
                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-                    TypeNameHandling = TypeNameHandling.Auto
+                    TypeNameHandling = TypeNameHandling.Auto,
                 };
 
                 string directory = Path.GetDirectoryName(fullPath);
-                if (!Directory.Exists(directory)) Directory.CreateDirectory(directory);
+                if (!Directory.Exists(directory))
+                    Directory.CreateDirectory(directory);
 
                 string json = JsonConvert.SerializeObject(container, settings);
                 File.WriteAllText(tempPath, json);
 
-                if (File.Exists(fullPath)) File.Delete(fullPath);
+                if (File.Exists(fullPath))
+                    File.Delete(fullPath);
                 File.Move(tempPath, fullPath);
 
                 m_CurrentSlot = slotName;
                 RefreshSaveSlots();
-                
+
                 CLogger.LogInfo($"Game saved to {fullPath}", LogTag.Game);
                 MessageBroker.Global.Publish(new SaveEvent(slotName, true));
             }
             catch (Exception e)
             {
                 CLogger.LogError($"Save failed: {e.Message}", LogTag.Game);
-                if (File.Exists(tempPath)) File.Delete(tempPath);
+                if (File.Exists(tempPath))
+                    File.Delete(tempPath);
                 MessageBroker.Global.Publish(new SaveEvent(slotName, false));
             }
         }
@@ -171,11 +180,12 @@ namespace Core
                 string json = File.ReadAllText(fullPath);
                 var settings = new JsonSerializerSettings
                 {
-                    TypeNameHandling = TypeNameHandling.Auto
+                    TypeNameHandling = TypeNameHandling.Auto,
                 };
 
                 var container = JsonConvert.DeserializeObject<SaveContainer>(json, settings);
-                if (container == null) return;
+                if (container == null)
+                    return;
 
                 foreach (var savable in m_Savables)
                 {
@@ -221,7 +231,8 @@ namespace Core
         {
             m_AvailableSlots.Clear();
             string dir = SaveDirectory;
-            if (!Directory.Exists(dir)) return;
+            if (!Directory.Exists(dir))
+                return;
 
             var files = Directory.GetFiles(dir, $"*{m_Extension}");
             foreach (var file in files)
@@ -237,7 +248,10 @@ namespace Core
                 }
                 catch (Exception e)
                 {
-                    CLogger.LogWarn($"Failed to read save meta from {file}: {e.Message}", LogTag.Game);
+                    CLogger.LogWarn(
+                        $"Failed to read save meta from {file}: {e.Message}",
+                        LogTag.Game
+                    );
                 }
             }
         }
@@ -245,11 +259,12 @@ namespace Core
         private IEnumerable<string> GetSlotNames()
         {
             // Auto refresh when opening dropdown in Editor
-            if (!Application.isPlaying) RefreshSaveSlots();
-            
+            if (!Application.isPlaying)
+                RefreshSaveSlots();
+
             if (m_AvailableSlots == null || m_AvailableSlots.Count == 0)
                 return new[] { "default" };
-                
+
             return m_AvailableSlots.Select(x => x.SlotName);
         }
 
@@ -257,10 +272,48 @@ namespace Core
         private void UpdatePlatformPathPreviews()
         {
             m_PlatformPreviews.Clear();
-            m_PlatformPreviews.Add(new PlatformPathInfo("Windows", Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "..", "LocalLow", Application.companyName, Application.productName, m_SaveFolderRelativePath)));
-            m_PlatformPreviews.Add(new PlatformPathInfo("macOS", Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "Library", "Application Support", Application.companyName, Application.productName, m_SaveFolderRelativePath)));
-            m_PlatformPreviews.Add(new PlatformPathInfo("Android", "/storage/emulated/0/Android/data/" + Application.identifier + "/files/" + m_SaveFolderRelativePath));
-            m_PlatformPreviews.Add(new PlatformPathInfo("iOS", "Data/Containers/Data/Application/.../Library/Application Support/" + m_SaveFolderRelativePath));
+            m_PlatformPreviews.Add(
+                new PlatformPathInfo(
+                    "Windows",
+                    Path.Combine(
+                        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                        "..",
+                        "LocalLow",
+                        Application.companyName,
+                        Application.productName,
+                        m_SaveFolderRelativePath
+                    )
+                )
+            );
+            m_PlatformPreviews.Add(
+                new PlatformPathInfo(
+                    "macOS",
+                    Path.Combine(
+                        Environment.GetFolderPath(Environment.SpecialFolder.Personal),
+                        "Library",
+                        "Application Support",
+                        Application.companyName,
+                        Application.productName,
+                        m_SaveFolderRelativePath
+                    )
+                )
+            );
+            m_PlatformPreviews.Add(
+                new PlatformPathInfo(
+                    "Android",
+                    "/storage/emulated/0/Android/data/"
+                        + Application.identifier
+                        + "/files/"
+                        + m_SaveFolderRelativePath
+                )
+            );
+            m_PlatformPreviews.Add(
+                new PlatformPathInfo(
+                    "iOS",
+                    "Data/Containers/Data/Application/.../Library/Application Support/"
+                        + m_SaveFolderRelativePath
+                )
+            );
         }
 
         private void InitializeDirectory()
@@ -293,7 +346,7 @@ namespace Core
                 {
                     RootPathType.PersistentDataPath => Application.persistentDataPath,
                     RootPathType.DataPathRelative => Path.Combine(Application.dataPath, ".."),
-                    _ => Application.persistentDataPath
+                    _ => Application.persistentDataPath,
                 };
                 return Path.Combine(root, m_SaveFolderRelativePath);
             }

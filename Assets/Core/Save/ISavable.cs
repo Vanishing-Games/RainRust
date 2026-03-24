@@ -9,7 +9,8 @@ namespace Core
         void RestoreState(object state);
     }
 
-    public interface ISavable<T> : ISavable where T : ISaveData
+    public interface ISavable<T> : ISavable
+        where T : ISaveData
     {
         T CaptureSaveData();
         void RestoreSaveData(T data);
