@@ -65,6 +65,7 @@ namespace GameMain.Editor
             }
 
             layers = layers.OrderByDescending(l => l.name).ToList();
+            layers.Reverse();
 
             string bgName = $"LDtk_background_{chapterName}";
             Transform bgTransform = chapter.Find(bgName);
