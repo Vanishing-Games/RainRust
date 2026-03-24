@@ -3,7 +3,7 @@
  * Copyright (c) 2025 Vanishing Games. All Rights Reserved.
  * @Author: VanishXiao
  * @Date: 2025-10-30 16:25:44
- * @LastEditTime: 2025-12-07 20:21:35
+ * @LastEditTime: 2026-03-25 01:34:37
  * --------------------------------------------------------------------------------
 -->
 > 《不尬的诗》
@@ -91,7 +91,7 @@ sfx_env_forest_daytime_birds_chirping_loop_ambient_lowIntensity_01.wav # 太长
 ## 逻辑与库
 - **事件系统**: 使用 **R3** 作为事件库。
 - **函数式编程 (FP)**: 优先考虑函数式编程风格。基础库（如 `Result`）位于 `Assets/Core/FP`。
-- **日志输出**: 统一使用 `Core.Logger`。
+- **日志输出**: 统一使用 `CLogger`。
     - 每次调用日志必须至少提供一个 `LogTag` 进行分类（例如 `LogTag.Game`）。
 
 ## 代码质量
