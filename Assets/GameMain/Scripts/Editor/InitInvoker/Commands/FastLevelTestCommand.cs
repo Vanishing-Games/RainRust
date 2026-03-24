@@ -201,7 +201,7 @@ namespace GameMain.Editor
             foreach (var t in transitions)
             {
                 Vector3 targetPos = t.transform.position;
-                
+
                 // 如果有 Collider，使用 Collider 的中心点作为计算参考
                 var box = t.GetComponent<BoxCollider2D>();
                 if (box != null)

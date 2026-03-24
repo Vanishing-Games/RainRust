@@ -18,7 +18,7 @@ namespace GameMain.Editor
             );
             LDtkComponentLevel level = root.GetComponent<LDtkComponentLevel>();
 
-            HashSet<int> indexCheck = new ();
+            HashSet<int> indexCheck = new();
 
             foreach (LDtkComponentLayer layer in level.LayerInstances)
             {
