@@ -20,6 +20,11 @@ namespace GameMain.RunTime
             }
         }
 
+        private void OnTriggerStay2D(Collider2D other)
+        {
+            CheckTransition();
+        }
+
         private void OnTriggerExit2D(Collider2D other)
         {
             if (other.CompareTag("Player"))
@@ -41,7 +46,8 @@ namespace GameMain.RunTime
                 && this == LevelManager.Instance.GetCurrentTransition()
             )
             {
-                LevelManager.Instance.SwitchLevel(this);
+                s_CurrentTransitions.Remove(this);
+                LevelManager.Instance.SwitchLevel(Target);
             }
         }
 

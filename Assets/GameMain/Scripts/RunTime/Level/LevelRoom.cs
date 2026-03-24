@@ -1,3 +1,4 @@
+using Core;
 using Sirenix.OdinInspector;
 using Unity.Cinemachine;
 using UnityEngine;
@@ -7,6 +8,20 @@ namespace GameMain.RunTime
 {
     public class LevelRoom : MonoBehaviour
     {
+        public void DeActivate() { }
+
+        public void Activate()
+        {
+            if (VirtualCamera == null)
+                CLogger.LogError("LevelRoom don't have a ref of virtual cam", LogTag.LevelRoom);
+
+            if (CameraMode == CameraMode.Follow)
+                VirtualCamera.Follow = GameMain.GetPlayer().transform;
+
+            VirtualCamera.Priority.Enabled = true;
+            VirtualCamera.Priority.Value = LevelManager.Instance.GetCurrentMaxPriority();
+        }
+
         [SerializeField, ReadOnly]
         private CameraMode _cameraMode;
 
@@ -32,14 +47,6 @@ namespace GameMain.RunTime
         {
             get => _virtualCamera;
             set => _virtualCamera = value;
-        }
-
-        public void SetActive(bool active)
-        {
-            if (VirtualCamera != null)
-            {
-                VirtualCamera.Priority = active ? 10 : 0;
-            }
         }
     }
 }

@@ -57,6 +57,13 @@ namespace GameMain.RunTime
             StartLevelInternal();
         }
 
+        internal int GetCurrentMaxPriority() => ++m_CurrentMaxPriority;
+
+        internal LevelTransition GetCurrentTransition()
+        {
+            return m_CurrentLevelTransition;
+        }
+
         private void StartLevelInternal()
         {
             SetUpPlayer();
@@ -271,11 +278,7 @@ namespace GameMain.RunTime
             m_CurrentRoom = level.GetComponent<LevelRoom>();
             if (m_CurrentRoom != null && m_CurrentRoom.VirtualCamera != null)
             {
-                if (m_CurrentRoom.CameraMode == CameraMode.Follow)
-                    m_CurrentRoom.VirtualCamera.Follow = GameMain.GetPlayer().transform;
-
-                m_CurrentRoom.VirtualCamera.Priority.Enabled = true;
-                m_CurrentRoom.VirtualCamera.Priority.Value = ++m_CurrentMaxPriority;
+                m_CurrentRoom.Activate();
             }
             else
             {
@@ -286,11 +289,6 @@ namespace GameMain.RunTime
                     LogTag.LevelManager
                 );
             }
-        }
-
-        internal LevelTransition GetCurrentTransition()
-        {
-            return m_CurrentLevelTransition;
         }
 
         private int m_CurrentMaxPriority = 0;

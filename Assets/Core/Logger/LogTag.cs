@@ -65,5 +65,6 @@ namespace Core
             "LevelTransitionProcessor",
             LdtkProcessor.Path
         );
+        public static readonly LogTag LevelRoom = new("LevelRoom", LevelManager.Path);
     }
 }

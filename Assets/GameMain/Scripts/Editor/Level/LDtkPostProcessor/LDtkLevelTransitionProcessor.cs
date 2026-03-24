@@ -2,6 +2,7 @@ using Core;
 using GameMain.RunTime;
 using LDtkUnity;
 using LDtkUnity.Editor;
+using UnityEditor;
 using UnityEngine;
 
 namespace GameMain.Editor
@@ -44,6 +45,8 @@ namespace GameMain.Editor
                                 levelTransition.Index = index;
                             }
                         }
+                        
+                        EditorUtility.SetDirty(levelTransition);
                     }
                 }
             }
@@ -101,6 +104,8 @@ namespace GameMain.Editor
                     );
                     transition.Target = null;
                 }
+                
+                EditorUtility.SetDirty(transition);
             }
         }
     }

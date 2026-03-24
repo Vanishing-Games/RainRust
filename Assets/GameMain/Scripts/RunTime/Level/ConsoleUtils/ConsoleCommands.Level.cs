@@ -25,5 +25,11 @@ namespace GameMain.RunTime
         {
             new EndLevelCommand().Execute();
         }
+
+        [ConsoleMethod("switch_level", "Switch current level")]
+        public static void SwitchLevel(string chapterId, string levelId, int spawnIndex)
+        {
+            new SwitchLevelCommand(chapterId, levelId, spawnIndex).Execute();
+        }
     }
 }

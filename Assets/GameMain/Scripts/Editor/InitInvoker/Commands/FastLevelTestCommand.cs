@@ -27,7 +27,9 @@ namespace GameMain.Editor
             );
 
             // 1. 查找关卡
-            LDtkComponentLevel currentLevel = FastLevelTestHelper.FindLevelByPosition(m_TestPosition);
+            LDtkComponentLevel currentLevel = FastLevelTestHelper.FindLevelByPosition(
+                m_TestPosition
+            );
 
             if (currentLevel == null)
             {
@@ -39,7 +41,10 @@ namespace GameMain.Editor
             }
 
             // 2. 查找最近的 Transition
-            LevelTransition nearestTransition = FastLevelTestHelper.FindNearestTransition(currentLevel, m_TestPosition);
+            LevelTransition nearestTransition = FastLevelTestHelper.FindNearestTransition(
+                currentLevel,
+                m_TestPosition
+            );
 
             if (nearestTransition == null)
             {
@@ -72,7 +77,12 @@ namespace GameMain.Editor
         private readonly string m_LevelId;
         private readonly int m_Index;
 
-        public ManualFastLevelTestCommand(Vector3 testPosition, string chapterId, string levelId, int index)
+        public ManualFastLevelTestCommand(
+            Vector3 testPosition,
+            string chapterId,
+            string levelId,
+            int index
+        )
         {
             m_TestPosition = testPosition;
             m_ChapterId = chapterId;
@@ -97,8 +107,10 @@ namespace GameMain.Editor
             LDtkComponentLevel targetLevel = null;
             if (!string.IsNullOrEmpty(m_LevelId))
             {
-                targetLevel = LDtkComponentLevel.Levels.FirstOrDefault(l => 
-                    l.Identifier == m_LevelId && (string.IsNullOrEmpty(m_ChapterId) || l.Parent.Identifier == m_ChapterId));
+                targetLevel = LDtkComponentLevel.Levels.FirstOrDefault(l =>
+                    l.Identifier == m_LevelId
+                    && (string.IsNullOrEmpty(m_ChapterId) || l.Parent.Identifier == m_ChapterId)
+                );
             }
 
             // Fallback: 使用位置识别
@@ -109,7 +121,10 @@ namespace GameMain.Editor
 
             if (targetLevel == null)
             {
-                CLogger.LogError("[ManualFastLevelTestCommand] Failed to identify level by ID or Position.", LogTag.LevelManager);
+                CLogger.LogError(
+                    "[ManualFastLevelTestCommand] Failed to identify level by ID or Position.",
+                    LogTag.LevelManager
+                );
                 return false;
             }
 
@@ -121,7 +136,7 @@ namespace GameMain.Editor
             {
                 var transitions = targetLevel.GetComponentsInChildren<LevelTransition>(true);
                 targetTransition = transitions.FirstOrDefault(t => t.Index == m_Index);
-                
+
                 // Fallback: 如果 Index 找不到，或者 Index 本身不匹配，按 List 顺序找
                 if (targetTransition == null && m_Index < transitions.Length)
                 {
@@ -132,13 +147,22 @@ namespace GameMain.Editor
             // Fallback: 如果还是没找到，或者没指定有效 Index，寻找最近的
             if (targetTransition == null)
             {
-                CLogger.LogInfo("[ManualFastLevelTestCommand] Index not found or invalid, falling back to nearest transition.", LogTag.LevelManager);
-                targetTransition = FastLevelTestHelper.FindNearestTransition(targetLevel, m_TestPosition);
+                CLogger.LogInfo(
+                    "[ManualFastLevelTestCommand] Index not found or invalid, falling back to nearest transition.",
+                    LogTag.LevelManager
+                );
+                targetTransition = FastLevelTestHelper.FindNearestTransition(
+                    targetLevel,
+                    m_TestPosition
+                );
             }
 
             if (targetTransition == null)
             {
-                CLogger.LogError($"[ManualFastLevelTestCommand] No transition found in level {targetLevel.Identifier}", LogTag.LevelManager);
+                CLogger.LogError(
+                    $"[ManualFastLevelTestCommand] No transition found in level {targetLevel.Identifier}",
+                    LogTag.LevelManager
+                );
                 return false;
             }
 
@@ -171,11 +195,15 @@ namespace GameMain.Editor
             return null;
         }
 
-        public static LevelTransition FindNearestTransition(LDtkComponentLevel level, Vector3 position)
+        public static LevelTransition FindNearestTransition(
+            LDtkComponentLevel level,
+            Vector3 position
+        )
         {
             // 使用 GetComponentsInChildren 更加鲁棒，不受 LayerInstances 是否为空影响
             var transitions = level.GetComponentsInChildren<LevelTransition>(true);
-            if (transitions.Length == 0) return null;
+            if (transitions.Length == 0)
+                return null;
 
             LevelTransition nearest = null;
             float minDistance = float.MaxValue;
