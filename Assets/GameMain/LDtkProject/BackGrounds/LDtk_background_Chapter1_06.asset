@@ -21,8 +21,8 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes: []
-  sprite: {fileID: 0}
-  parallaxFactor: 0
-  clampMode: 0
+  sprite: {fileID: 7721318030694132096, guid: ab8274f79ae540f4bb00bac76bdfc10b, type: 3}
+  parallaxFactor: 0.8333333
+  clampMode: 1
   blurMode: 0
-  blurIntensity: 0.001
+  blurIntensity: 1.6666669
