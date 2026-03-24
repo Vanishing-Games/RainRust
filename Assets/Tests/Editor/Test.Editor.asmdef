@@ -3,12 +3,10 @@
     "rootNamespace": "Test.Editor",
     "references": [
         "GUID:198f161f050714b85981e87f526d009e",
-        "GUID:d8bb2cd7a27f644eda5255efef5e9d6b",
-        "GUID:5f34f4219be7446d99f83220acdaa345",
-        "GUID:bf7e815dd89b4164880b6713ec250d60",
-        "GUID:d8bb2cd7a27f644eda5255efef5e9d6b",
-        "GUID:77221876cc6b8244180b96e320b1bcd4",
-        "GUID:f8c68d614fe30d647996098360b5e0d5"
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner",
+        "R3.Unity",
+        "Newtonsoft.Json"
     ],
     "includePlatforms": [
         "Editor"
