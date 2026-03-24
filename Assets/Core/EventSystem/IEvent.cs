@@ -4,8 +4,5 @@ using UnityEngine;
 
 namespace Core
 {
-    public interface IEvent
-    {
-
-    }
+    public interface IEvent { }
 }

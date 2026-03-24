@@ -18,39 +18,36 @@ namespace Core
                 new GameEntryInitCommand().Execute();
             });
 
-            m_QuickStartEventSubscription = MessageBroker.Global.Subscribe<GameQuickStartEvent>(_ =>
+            m_StartEventSubscription = MessageBroker.Global.Subscribe<GameStartInitEvent>(_ =>
             {
-                new GameQuickStartCommand().Execute();
+                // TODO: Handle GameStartInitEvent if needed
+            });
+
+            m_LevelEventSubscription = MessageBroker.Global.Subscribe<GameLevelInitEvent>(_ =>
+            {
+                // TODO: Handle GameLevelInitEvent if needed
+            });
+
+            m_EndEventSubscription = MessageBroker.Global.Subscribe<GameEndInitEvent>(_ =>
+            {
+                // TODO: Handle GameEndInitEvent if needed
+            });
+
+            m_CustomEventSubscription = MessageBroker.Global.Subscribe<GameCustomInitEvent>(_ =>
+            {
+                // TODO: Handle GameEndInitEvent if needed
             });
         }
 
         protected async void Start()
         {
-            Logger.LogInfo("[GameCore] Start...", LogTag.GameCoreStart);
+            CLogger.LogInfo("[GameCore] Start...", LogTag.GameCoreStart);
 
             if (!GameRunCheck())
             {
-                Logger.LogInfo("[GameCore] Game Check Failed, Quit Game...", LogTag.GameRunCheck);
+                CLogger.LogInfo("[GameCore] Game Check Failed, Quit Game...", LogTag.GameRunCheck);
                 await QuitGame();
                 return;
-            }
-
-            // 检查当前场景，根据场景决定启动策略
-            if (SceneManager.GetActiveScene().name == "GameEntry")
-            {
-                Logger.LogInfo(
-                    "[GameCore] In GameEntry, Publishing GameEntryInitEvent...",
-                    LogTag.GameCoreStart
-                );
-                MessageBroker.Global.Publish(new GameEntryInitEvent());
-            }
-            else
-            {
-                Logger.LogInfo(
-                    $"[GameCore] Current Scene is {SceneManager.GetActiveScene().name}, Publishing GameQuickStartEvent...",
-                    LogTag.GameCoreStart
-                );
-                MessageBroker.Global.Publish(new GameQuickStartEvent());
             }
         }
 
@@ -60,12 +57,17 @@ namespace Core
 
         private void OnDestroy()
         {
-            Logger.LogInfo("[GameCore] OnDestroy...", LogTag.GameCoreDestroy);
+            CLogger.LogInfo("[GameCore] OnDestroy...", LogTag.GameCoreDestroy);
             m_InitEventSubscription?.Dispose();
-            m_QuickStartEventSubscription?.Dispose();
+            m_StartEventSubscription?.Dispose();
+            m_LevelEventSubscription?.Dispose();
+            m_EndEventSubscription?.Dispose();
         }
 
         private IDisposable m_InitEventSubscription;
-        private IDisposable m_QuickStartEventSubscription;
+        private IDisposable m_StartEventSubscription;
+        private IDisposable m_LevelEventSubscription;
+        private IDisposable m_EndEventSubscription;
+        private IDisposable m_CustomEventSubscription;
     }
 }

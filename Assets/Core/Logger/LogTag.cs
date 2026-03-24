@@ -35,6 +35,7 @@ namespace Core
         public static readonly LogTag Command = new("Command");
         public static readonly LogTag Rendering = new("Rendering");
         public static readonly LogTag Game = new("Game");
+        public static readonly LogTag Fuck = new("Fuck");
 
         // ========== Second Tags ==========
         public static readonly LogTag CodeUnfucker = new("CodeUnfucker", Editor.Path);
@@ -50,6 +51,7 @@ namespace Core
         public static readonly LogTag PlayerControl = new("PlayerControl", Game.Path);
         public static readonly LogTag LdtkProcessor = new("LDtkProcessor", Editor.Path);
         public static readonly LogTag PlayerManager = new("PlayerManager", Game.Path);
+        public static readonly LogTag LevelManager = new("LevelManager", Game.Path);
 
         // ========== Third Tags ==========
         public static readonly LogTag CodeUnfucker_3_Sample = new("Save", CodeUnfucker.Path); // MAX depth = 3
@@ -63,5 +65,6 @@ namespace Core
             "LevelTransitionProcessor",
             LdtkProcessor.Path
         );
+        public static readonly LogTag LevelRoom = new("LevelRoom", LevelManager.Path);
     }
 }

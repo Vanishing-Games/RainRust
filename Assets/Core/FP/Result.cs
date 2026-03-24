@@ -209,8 +209,5 @@ namespace Core
         }
     }
 
-    public class AsyncResult<T,E>
-    {
-        
-    }
+    public class AsyncResult<T, E> { }
 }

@@ -4,8 +4,5 @@ using UnityEngine;
 
 namespace Core
 {
-    public class TransformExtension : MonoBehaviour
-    {
-        
-    }
+    public class TransformExtension : MonoBehaviour { }
 }

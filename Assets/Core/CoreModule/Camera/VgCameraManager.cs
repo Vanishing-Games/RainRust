@@ -35,7 +35,7 @@ namespace Core
             }
             else
             {
-                Logger.LogWarn(
+                CLogger.LogWarn(
                     "Loading Camera is not set in VgCameraManager",
                     LogTag.VgCameraManager
                 );

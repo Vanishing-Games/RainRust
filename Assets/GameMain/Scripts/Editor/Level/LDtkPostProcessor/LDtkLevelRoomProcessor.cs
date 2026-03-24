@@ -3,6 +3,7 @@ using GameMain.RunTime;
 using LDtkUnity;
 using LDtkUnity.Editor;
 using Unity.Cinemachine;
+using UnityEditor;
 using UnityEngine;
 using CameraMode = GameMain.LDtk.CameraMode;
 
@@ -27,10 +28,7 @@ namespace GameMain.Editor
             Result
                 .Success(root)
                 .Tap(r =>
-                    Core.Logger.LogInfo(
-                        $"Post process LDtk level: {r.name}",
-                        LogTag.LdtkRoomProcessor
-                    )
+                    CLogger.LogInfo($"Post process LDtk level: {r.name}", LogTag.LdtkRoomProcessor)
                 )
                 .Map(r => r.GetComponent<LDtkComponentLevel>())
                 .Tap(OnProcessRoomCamera);
@@ -38,17 +36,26 @@ namespace GameMain.Editor
         private void OnProcessRoomCamera(LDtkComponentLevel level) =>
             Result
                 .Success(new RoomContext(level, level.gameObject.AddComponent<LevelRoom>()))
-                .Tap(ctx => ctx.Room.BorderBounds = ctx.Level.BorderBounds)
+                .Tap(ctx =>
+                {
+                    ctx.Room.BorderBounds = ctx.Level.BorderBounds;
+                    EditorUtility.SetDirty(ctx.Room);
+                })
                 .Tap(ApplyCameraModeFields)
                 .Map(CreateVirtualCamera)
                 .Tap(ApplyCameraFollow)
                 .Tap(ApplyFixedCameraSettings)
                 .Tap(ApplyConfinerSettings);
 
-        private void ApplyCameraModeFields(RoomContext ctx) =>
-            ctx.Room.CameraMode = ctx.Level.TryGetComponent<LDtkFields>(out var fields)
-                ? fields.GetEnum<CameraMode>("CameraMode")
-                : ctx.Room.CameraMode;
+        private void ApplyCameraModeFields(RoomContext ctx)
+        {
+            var bounds = ctx.Room.BorderBounds;
+
+            // Rooms larger than 40*23 should use follow mode.
+            ctx.Room.CameraMode =
+                bounds.size.x > 40f && bounds.size.y > 23f ? CameraMode.Follow : CameraMode.Fixed;
+            EditorUtility.SetDirty(ctx.Room);
+        }
 
         private RoomContext CreateVirtualCamera(RoomContext ctx)
         {
@@ -57,14 +64,23 @@ namespace GameMain.Editor
             ).AddComponent<CinemachineCamera>();
             vCam.transform.SetParent(ctx.Level.transform);
             ctx.VCam = vCam;
+            ctx.Room.VirtualCamera = vCam;
+
+            // Default settings
+            vCam.Lens.ModeOverride = LensSettings.OverrideModes.Orthographic;
+            vCam.Lens.OrthographicSize = 11.25f; // This matches half of 22.5 (close to 23)
+            vCam.Lens.NearClipPlane = 0.1f;
+            vCam.Lens.FarClipPlane = 5000f;
+
+            EditorUtility.SetDirty(ctx.Room);
             return ctx;
         }
 
-        private void ApplyCameraFollow(RoomContext ctx) =>
-            ctx.VCam.Follow =
-                ctx.Room.CameraMode == CameraMode.Fixed
-                    ? null
-                    : RunTime.GameMain.GetPlayer()?.transform;
+        private void ApplyCameraFollow(RoomContext ctx)
+        {
+            if (ctx.Room.CameraMode == CameraMode.Follow)
+                ctx.VCam.gameObject.AddComponent<CinemachinePositionComposer>();
+        }
 
         private void ApplyFixedCameraSettings(RoomContext ctx)
         {
@@ -72,20 +88,58 @@ namespace GameMain.Editor
                 return;
 
             var bounds = ctx.Room.BorderBounds;
-
             ctx.VCam.transform.position = bounds.center + Vector3.back * 10f;
-            ctx.VCam.Lens.ModeOverride = LensSettings.OverrideModes.Orthographic;
-            ctx.VCam.Lens.OrthographicSize = 11.25f;
-            ctx.VCam.Lens.NearClipPlane = 0.1f;
-            ctx.VCam.Lens.FarClipPlane = 5000f;
         }
 
         private void ApplyConfinerSettings(RoomContext ctx)
         {
-            var confiner = ctx.Level.gameObject.AddComponent<CinemachineConfiner2D>();
-            confiner.BoundingShape2D = ctx.Level.TryGetComponent<PolygonCollider2D>(out var poly)
-                ? poly
-                : ctx.Level.GetComponentInChildren<PolygonCollider2D>();
+            // Find the LogicMap layer
+            LDtkComponentLayer logicMapLayer = null;
+            foreach (var layer in ctx.Level.LayerInstances)
+            {
+                if (layer != null && layer.Identifier == LDtkIdentifiers.LogicMap)
+                {
+                    logicMapLayer = layer;
+                    break;
+                }
+            }
+
+            if (logicMapLayer == null)
+            {
+                CLogger.LogWarn(
+                    $"Level {ctx.Level.name} does not have a LogicMap layer.",
+                    LogTag.LdtkRoomProcessor
+                );
+                return;
+            }
+
+            // Generate PolygonCollider2D for room boundary
+            var collider = logicMapLayer.gameObject.GetComponent<PolygonCollider2D>();
+            if (collider == null)
+            {
+                collider = logicMapLayer.gameObject.AddComponent<PolygonCollider2D>();
+            }
+
+            collider.isTrigger = true;
+
+            // Set points to match level bounds (in local space of logicMapLayer)
+            Bounds bounds = ctx.Level.BorderBounds;
+            Vector3 localMin = logicMapLayer.transform.InverseTransformPoint(bounds.min);
+            Vector3 localMax = logicMapLayer.transform.InverseTransformPoint(bounds.max);
+
+            collider.points = new Vector2[]
+            {
+                new(localMin.x, localMin.y),
+                new(localMax.x, localMin.y),
+                new(localMax.x, localMax.y),
+                new(localMin.x, localMax.y),
+            };
+
+            var confiner = ctx.VCam.gameObject.AddComponent<CinemachineConfiner2D>();
+            confiner.BoundingShape2D = collider;
+
+            EditorUtility.SetDirty(logicMapLayer);
+            EditorUtility.SetDirty(ctx.VCam);
         }
     }
 }

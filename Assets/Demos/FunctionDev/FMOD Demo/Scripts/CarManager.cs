@@ -4,23 +4,35 @@ using UnityEngine;
 public class CarManager : MonoBehaviour
 {
     [Header("Spawning")]
-    [SerializeField] private GameObject carPrefab;
-    [SerializeField] private int targetCarCount = 20;
-    [SerializeField] private float spawnIntervalSeconds = 0.2f;
+    [SerializeField]
+    private GameObject carPrefab;
+
+    [SerializeField]
+    private int targetCarCount = 20;
+
+    [SerializeField]
+    private float spawnIntervalSeconds = 0.2f;
 
     [Header("Area (local to this GameObject)")]
-    [SerializeField] private Vector3 areaCenter = Vector3.zero;
-    [SerializeField] private Vector3 areaSize = new Vector3(60f, 0f, 60f);
+    [SerializeField]
+    private Vector3 areaCenter = Vector3.zero;
+
+    [SerializeField]
+    private Vector3 areaSize = new Vector3(60f, 0f, 60f);
 
     [Header("Car Settings")]
-    [SerializeField] private Vector2 speedRange = new Vector2(5f, 10f);
-    [SerializeField] private float carDespawnDistance = 100f;
+    [SerializeField]
+    private Vector2 speedRange = new Vector2(5f, 10f);
+
+    [SerializeField]
+    private float carDespawnDistance = 100f;
 
     private float spawnTimer;
 
     private void Update()
     {
-        if (carPrefab == null) return;
+        if (carPrefab == null)
+            return;
 
         spawnTimer += Time.deltaTime;
         if (spawnTimer >= spawnIntervalSeconds)
@@ -65,7 +77,10 @@ public class CarManager : MonoBehaviour
         }
 
         Vector3 spawnPos = worldCenter + transform.TransformDirection(localPos);
-        Quaternion rotation = Quaternion.LookRotation(transform.TransformDirection(dir), Vector3.up);
+        Quaternion rotation = Quaternion.LookRotation(
+            transform.TransformDirection(dir),
+            Vector3.up
+        );
 
         GameObject carObj = Instantiate(carPrefab, spawnPos, rotation);
         Car car = carObj.GetComponent<Car>();
@@ -82,7 +97,9 @@ public class CarManager : MonoBehaviour
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.cyan;
-        Vector3 worldCenter = Application.isPlaying ? transform.TransformPoint(areaCenter) : transform.position + areaCenter;
+        Vector3 worldCenter = Application.isPlaying
+            ? transform.TransformPoint(areaCenter)
+            : transform.position + areaCenter;
         Gizmos.matrix = Matrix4x4.identity;
         Gizmos.DrawWireCube(worldCenter, new Vector3(areaSize.x, 0.01f, areaSize.z));
     }

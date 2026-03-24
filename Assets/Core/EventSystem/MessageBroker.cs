@@ -148,7 +148,7 @@ namespace Core
         public void Publish<T>(T message)
             where T : IEvent
         {
-            Logger.LogVerbose($"Publish Event: {typeof(T).Name}", LogTag.Event);
+            CLogger.LogVerbose($"Publish Event: {typeof(T).Name}", LogTag.Event);
 
             lock (m_Locker)
             {
@@ -164,7 +164,7 @@ namespace Core
         public void PublishErrorStop<T>(object errorSource, Exception error)
             where T : IEvent
         {
-            Logger.LogVerbose($"Publish Error Event: {typeof(T).Name}", LogTag.Event);
+            CLogger.LogVerbose($"Publish Error Event: {typeof(T).Name}", LogTag.Event);
 
             lock (m_Locker)
             {
@@ -174,7 +174,7 @@ namespace Core
                     var subject = (ISubject<T>)eventInfo.Subject;
                     subject.OnCompleted();
 
-                    Logger.LogError(
+                    CLogger.LogError(
                         $"Event {typeof(T).Name} terminated with error: {error.Message}",
                         LogTag.Event
                     );
@@ -187,7 +187,7 @@ namespace Core
         public void PublishErrorResume<T>(object errorSource, Exception error)
             where T : IEvent
         {
-            Logger.LogVerbose($"Publish Error Resume Event: {typeof(T).Name}", LogTag.Event);
+            CLogger.LogVerbose($"Publish Error Resume Event: {typeof(T).Name}", LogTag.Event);
 
             lock (m_Locker)
             {
@@ -203,7 +203,7 @@ namespace Core
         public void PublishComplete<T>(T message)
             where T : IEvent
         {
-            Logger.LogVerbose($"Publish Complete Event: {typeof(T).Name}", LogTag.Event);
+            CLogger.LogVerbose($"Publish Complete Event: {typeof(T).Name}", LogTag.Event);
 
             lock (m_Locker)
             {
@@ -221,7 +221,7 @@ namespace Core
         public void Complete<T>()
             where T : IEvent
         {
-            Logger.LogVerbose($"Complete Event: {typeof(T).Name}", LogTag.Event);
+            CLogger.LogVerbose($"Complete Event: {typeof(T).Name}", LogTag.Event);
 
             lock (m_Locker)
             {
@@ -252,7 +252,7 @@ namespace Core
 
         public void Clear()
         {
-            Logger.LogVerbose($"Clear MessageBroker", LogTag.Event);
+            CLogger.LogVerbose($"Clear MessageBroker", LogTag.Event);
 
             lock (m_Locker)
             {
@@ -267,7 +267,7 @@ namespace Core
         public int GetSubscriberCount<T>()
             where T : IEvent
         {
-            Logger.LogVerbose($"Get Subscriber Count: {typeof(T).Name}", LogTag.Event);
+            CLogger.LogVerbose($"Get Subscriber Count: {typeof(T).Name}", LogTag.Event);
 
             lock (m_Locker)
             {
@@ -280,7 +280,7 @@ namespace Core
         public IReadOnlyCollection<object> GetSubscribers<T>()
             where T : IEvent
         {
-            Logger.LogVerbose($"Get Subscribers: {typeof(T).Name}", LogTag.Event);
+            CLogger.LogVerbose($"Get Subscribers: {typeof(T).Name}", LogTag.Event);
 
             lock (m_Locker)
             {
@@ -295,7 +295,7 @@ namespace Core
         public bool HasActiveSubscribers<T>()
             where T : IEvent
         {
-            Logger.LogVerbose($"Has Active Subscribers: {typeof(T).Name}", LogTag.Event);
+            CLogger.LogVerbose($"Has Active Subscribers: {typeof(T).Name}", LogTag.Event);
 
             lock (m_Locker)
             {
@@ -307,7 +307,7 @@ namespace Core
 #if UNITY_EDITOR
         public string GetDebugInfo()
         {
-            Logger.LogVerbose($"Get Debug Info", LogTag.Event);
+            CLogger.LogVerbose($"Get Debug Info", LogTag.Event);
 
             lock (m_Locker)
             {

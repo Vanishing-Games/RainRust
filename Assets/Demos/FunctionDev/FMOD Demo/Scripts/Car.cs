@@ -44,14 +44,16 @@ public class Car : MonoBehaviour
 
     public static int CountNearby(Vector3 position, float radius)
     {
-        if (radius <= 0f) return 0;
+        if (radius <= 0f)
+            return 0;
 
         int count = 0;
         float radiusSqr = radius * radius;
         for (int i = 0; i < ActiveCars.Count; i++)
         {
             Car car = ActiveCars[i];
-            if (car == null) continue;
+            if (car == null)
+                continue;
             Vector3 to = car.transform.position - position;
             to.y = 0f;
             if (to.sqrMagnitude <= radiusSqr)
