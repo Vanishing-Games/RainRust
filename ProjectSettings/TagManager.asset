@@ -10,6 +10,7 @@ TagManager:
   - AutoTile
   - ManualTile
   - Entity
+  - System
   layers:
   - Default
   - TransparentFX
@@ -42,7 +43,7 @@ TagManager:
   - 
   - 
   - 
-  - 
+  - System
   m_SortingLayers:
   - name: Default
     uniqueID: 0
