@@ -29,23 +29,27 @@ namespace GameMain.Editor
                     case LDtkIdentifiers.LogicMap:
                         layer.gameObject.SetLayerRecursively(LayerMask.NameToLayer("LogicMap"));
                         layer.gameObject.SetTagRecursively("LogicMap");
+                        layer.gameObject.SetSortingLayerRecursively("LogicMap");
                         break;
 
                     case LDtkIdentifiers.AutoTiles:
                         layer.gameObject.SetLayerRecursively(LayerMask.NameToLayer("AutoTile"));
                         layer.gameObject.SetTagRecursively("AutoTile");
+                        layer.gameObject.SetSortingLayerRecursively("AutoTile");
 
                         break;
 
                     case LDtkIdentifiers.ManualTiles:
                         layer.gameObject.SetLayerRecursively(LayerMask.NameToLayer("ManualTile"));
                         layer.gameObject.SetTagRecursively("ManualTile");
+                        layer.gameObject.SetSortingLayerRecursively("ManualTile");
 
                         break;
 
                     case LDtkIdentifiers.Entities:
                         layer.gameObject.SetLayerRecursively(LayerMask.NameToLayer("Entity"));
                         layer.gameObject.SetTagRecursively("Entity");
+                        layer.gameObject.SetSortingLayerRecursively("Entity");
 
                         break;
                 }
