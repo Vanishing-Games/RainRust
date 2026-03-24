@@ -4,6 +4,7 @@ namespace PlayerControlByOris
     {
         InitialSet,
         CollisionStartCheck,
+        DeathControl,
         StateStartSet,
         WhistleControl,
         ThrowControl,

@@ -196,6 +196,36 @@ namespace PlayerControlByOris
 
         #endregion
 
+        #region 死亡与重生相关
+        [BoxGroup("死亡与重生相关"), Tooltip("死亡判断"), ShowInInspector, ReadOnly]
+        public bool isShouldDie { get; set; }
+
+        [BoxGroup("死亡与重生相关"), Tooltip("重生位置"), ShowInInspector, ReadOnly]
+        public Vector3 RespawnPos { get; set; }
+
+        [BoxGroup("死亡与重生相关"), Tooltip("死亡黑屏"), ShowInInspector, OdinSerialize]
+        public GameObject RespawnBlackMask { get; set; }
+
+        [BoxGroup("死亡与重生相关"), Tooltip("死亡动画/过度时间"), ShowInInspector, OdinSerialize]
+        public int DyingTime { get; set; }
+
+        [BoxGroup("死亡与重生相关"), Tooltip("死亡动画/过度时间计时器"), ShowInInspector, ReadOnly]
+        public int DyingTimer { get; set; }
+
+        [BoxGroup("死亡与重生相关"), Tooltip("死亡持续时间"), ShowInInspector, OdinSerialize]
+        public int DeathTime { get; set; }
+
+        [BoxGroup("死亡与重生相关"), Tooltip("死亡持续时间计时器"), ShowInInspector, ReadOnly]
+        public int DeathTimer { get; set; }
+
+        [BoxGroup("死亡与重生相关"), Tooltip("死亡持续时间"), ShowInInspector, OdinSerialize]
+        public int RespawnTime { get; set; }
+
+        [BoxGroup("死亡与重生相关"), Tooltip("死亡持续时间计时器"), ShowInInspector, ReadOnly]
+        public int RespawnTimer { get; set; }
+
+        #endregion
+
         #region 重力相关
 
         [BoxGroup("重力相关"), Tooltip("角色的正常最大下落速度"), ShowInInspector, OdinSerialize]

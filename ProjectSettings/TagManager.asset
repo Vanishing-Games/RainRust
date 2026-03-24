@@ -10,6 +10,7 @@ TagManager:
   - AutoTile
   - ManualTile
   - Entity
+  - Danger
   layers:
   - Default
   - TransparentFX
@@ -28,7 +29,7 @@ TagManager:
   - AutoTile
   - ManualTile
   - LogicMap
-  - 
+  - Respawn
   - 
   - 
   - 
