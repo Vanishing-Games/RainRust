@@ -1,9 +1,13 @@
 {
-    "name": "PlayMode",
-    "rootNamespace": "",
+    "name": "Test.PlayMode",
+    "rootNamespace": "Test.PlayMode",
     "references": [
         "UnityEngine.TestRunner",
-        "UnityEditor.TestRunner"
+        "UnityEditor.TestRunner",
+        "Core",
+        "GameMain.RunTime",
+        "GameMain.LDtk",
+        "GameMain.RunTime.ConsoleUtilities"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

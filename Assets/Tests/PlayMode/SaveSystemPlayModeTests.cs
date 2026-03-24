@@ -5,7 +5,7 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-namespace Tests.PlayMode
+namespace Test.PlayMode
 {
     public class SaveSystemPlayModeTests
     {

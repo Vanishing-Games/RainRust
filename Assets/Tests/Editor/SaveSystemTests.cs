@@ -7,7 +7,7 @@ using NUnit.Framework;
 using R3;
 using UnityEngine;
 
-namespace Tests.Editor
+namespace Test.Editor
 {
     public class SaveSystemTests
     {
