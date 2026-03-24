@@ -11,8 +11,8 @@ namespace Core
         Mirror,
     }
 
-    [Serializable]
-    public class ParallaxLayer
+    [CreateAssetMenu(fileName = "NewParallaxLayer", menuName = "Parallax/Layer")]
+    public class ParallaxLayer : VgSerializedScriptableObject
     {
         [Tooltip("背景层渲染的图片")]
         public Sprite sprite;
@@ -27,15 +27,15 @@ namespace Core
         public float blurMode;
 
         [Tooltip("高斯模糊强度"), Range(0.001f, 10f)]
-        public float blurIntensity;
+        public float blurIntensity = 0.001f;
 
-        [HideInInspector]
+        [NonSerialized, HideInInspector]
         public GameObject layerObject;
 
-        [HideInInspector]
+        [NonSerialized, HideInInspector]
         public SpriteRenderer[] renderers;
 
-        [HideInInspector]
+        [NonSerialized, HideInInspector]
         public float textureWidth;
     }
 
@@ -73,7 +73,7 @@ namespace Core
 
             foreach (var layer in m_Layers)
             {
-                if (layer.layerObject == null)
+                if (layer == null || layer.layerObject == null)
                 {
                     continue;
                 }
@@ -109,10 +109,12 @@ namespace Core
                     DestroyImmediate(transform.GetChild(i).gameObject);
             }
 
+            if (m_Layers == null) return;
+
             for (int i = 0; i < m_Layers.Count; i++)
             {
                 var layer = m_Layers[i];
-                if (layer.sprite == null)
+                if (layer == null || layer.sprite == null)
                     continue;
 
                 GameObject container = new($"Layer_{i}_{layer.sprite.name}");
@@ -163,9 +165,11 @@ namespace Core
                 m_BlurMaterial = new Material(m_BlurShader);
             }
 
+            if (m_Layers == null) return;
+
             foreach (var layer in m_Layers)
             {
-                if (layer.renderers == null)
+                if (layer == null || layer.renderers == null)
                     continue;
 
                 foreach (var sr in layer.renderers)
@@ -220,6 +224,12 @@ namespace Core
             }
         }
 
+        public List<ParallaxLayer> Layers
+        {
+            get => m_Layers;
+            set => m_Layers = value;
+        }
+
         [SerializeField]
         private Camera m_TargetCamera;
 
@@ -239,6 +249,7 @@ namespace Core
 
             if (m_Layers.Count > 1)
             {
+                m_Layers.RemoveAll(l => l == null);
                 m_Layers.Sort((a, b) => b.parallaxFactor.CompareTo(a.parallaxFactor));
             }
 
@@ -249,7 +260,7 @@ namespace Core
         }
 
         [ContextMenu("一键分配视差系数")]
-        private void DistributeFactors()
+        public void DistributeFactors()
         {
             if (m_Layers == null || m_Layers.Count == 0)
                 return;
