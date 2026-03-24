@@ -1,22 +1,21 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 namespace Core
 {
-    public interface ISavable { }
-
     public interface ISaveData { }
 
-    /// <summary>
-    /// Save data without reference
-    /// </summary>
-    public interface ISavableStruct<T> : ISavable
-        where T : struct { }
+    public interface ISavable
+    {
+        string SaveID { get; }
+        object CaptureState();
+        void RestoreState(object state);
+    }
 
-    /// <summary>
-    /// Save data with reference
-    /// </summary>
-    public interface ISavableClass<T> : ISavable
-        where T : ISaveData { }
+    public interface ISavable<T> : ISavable
+        where T : ISaveData
+    {
+        T CaptureSaveData();
+        void RestoreSaveData(T data);
+
+        object ISavable.CaptureState() => CaptureSaveData();
+        void ISavable.RestoreState(object state) => RestoreSaveData((T)state);
+    }
 }

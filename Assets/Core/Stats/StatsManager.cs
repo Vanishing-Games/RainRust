@@ -1,11 +1,12 @@
 using System.Collections.Generic;
-using UnityEngine;
-using System.IO;
 using System.Linq;
+using Core.Save;
+using Newtonsoft.Json.Linq;
+using UnityEngine;
 
-namespace Core
+namespace Core.Stats
 {
-    public class StatsManager : MonoBehaviour, ISavableClass<StatsSaveData>
+    public class StatsManager : MonoBehaviour, ISavable<StatsSaveData>
     {
         private void Awake()
         {
@@ -30,12 +31,20 @@ namespace Core
                 }
             }
 
-            if (m_PersistOnDisk)
-            {
-                LoadFromDisk();
-            }
-
             CacheTimerKeys();
+        }
+
+        private void Start()
+        {
+            SaveManager.Instance.Register(this);
+        }
+
+        private void OnDestroy()
+        {
+            if (m_Instance == this)
+            {
+                SaveManager.Instance.Unregister(this);
+            }
         }
 
         private void Update()
@@ -46,11 +55,39 @@ namespace Core
             }
         }
 
-        private void OnApplicationQuit()
+        public StatsSaveData CaptureSaveData()
         {
-            if (m_PersistOnDisk)
+            return new StatsSaveData { Stats = m_Stats.Values.ToList() };
+        }
+
+        public void RestoreSaveData(StatsSaveData data)
+        {
+            if (data?.Stats == null)
+                return;
+
+            foreach (var record in data.Stats)
             {
-                SaveToDisk();
+                if (m_Stats.ContainsKey(record.Key))
+                {
+                    m_Stats[record.Key].Value = record.Value;
+                }
+                else
+                {
+                    m_Stats.Add(record.Key, record);
+                }
+            }
+            CacheTimerKeys();
+        }
+
+        void ISavable.RestoreState(object state)
+        {
+            if (state is JObject jObject)
+            {
+                RestoreSaveData(jObject.ToObject<StatsSaveData>());
+            }
+            else if (state is StatsSaveData data)
+            {
+                RestoreSaveData(data);
             }
         }
 
@@ -83,15 +120,6 @@ namespace Core
             }
         }
 
-        public static void Set(string key, float value)
-        {
-            if (!Instance.m_Stats.ContainsKey(key))
-            {
-                Instance.RegisterStat(key, StatType.Counter);
-            }
-            Instance.UpdateStat(key, value);
-        }
-
         public static float GetValue(string key)
         {
             return Instance.m_Stats.TryGetValue(key, out var stat) ? stat.Value : 0;
@@ -109,45 +137,6 @@ namespace Core
             }
         }
 
-        public void SaveToDisk()
-        {
-            var data = new StatsSaveData { Stats = m_Stats.Values.ToList() };
-            string json = JsonUtility.ToJson(data, true);
-            File.WriteAllText(SavePath, json);
-            CLogger.LogInfo($"Stats saved to: {SavePath}", LogTag.Game);
-        }
-
-        public void LoadFromDisk()
-        {
-            if (File.Exists(SavePath))
-            {
-                try
-                {
-                    string json = File.ReadAllText(SavePath);
-                    var data = JsonUtility.FromJson<StatsSaveData>(json);
-                    if (data?.Stats != null)
-                    {
-                        foreach (var record in data.Stats)
-                        {
-                            if (m_Stats.ContainsKey(record.Key))
-                            {
-                                m_Stats[record.Key].Value = record.Value;
-                            }
-                            else
-                            {
-                                m_Stats.Add(record.Key, record);
-                            }
-                        }
-                    }
-                    CLogger.LogInfo("Stats loaded from disk.", LogTag.Game);
-                }
-                catch (System.Exception e)
-                {
-                    CLogger.LogError($"Failed to load stats: {e.Message}", LogTag.Game);
-                }
-            }
-        }
-
         private void UpdateStat(string key, float newValue, bool publishEvent = true)
         {
             if (m_Stats.TryGetValue(key, out var stat))
@@ -157,15 +146,17 @@ namespace Core
 
                 if (publishEvent && oldValue != newValue)
                 {
-                    MessageBroker.Global.Publish(new StatChangedEvent(key, oldValue, newValue, stat.Type));
+                    MessageBroker.Global.Publish(
+                        new StatChangedEvent(key, oldValue, newValue, stat.Type)
+                    );
                 }
             }
         }
 
         private void CacheTimerKeys()
         {
-            m_CachedTimerKeys = m_Stats.Values
-                .Where(s => s.Type == StatType.Timer)
+            m_CachedTimerKeys = m_Stats
+                .Values.Where(s => s.Type == StatType.Timer)
                 .Select(s => s.Key)
                 .ToList();
         }
@@ -187,13 +178,11 @@ namespace Core
             }
         }
 
+        public string SaveID => "GlobalStats";
+
         [Header("Configuration")]
         [SerializeField]
         private bool m_DontDestroyOnLoad = true;
-        [SerializeField]
-        private bool m_PersistOnDisk = true;
-        [SerializeField]
-        private string m_FileName = "player_stats.json";
 
         [Header("Default Stats")]
         [SerializeField]
@@ -209,6 +198,5 @@ namespace Core
         private static StatsManager m_Instance;
         private readonly Dictionary<string, StatRecord> m_Stats = new();
         private List<string> m_CachedTimerKeys = new();
-        private string SavePath => Path.Combine(Application.persistentDataPath, m_FileName);
     }
 }
