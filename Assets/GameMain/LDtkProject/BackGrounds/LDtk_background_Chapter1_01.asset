@@ -9,9 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: 5b9d01932ed0c0d419c8d16750e79a9c, type: 3}
   m_Name: LDtk_background_Chapter1_01
-  m_EditorClassIdentifier: Core:Core:ParallaxLayer
+  m_EditorClassIdentifier: Core::Core.ParallaxLayer
   serializationData:
     SerializedFormat: 2
     SerializedBytes: 
@@ -21,7 +21,7 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes: []
-  sprite: {fileID: 0}
+  sprite: {fileID: -5312297342821815488, guid: 75a350021569ccd4a8f6a6f60fb2188c, type: 3}
   parallaxFactor: 0
   clampMode: 0
   blurMode: 0
