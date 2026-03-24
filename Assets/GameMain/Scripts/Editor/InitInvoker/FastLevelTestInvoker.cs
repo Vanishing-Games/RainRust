@@ -27,13 +27,21 @@ namespace GameMain.Editor
 
         private void Start()
         {
+            // 优先获取场景中 Player 的位置作为测试参考点
+            Vector3 testPos = transform.position;
+            GameObject player = GameObject.FindWithTag("Player");
+            if (player != null)
+            {
+                testPos = player.transform.position;
+            }
+
             if (AutoFindNearest)
             {
-                new FastLevelTestCommand(transform.position).Execute();
+                new FastLevelTestCommand(testPos).Execute();
             }
             else
             {
-                new ManualFastLevelTestCommand(transform.position, chapterId, levelId, SpawnIndex).Execute();
+                new ManualFastLevelTestCommand(testPos, chapterId, levelId, SpawnIndex).Execute();
             }
         }
     }

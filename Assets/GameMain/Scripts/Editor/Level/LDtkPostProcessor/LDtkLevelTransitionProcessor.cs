@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Core;
 using GameMain.RunTime;
 using LDtkUnity;
@@ -16,6 +17,9 @@ namespace GameMain.Editor
                 LogTag.LDtkTransitionProcessor
             );
             LDtkComponentLevel level = root.GetComponent<LDtkComponentLevel>();
+
+            HashSet<int> indexCheck = new ();
+
             foreach (LDtkComponentLayer layer in level.LayerInstances)
             {
                 if (layer == null || layer.EntityInstances == null)
@@ -28,6 +32,7 @@ namespace GameMain.Editor
                         var transitionGo = entity.gameObject;
                         var size = entity.Size;
                         transitionGo.transform.localScale = Vector3.one;
+                        transitionGo.layer = LayerMask.NameToLayer("Ignore Raycast");
 
                         var collider = transitionGo.AddComponent<BoxCollider2D>();
                         collider.isTrigger = true;
@@ -42,10 +47,18 @@ namespace GameMain.Editor
                         {
                             if (fields.TryGetInt("Index", out var index))
                             {
+                                if (indexCheck.Contains(index))
+                                {
+                                    CLogger.LogError(
+                                        $"关卡 {level.Identifier} 中存在重复的 Transition Index: {index}. 请在 LDtk 中检查并修改.",
+                                        LogTag.LDtkTransitionProcessor
+                                    );
+                                }
+                                indexCheck.Add(index);
                                 levelTransition.Index = index;
                             }
                         }
-                        
+
                         EditorUtility.SetDirty(levelTransition);
                     }
                 }
@@ -104,7 +117,7 @@ namespace GameMain.Editor
                     );
                     transition.Target = null;
                 }
-                
+
                 EditorUtility.SetDirty(transition);
             }
         }

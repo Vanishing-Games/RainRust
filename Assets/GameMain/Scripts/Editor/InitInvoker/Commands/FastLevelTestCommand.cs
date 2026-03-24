@@ -131,24 +131,15 @@ namespace GameMain.Editor
             // 2. 识别目标 Transition
             LevelTransition targetTransition = null;
 
-            // 如果指定了 Index (>=0)，尝试寻找对应 Index 的 Transition
-            if (m_Index >= 0)
-            {
-                var transitions = targetLevel.GetComponentsInChildren<LevelTransition>(true);
-                targetTransition = transitions.FirstOrDefault(t => t.Index == m_Index);
+            // 必须匹配 LevelTransition.Index 属性
+            var transitions = targetLevel.GetComponentsInChildren<LevelTransition>(true);
+            targetTransition = transitions.FirstOrDefault(t => t.Index == m_Index);
 
-                // Fallback: 如果 Index 找不到，或者 Index 本身不匹配，按 List 顺序找
-                if (targetTransition == null && m_Index < transitions.Length)
-                {
-                    targetTransition = transitions[m_Index];
-                }
-            }
-
-            // Fallback: 如果还是没找到，或者没指定有效 Index，寻找最近的
+            // 如果还是没找到，或者没指定有效 Index，寻找最近的
             if (targetTransition == null)
             {
-                CLogger.LogInfo(
-                    "[ManualFastLevelTestCommand] Index not found or invalid, falling back to nearest transition.",
+                CLogger.LogWarn(
+                    $"[ManualFastLevelTestCommand] Transition with Index {m_Index} not found in level {targetLevel.Identifier}, falling back to nearest transition.",
                     LogTag.LevelManager
                 );
                 targetTransition = FastLevelTestHelper.FindNearestTransition(
@@ -200,7 +191,6 @@ namespace GameMain.Editor
             Vector3 position
         )
         {
-            // 使用 GetComponentsInChildren 更加鲁棒，不受 LayerInstances 是否为空影响
             var transitions = level.GetComponentsInChildren<LevelTransition>(true);
             if (transitions.Length == 0)
                 return null;
@@ -210,8 +200,16 @@ namespace GameMain.Editor
 
             foreach (var t in transitions)
             {
-                // 使用 Vector2.Distance 忽略 Z 轴偏差，解决 "出生点都一样" 的潜在误差问题
-                float dist = Vector2.Distance(position, t.transform.position);
+                Vector3 targetPos = t.transform.position;
+                
+                // 如果有 Collider，使用 Collider 的中心点作为计算参考
+                var box = t.GetComponent<BoxCollider2D>();
+                if (box != null)
+                {
+                    targetPos = t.transform.TransformPoint(box.offset);
+                }
+
+                float dist = Vector2.Distance(position, targetPos);
                 if (dist < minDistance)
                 {
                     minDistance = dist;

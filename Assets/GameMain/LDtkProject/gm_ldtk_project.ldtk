@@ -2630,7 +2630,7 @@
 										"id": "V_String",
 										"params": ["6eb6d0b0-21a0-11f1-881e-29a152b868d6"]
 									}] },
-									{ "__identifier": "Index", "__type": "Int", "__value": null, "__tile": null, "defUid": 92, "realEditorValues": [null] }
+									{ "__identifier": "Index", "__type": "Int", "__value": 1, "__tile": null, "defUid": 92, "realEditorValues": [{ "id": "V_Int", "params": [1] }] }
 								],
 								"__worldX": -1792,
 								"__worldY": 1280
@@ -3993,7 +3993,7 @@
 										"id": "V_String",
 										"params": ["6d99ef00-21a0-11f1-881e-a9342259a729"]
 									}] },
-									{ "__identifier": "Index", "__type": "Int", "__value": null, "__tile": null, "defUid": 92, "realEditorValues": [] }
+									{ "__identifier": "Index", "__type": "Int", "__value": 0, "__tile": null, "defUid": 92, "realEditorValues": [{ "id": "V_Int", "params": [0] }] }
 								],
 								"__worldX": -1792,
 								"__worldY": 1024
@@ -4934,7 +4934,7 @@
 										"id": "V_String",
 										"params": ["5525df10-21a0-11f1-881e-1b9d196c1de7"]
 									}] },
-									{ "__identifier": "Index", "__type": "Int", "__value": null, "__tile": null, "defUid": 92, "realEditorValues": [] }
+									{ "__identifier": "Index", "__type": "Int", "__value": 0, "__tile": null, "defUid": 92, "realEditorValues": [{ "id": "V_Int", "params": [0] }] }
 								],
 								"__worldX": 1152,
 								"__worldY": 896
