@@ -6,10 +6,14 @@ namespace GameMain.RunTime
     public static class LDtkIdentifiers
     {
         // Layer Identifiers
-        public const string AutoTiles = "AutoTiles"; // 自动绘制的瓦片层, 包含地面、平台等
+        public const string AutoTiles_Wall_A = "AutoTiles_Wall_A"; // 自动绘制的瓦片层, 包含地面、平台等
+        public const string AutoTiles_Wall_B = "AutoTiles_Wall_B"; // 自动绘制的瓦片层, 包含地面、平台等
+        public const string AutoTiles_BG_A = "AutoTiles_BG_A"; // 自动绘制的瓦片层, 包含地面、平台等
+        public const string AutoTiles_BG_B = "AutoTiles_BG_B"; // 自动绘制的瓦片层, 包含地面、平台等
         public const string ManualTiles = "ManualTiles"; // 手动绘制的瓦片层, 包含装饰性元素
         public const string Entities = "Entities"; // 实体层, 包含玩家、敌人、道具等
         public const string LogicMap = "LogicMap"; // 逻辑地图层, 0: Wall,
+        public const string BGMap = "BGMap";
 
         // Entity Identifiers
         public const string LevelTransition = "LevelTransition"; // 关卡出入口

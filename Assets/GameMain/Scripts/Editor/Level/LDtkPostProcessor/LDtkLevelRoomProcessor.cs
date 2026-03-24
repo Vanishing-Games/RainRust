@@ -46,6 +46,7 @@ namespace GameMain.Editor
                 })
                 .Tap(ApplyCameraModeFields)
                 .Map(CreateVirtualCamera)
+                .Tap(ApplyCameraCommonSettings)
                 .Tap(ApplyCameraFollow)
                 .Tap(ApplyFixedCameraSettings)
                 .Tap(ApplyConfinerSettings)
@@ -78,6 +79,12 @@ namespace GameMain.Editor
 
             EditorUtility.SetDirty(ctx.Room);
             return ctx;
+        }
+
+        private void ApplyCameraCommonSettings(RoomContext ctx)
+        {
+            //CinemachineFollow vCamFollow = ctx.VCam.gameObject.AddComponent<CinemachineFollow>();
+            //vCamFollow.
         }
 
         private void ApplyCameraFollow(RoomContext ctx)
