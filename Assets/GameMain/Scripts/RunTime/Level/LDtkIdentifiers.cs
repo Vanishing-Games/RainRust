@@ -16,5 +16,6 @@ namespace GameMain.RunTime
 
         // Enum Identifiers
         public const string Enum_CameraMode = "CameraMode";
+
     }
 }
