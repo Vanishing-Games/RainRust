@@ -1,10 +1,9 @@
 using System.Collections.Generic;
-using System.Linq;
-using Core.Save;
-using Newtonsoft.Json.Linq;
 using UnityEngine;
+using System.Linq;
+using Newtonsoft.Json.Linq;
 
-namespace Core.Stats
+namespace Core
 {
     public class StatsManager : MonoBehaviour, ISavable<StatsSaveData>
     {
@@ -16,12 +15,6 @@ namespace Core.Stats
                 return;
             }
             m_Instance = this;
-
-            if (m_DontDestroyOnLoad)
-            {
-                transform.SetParent(null);
-                DontDestroyOnLoad(gameObject);
-            }
 
             foreach (var stat in m_InitialStats)
             {
@@ -41,7 +34,7 @@ namespace Core.Stats
 
         private void OnDestroy()
         {
-            if (m_Instance == this)
+            if (m_Instance == this && SaveManager.Instance != null)
             {
                 SaveManager.Instance.Unregister(this);
             }
@@ -62,8 +55,7 @@ namespace Core.Stats
 
         public void RestoreSaveData(StatsSaveData data)
         {
-            if (data?.Stats == null)
-                return;
+            if (data?.Stats == null) return;
 
             foreach (var record in data.Stats)
             {
@@ -146,17 +138,15 @@ namespace Core.Stats
 
                 if (publishEvent && oldValue != newValue)
                 {
-                    MessageBroker.Global.Publish(
-                        new StatChangedEvent(key, oldValue, newValue, stat.Type)
-                    );
+                    MessageBroker.Global.Publish(new StatChangedEvent(key, oldValue, newValue, stat.Type));
                 }
             }
         }
 
         private void CacheTimerKeys()
         {
-            m_CachedTimerKeys = m_Stats
-                .Values.Where(s => s.Type == StatType.Timer)
+            m_CachedTimerKeys = m_Stats.Values
+                .Where(s => s.Type == StatType.Timer)
                 .Select(s => s.Key)
                 .ToList();
         }
@@ -179,10 +169,6 @@ namespace Core.Stats
         }
 
         public string SaveID => "GlobalStats";
-
-        [Header("Configuration")]
-        [SerializeField]
-        private bool m_DontDestroyOnLoad = true;
 
         [Header("Default Stats")]
         [SerializeField]
