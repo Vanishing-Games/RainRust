@@ -27,24 +27,26 @@ namespace GameMain.Editor
                 switch (layer.Identifier)
                 {
                     case LDtkIdentifiers.LogicMap:
-                        layer.gameObject.SetLayerRecursively(LayerMask.NameToLayer("Wall"));
-                        layer.gameObject.SetTagRecursively("Wall");
+                        layer.gameObject.SetLayerRecursively(LayerMask.NameToLayer("LogicMap"));
+                        layer.gameObject.SetTagRecursively("LogicMap");
                         break;
 
                     case LDtkIdentifiers.AutoTiles:
-                        layer.gameObject.SetLayerRecursively(
-                            LayerMask.NameToLayer("Static Object")
-                        );
+                        layer.gameObject.SetLayerRecursively(LayerMask.NameToLayer("AutoTile"));
+                        layer.gameObject.SetTagRecursively("AutoTile");
+
                         break;
 
                     case LDtkIdentifiers.ManualTiles:
-                        layer.gameObject.SetLayerRecursively(LayerMask.NameToLayer("Default"));
+                        layer.gameObject.SetLayerRecursively(LayerMask.NameToLayer("ManualTile"));
+                        layer.gameObject.SetTagRecursively("ManualTile");
+
                         break;
 
                     case LDtkIdentifiers.Entities:
-                        layer.gameObject.SetLayerRecursively(
-                            LayerMask.NameToLayer("Dynamic Object")
-                        );
+                        layer.gameObject.SetLayerRecursively(LayerMask.NameToLayer("Entity"));
+                        layer.gameObject.SetTagRecursively("Entity");
+
                         break;
                 }
             }

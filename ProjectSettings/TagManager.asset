@@ -6,6 +6,10 @@ TagManager:
   tags:
   - Wall
   - Wave
+  - LogicMap
+  - AutoTile
+  - ManualTile
+  - Entity
   layers:
   - Default
   - TransparentFX
@@ -13,17 +17,17 @@ TagManager:
   - Progress Bar
   - Water
   - UI
-  - Character
-  - Static Object
-  - Dynamic Object
-  - Kinematic Object
+  - Player
+  - Entity
+  - 
+  - 
   - Wall
   - VerticalGrab
-  - Player
   - Hook
   - Wave
-  - 
-  - 
+  - AutoTile
+  - ManualTile
+  - LogicMap
   - 
   - 
   - 

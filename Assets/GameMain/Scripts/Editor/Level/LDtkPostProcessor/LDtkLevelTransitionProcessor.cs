@@ -10,6 +10,8 @@ namespace GameMain.Editor
 {
     public class LDtkTransitionProcessor : LDtkPostprocessor
     {
+        public override int GetPostprocessOrder() => 3;
+
         protected override void OnPostprocessLevel(GameObject root, LdtkJson projectJson)
         {
             CLogger.LogInfo(
