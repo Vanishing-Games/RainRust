@@ -66,6 +66,9 @@ namespace Core
             LdtkProcessor.Path
         );
         public static readonly LogTag LevelRoom = new("LevelRoom", LevelManager.Path);
-        public static readonly LogTag LDtkChapterBackgroundProcessor = new("LDtkChapterBackgroundProcessor", LdtkProcessor.Path);
+        public static readonly LogTag LDtkChapterBackgroundProcessor = new(
+            "LDtkChapterBackgroundProcessor",
+            LdtkProcessor.Path
+        );
     }
 }
