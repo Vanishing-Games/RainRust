@@ -109,7 +109,8 @@ namespace Core
                     DestroyImmediate(transform.GetChild(i).gameObject);
             }
 
-            if (m_Layers == null) return;
+            if (m_Layers == null)
+                return;
 
             for (int i = 0; i < m_Layers.Count; i++)
             {
@@ -165,7 +166,8 @@ namespace Core
                 m_BlurMaterial = new Material(m_BlurShader);
             }
 
-            if (m_Layers == null) return;
+            if (m_Layers == null)
+                return;
 
             foreach (var layer in m_Layers)
             {
