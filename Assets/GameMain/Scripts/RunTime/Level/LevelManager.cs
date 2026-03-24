@@ -59,6 +59,16 @@ namespace GameMain.RunTime
 
         internal int GetCurrentMaxPriority() => ++m_CurrentMaxPriority;
 
+        public LDtkComponentLevel CurrentLevel => m_CurrentLevel;
+        public LevelTransition CurrentTransition => m_CurrentLevelTransition;
+
+        public void ClearCurrentTransition()
+        {
+            m_CurrentLevelTransition = null;
+        }
+
+        private int m_LastSwitchFrame = -1;
+
         internal LevelTransition GetCurrentTransition()
         {
             return m_CurrentLevelTransition;
@@ -66,6 +76,7 @@ namespace GameMain.RunTime
 
         private void StartLevelInternal()
         {
+            m_LastSwitchFrame = Time.frameCount;
             SetUpPlayer();
             ActivateRoom(m_CurrentLevel);
 
@@ -245,6 +256,9 @@ namespace GameMain.RunTime
         /// <param name="targetTransition"></param>
         public void SwitchLevel(LevelTransition targetTransition)
         {
+            if (Time.frameCount == m_LastSwitchFrame)
+                return;
+
             var level = targetTransition.GetComponentInParent<LDtkComponentLevel>();
             if (level == null)
             {
@@ -255,6 +269,7 @@ namespace GameMain.RunTime
             if (m_CurrentLevel == level)
                 return;
 
+            m_LastSwitchFrame = Time.frameCount;
             m_CurrentLevel = level;
             m_CurrentLevelTransition = targetTransition;
             m_CurrentWorld = level.GetComponentInParent<LDtkComponentWorld>();

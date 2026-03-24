@@ -13,10 +13,20 @@ namespace GameMain.RunTime
         public void Activate()
         {
             if (VirtualCamera == null)
+            {
                 CLogger.LogError("LevelRoom don't have a ref of virtual cam", LogTag.LevelRoom);
+                return;
+            }
 
             if (CameraMode == CameraMode.Follow)
+            {
                 VirtualCamera.Follow = GameMain.GetPlayer().transform;
+            }
+            else
+            {
+                VirtualCamera.Follow = null;
+                VirtualCamera.LookAt = null;
+            }
 
             VirtualCamera.Priority.Enabled = true;
             VirtualCamera.Priority.Value = LevelManager.Instance.GetCurrentMaxPriority();

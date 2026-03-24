@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using LDtkUnity;
 
 namespace GameMain.RunTime
 {
@@ -22,7 +23,10 @@ namespace GameMain.RunTime
 
         private void OnTriggerStay2D(Collider2D other)
         {
-            CheckTransition();
+            if (other.CompareTag("Player"))
+            {
+                CheckTransition();
+            }
         }
 
         private void OnTriggerExit2D(Collider2D other)
@@ -30,6 +34,12 @@ namespace GameMain.RunTime
             if (other.CompareTag("Player"))
             {
                 s_CurrentTransitions.Remove(this);
+                
+                var levelManager = LevelManager.Instance;
+                if (this == levelManager.CurrentTransition)
+                {
+                    levelManager.ClearCurrentTransition();
+                }
             }
         }
 
@@ -40,18 +50,23 @@ namespace GameMain.RunTime
 
         private void CheckTransition()
         {
-            if (
-                Target != null
-                && s_CurrentTransitions.Contains(Target)
-                && this == LevelManager.Instance.GetCurrentTransition()
-            )
+            var levelManager = LevelManager.Instance;
+            var myLevel = GetComponentInParent<LDtkComponentLevel>();
+            
+            if (myLevel == null || myLevel == levelManager.CurrentLevel) 
+                return;
+
+            // Ping-pong 保护：如果我们刚刚从某个入口进来，在离开那个入口的 Trigger 之前，
+            // 不允许通过那个入口的 Target（也就是我们刚才出来的那个出口）切回去。
+            if (levelManager.CurrentTransition != null && this == levelManager.CurrentTransition.Target)
             {
-                s_CurrentTransitions.Remove(this);
-                LevelManager.Instance.SwitchLevel(Target);
+                return;
             }
+
+            levelManager.SwitchLevel(this);
         }
 
-        private static readonly HashSet<LevelTransition> s_CurrentTransitions = new();
+        public static readonly HashSet<LevelTransition> s_CurrentTransitions = new();
 
         [LabelText("目标位置")]
         [SerializeField]
