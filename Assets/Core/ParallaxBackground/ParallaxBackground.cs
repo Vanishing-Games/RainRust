@@ -51,8 +51,8 @@ namespace Core
                 }
 
                 Vector3 movement = new(
-                    cameraDelta.x * (1 - layer.parallaxFactor),
-                    cameraDelta.y * (1 - layer.parallaxFactor),
+                    cameraDelta.x * (1 - layer.parallaxFactorX),
+                    cameraDelta.y * (1 - layer.parallaxFactorY),
                     0
                 );
 
@@ -234,7 +234,7 @@ namespace Core
             if (m_Layers.Count > 1)
             {
                 m_Layers.RemoveAll(l => l == null);
-                m_Layers.Sort((a, b) => b.parallaxFactor.CompareTo(a.parallaxFactor));
+                m_Layers.Sort((a, b) => b.parallaxFactorX.CompareTo(a.parallaxFactorX));
             }
 
             if (transform.childCount > 0)
@@ -253,15 +253,18 @@ namespace Core
 
             if (m_Layers.Count == 1)
             {
-                m_Layers[0].parallaxFactor = 0.5f;
+                m_Layers[0].parallaxFactorX = 0.5f;
+                m_Layers[0].parallaxFactorY = 0.5f;
             }
             else
             {
                 for (int i = 0; i < m_Layers.Count; i++)
                 {
-                    m_Layers[i].parallaxFactor = 1.0f - ((float)i / (m_Layers.Count - 1));
+                    float factor = 1.0f - ((float)i / (m_Layers.Count - 1));
+                    m_Layers[i].parallaxFactorX = factor;
+                    m_Layers[i].parallaxFactorY = factor;
                     m_Layers[i].blurIntensity = Math.Clamp(
-                        (1.0f - m_Layers[i].parallaxFactor) * 10f,
+                        (1.0f - factor) * 10f,
                         0.001f,
                         10f
                     );

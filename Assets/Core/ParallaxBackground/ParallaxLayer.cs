@@ -10,8 +10,11 @@ namespace Core
         [Tooltip("背景层渲染的图片")]
         public Sprite sprite;
 
-        [Tooltip("视差系数 (0: 随相机移动/无穷远, 1: 在世界空间固定/近处)"), Range(0, 1)]
-        public float parallaxFactor;
+        [Tooltip("水平视差系数 (0: 随相机移动/无穷远, 1: 在世界空间固定/近处)"), Range(0, 1)]
+        public float parallaxFactorX;
+
+        [Tooltip("垂直视差系数 (0: 随相机移动/无穷远, 1: 在世界空间固定/近处)"), Range(0, 1)]
+        public float parallaxFactorY;
 
         [Tooltip("边界处理模式 (仅水平方向)")]
         public ParallaxClampMode clampMode;
