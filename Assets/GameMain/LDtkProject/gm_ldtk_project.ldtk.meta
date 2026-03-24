@@ -22,7 +22,13 @@ ScriptedImporter:
   _scaleEntities: 1
   _intGridValues:
   - _key: LogicMap_1
-    _asset: {instanceID: 0}
+    _asset: {fileID: 11400000, guid: b30035e599210204e8d7880f32ae09fd, type: 2}
+  - _key: LogicMap_2
+    _asset: {fileID: 11400000, guid: 5cdbd6b9014c8484fa8b17bb9c8dbc86, type: 2}
+  - _key: LogicMap_3
+    _asset: {fileID: 11400000, guid: 73b7b4c1e7fe9af4bb204ac5c8713ff5, type: 2}
+  - _key: LogicMap_4
+    _asset: {fileID: 11400000, guid: b51cbfc09d6d22d4a97114c30dcfe807, type: 2}
   _entities:
   - _key: LevelTransition
     _asset: {instanceID: 0}

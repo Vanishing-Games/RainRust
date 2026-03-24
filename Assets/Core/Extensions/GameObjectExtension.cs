@@ -1,6 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 namespace Core.Extensions
 {
@@ -49,6 +48,25 @@ namespace Core.Extensions
             {
                 t.gameObject.tag = tag;
                 t.gameObject.layer = layer;
+            }
+        }
+
+        public static void SetSortingLayerRecursively(
+            this GameObject gameObject,
+            string sortingLayer
+        )
+        {
+            var transforms = gameObject.GetComponentsInChildren<Transform>(true);
+            foreach (var t in transforms)
+            {
+                var renderer2D = t.GetComponent<SpriteRenderer>();
+                var tilemapRenderer = t.GetComponent<TilemapRenderer>();
+
+                if (renderer2D != null)
+                    renderer2D.sortingLayerName = sortingLayer;
+
+                if (tilemapRenderer != null)
+                    tilemapRenderer.sortingLayerName = sortingLayer;
             }
         }
     }

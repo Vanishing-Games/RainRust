@@ -1,4 +1,5 @@
 using Core;
+using Core.Extensions;
 using GameMain.RunTime;
 using LDtkUnity;
 using LDtkUnity.Editor;
@@ -11,6 +12,8 @@ namespace GameMain.Editor
 {
     public class LDtkRoomProcessor : LDtkPostprocessor
     {
+        public override int GetPostprocessOrder() => 2;
+
         private class RoomContext
         {
             public LDtkComponentLevel Level;
@@ -45,7 +48,8 @@ namespace GameMain.Editor
                 .Map(CreateVirtualCamera)
                 .Tap(ApplyCameraFollow)
                 .Tap(ApplyFixedCameraSettings)
-                .Tap(ApplyConfinerSettings);
+                .Tap(ApplyConfinerSettings)
+                .Tap(ApplyLayerTagSettings);
 
         private void ApplyCameraModeFields(RoomContext ctx)
         {
@@ -114,8 +118,7 @@ namespace GameMain.Editor
             }
 
             // Generate PolygonCollider2D for room boundary
-            var collider = logicMapLayer.gameObject.GetComponent<PolygonCollider2D>();
-            if (collider == null)
+            if (!logicMapLayer.gameObject.TryGetComponent<PolygonCollider2D>(out var collider))
             {
                 collider = logicMapLayer.gameObject.AddComponent<PolygonCollider2D>();
             }
@@ -140,6 +143,36 @@ namespace GameMain.Editor
 
             EditorUtility.SetDirty(logicMapLayer);
             EditorUtility.SetDirty(ctx.VCam);
+        }
+
+        private void ApplyLayerTagSettings(RoomContext ctx)
+        {
+            // Find the LogicMap layer
+            LDtkComponentLayer logicMapLayer = null;
+            foreach (var layer in ctx.Level.LayerInstances)
+            {
+                if (layer != null && layer.Identifier == LDtkIdentifiers.LogicMap)
+                {
+                    logicMapLayer = layer;
+                    break;
+                }
+            }
+
+            if (logicMapLayer == null)
+            {
+                CLogger.LogWarn(
+                    $"Level {ctx.Level.name} does not have a LogicMap layer.",
+                    LogTag.LdtkRoomProcessor
+                );
+                return;
+            }
+
+            var transform = logicMapLayer.transform;
+            for (int i = 0; i < transform.childCount; i++)
+            {
+                transform.GetChild(i).gameObject.SetLayerRecursively(LayerMask.NameToLayer("Wall"));
+                transform.GetChild(i).gameObject.SetTagRecursively("Wall");
+            }
         }
     }
 }
