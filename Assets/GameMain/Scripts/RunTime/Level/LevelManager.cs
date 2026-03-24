@@ -251,7 +251,7 @@ namespace GameMain.RunTime
         }
 
         /// <summary>
-        /// 切换到指定关卡 (用于无缝切换)
+        /// 切换到指定关卡
         /// </summary>
         /// <param name="targetTransition"></param>
         public void SwitchLevel(LevelTransition targetTransition)

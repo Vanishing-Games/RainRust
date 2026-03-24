@@ -93,14 +93,53 @@ namespace GameMain.Editor
 
         private void ApplyConfinerSettings(RoomContext ctx)
         {
-            var confiner = ctx.VCam.gameObject.AddComponent<CinemachineConfiner2D>();
+            // Find the LogicMap layer
+            LDtkComponentLayer logicMapLayer = null;
+            foreach (var layer in ctx.Level.LayerInstances)
+            {
+                if (layer != null && layer.Identifier == LDtkIdentifiers.LogicMap)
+                {
+                    logicMapLayer = layer;
+                    break;
+                }
+            }
 
-            // Get or create a collider for bounding
-            CompositeCollider2D composite = ctx.Level.GetComponentInChildren<CompositeCollider2D>();
-            if (composite != null)
-                confiner.BoundingShape2D = composite;
-            else
-                confiner.BoundingShape2D = ctx.Level.GetComponentInChildren<PolygonCollider2D>();
+            if (logicMapLayer == null)
+            {
+                CLogger.LogWarn(
+                    $"Level {ctx.Level.name} does not have a LogicMap layer.",
+                    LogTag.LdtkRoomProcessor
+                );
+                return;
+            }
+
+            // Generate PolygonCollider2D for room boundary
+            var collider = logicMapLayer.gameObject.GetComponent<PolygonCollider2D>();
+            if (collider == null)
+            {
+                collider = logicMapLayer.gameObject.AddComponent<PolygonCollider2D>();
+            }
+
+            collider.isTrigger = true;
+
+            // Set points to match level bounds (in local space of logicMapLayer)
+            Bounds bounds = ctx.Level.BorderBounds;
+            Vector3 localMin = logicMapLayer.transform.InverseTransformPoint(bounds.min);
+            Vector3 localMax = logicMapLayer.transform.InverseTransformPoint(bounds.max);
+
+            collider.points = new Vector2[]
+            {
+                new(localMin.x, localMin.y),
+                new(localMax.x, localMin.y),
+                new(localMax.x, localMax.y),
+                new(localMin.x, localMax.y),
+            };
+
+            var confiner = ctx.VCam.gameObject.AddComponent<CinemachineConfiner2D>();
+            confiner.BoundingShape2D = collider;
+
+            EditorUtility.SetDirty(logicMapLayer);
+            EditorUtility.SetDirty(ctx.VCam);
         }
     }
 }
