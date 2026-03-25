@@ -72,14 +72,22 @@ Shader "RainRust/CrtEffect"
                 return output;
             }
 
-            // Function to apply barrel distortion
+            // Function to apply barrel distortion with automatic scaling to fill the screen
             float2 ApplyBarrelDistortion(float2 uv, float distortion)
             {
                 float2 center = float2(0.5, 0.5);
                 float2 vec = uv - center;
                 float dist = dot(vec, vec);
+                
+                // Distortion factor
                 float f = 1.0 + dist * distortion;
-                return (vec * f) + center;
+                
+                // Scale factor to ensure the image fills the screen (corners touch the edges)
+                // At the corners, dist is 0.5 (dot((0.5,0.5), (0.5,0.5))).
+                // We divide by the distortion at the corners to zoom in.
+                float scale = 1.0 / (1.0 + 0.5 * distortion);
+                
+                return (vec * f * scale) + center;
             }
 
             // Function to apply vignette
