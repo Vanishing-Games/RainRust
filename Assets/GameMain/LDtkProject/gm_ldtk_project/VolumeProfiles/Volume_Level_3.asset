@@ -49,7 +49,7 @@ MonoBehaviour:
     m_Value: 8
   lightIntensity:
     m_OverrideState: 1
-    m_Value: 0.3
+    m_Value: 0.35
   lightFalloffAlpha:
     m_OverrideState: 1
     m_Value: 1
