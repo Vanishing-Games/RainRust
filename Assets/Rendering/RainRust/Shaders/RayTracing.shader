@@ -42,6 +42,7 @@ Shader "Hidden/RainRust/RayTracing"
             float _Intensity; // 光照强度
             float _LightFalloffAlpha; // GTR 衰减 alpha 参数
             float _LightFalloffGamma; // GTR 衰减 gamma 参数
+            float3 _AmbientColor; // 环境光颜色
 
             // 噪声相关参数
             float _NoiseScale; // 噪声缩放
@@ -80,7 +81,7 @@ Shader "Hidden/RainRust/RayTracing"
                 // 步进
                 uvPos += dir * tex2D(_DistTex, uvPos).rr;
                 if (NotUVSpace(uvPos))
-                    return AMBIENT;
+                    return _AmbientColor;
                 
                 [unroll]
                 for (int n = 1; n < STEPS; n++)
@@ -95,10 +96,10 @@ Shader "Hidden/RainRust/RayTracing"
 
                     uvPos += dir * tex2D(_DistTex, uvPos).rr;
                     if (NotUVSpace(uvPos))
-                        return AMBIENT;
+                        return _AmbientColor;
                 }
                 
-                return AMBIENT;
+                return _AmbientColor;
             }
 
             // =======================================================================
@@ -145,7 +146,7 @@ Shader "Hidden/RainRust/RayTracing"
 
             float4 Frag(FragInputGI i) : SV_Target
             {
-                float3 result = AMBIENT;
+                float3 result = _AmbientColor;
 
 #if defined(FRAGMENT_RANDOM)
                 const float rand = GetShaderNoise(i.noise_uv);

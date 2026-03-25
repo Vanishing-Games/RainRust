@@ -14,6 +14,11 @@ namespace RainRust.Rendering
             renderPassEvent = RenderPassEvent.BeforeRenderingOpaques;
         }
 
+        public void Setup(RainRustLighting.RainRustLightingSettings settings)
+        {
+            m_Settings = settings;
+        }
+
         class RainRustDrawObjectsPassData
         {
             public UniversalCameraData cameraData;
@@ -104,7 +109,9 @@ namespace RainRust.Rendering
         {
             SortingCriteria sortingCriteria = passData.cameraData.defaultOpaqueSortFlags;
             // Use RenderQueueRange.all to include both Opaque and Transparent objects
-            FilteringSettings filteringSettings = new(RenderQueueRange.all, ~0);
+            // Use configured LayerMask for filtering
+            LayerMask layerMask = m_Settings != null ? m_Settings.layerMask : (LayerMask)(-1);
+            FilteringSettings filteringSettings = new(RenderQueueRange.all, layerMask);
 
             DrawingSettings drawingSettings = RenderingUtils.CreateDrawingSettings(
                 new ShaderTagId("UniversalForward"),
@@ -246,6 +253,7 @@ namespace RainRust.Rendering
         );
         private static readonly ShaderTagId sShaderTagId = new("UniversalForward");
         private RainRustRenderSettings m_CurrentRrSettings;
+        private RainRustLighting.RainRustLightingSettings m_Settings;
     }
 
     internal class RainRustRenderSettings { }

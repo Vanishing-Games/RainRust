@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.RenderGraphModule;
@@ -7,6 +8,14 @@ namespace RainRust.Rendering
 {
     public class RainRustLighting : ScriptableRendererFeature
     {
+        [Serializable]
+        public class RainRustLightingSettings
+        {
+            public LayerMask layerMask = -1;
+        }
+
+        public RainRustLightingSettings settings = new();
+
         /** Called when
         * - When the Scriptable Renderer Feature loads the first time.
         * - When you enable or disable the Scriptable Renderer Feature.
@@ -29,6 +38,7 @@ namespace RainRust.Rendering
             ref RenderingData renderingData
         )
         {
+            m_RainRustDrawObjectsPass.Setup(settings);
             renderer.EnqueuePass(m_RainRustDrawObjectsPass);
             renderer.EnqueuePass(m_JfaInitPass);
             renderer.EnqueuePass(m_JfaPass);

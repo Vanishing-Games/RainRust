@@ -24,6 +24,7 @@ namespace RainRust.Rendering
         public ClampedFloatParameter lightIntensity = new(0f, 0f, 10f);
         public ClampedFloatParameter lightFalloffAlpha = new(0.1f, 0.001f, 1f);
         public ClampedFloatParameter lightFalloffGamma = new(2.0f, 0.001f, 10f);
+        public ColorParameter ambientColor = new(Color.black);
 
         public bool IsActive() => isEnabled.value;
 

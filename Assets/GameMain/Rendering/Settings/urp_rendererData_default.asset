@@ -13,6 +13,10 @@ MonoBehaviour:
   m_Name: RainRustLighting
   m_EditorClassIdentifier: RainRust.Rendering::RainRust.Rendering.RainRustLighting
   m_Active: 1
+  settings:
+    layerMask:
+      serializedVersion: 2
+      m_Bits: 2147613951
 --- !u!114 &-550442475629455102
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -152,7 +156,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b00045f12942b46c698459096c89274e, type: 3}
   m_Name: FullScreenPassRendererFeatureOldGUID
   m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::FullScreenPassRendererFeature_OldGUID
-  m_Active: 0
+  m_Active: 1
   injectionPoint: 600
   fetchColorBuffer: 1
   requirements: 0
