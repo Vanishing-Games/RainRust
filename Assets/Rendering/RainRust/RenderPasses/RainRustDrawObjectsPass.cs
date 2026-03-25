@@ -28,6 +28,7 @@ namespace RainRust.Rendering
             public UniversalResourceData  resourceData;
             public TextureHandle          rrMainRt;
             public TextureHandle          rrMainDepthRt;
+            public TextureHandle          rrScaledDepthRt;
             public TextureHandle          rrReceiverRt;
             public RendererListHandle     lightSourcesRendererList;
             public RendererListHandle     receiversRendererList;
@@ -48,6 +49,7 @@ namespace RainRust.Rendering
                 cameraData,
                 out TextureHandle mainRtHandle,
                 out TextureHandle mainDepthRtHandle,
+                out TextureHandle scaledDepthRtHandle,
                 out TextureHandle receiverRtHandle,
                 out TextureHandle jfaFirstRtHandle,
                 out TextureHandle jfaSecondRtHandle,
@@ -84,10 +86,10 @@ namespace RainRust.Rendering
                     ref passData
                 );
                 passData.rrMainRt = mainRtHandle;
-                passData.rrMainDepthRt = mainDepthRtHandle;
+                passData.rrScaledDepthRt = scaledDepthRtHandle;
 
                 builder.SetRenderAttachment(mainRtHandle, 0, AccessFlags.Write);
-                builder.SetRenderAttachmentDepth(mainDepthRtHandle, AccessFlags.Write);
+                builder.SetRenderAttachmentDepth(scaledDepthRtHandle, AccessFlags.Write);
 
                 // Light Sources Renderer List
                 SortingCriteria sortingCriteria = passData.cameraData.defaultOpaqueSortFlags;
@@ -260,6 +262,7 @@ namespace RainRust.Rendering
             UniversalCameraData cameraData,
             out TextureHandle mainRtHandle,
             out TextureHandle mainDepthRtHandle,
+            out TextureHandle scaledDepthRtHandle,
             out TextureHandle receiverRtHandle,
             out TextureHandle jfaFirstRtHandle,
             out TextureHandle jfaSecondRtHandle,
@@ -270,52 +273,75 @@ namespace RainRust.Rendering
             var stack = VolumeManager.instance.stack.GetComponent<RainRustVolume>();
             float scalar = stack.resolutionScalar.value;
 
-            RenderTextureDescriptor textureDescriptor;
-            {
-                textureDescriptor = cameraData.cameraTargetDescriptor;
-                textureDescriptor.width = Mathf.Max(1, (int)(textureDescriptor.width * scalar));
-                textureDescriptor.height = Mathf.Max(1, (int)(textureDescriptor.height * scalar));
-                textureDescriptor.colorFormat = RenderTextureFormat.ARGB32;
-                textureDescriptor.depthStencilFormat = GraphicsFormat.None;
-                textureDescriptor.msaaSamples = 1;
-                textureDescriptor.useMipMap = false;
-            }
+            // 1. Scaled Descriptor (for lighting calculation)
+            RenderTextureDescriptor scaledDescriptor = cameraData.cameraTargetDescriptor;
+            scaledDescriptor.width = Mathf.Max(1, (int)(scaledDescriptor.width * scalar));
+            scaledDescriptor.height = Mathf.Max(1, (int)(scaledDescriptor.height * scalar));
+            scaledDescriptor.colorFormat = RenderTextureFormat.ARGB32;
+            scaledDescriptor.depthStencilFormat = GraphicsFormat.None;
+            scaledDescriptor.msaaSamples = 1;
+            scaledDescriptor.useMipMap = false;
 
+            // 2. Full Descriptor (for final composition / receiver rendering)
+            RenderTextureDescriptor fullDescriptor = cameraData.cameraTargetDescriptor;
+            fullDescriptor.colorFormat = RenderTextureFormat.ARGB32;
+            fullDescriptor.depthStencilFormat = GraphicsFormat.None;
+            fullDescriptor.msaaSamples = 1;
+            fullDescriptor.useMipMap = false;
+
+            // Main RT (Source for lighting) - Scaled
             mainRtHandle = UniversalRenderer.CreateRenderGraphTexture(
                 renderGraph,
-                textureDescriptor,
+                scaledDescriptor,
                 "RainRust Main Texture",
                 true,
                 FilterMode.Bilinear,
                 TextureWrapMode.Clamp
             );
 
+            // Receiver RT (Final visual output) - Full Resolution
             receiverRtHandle = UniversalRenderer.CreateRenderGraphTexture(
                 renderGraph,
-                textureDescriptor,
+                fullDescriptor,
                 "RainRust Receiver Texture",
                 true,
                 FilterMode.Bilinear,
                 TextureWrapMode.Clamp
             );
 
-            RenderTextureDescriptor depthDescriptor = textureDescriptor;
-            depthDescriptor.colorFormat = RenderTextureFormat.Depth;
-            depthDescriptor.depthStencilFormat = GraphicsFormat.D24_UNorm_S8_UInt;
+            // Depth for Light Sources - Scaled Resolution
+            RenderTextureDescriptor scaledDepthDescriptor = scaledDescriptor;
+            scaledDepthDescriptor.colorFormat = RenderTextureFormat.Depth;
+            scaledDepthDescriptor.depthStencilFormat = GraphicsFormat.D24_UNorm_S8_UInt;
+
+            scaledDepthRtHandle = UniversalRenderer.CreateRenderGraphTexture(
+                renderGraph,
+                scaledDepthDescriptor,
+                "RainRust Scaled Depth Texture",
+                true,
+                FilterMode.Point,
+                TextureWrapMode.Clamp
+            );
+
+            // Depth for Receivers - Full Resolution
+            RenderTextureDescriptor fullDepthDescriptor = fullDescriptor;
+            fullDepthDescriptor.colorFormat = RenderTextureFormat.Depth;
+            fullDepthDescriptor.depthStencilFormat = GraphicsFormat.D24_UNorm_S8_UInt;
 
             mainDepthRtHandle = UniversalRenderer.CreateRenderGraphTexture(
                 renderGraph,
-                depthDescriptor,
+                fullDepthDescriptor,
                 "RainRust Main Depth Texture",
                 true,
                 FilterMode.Point,
                 TextureWrapMode.Clamp
             );
 
-            textureDescriptor.colorFormat = RenderTextureFormat.ARGBFloat;
+            // Lighting calculation textures - Scaled
+            scaledDescriptor.colorFormat = RenderTextureFormat.ARGBFloat;
             jfaFirstRtHandle = UniversalRenderer.CreateRenderGraphTexture(
                 renderGraph,
-                textureDescriptor,
+                scaledDescriptor,
                 "RainRust Jfa Texture 0",
                 true,
                 FilterMode.Bilinear,
@@ -323,7 +349,7 @@ namespace RainRust.Rendering
             );
             jfaSecondRtHandle = UniversalRenderer.CreateRenderGraphTexture(
                 renderGraph,
-                textureDescriptor,
+                scaledDescriptor,
                 "RainRust Jfa Texture 1",
                 true,
                 FilterMode.Bilinear,
@@ -331,7 +357,7 @@ namespace RainRust.Rendering
             );
             distanceRtHandle = UniversalRenderer.CreateRenderGraphTexture(
                 renderGraph,
-                textureDescriptor,
+                scaledDescriptor,
                 "RainRust Distance Texture",
                 true,
                 FilterMode.Bilinear,
@@ -339,7 +365,7 @@ namespace RainRust.Rendering
             );
             lightingRtHandle = UniversalRenderer.CreateRenderGraphTexture(
                 renderGraph,
-                textureDescriptor,
+                scaledDescriptor,
                 "RainRust Lighting Texture",
                 true,
                 FilterMode.Bilinear,
