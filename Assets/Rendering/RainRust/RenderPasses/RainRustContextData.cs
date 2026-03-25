@@ -24,6 +24,8 @@ namespace RainRust.Rendering
     public class RainRustContextData : ContextItem
     {
         public TextureHandle mainRt;
+        public TextureHandle mainDepthRt;
+        public TextureHandle receiverRt;
         public TextureHandlePingPong jfaRt;
         public TextureHandle finalJfaRt;
         public TextureHandle distanceRt;
@@ -31,11 +33,15 @@ namespace RainRust.Rendering
 
         public override void Reset()
         {
-            mainRt = TextureHandle.nullHandle;
-            jfaRt = new TextureHandlePingPong(TextureHandle.nullHandle, TextureHandle.nullHandle);
-            finalJfaRt = TextureHandle.nullHandle;
-            distanceRt = TextureHandle.nullHandle;
-            lightingRt = TextureHandle.nullHandle;
+            // csharpier-ignore-start
+            mainRt      = TextureHandle.nullHandle;
+            mainDepthRt = TextureHandle.nullHandle;
+            receiverRt  = TextureHandle.nullHandle;
+            jfaRt       = new TextureHandlePingPong(TextureHandle.nullHandle, TextureHandle.nullHandle);
+            finalJfaRt  = TextureHandle.nullHandle;
+            distanceRt  = TextureHandle.nullHandle;
+            lightingRt  = TextureHandle.nullHandle;
+            // csharpier-ignore-end
         }
     }
 }
