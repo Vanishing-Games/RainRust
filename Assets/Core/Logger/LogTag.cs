@@ -74,5 +74,9 @@ namespace Core
             "LDtkChapterBackgroundProcessor",
             LdtkProcessor.Path
         );
+        public static readonly LogTag LDtkMaterialSetProcessor = new(
+            "LDtkMaterialSetProcessor",
+            LdtkProcessor.Path
+        );
     }
 }
