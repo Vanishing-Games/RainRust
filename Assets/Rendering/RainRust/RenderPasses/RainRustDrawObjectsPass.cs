@@ -94,6 +94,7 @@ namespace RainRust.Rendering
                 lightSourcesDrawing.SetShaderPassName(1, new ShaderTagId("UniversalForwardOnly"));
                 lightSourcesDrawing.SetShaderPassName(2, new ShaderTagId("SRPDefaultUnlit"));
                 lightSourcesDrawing.SetShaderPassName(3, new ShaderTagId("Lit"));
+                lightSourcesDrawing.SetShaderPassName(4, new ShaderTagId("RainRustLighting"));
 
                 passData.lightSourcesRendererList = renderGraph.CreateRendererList(
                     new RendererListParams(passData.renderingData.cullResults, lightSourcesDrawing, lightSourcesFiltering)
