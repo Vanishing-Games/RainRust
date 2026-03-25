@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: ffe0eb572c8cfe24eabbd112fa04dc76
+guid: 1bd508bee61f5f446b0115f02b13dc92
 ScriptedImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -12,7 +12,7 @@ ScriptedImporter:
   _pixelsPerUnit: 128
   _overrideTexture: {instanceID: 0}
   _sprites:
-  - name: SmalltileA_0
+  - name: Tilemap_B_0
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -24,10 +24,10 @@ ScriptedImporter:
       y: 384
       width: 128
       height: 128
-    spriteID: 3065085a6e33fc141b13cd29340f323a
+    spriteID: c296f1dbb9fc14f43b5ab2ccc4fdb880
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_1
+  - name: Tilemap_B_1
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -39,10 +39,10 @@ ScriptedImporter:
       y: 384
       width: 128
       height: 128
-    spriteID: 672dcdc444372f34da4607023ecdedc8
+    spriteID: d7ac31f430886bd47827f302f4ee9ad8
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_2
+  - name: Tilemap_B_2
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -54,10 +54,10 @@ ScriptedImporter:
       y: 384
       width: 128
       height: 128
-    spriteID: 0c9ed893233795e4f9c2029e56d32634
+    spriteID: 964829364aa7c434c80e2a217411a821
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_3
+  - name: Tilemap_B_3
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -69,10 +69,10 @@ ScriptedImporter:
       y: 384
       width: 128
       height: 128
-    spriteID: 9b238e1a044928540a09dfd67949319d
+    spriteID: 656f1a46a0a6b6244b406e840f42d42d
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_4
+  - name: Tilemap_B_4
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -84,10 +84,10 @@ ScriptedImporter:
       y: 384
       width: 128
       height: 128
-    spriteID: 34bb08128ee11e642be0b63ba279cd84
+    spriteID: ecf8b14c27ec5f8479313c26a86a7832
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_5
+  - name: Tilemap_B_5
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -99,10 +99,10 @@ ScriptedImporter:
       y: 384
       width: 128
       height: 128
-    spriteID: 3b8953c5921bbd44cafd3d87fecb4a85
+    spriteID: 7a5bdcdbdb06151429fad9eb1deeda03
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_6
+  - name: Tilemap_B_6
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -114,10 +114,10 @@ ScriptedImporter:
       y: 384
       width: 128
       height: 128
-    spriteID: 3ad91462a30236e40a51e8e9beabc7ee
+    spriteID: 3e8f37bb9f677514fa11005a4ca0a2ca
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_7
+  - name: Tilemap_B_7
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -129,10 +129,10 @@ ScriptedImporter:
       y: 384
       width: 128
       height: 128
-    spriteID: 3aa0c7b255f1cb1448245823d39d46ad
+    spriteID: a33bc2e16bbff7845a930bce1890f99d
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_8
+  - name: Tilemap_B_8
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -144,10 +144,10 @@ ScriptedImporter:
       y: 384
       width: 128
       height: 128
-    spriteID: 03bf969262a6606449feee03532b00ff
+    spriteID: 6b6f05e1732a6b44493d28964e943045
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_9
+  - name: Tilemap_B_9
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -159,10 +159,10 @@ ScriptedImporter:
       y: 384
       width: 128
       height: 128
-    spriteID: b637eb46adca4d84f8d0cc6e8ca0c240
+    spriteID: 6ef40f00e7c4fcb4aae133265cf27287
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_10
+  - name: Tilemap_B_10
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -174,10 +174,10 @@ ScriptedImporter:
       y: 384
       width: 128
       height: 128
-    spriteID: bd3fe307687716f439b1390e3888dd1c
+    spriteID: 94a55ffe35a3eb24188dc05bfb50816f
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_11
+  - name: Tilemap_B_11
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -189,10 +189,10 @@ ScriptedImporter:
       y: 384
       width: 128
       height: 128
-    spriteID: 7e86101287703c743aa84a978bae08f5
+    spriteID: 88ea08a7314b8c54eaa7fbd3942a1d9f
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_12
+  - name: Tilemap_B_12
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -204,10 +204,10 @@ ScriptedImporter:
       y: 256
       width: 128
       height: 128
-    spriteID: 6cc26cd496070f44d84accd5e675a4c8
+    spriteID: f40f982abf5fc73488993c23bccdec41
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_13
+  - name: Tilemap_B_13
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -219,10 +219,10 @@ ScriptedImporter:
       y: 256
       width: 128
       height: 128
-    spriteID: a1e4819dc62b68e42a8218d118fc2828
+    spriteID: db97e54e7dfd2684786c99b9f7ea590f
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_14
+  - name: Tilemap_B_14
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -234,10 +234,10 @@ ScriptedImporter:
       y: 256
       width: 128
       height: 128
-    spriteID: d3710d43c0d62544585098eb3eee4001
+    spriteID: f4b97f55e4d30ad48a1e042d42c773ee
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_15
+  - name: Tilemap_B_15
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -249,10 +249,10 @@ ScriptedImporter:
       y: 256
       width: 128
       height: 128
-    spriteID: d08f037128ae66142ba846e56458b0f1
+    spriteID: 4c2810de7a1124f4dada79ada7a98840
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_16
+  - name: Tilemap_B_16
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -264,10 +264,10 @@ ScriptedImporter:
       y: 256
       width: 128
       height: 128
-    spriteID: de2b1bb475baa674e99a475cfcb033a2
+    spriteID: 88cd39d83fe120449b06e5d3b8b596e8
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_17
+  - name: Tilemap_B_17
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -279,10 +279,10 @@ ScriptedImporter:
       y: 256
       width: 128
       height: 128
-    spriteID: 0290bbb421602ee4b956b750b7940adb
+    spriteID: 3d554f19affbcf948954755776c8b080
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_18
+  - name: Tilemap_B_18
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -294,10 +294,10 @@ ScriptedImporter:
       y: 256
       width: 128
       height: 128
-    spriteID: d671e01b42a8e5148a4d7c25263a05a8
+    spriteID: 2e293f15989a35842b11bebe4864af92
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_19
+  - name: Tilemap_B_19
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -309,10 +309,10 @@ ScriptedImporter:
       y: 256
       width: 128
       height: 128
-    spriteID: 1e06ff548a6480a4a9596b2c7d96a6dc
+    spriteID: 918ff09d4f2324b48b9335d04ae3acc5
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_20
+  - name: Tilemap_B_20
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -324,10 +324,10 @@ ScriptedImporter:
       y: 256
       width: 128
       height: 128
-    spriteID: bf44f9b6524c9ca46b09780a81df858c
+    spriteID: d4746a74334a505489ce42863d62c3cc
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_21
+  - name: Tilemap_B_21
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -339,10 +339,10 @@ ScriptedImporter:
       y: 256
       width: 128
       height: 128
-    spriteID: 9810dacee12d12c47bd76bb9f850a8ab
+    spriteID: 1d3016f4f66b9e842ad17dc448179470
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_22
+  - name: Tilemap_B_22
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -354,10 +354,10 @@ ScriptedImporter:
       y: 256
       width: 128
       height: 128
-    spriteID: 72ac87667b8064a478bc1b53d4506429
+    spriteID: d84d940b4ec205840b53b31df1775b01
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_23
+  - name: Tilemap_B_23
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -369,10 +369,10 @@ ScriptedImporter:
       y: 256
       width: 128
       height: 128
-    spriteID: da0d15d15d37cda46868e0c5497c98db
+    spriteID: bc4366a2d7518b3468f4e0f31f740d3b
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_24
+  - name: Tilemap_B_24
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -384,10 +384,10 @@ ScriptedImporter:
       y: 128
       width: 128
       height: 128
-    spriteID: ac9b3c0680c77e0438b6a3c32a9ad193
+    spriteID: 9632c2ec2a5e64846b3dc7b2af76d255
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_25
+  - name: Tilemap_B_25
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -399,10 +399,10 @@ ScriptedImporter:
       y: 128
       width: 128
       height: 128
-    spriteID: 862e51fbf6845654c980deac929553d7
+    spriteID: 12d1a3d6e8facea4082e7398f6cd4393
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_26
+  - name: Tilemap_B_26
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -414,10 +414,10 @@ ScriptedImporter:
       y: 128
       width: 128
       height: 128
-    spriteID: 7ee094caf77014e44ab054ffcefc9c3b
+    spriteID: 953dc7c536968cb40961227729594baa
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_27
+  - name: Tilemap_B_27
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -429,10 +429,10 @@ ScriptedImporter:
       y: 128
       width: 128
       height: 128
-    spriteID: ab67073802c355243ab81815e0546e7a
+    spriteID: 81249909222c6b0409b59b8cc542766a
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_28
+  - name: Tilemap_B_28
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -444,10 +444,10 @@ ScriptedImporter:
       y: 128
       width: 128
       height: 128
-    spriteID: ff5e23b5a5241fb4ba5f54daee461160
+    spriteID: d57247eb8a0baea4eba9dcc13ab5eaaf
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_29
+  - name: Tilemap_B_29
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -459,10 +459,10 @@ ScriptedImporter:
       y: 128
       width: 128
       height: 128
-    spriteID: 7f05e5da2ad6e01439845529b79db156
+    spriteID: 96746c5865e545d4680f4f679a849349
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_30
+  - name: Tilemap_B_30
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -474,10 +474,10 @@ ScriptedImporter:
       y: 128
       width: 128
       height: 128
-    spriteID: dd1b42a5dfd98ec48b07a898648b2a91
+    spriteID: d8ab0f8d98d3a5a4291693b05da79a87
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_31
+  - name: Tilemap_B_31
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -489,10 +489,10 @@ ScriptedImporter:
       y: 128
       width: 128
       height: 128
-    spriteID: 27397b83c56bca74681a77affb284b03
+    spriteID: 3af70c314f82d33409d70480c8941763
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_32
+  - name: Tilemap_B_32
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -504,10 +504,10 @@ ScriptedImporter:
       y: 128
       width: 128
       height: 128
-    spriteID: 08b56616f985b4e4997584beb1d1f44d
+    spriteID: 0a448cd3015eba14a8a417dfb3c88d08
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_33
+  - name: Tilemap_B_33
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -519,10 +519,10 @@ ScriptedImporter:
       y: 128
       width: 128
       height: 128
-    spriteID: 8d760a4404c1a9441827cddd4a1325a5
+    spriteID: eabfa1eb0d549614897720eca25e482c
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_34
+  - name: Tilemap_B_34
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -534,10 +534,10 @@ ScriptedImporter:
       y: 128
       width: 128
       height: 128
-    spriteID: 9df519025b6e268418f3eebad2e84d3b
+    spriteID: 9c33b485237caab41abfea979993333c
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_35
+  - name: Tilemap_B_35
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -549,10 +549,10 @@ ScriptedImporter:
       y: 128
       width: 128
       height: 128
-    spriteID: 0d533930c3efe354bb0c3403bbf30ee7
+    spriteID: 56e84eda30dafee40bd224f3fe27b170
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_36
+  - name: Tilemap_B_36
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -564,10 +564,10 @@ ScriptedImporter:
       y: 0
       width: 128
       height: 128
-    spriteID: 355f1a96fa7605b409ff5aa7b512e0b3
+    spriteID: 40391f67c29592c4181e51857c2d3356
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_37
+  - name: Tilemap_B_37
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -579,10 +579,10 @@ ScriptedImporter:
       y: 0
       width: 128
       height: 128
-    spriteID: 38b1822f2565c7c4c806981ee0403634
+    spriteID: 7205dcf7241d040468aef7be30044b5d
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_38
+  - name: Tilemap_B_38
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -594,10 +594,10 @@ ScriptedImporter:
       y: 0
       width: 128
       height: 128
-    spriteID: 051fd0142b30b5045a326ab66f5e7672
+    spriteID: 1da44f2936bb29c4f9abbf7e14728dad
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_39
+  - name: Tilemap_B_39
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -609,10 +609,10 @@ ScriptedImporter:
       y: 0
       width: 128
       height: 128
-    spriteID: 8e026200ce3f46546a8e06b483ee5b67
+    spriteID: d8538cc6419cb304bb6db24d3eb11087
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_40
+  - name: Tilemap_B_40
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -624,10 +624,10 @@ ScriptedImporter:
       y: 0
       width: 128
       height: 128
-    spriteID: dc24f427d63ddba4bb7f934eba764ed9
+    spriteID: b747e760dd64e9147adeeb00c9ba992f
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_41
+  - name: Tilemap_B_41
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -639,10 +639,10 @@ ScriptedImporter:
       y: 0
       width: 128
       height: 128
-    spriteID: daf0ac2e27f67034ba513aed457608bc
+    spriteID: 419eaaa4529e6c444a8f1f6b65a3c127
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_42
+  - name: Tilemap_B_42
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -654,10 +654,10 @@ ScriptedImporter:
       y: 0
       width: 128
       height: 128
-    spriteID: 15993da113f55424bb422884cf19efb5
+    spriteID: a9fc2ed3c8e2ea24ba9b3fe424838f82
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_43
+  - name: Tilemap_B_43
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -669,10 +669,10 @@ ScriptedImporter:
       y: 0
       width: 128
       height: 128
-    spriteID: f8a8b5eb949cf1a45a859aa7650cac76
+    spriteID: 01abeaeb013fbc64eaed64b8304438bc
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_44
+  - name: Tilemap_B_44
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -684,10 +684,10 @@ ScriptedImporter:
       y: 0
       width: 128
       height: 128
-    spriteID: a25a57c7dc5b5c14280b674624577de5
+    spriteID: f65d8729f7c648f4084cb46b1c8fb012
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_45
+  - name: Tilemap_B_45
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -699,10 +699,10 @@ ScriptedImporter:
       y: 0
       width: 128
       height: 128
-    spriteID: 6332468c1c923c149909397112e05cdd
+    spriteID: 80f04d5562c58ac47b5fc61e37f49240
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_46
+  - name: Tilemap_B_46
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -714,10 +714,10 @@ ScriptedImporter:
       y: 0
       width: 128
       height: 128
-    spriteID: f722ac54198d1294cb989f8c104641dd
+    spriteID: cac28d094b9dde14ba0550fdbdd3c2e1
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_47
+  - name: Tilemap_B_47
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -729,7 +729,7 @@ ScriptedImporter:
       y: 0
       width: 128
       height: 128
-    spriteID: 9c2a37256bf4457438df65b8c14347d1
+    spriteID: 20d1380820ae8ab4eb452a5a4d36151f
     spriteOutline: []
     tessellationDetail: 0
   _secondaryTextures: []
