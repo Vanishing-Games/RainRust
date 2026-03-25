@@ -9481,7 +9481,7 @@
 										"id": "V_String",
 										"params": ["6d99ef00-21a0-11f1-881e-a9342259a729"]
 									}] },
-									{ "__identifier": "Index", "__type": "Int", "__value": null, "__tile": null, "defUid": 92, "realEditorValues": [] }
+									{ "__identifier": "Index", "__type": "Int", "__value": 0, "__tile": null, "defUid": 92, "realEditorValues": [{ "id": "V_Int", "params": [0] }] }
 								],
 								"__worldX": -4736,
 								"__worldY": 3456
