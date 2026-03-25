@@ -157,7 +157,7 @@ namespace RainRust.Rendering
                     RenderQueueRange.all,
                     receiversLayerMask
                 );
-                
+
                 // 专门寻找接收者标签
                 DrawingSettings receiversDrawing = RenderingUtils.CreateDrawingSettings(
                     new ShaderTagId("RainRustLighting"),
