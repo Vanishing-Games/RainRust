@@ -26,6 +26,9 @@ namespace PlayerControlByOris
             mCollisionStaySubscription = mGameObject
                 .OnCollisionStay2DAsObservable()
                 .Subscribe(OnCollisionStay2D);
+            mTriggerEnterSubscription = mGameObject
+                .OnTriggerEnter2DAsObservable()
+                .Subscribe(OnTriggerEnter2D);
         }
 
         protected override void OnRemoved()
@@ -55,6 +58,19 @@ namespace PlayerControlByOris
                 {
                     DashEndCheck();
                 }
+            }
+        }
+
+        private void OnTriggerEnter2D(Collider2D collision)
+        {
+            if (collision.transform.CompareTag("Respawn"))
+            {
+                RespawnPos = collision.transform.position;
+            }
+
+            if (collision.transform.CompareTag("Danger"))
+            {
+                isShouldDie = true;
             }
         }
 
@@ -136,5 +152,6 @@ namespace PlayerControlByOris
         private IDisposable mCollisionEnterSubscription;
         private IDisposable mCollisionExitSubscription;
         private IDisposable mCollisionStaySubscription;
+        private IDisposable mTriggerEnterSubscription;
     }
 }

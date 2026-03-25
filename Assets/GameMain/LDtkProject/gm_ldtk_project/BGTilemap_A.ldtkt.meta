@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: ffe0eb572c8cfe24eabbd112fa04dc76
+guid: 3d6782c940b244749b6c80f6733b0903
 ScriptedImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -12,7 +12,7 @@ ScriptedImporter:
   _pixelsPerUnit: 128
   _overrideTexture: {instanceID: 0}
   _sprites:
-  - name: SmalltileA_0
+  - name: BGTilemap_A_0
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -24,10 +24,10 @@ ScriptedImporter:
       y: 384
       width: 128
       height: 128
-    spriteID: 3065085a6e33fc141b13cd29340f323a
+    spriteID: 4b4d339da572c0146981bb804cc7fe3f
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_1
+  - name: BGTilemap_A_1
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -39,10 +39,10 @@ ScriptedImporter:
       y: 384
       width: 128
       height: 128
-    spriteID: 672dcdc444372f34da4607023ecdedc8
+    spriteID: 1d75c2c3a58e9c043a14163a33dba266
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_2
+  - name: BGTilemap_A_2
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -54,10 +54,10 @@ ScriptedImporter:
       y: 384
       width: 128
       height: 128
-    spriteID: 0c9ed893233795e4f9c2029e56d32634
+    spriteID: 543f40c4c0e20aa4c867f699619dc5a5
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_3
+  - name: BGTilemap_A_3
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -69,10 +69,10 @@ ScriptedImporter:
       y: 384
       width: 128
       height: 128
-    spriteID: 9b238e1a044928540a09dfd67949319d
+    spriteID: dc695967337e40b41b0e94e76bc44784
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_4
+  - name: BGTilemap_A_4
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -84,10 +84,10 @@ ScriptedImporter:
       y: 384
       width: 128
       height: 128
-    spriteID: 34bb08128ee11e642be0b63ba279cd84
+    spriteID: 92d59e20b910c1c48bb8293a1fc6c481
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_5
+  - name: BGTilemap_A_5
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -99,10 +99,10 @@ ScriptedImporter:
       y: 384
       width: 128
       height: 128
-    spriteID: 3b8953c5921bbd44cafd3d87fecb4a85
+    spriteID: fcd28b90da2b179438c30d9de476ebc4
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_6
+  - name: BGTilemap_A_6
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -114,10 +114,10 @@ ScriptedImporter:
       y: 384
       width: 128
       height: 128
-    spriteID: 3ad91462a30236e40a51e8e9beabc7ee
+    spriteID: a4d9318a0d07f0447ac688b88c535fce
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_7
+  - name: BGTilemap_A_7
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -129,10 +129,10 @@ ScriptedImporter:
       y: 384
       width: 128
       height: 128
-    spriteID: 3aa0c7b255f1cb1448245823d39d46ad
+    spriteID: 39f6b380a3829aa4a99e6524c22d9eae
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_8
+  - name: BGTilemap_A_8
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -144,10 +144,10 @@ ScriptedImporter:
       y: 384
       width: 128
       height: 128
-    spriteID: 03bf969262a6606449feee03532b00ff
+    spriteID: 2de7925db5c9b2841b2858c66b43065a
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_9
+  - name: BGTilemap_A_9
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -159,10 +159,10 @@ ScriptedImporter:
       y: 384
       width: 128
       height: 128
-    spriteID: b637eb46adca4d84f8d0cc6e8ca0c240
+    spriteID: 1297bc07ac3a5c64a9953c885820d72d
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_10
+  - name: BGTilemap_A_10
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -174,10 +174,10 @@ ScriptedImporter:
       y: 384
       width: 128
       height: 128
-    spriteID: bd3fe307687716f439b1390e3888dd1c
+    spriteID: a3b49645b0c1d83498515fea9ae23a63
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_11
+  - name: BGTilemap_A_11
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -189,10 +189,10 @@ ScriptedImporter:
       y: 384
       width: 128
       height: 128
-    spriteID: 7e86101287703c743aa84a978bae08f5
+    spriteID: d5ce8c90486598d469f759c49181373e
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_12
+  - name: BGTilemap_A_12
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -204,10 +204,10 @@ ScriptedImporter:
       y: 256
       width: 128
       height: 128
-    spriteID: 6cc26cd496070f44d84accd5e675a4c8
+    spriteID: bee20a33628fa9947b56d1d5b4fb5bd7
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_13
+  - name: BGTilemap_A_13
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -219,10 +219,10 @@ ScriptedImporter:
       y: 256
       width: 128
       height: 128
-    spriteID: a1e4819dc62b68e42a8218d118fc2828
+    spriteID: 8fe562e38d48051478a1a3ad5c3fa1df
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_14
+  - name: BGTilemap_A_14
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -234,10 +234,10 @@ ScriptedImporter:
       y: 256
       width: 128
       height: 128
-    spriteID: d3710d43c0d62544585098eb3eee4001
+    spriteID: 6efddfee6af1f3b46b4dd1a39b0a5a7a
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_15
+  - name: BGTilemap_A_15
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -249,10 +249,10 @@ ScriptedImporter:
       y: 256
       width: 128
       height: 128
-    spriteID: d08f037128ae66142ba846e56458b0f1
+    spriteID: e17d65a9d9c622742addf9c56b87e759
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_16
+  - name: BGTilemap_A_16
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -264,10 +264,10 @@ ScriptedImporter:
       y: 256
       width: 128
       height: 128
-    spriteID: de2b1bb475baa674e99a475cfcb033a2
+    spriteID: 24347140e13d79a419570dc92e8bb581
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_17
+  - name: BGTilemap_A_17
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -279,10 +279,10 @@ ScriptedImporter:
       y: 256
       width: 128
       height: 128
-    spriteID: 0290bbb421602ee4b956b750b7940adb
+    spriteID: e825ad5ed69ef154eb1f9982a4c3fa32
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_18
+  - name: BGTilemap_A_18
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -294,10 +294,10 @@ ScriptedImporter:
       y: 256
       width: 128
       height: 128
-    spriteID: d671e01b42a8e5148a4d7c25263a05a8
+    spriteID: 8e29bd401d6337a4781da91c7efce55a
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_19
+  - name: BGTilemap_A_19
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -309,10 +309,10 @@ ScriptedImporter:
       y: 256
       width: 128
       height: 128
-    spriteID: 1e06ff548a6480a4a9596b2c7d96a6dc
+    spriteID: fe0d8d933e2d4df4d84565d9448f13d4
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_20
+  - name: BGTilemap_A_20
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -324,10 +324,10 @@ ScriptedImporter:
       y: 256
       width: 128
       height: 128
-    spriteID: bf44f9b6524c9ca46b09780a81df858c
+    spriteID: c8fbc5395f58b6b4a903abaaa8464551
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_21
+  - name: BGTilemap_A_21
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -339,10 +339,10 @@ ScriptedImporter:
       y: 256
       width: 128
       height: 128
-    spriteID: 9810dacee12d12c47bd76bb9f850a8ab
+    spriteID: bd064c209d71495498dce69a6e228552
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_22
+  - name: BGTilemap_A_22
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -354,10 +354,10 @@ ScriptedImporter:
       y: 256
       width: 128
       height: 128
-    spriteID: 72ac87667b8064a478bc1b53d4506429
+    spriteID: ca1479390b62780489e57263bf71bc73
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_23
+  - name: BGTilemap_A_23
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -369,10 +369,10 @@ ScriptedImporter:
       y: 256
       width: 128
       height: 128
-    spriteID: da0d15d15d37cda46868e0c5497c98db
+    spriteID: 680fd1aa78071fa439fe31dcaca99a35
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_24
+  - name: BGTilemap_A_24
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -384,10 +384,10 @@ ScriptedImporter:
       y: 128
       width: 128
       height: 128
-    spriteID: ac9b3c0680c77e0438b6a3c32a9ad193
+    spriteID: a63358a3b6c1e96499fc8842785856d4
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_25
+  - name: BGTilemap_A_25
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -399,10 +399,10 @@ ScriptedImporter:
       y: 128
       width: 128
       height: 128
-    spriteID: 862e51fbf6845654c980deac929553d7
+    spriteID: c7d6b4d886407c5468a5b5208d80ecbe
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_26
+  - name: BGTilemap_A_26
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -414,10 +414,10 @@ ScriptedImporter:
       y: 128
       width: 128
       height: 128
-    spriteID: 7ee094caf77014e44ab054ffcefc9c3b
+    spriteID: 6856eb9f0cdb3754c8bf92343b7b7a2f
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_27
+  - name: BGTilemap_A_27
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -429,10 +429,10 @@ ScriptedImporter:
       y: 128
       width: 128
       height: 128
-    spriteID: ab67073802c355243ab81815e0546e7a
+    spriteID: 6560de3a18bb7f84fa7fbe29f7d78bf3
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_28
+  - name: BGTilemap_A_28
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -444,10 +444,10 @@ ScriptedImporter:
       y: 128
       width: 128
       height: 128
-    spriteID: ff5e23b5a5241fb4ba5f54daee461160
+    spriteID: c13442eaa06eccc498da3ea1f16ba0f3
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_29
+  - name: BGTilemap_A_29
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -459,10 +459,10 @@ ScriptedImporter:
       y: 128
       width: 128
       height: 128
-    spriteID: 7f05e5da2ad6e01439845529b79db156
+    spriteID: 4b882563800851f43979ea60b069eba6
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_30
+  - name: BGTilemap_A_30
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -474,10 +474,10 @@ ScriptedImporter:
       y: 128
       width: 128
       height: 128
-    spriteID: dd1b42a5dfd98ec48b07a898648b2a91
+    spriteID: 8a9dd9046bed6fa428df26df3c38b764
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_31
+  - name: BGTilemap_A_31
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -489,10 +489,10 @@ ScriptedImporter:
       y: 128
       width: 128
       height: 128
-    spriteID: 27397b83c56bca74681a77affb284b03
+    spriteID: 982ddbb1e908bda44b974662b2b017fa
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_32
+  - name: BGTilemap_A_32
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -504,10 +504,10 @@ ScriptedImporter:
       y: 128
       width: 128
       height: 128
-    spriteID: 08b56616f985b4e4997584beb1d1f44d
+    spriteID: b2671cc9a129cd44fbf8ed4d05840e3c
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_33
+  - name: BGTilemap_A_33
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -519,10 +519,10 @@ ScriptedImporter:
       y: 128
       width: 128
       height: 128
-    spriteID: 8d760a4404c1a9441827cddd4a1325a5
+    spriteID: 637dc0675cecc2242a88e6126da2dab7
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_34
+  - name: BGTilemap_A_34
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -534,10 +534,10 @@ ScriptedImporter:
       y: 128
       width: 128
       height: 128
-    spriteID: 9df519025b6e268418f3eebad2e84d3b
+    spriteID: ee2419dad429c9642847f4f971942021
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_35
+  - name: BGTilemap_A_35
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -549,10 +549,10 @@ ScriptedImporter:
       y: 128
       width: 128
       height: 128
-    spriteID: 0d533930c3efe354bb0c3403bbf30ee7
+    spriteID: 4684c84659d90f643af3d43e913041e3
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_36
+  - name: BGTilemap_A_36
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -564,10 +564,10 @@ ScriptedImporter:
       y: 0
       width: 128
       height: 128
-    spriteID: 355f1a96fa7605b409ff5aa7b512e0b3
+    spriteID: bb9bdf83a1c1ea54bb01bc52e0b2612a
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_37
+  - name: BGTilemap_A_37
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -579,10 +579,10 @@ ScriptedImporter:
       y: 0
       width: 128
       height: 128
-    spriteID: 38b1822f2565c7c4c806981ee0403634
+    spriteID: d90409093dbd4bd4ba5147a69b11df7b
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_38
+  - name: BGTilemap_A_38
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -594,10 +594,10 @@ ScriptedImporter:
       y: 0
       width: 128
       height: 128
-    spriteID: 051fd0142b30b5045a326ab66f5e7672
+    spriteID: b8fc465230c233a43a6114679d6a99a2
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_39
+  - name: BGTilemap_A_39
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -609,10 +609,10 @@ ScriptedImporter:
       y: 0
       width: 128
       height: 128
-    spriteID: 8e026200ce3f46546a8e06b483ee5b67
+    spriteID: cf208968be72e8b4483a797cb23c3660
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_40
+  - name: BGTilemap_A_40
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -624,10 +624,10 @@ ScriptedImporter:
       y: 0
       width: 128
       height: 128
-    spriteID: dc24f427d63ddba4bb7f934eba764ed9
+    spriteID: 7297836d87abd214395e781591d12aa6
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_41
+  - name: BGTilemap_A_41
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -639,10 +639,10 @@ ScriptedImporter:
       y: 0
       width: 128
       height: 128
-    spriteID: daf0ac2e27f67034ba513aed457608bc
+    spriteID: 7c2175ffcd353f94aa52573901145400
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_42
+  - name: BGTilemap_A_42
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -654,10 +654,10 @@ ScriptedImporter:
       y: 0
       width: 128
       height: 128
-    spriteID: 15993da113f55424bb422884cf19efb5
+    spriteID: 87929c5dddafb8c4ca5f04daa6d2f54d
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_43
+  - name: BGTilemap_A_43
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -669,10 +669,10 @@ ScriptedImporter:
       y: 0
       width: 128
       height: 128
-    spriteID: f8a8b5eb949cf1a45a859aa7650cac76
+    spriteID: 652919b82af99c14b8c5530d73b3ffe4
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_44
+  - name: BGTilemap_A_44
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -684,10 +684,10 @@ ScriptedImporter:
       y: 0
       width: 128
       height: 128
-    spriteID: a25a57c7dc5b5c14280b674624577de5
+    spriteID: be6b9542ccd8cd84c952b91fb597266b
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_45
+  - name: BGTilemap_A_45
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -699,10 +699,10 @@ ScriptedImporter:
       y: 0
       width: 128
       height: 128
-    spriteID: 6332468c1c923c149909397112e05cdd
+    spriteID: 94f94addafcea154a86e407934e362e0
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_46
+  - name: BGTilemap_A_46
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -714,10 +714,10 @@ ScriptedImporter:
       y: 0
       width: 128
       height: 128
-    spriteID: f722ac54198d1294cb989f8c104641dd
+    spriteID: 6c3cb4695ffdb7a4b9363b77095561cd
     spriteOutline: []
     tessellationDetail: 0
-  - name: SmalltileA_47
+  - name: BGTilemap_A_47
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -729,7 +729,7 @@ ScriptedImporter:
       y: 0
       width: 128
       height: 128
-    spriteID: 9c2a37256bf4457438df65b8c14347d1
+    spriteID: e436f7bf8955745469f5cae90bfd3d53
     spriteOutline: []
     tessellationDetail: 0
   _secondaryTextures: []

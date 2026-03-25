@@ -11,6 +11,9 @@ TagManager:
   - ManualTile
   - Entity
   - System
+  - asteroid
+  - ship
+  - Danger
   layers:
   - Default
   - TransparentFX
@@ -29,7 +32,7 @@ TagManager:
   - AutoTile
   - ManualTile
   - LogicMap
-  - 
+  - Respawn
   - 
   - 
   - 
