@@ -58,7 +58,7 @@ namespace GameMain.Editor
 
             // Rooms larger than 40*23 should use follow mode.
             ctx.Room.CameraMode =
-                bounds.size.x > 40f && bounds.size.y > 23f ? CameraMode.Follow : CameraMode.Fixed;
+                bounds.size.x >= 40f && bounds.size.y >= 23f ? CameraMode.Follow : CameraMode.Fixed;
             EditorUtility.SetDirty(ctx.Room);
         }
 

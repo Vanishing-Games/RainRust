@@ -100,6 +100,10 @@ namespace GameMain.RunTime
                 "Transition",
                 m_CurrentLevelTransition != null ? m_CurrentLevelTransition.name : "None"
             );
+            DebugUIManager.Log(
+                "Camera Mode",
+                m_CurrentLevelTransition != null ? m_CurrentRoom.CameraMode : "None"
+            );
         }
 #endif
 

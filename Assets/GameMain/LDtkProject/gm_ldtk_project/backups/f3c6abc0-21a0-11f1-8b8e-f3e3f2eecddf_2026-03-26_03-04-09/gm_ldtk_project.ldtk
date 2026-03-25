@@ -33,7 +33,7 @@
 	"imageExportMode": "None",
 	"exportLevelBg": true,
 	"pngFilePattern": null,
-	"backupOnSave": true,
+	"backupOnSave": false,
 	"backupLimit": 10,
 	"backupRelPath": null,
 	"levelNamePattern": "Level_%idx",
