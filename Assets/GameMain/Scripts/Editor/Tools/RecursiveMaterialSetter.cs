@@ -71,5 +71,9 @@ namespace GameMain.Editor.Tools
             );
             EditorUtility.DisplayDialog("完成", $"已成功处理了 {count} 个 Renderer。", "确定");
         }
+
+        [Button(ButtonSizes.Large, Name = "设置所有Volume的Layer")]
+        [GUIColor(0.3f, 0.8f, 0.3f)]
+        private void ApplyLayers() { }
     }
 }

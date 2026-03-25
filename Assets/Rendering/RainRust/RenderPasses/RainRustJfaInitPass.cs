@@ -10,7 +10,7 @@ namespace RainRust.Rendering
     public class RainRustJfaInitPass : ScriptableRenderPass
     {
         private Material m_JfaInitMaterial;
-        private const string k_ShaderName = "Hidden/RainRust/JfaSeedInit";
+        private RainRustLighting.RainRustLightingSettings m_Settings;
 
         class PassData
         {
@@ -22,19 +22,25 @@ namespace RainRust.Rendering
             renderPassEvent = RenderPassEvent.BeforeRenderingOpaques;
         }
 
+        public void Setup(RainRustLighting.RainRustLightingSettings settings)
+        {
+            m_Settings = settings;
+        }
+
         public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
         {
             RainRustContextData rainRustData = frameData.Get<RainRustContextData>();
 
-            if (rainRustData == null)
+            if (rainRustData == null || m_Settings == null)
                 return;
 
-            if (m_JfaInitMaterial == null)
+            if (m_JfaInitMaterial == null && m_Settings.jfaInitShader != null)
             {
-                var shader = Shader.Find(k_ShaderName);
-                if (shader != null)
-                    m_JfaInitMaterial = CoreUtils.CreateEngineMaterial(shader);
+                m_JfaInitMaterial = CoreUtils.CreateEngineMaterial(m_Settings.jfaInitShader);
             }
+
+            if (m_JfaInitMaterial == null)
+                return;
 
             BlitMaterialParameters blitParams = new(
                 rainRustData.mainRt,

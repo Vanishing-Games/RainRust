@@ -95,7 +95,6 @@ namespace GameMain.Editor
                             $"        public const string Enum_{@enum.Identifier} = \"{@enum.Identifier}\";"
                         );
                     }
-                    sb.AppendLine("");
                 }
             }
 

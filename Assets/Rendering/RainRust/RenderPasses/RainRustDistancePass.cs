@@ -9,9 +9,17 @@ namespace RainRust.Rendering
 {
     public class RainRustDistancePass : ScriptableRenderPass
     {
+        private Material m_DistanceMaterial;
+        private RainRustLighting.RainRustLightingSettings m_Settings;
+
         public RainRustDistancePass()
         {
             renderPassEvent = RenderPassEvent.BeforeRenderingOpaques;
+        }
+
+        public void Setup(RainRustLighting.RainRustLightingSettings settings)
+        {
+            m_Settings = settings;
         }
 
         class RainRustDistancePassData
@@ -24,16 +32,16 @@ namespace RainRust.Rendering
 
         public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
         {
-            if (m_DistanceMaterial == null)
+            if (m_Settings == null)
+                return;
+
+            if (m_DistanceMaterial == null && m_Settings.distanceShader != null)
             {
-                var shader = Shader.Find(k_DistanceShaderName);
-                if (shader == null)
-                {
-                    Debug.LogError($"Shader not found: {k_DistanceShaderName}");
-                    return;
-                }
-                m_DistanceMaterial = CoreUtils.CreateEngineMaterial(shader);
+                m_DistanceMaterial = CoreUtils.CreateEngineMaterial(m_Settings.distanceShader);
             }
+
+            if (m_DistanceMaterial == null)
+                return;
 
             var rainRustContextData = frameData.Get<RainRustContextData>();
             var cameraData = frameData.Get<UniversalCameraData>();
@@ -52,8 +60,5 @@ namespace RainRust.Rendering
             );
             renderGraph.AddBlitPass(blitParams, "RainRust Distance Pass");
         }
-
-        private Material m_DistanceMaterial;
-        private const string k_DistanceShaderName = "Hidden/RainRust/Distance";
     }
 }

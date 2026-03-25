@@ -16,7 +16,14 @@ Shader "RainRust/RainRustLighting"
 
     SubShader
     {
-        Tags { "Queue"="Transparent" "RenderType"="Transparent" "RenderPipeline"="UniversalPipeline" "PreviewType"="Plane" "CanUseSpriteAtlas"="True" }
+        Tags 
+        { 
+            "Queue"="Transparent" 
+            "RenderType"="Transparent" 
+            "RenderPipeline"="UniversalPipeline" 
+            "PreviewType"="Plane" 
+            "CanUseSpriteAtlas"="True" 
+        }
 
         HLSLINCLUDE
         #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
@@ -37,11 +44,20 @@ Shader "RainRust/RainRustLighting"
             UNITY_VERTEX_OUTPUT_STEREO
         };
 
+        // 纹理定义建议使用 URP 的宏，但为了兼容你的旧逻辑保留 sampler2D
         sampler2D _MainTex;
         sampler2D _AlphaTex;
         float4 _Color;
         float4 _RendererColor;
         float2 _Flip;
+
+        // --- 修复：手动实现 URP 缺失的 PixelSnap 函数 ---
+        float4 UnityPixelSnap(float4 pos)
+        {
+            float2 hms = _ScreenParams.xy * 0.5;
+            pos.xy = round(pos.xy * hms) / hms;
+            return pos;
+        }
 
         Varyings vert(Attributes input)
         {
@@ -49,7 +65,10 @@ Shader "RainRust/RainRustLighting"
             UNITY_SETUP_INSTANCE_ID(input);
             UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
 
-            output.positionCS = TransformObjectToHClip(input.positionOS.xyz);
+            // 处理翻转逻辑（SpriteRenderer 常用）
+            float3 positionWS = input.positionOS.xyz;
+            
+            output.positionCS = TransformObjectToHClip(positionWS);
             output.uv = input.uv;
             output.color = input.color * _Color * _RendererColor;
 
@@ -69,15 +88,14 @@ Shader "RainRust/RainRustLighting"
             color.a = alpha.r;
             #endif
 
-            // Discard transparent pixels
+            // 丢弃过透明的像素，确保光照边缘干净
             clip(color.a - 0.1);
 
             return color;
         }
         ENDHLSL
 
-        // Pass 1: 用于 RainRust 光源提取 (Light Sources Pass)
-        // 只有当材质开启了 _EMIT_LIGHTING 时，此 Pass 才会产生输出
+        // Pass 1: 用于 RainRust 光源提取
         Pass
         {
             Name "RainRustLightSource"
@@ -97,15 +115,14 @@ Shader "RainRust/RainRustLighting"
             float4 frag(Varyings input) : SV_Target
             {
                 #if !defined(_EMIT_LIGHTING)
-                discard; // 如果未开启发射光照，则在光源阶段不渲染
+                discard; 
                 #endif
                 return frag_common(input);
             }
             ENDHLSL
         }
 
-        // Pass 2: 用于 RainRust 接收者渲染 (Receivers Pass)
-        // 只有当材质开启了 _ACCEPT_LIGHTING 时，此 Pass 才会产生输出
+        // Pass 2: 用于 RainRust 接收者渲染 (带 Stencil 标记)
         Pass
         {
             Name "RainRustLighting"
@@ -132,14 +149,14 @@ Shader "RainRust/RainRustLighting"
             float4 frag(Varyings input) : SV_Target
             {
                 #if !defined(_ACCEPT_LIGHTING)
-                discard; // 如果未开启接受光照，则在接收者阶段不渲染
+                discard;
                 #endif
                 return frag_common(input);
             }
             ENDHLSL
         }
 
-        // Pass 3: 用于 URP 标准渲染（ fallback / 预览）
+        // Pass 3: URP 默认渲染（当不使用 RainRust 特性时显示）
         Pass
         {
             Name "UniversalForward"
@@ -158,7 +175,8 @@ Shader "RainRust/RainRustLighting"
 
             float4 frag(Varyings input) : SV_Target
             {
-                // 如果开启了接受光照，则在 URP 默认渲染中禁用自己（交给 RainRust 特性处理渲染）
+                // 如果开启了接受光照，逻辑上它应该由 RainRust 的渲染管线控制
+                // 在默认 URP 渲染中我们 discard 它
                 #if defined(_ACCEPT_LIGHTING)
                 discard;
                 #endif

@@ -1,3 +1,4 @@
+using Core;
 using System;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -28,10 +29,16 @@ namespace RainRust.Rendering
             [Header("Composition Settings")]
             public BlendMode receiverBlendMode = BlendMode.AlphaBlend;
             public BlendMode lightingBlendMode = BlendMode.Additive;
+
+            [Header("Shaders")]
+            public Shader jfaInitShader     ;
+            public Shader jfaShader         ;
+            public Shader distanceShader    ;
+            public Shader rayTracingShader  ;
+            public Shader compositionShader ;
+            public Shader blitShader        ;
             // csharpier-ignore-end
         }
-
-        public RainRustLightingSettings settings = new();
 
         /** Called when
     * - When the Scriptable Renderer Feature loads the first time.
@@ -55,6 +62,26 @@ namespace RainRust.Rendering
             ref RenderingData renderingData
         )
         {
+            if (settings == null)
+            {
+                CLogger.LogError("[RainRust] Settings are null in AddRenderPasses!", LogTag.Rendering);
+                return;
+            }
+
+            // 检查关键 Shader 是否丢失
+            if (settings.jfaInitShader == null)
+                CLogger.LogError("[RainRust] JFA Init Shader is MISSING!", LogTag.Rendering);
+            if (settings.jfaShader == null)
+                CLogger.LogError("[RainRust] JFA Shader is MISSING!", LogTag.Rendering);
+            if (settings.distanceShader == null)
+                CLogger.LogError("[RainRust] Distance Shader is MISSING!", LogTag.Rendering);
+            if (settings.rayTracingShader == null)
+                CLogger.LogError("[RainRust] RayTracing Shader is MISSING!", LogTag.Rendering);
+            if (settings.compositionShader == null)
+                CLogger.LogError("[RainRust] Composition Shader is MISSING!", LogTag.Rendering);
+            if (settings.blitShader == null)
+                CLogger.LogError("[RainRust] Blit Shader is MISSING!", LogTag.Rendering);
+
             // csharpier-ignore-start
             // Apply settings to all passes
             m_RainRustDrawObjectsPass.renderPassEvent = settings.injectionPoint;
@@ -63,10 +90,14 @@ namespace RainRust.Rendering
             m_DistancePass.renderPassEvent            = settings.injectionPoint;
             m_RainRustRayTracingPass.renderPassEvent  = settings.injectionPoint;
             m_RainRustRenderingPass.renderPassEvent   = settings.injectionPoint;
-            // csharpier-ignore-end
 
             m_RainRustDrawObjectsPass.Setup(settings);
-            m_RainRustRenderingPass.Setup(settings);
+            m_JfaInitPass            .Setup(settings);
+            m_JfaPass                .Setup(settings);
+            m_DistancePass           .Setup(settings);
+            m_RainRustRayTracingPass .Setup(settings);
+            m_RainRustRenderingPass  .Setup(settings);
+            // csharpier-ignore-end
 
             renderer.EnqueuePass(m_RainRustDrawObjectsPass);
             renderer.EnqueuePass(m_JfaInitPass);
@@ -84,11 +115,36 @@ namespace RainRust.Rendering
             m_RainRustRenderingPass?.Dispose();
         }
 
+        public RainRustLightingSettings settings = new();
+
+        private void OnValidate()
+        {
+            if (settings == null)
+                return;
+
+            // 自动寻找 Shader, 避免用户手动寻找 Hidden Shader
+            if (settings.jfaInitShader == null)
+                settings.jfaInitShader = Shader.Find("Hidden/RainRust/JfaSeedInit");
+            if (settings.jfaShader == null)
+                settings.jfaShader = Shader.Find("Hidden/RainRust/JumpFloodAlgorithm");
+            if (settings.distanceShader == null)
+                settings.distanceShader = Shader.Find("Hidden/RainRust/Distance");
+            if (settings.rayTracingShader == null)
+                settings.rayTracingShader = Shader.Find("Hidden/RainRust/RayTracing");
+            if (settings.compositionShader == null)
+                settings.compositionShader = Shader.Find("Hidden/RainRust/Composition");
+            if (settings.blitShader == null)
+                settings.blitShader = Shader.Find("Hidden/Universal Render Pipeline/Blit");
+        }
+
+        // csharpier-ignore-start
+
         private RainRustDrawObjectsPass m_RainRustDrawObjectsPass;
-        private RainRustJfaInitPass m_JfaInitPass;
-        private RainRustJfaPass m_JfaPass;
-        private RainRustDistancePass m_DistancePass;
-        private RainRustRayTracingPass m_RainRustRayTracingPass;
-        private RainRustRenderingPass m_RainRustRenderingPass;
+        private RainRustJfaInitPass     m_JfaInitPass;
+        private RainRustJfaPass         m_JfaPass;
+        private RainRustDistancePass    m_DistancePass;
+        private RainRustRayTracingPass  m_RainRustRayTracingPass;
+        private RainRustRenderingPass   m_RainRustRenderingPass;
+        // csharpier-ignore-end
     }
 }

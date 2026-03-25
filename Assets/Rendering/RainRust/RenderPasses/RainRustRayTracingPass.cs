@@ -8,9 +8,17 @@ namespace RainRust.Rendering
 {
     public class RainRustRayTracingPass : ScriptableRenderPass
     {
+        private Material m_RayTracingMaterial;
+        private RainRustLighting.RainRustLightingSettings m_Settings;
+
         public RainRustRayTracingPass()
         {
             renderPassEvent = RenderPassEvent.BeforeRenderingOpaques;
+        }
+
+        public void Setup(RainRustLighting.RainRustLightingSettings settings)
+        {
+            m_Settings = settings;
         }
 
         class RainRustRayTracingPassData
@@ -29,16 +37,16 @@ namespace RainRust.Rendering
 
         public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
         {
-            if (m_RayTracingMaterial == null)
+            if (m_Settings == null)
+                return;
+
+            if (m_RayTracingMaterial == null && m_Settings.rayTracingShader != null)
             {
-                var shader = Shader.Find(k_RayTracingShaderName);
-                if (shader == null)
-                {
-                    Debug.LogError($"Shader not found: {k_RayTracingShaderName}");
-                    return;
-                }
-                m_RayTracingMaterial = CoreUtils.CreateEngineMaterial(shader);
+                m_RayTracingMaterial = CoreUtils.CreateEngineMaterial(m_Settings.rayTracingShader);
             }
+
+            if (m_RayTracingMaterial == null)
+                return;
 
             var rainRustContextData = frameData.Get<RainRustContextData>();
 
@@ -150,8 +158,5 @@ namespace RainRust.Rendering
                 );
             }
         }
-
-        private Material m_RayTracingMaterial;
-        private const string k_RayTracingShaderName = "Hidden/RainRust/RayTracing";
     }
 }

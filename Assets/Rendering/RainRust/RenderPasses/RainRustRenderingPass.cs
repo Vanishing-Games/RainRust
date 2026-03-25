@@ -1,3 +1,4 @@
+using Core;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.RenderGraphModule;
@@ -9,6 +10,10 @@ namespace RainRust.Rendering
 {
     public class RainRustRenderingPass : ScriptableRenderPass
     {
+        private Material m_RenderingMaterial;
+        private Material m_BlitMaterial;
+        private RainRustLighting.RainRustLightingSettings m_Settings;
+
         public RainRustRenderingPass()
         {
             renderPassEvent = RenderPassEvent.BeforeRenderingOpaques;
@@ -32,17 +37,33 @@ namespace RainRust.Rendering
 
         public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
         {
+            if (m_Settings == null)
+            {
+                CLogger.LogError("[RainRust] RenderingPass: m_Settings is null!", LogTag.Rendering);
+                return;
+            }
+
             // Ensure material is created
+            if (m_RenderingMaterial == null && m_Settings.compositionShader != null)
+            {
+                m_RenderingMaterial = CoreUtils.CreateEngineMaterial(m_Settings.compositionShader);
+                if (m_RenderingMaterial == null)
+                    CLogger.LogError(
+                        "[RainRust] RenderingPass: Failed to create Composition Material!",
+                        LogTag.Rendering
+                    );
+            }
+
             if (m_RenderingMaterial == null)
             {
-                var shader = Shader.Find(k_RenderingShaderName);
-                if (shader == null)
-                {
-                    Debug.LogError($"Shader not found: {k_RenderingShaderName}");
-                    return;
-                }
-                m_RenderingMaterial = CoreUtils.CreateEngineMaterial(shader);
+                if (m_Settings.compositionShader == null)
+                    CLogger.LogError(
+                        "[RainRust] RenderingPass: Composition Shader is null!",
+                        LogTag.Rendering
+                    );
+                return;
             }
+
 
             var rainRustContextData = frameData.Get<RainRustContextData>();
             var resourceData = frameData.Get<UniversalResourceData>();
@@ -65,10 +86,8 @@ namespace RainRust.Rendering
                 passData.receiverRt = rainRustContextData.receiverRt;
                 passData.receiverDepthRt = rainRustContextData.mainDepthRt;
                 passData.cameraColor = cameraColor;
-                passData.receiverBlendMode =
-                    m_Settings != null ? m_Settings.receiverBlendMode : RainRustLighting.BlendMode.AlphaBlend;
-                passData.lightingBlendMode =
-                    m_Settings != null ? m_Settings.lightingBlendMode : RainRustLighting.BlendMode.Additive;
+                passData.receiverBlendMode = m_Settings.receiverBlendMode;
+                passData.lightingBlendMode = m_Settings.lightingBlendMode;
 
                 builder.UseTexture(passData.lightingRt, AccessFlags.Read);
                 builder.UseTexture(passData.receiverRt, AccessFlags.Read);
@@ -102,21 +121,41 @@ namespace RainRust.Rendering
                         // Set receiver blend keywords
                         switch (data.receiverBlendMode)
                         {
-                            case RainRustLighting.BlendMode.Additive: data.material.EnableKeyword("RECEIVER_BLEND_ADDITIVE"); break;
-                            case RainRustLighting.BlendMode.AlphaBlend: data.material.EnableKeyword("RECEIVER_BLEND_ALPHABLEND"); break;
-                            case RainRustLighting.BlendMode.Multiply: data.material.EnableKeyword("RECEIVER_BLEND_MULTIPLY"); break;
-                            case RainRustLighting.BlendMode.Screen: data.material.EnableKeyword("RECEIVER_BLEND_SCREEN"); break;
-                            case RainRustLighting.BlendMode.Overlay: data.material.EnableKeyword("RECEIVER_BLEND_OVERLAY"); break;
+                            case RainRustLighting.BlendMode.Additive:
+                                data.material.EnableKeyword("RECEIVER_BLEND_ADDITIVE");
+                                break;
+                            case RainRustLighting.BlendMode.AlphaBlend:
+                                data.material.EnableKeyword("RECEIVER_BLEND_ALPHABLEND");
+                                break;
+                            case RainRustLighting.BlendMode.Multiply:
+                                data.material.EnableKeyword("RECEIVER_BLEND_MULTIPLY");
+                                break;
+                            case RainRustLighting.BlendMode.Screen:
+                                data.material.EnableKeyword("RECEIVER_BLEND_SCREEN");
+                                break;
+                            case RainRustLighting.BlendMode.Overlay:
+                                data.material.EnableKeyword("RECEIVER_BLEND_OVERLAY");
+                                break;
                         }
 
                         // Set lighting blend keywords
                         switch (data.lightingBlendMode)
                         {
-                            case RainRustLighting.BlendMode.Additive: data.material.EnableKeyword("LIGHTING_BLEND_ADDITIVE"); break;
-                            case RainRustLighting.BlendMode.AlphaBlend: data.material.EnableKeyword("LIGHTING_BLEND_ALPHABLEND"); break;
-                            case RainRustLighting.BlendMode.Multiply: data.material.EnableKeyword("LIGHTING_BLEND_MULTIPLY"); break;
-                            case RainRustLighting.BlendMode.Screen: data.material.EnableKeyword("LIGHTING_BLEND_SCREEN"); break;
-                            case RainRustLighting.BlendMode.Overlay: data.material.EnableKeyword("LIGHTING_BLEND_OVERLAY"); break;
+                            case RainRustLighting.BlendMode.Additive:
+                                data.material.EnableKeyword("LIGHTING_BLEND_ADDITIVE");
+                                break;
+                            case RainRustLighting.BlendMode.AlphaBlend:
+                                data.material.EnableKeyword("LIGHTING_BLEND_ALPHABLEND");
+                                break;
+                            case RainRustLighting.BlendMode.Multiply:
+                                data.material.EnableKeyword("LIGHTING_BLEND_MULTIPLY");
+                                break;
+                            case RainRustLighting.BlendMode.Screen:
+                                data.material.EnableKeyword("LIGHTING_BLEND_SCREEN");
+                                break;
+                            case RainRustLighting.BlendMode.Overlay:
+                                data.material.EnableKeyword("LIGHTING_BLEND_OVERLAY");
+                                break;
                         }
 
                         // Use a full-screen draw
@@ -132,13 +171,14 @@ namespace RainRust.Rendering
             }
 
             // Ensure blit material is available
-            if (m_BlitMaterial == null)
+            if (m_BlitMaterial == null && m_Settings.blitShader != null)
             {
-                var blitShader = Shader.Find("Hidden/Universal Render Pipeline/Blit");
-                if (blitShader != null)
-                {
-                    m_BlitMaterial = CoreUtils.CreateEngineMaterial(blitShader);
-                }
+                m_BlitMaterial = CoreUtils.CreateEngineMaterial(m_Settings.blitShader);
+                if (m_BlitMaterial == null)
+                    CLogger.LogError(
+                        "[RainRust] RenderingPass: Failed to create Blit Material!",
+                        LogTag.Rendering
+                    );
             }
 
             // Blit temp back to cameraColor
@@ -156,11 +196,5 @@ namespace RainRust.Rendering
             CoreUtils.Destroy(m_RenderingMaterial);
             CoreUtils.Destroy(m_BlitMaterial);
         }
-
-        private Material m_RenderingMaterial;
-        private Material m_BlitMaterial;
-        private RainRustLighting.RainRustLightingSettings m_Settings;
-
-        private const string k_RenderingShaderName = "Hidden/RainRust/Composition";
     }
 }

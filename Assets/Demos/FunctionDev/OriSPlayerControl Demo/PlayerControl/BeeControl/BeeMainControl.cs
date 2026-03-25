@@ -248,6 +248,14 @@ namespace PlayerControlByOris
             }
         }
 
+        private void OnCollisionExit2D(Collision2D collision)
+        {
+            if (currentState == BeeState.StaySt && collision.transform.CompareTag("Wall"))
+            {
+                ChangeState(BeeState.FollowSt);
+            }
+        }
+
         private void OnTriggerEnter2D(Collider2D collision)
         {
             if (currentState == BeeState.StaySt && collision.transform.CompareTag("Wave"))
