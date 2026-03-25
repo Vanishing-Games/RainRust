@@ -11,6 +11,7 @@ TagManager:
   - ManualTile
   - Entity
   - System
+  - BackGround
   layers:
   - Default
   - TransparentFX
@@ -42,7 +43,7 @@ TagManager:
   - 
   - 
   - 
-  - 
+  - BackGround
   - System
   m_SortingLayers:
   - name: Default
