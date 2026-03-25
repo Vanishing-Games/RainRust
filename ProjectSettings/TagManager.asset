@@ -14,6 +14,7 @@ TagManager:
   - asteroid
   - ship
   - Danger
+  - BackGround
   layers:
   - Default
   - TransparentFX
