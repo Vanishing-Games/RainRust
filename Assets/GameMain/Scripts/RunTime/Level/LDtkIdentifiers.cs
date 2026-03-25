@@ -17,6 +17,7 @@ namespace GameMain.RunTime
 
         // Entity Identifiers
         public const string LevelTransition = "LevelTransition"; // 关卡出入口
+        public const string Entity = "Entity";
 
         // Enum Identifiers
         public const string Enum_CameraMode = "CameraMode";

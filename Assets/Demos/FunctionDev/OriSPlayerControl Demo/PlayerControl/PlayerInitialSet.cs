@@ -19,6 +19,7 @@ namespace PlayerControlByOris
             mPCComponent.FacingDir = 1;
             StateTag = this;
             SetStateMachine(PlayerStateMachine.NormalState, EccTag.NormalState);
+            if (mPCComponent.AllBees == null) { }
         }
 
         protected override bool OnShouldActivate()
