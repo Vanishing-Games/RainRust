@@ -57,7 +57,7 @@ namespace GameMain.Editor
             boxCollider.isTrigger = true;
 
             Vector2 size = level.Size;
-            boxCollider.center = new Vector3(size.x / 2f, -size.y / 2f, 0f);
+            boxCollider.center = new Vector3(size.x / 2f, size.y / 2f, 0f);
             boxCollider.size = new Vector3(size.x, size.y, 50f);
 
             string profilePath = $"{PROFILE_FOLDER_PATH}/{volumeName}.asset";
