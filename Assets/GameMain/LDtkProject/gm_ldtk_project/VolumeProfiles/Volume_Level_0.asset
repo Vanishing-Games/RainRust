@@ -48,7 +48,7 @@ MonoBehaviour:
     m_Value: {x: 1, y: 1, z: 1, w: 1}
   noiseVelocity:
     m_OverrideState: 1
-    m_Value: {x: 0, y: 0}
+    m_Value: {x: 1, y: 1}
   noiseScale:
     m_OverrideState: 1
     m_Value: 10
@@ -63,7 +63,7 @@ MonoBehaviour:
     m_Value: 16
   lightIntensity:
     m_OverrideState: 1
-    m_Value: 0
+    m_Value: 10
   lightFalloffAlpha:
     m_OverrideState: 1
     m_Value: 0.1

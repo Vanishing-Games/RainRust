@@ -42,15 +42,16 @@ namespace GameMain.Editor
             }
 
             volumeGo.transform.localPosition = Vector3.zero;
-            volumeGo.layer = LayerMask.NameToLayer("Ignore Raycast");
+            volumeGo.layer = LayerMask.NameToLayer("Volume");
 
-            if (!volumeGo.TryGetComponent<Volume>(out Volume volume))
+            if (!volumeGo.TryGetComponent(out Volume volume))
             {
                 volume = volumeGo.AddComponent<Volume>();
             }
             volume.isGlobal = false;
+            volume.blendDistance = 1f;
 
-            if (!volumeGo.TryGetComponent<BoxCollider>(out BoxCollider boxCollider))
+            if (!volumeGo.TryGetComponent(out BoxCollider boxCollider))
             {
                 boxCollider = volumeGo.AddComponent<BoxCollider>();
             }
