@@ -74,7 +74,13 @@ namespace RainRust.Rendering
             )
             {
                 builder.AllowPassCulling(false);
-                InitDrawObjectsPassData(cameraData, renderingData, lightData, resourceData, ref passData);
+                InitDrawObjectsPassData(
+                    cameraData,
+                    renderingData,
+                    lightData,
+                    resourceData,
+                    ref passData
+                );
                 passData.rrMainRt = mainRtHandle;
                 passData.rrMainDepthRt = mainDepthRtHandle;
 
@@ -83,8 +89,12 @@ namespace RainRust.Rendering
 
                 // Light Sources Renderer List
                 SortingCriteria sortingCriteria = passData.cameraData.defaultOpaqueSortFlags;
-                LayerMask lightSourcesLayerMask = m_Settings != null ? m_Settings.lightSourcesLayerMask : (LayerMask)(-1);
-                FilteringSettings lightSourcesFiltering = new(RenderQueueRange.all, lightSourcesLayerMask);
+                LayerMask lightSourcesLayerMask =
+                    m_Settings != null ? m_Settings.lightSourcesLayerMask : (LayerMask)(-1);
+                FilteringSettings lightSourcesFiltering = new(
+                    RenderQueueRange.all,
+                    lightSourcesLayerMask
+                );
                 DrawingSettings lightSourcesDrawing = RenderingUtils.CreateDrawingSettings(
                     new ShaderTagId("UniversalForward"),
                     passData.renderingData,
@@ -98,7 +108,11 @@ namespace RainRust.Rendering
                 lightSourcesDrawing.SetShaderPassName(4, new ShaderTagId("RainRustLighting"));
 
                 passData.lightSourcesRendererList = renderGraph.CreateRendererList(
-                    new RendererListParams(passData.renderingData.cullResults, lightSourcesDrawing, lightSourcesFiltering)
+                    new RendererListParams(
+                        passData.renderingData.cullResults,
+                        lightSourcesDrawing,
+                        lightSourcesFiltering
+                    )
                 );
                 builder.UseRendererList(passData.lightSourcesRendererList);
 
@@ -117,7 +131,13 @@ namespace RainRust.Rendering
             )
             {
                 builder.AllowPassCulling(false);
-                InitDrawObjectsPassData(cameraData, renderingData, lightData, resourceData, ref passData);
+                InitDrawObjectsPassData(
+                    cameraData,
+                    renderingData,
+                    lightData,
+                    resourceData,
+                    ref passData
+                );
                 passData.rrReceiverRt = receiverRtHandle;
                 passData.rrMainDepthRt = mainDepthRtHandle;
 
@@ -126,8 +146,12 @@ namespace RainRust.Rendering
 
                 // Receivers Renderer List
                 SortingCriteria sortingCriteria = passData.cameraData.defaultOpaqueSortFlags;
-                LayerMask receiversLayerMask = m_Settings != null ? m_Settings.receiversLayerMask : (LayerMask)(-1);
-                FilteringSettings receiversFiltering = new(RenderQueueRange.all, receiversLayerMask);
+                LayerMask receiversLayerMask =
+                    m_Settings != null ? m_Settings.receiversLayerMask : (LayerMask)(-1);
+                FilteringSettings receiversFiltering = new(
+                    RenderQueueRange.all,
+                    receiversLayerMask
+                );
                 DrawingSettings receiversDrawing = RenderingUtils.CreateDrawingSettings(
                     new ShaderTagId("RainRustLighting"),
                     passData.renderingData,
@@ -137,7 +161,11 @@ namespace RainRust.Rendering
                 );
 
                 passData.receiversRendererList = renderGraph.CreateRendererList(
-                    new RendererListParams(passData.renderingData.cullResults, receiversDrawing, receiversFiltering)
+                    new RendererListParams(
+                        passData.renderingData.cullResults,
+                        receiversDrawing,
+                        receiversFiltering
+                    )
                 );
                 builder.UseRendererList(passData.receiversRendererList);
 
@@ -154,10 +182,14 @@ namespace RainRust.Rendering
         )
         {
             SortingCriteria sortingCriteria = passData.cameraData.defaultOpaqueSortFlags;
-            
+
             // Light Sources
-            LayerMask lightSourcesLayerMask = m_Settings != null ? m_Settings.lightSourcesLayerMask : (LayerMask)(-1);
-            FilteringSettings lightSourcesFiltering = new(RenderQueueRange.all, lightSourcesLayerMask);
+            LayerMask lightSourcesLayerMask =
+                m_Settings != null ? m_Settings.lightSourcesLayerMask : (LayerMask)(-1);
+            FilteringSettings lightSourcesFiltering = new(
+                RenderQueueRange.all,
+                lightSourcesLayerMask
+            );
             DrawingSettings lightSourcesDrawing = RenderingUtils.CreateDrawingSettings(
                 new ShaderTagId("UniversalForward"),
                 passData.renderingData,
@@ -178,7 +210,8 @@ namespace RainRust.Rendering
             );
 
             // Receivers
-            LayerMask receiversLayerMask = m_Settings != null ? m_Settings.receiversLayerMask : (LayerMask)(-1);
+            LayerMask receiversLayerMask =
+                m_Settings != null ? m_Settings.receiversLayerMask : (LayerMask)(-1);
             FilteringSettings receiversFiltering = new(RenderQueueRange.all, receiversLayerMask);
             DrawingSettings receiversDrawing = RenderingUtils.CreateDrawingSettings(
                 new ShaderTagId("RainRustLighting"),
