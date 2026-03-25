@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Core;
+using LDtkUnity;
 using LDtkUnity.Editor;
 using UnityEditor;
 using UnityEngine;
@@ -11,6 +12,28 @@ namespace GameMain.Editor
 {
     public class LDtkChapterBackgroundProcessor : LDtkPostprocessor
     {
+        public override int GetPostprocessOrder() => 4;
+
+        protected override void OnPostprocessLevel(GameObject root, LdtkJson projectJson)
+        {
+            CLogger.LogInfo(
+                $"Post process LDtk level: {root.name}",
+                LogTag.LDtkTransitionProcessor
+            );
+            LDtkComponentLevel level = root.GetComponent<LDtkComponentLevel>();
+
+            for (int i = 0; i < level.transform.childCount; i++)
+            {
+                var child = level.transform.GetChild(i);
+                if (child.name.EndsWith("BgColor"))
+                {
+                    var sr = child.GetComponent<SpriteRenderer>();
+                    sr.color = new Color(0, 0, 0, 0);
+                    child.gameObject.SetActive(false);
+                }
+            }
+        }
+
         protected override void OnPostprocessProject(GameObject project)
         {
             if (project == null)

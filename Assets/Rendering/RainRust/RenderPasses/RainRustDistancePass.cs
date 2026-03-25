@@ -24,7 +24,6 @@ namespace RainRust.Rendering
 
         public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
         {
-            // Ensure material is created
             if (m_DistanceMaterial == null)
             {
                 var shader = Shader.Find(k_DistanceShaderName);

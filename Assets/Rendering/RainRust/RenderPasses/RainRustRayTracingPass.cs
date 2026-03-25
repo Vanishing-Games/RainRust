@@ -81,6 +81,7 @@ namespace RainRust.Rendering
                         data.material.SetFloat("_Intensity", stack.lightIntensity.value);
                         data.material.SetFloat("_LightFalloffAlpha", stack.lightFalloffAlpha.value);
                         data.material.SetFloat("_LightFalloffGamma", stack.lightFalloffGamma.value);
+                        data.material.SetColor("_AmbientColor", stack.ambientColor.value);
 
                         data.material.SetFloat("_NoiseScale", stack.noiseScale.value);
                         data.material.SetFloat("_NoiseIntensity", stack.noiseIntensity.value);
