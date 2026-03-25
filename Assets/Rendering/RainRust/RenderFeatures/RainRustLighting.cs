@@ -11,6 +11,7 @@ namespace RainRust.Rendering
         [Serializable]
         public class RainRustLightingSettings
         {
+            public RenderPassEvent injectionPoint = RenderPassEvent.BeforeRenderingOpaques;
             public LayerMask layerMask = -1;
         }
 
@@ -38,7 +39,16 @@ namespace RainRust.Rendering
             ref RenderingData renderingData
         )
         {
+            // Apply settings to all passes
+            m_RainRustDrawObjectsPass.renderPassEvent = settings.injectionPoint;
+            m_JfaInitPass.renderPassEvent             = settings.injectionPoint;
+            m_JfaPass.renderPassEvent                 = settings.injectionPoint;
+            m_DistancePass.renderPassEvent            = settings.injectionPoint;
+            m_RainRustRayTracingPass.renderPassEvent  = settings.injectionPoint;
+            m_RainRustRenderingPass.renderPassEvent   = settings.injectionPoint;
+
             m_RainRustDrawObjectsPass.Setup(settings);
+            
             renderer.EnqueuePass(m_RainRustDrawObjectsPass);
             renderer.EnqueuePass(m_JfaInitPass);
             renderer.EnqueuePass(m_JfaPass);
