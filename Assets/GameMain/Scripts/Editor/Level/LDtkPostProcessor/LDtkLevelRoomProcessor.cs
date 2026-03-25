@@ -104,7 +104,6 @@ namespace GameMain.Editor
 
         private void ApplyConfinerSettings(RoomContext ctx)
         {
-            // Find the LogicMap layer
             LDtkComponentLayer logicMapLayer = null;
             foreach (var layer in ctx.Level.LayerInstances)
             {
@@ -124,7 +123,6 @@ namespace GameMain.Editor
                 return;
             }
 
-            // Generate PolygonCollider2D for room boundary
             if (!logicMapLayer.gameObject.TryGetComponent<PolygonCollider2D>(out var collider))
             {
                 collider = logicMapLayer.gameObject.AddComponent<PolygonCollider2D>();
@@ -132,7 +130,6 @@ namespace GameMain.Editor
 
             collider.isTrigger = true;
 
-            // Set points to match level bounds (in local space of logicMapLayer)
             Bounds bounds = ctx.Level.BorderBounds;
             Vector3 localMin = logicMapLayer.transform.InverseTransformPoint(bounds.min);
             Vector3 localMax = logicMapLayer.transform.InverseTransformPoint(bounds.max);
@@ -147,6 +144,14 @@ namespace GameMain.Editor
 
             var confiner = ctx.VCam.gameObject.AddComponent<CinemachineConfiner2D>();
             confiner.BoundingShape2D = collider;
+
+            var overSetting = new CinemachineConfiner2D.OversizeWindowSettings
+            {
+                Enabled = true,
+                MaxWindowSize = 0,
+                Padding = 0,
+            };
+            confiner.OversizeWindow = overSetting;
 
             EditorUtility.SetDirty(logicMapLayer);
             EditorUtility.SetDirty(ctx.VCam);

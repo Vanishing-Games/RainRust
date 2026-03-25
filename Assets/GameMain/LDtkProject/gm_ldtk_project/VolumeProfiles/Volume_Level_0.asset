@@ -54,22 +54,22 @@ MonoBehaviour:
     m_Value: 10
   noiseIntensity:
     m_OverrideState: 1
-    m_Value: 0
+    m_Value: 10
   resolutionScalar:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 0.5
   lightSamples:
     m_OverrideState: 1
-    m_Value: 16
+    m_Value: 128
   lightIntensity:
     m_OverrideState: 1
-    m_Value: 10
+    m_Value: 0.81
   lightFalloffAlpha:
     m_OverrideState: 1
-    m_Value: 0.1
+    m_Value: 0.033
   lightFalloffGamma:
     m_OverrideState: 1
-    m_Value: 2
+    m_Value: 10
   ambientColor:
     m_OverrideState: 1
     m_Value: {r: 0, g: 0, b: 0, a: 1}

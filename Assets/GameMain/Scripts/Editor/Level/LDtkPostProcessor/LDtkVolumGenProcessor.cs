@@ -13,10 +13,6 @@ namespace GameMain.Editor
     {
         public override int GetPostprocessOrder() => 5;
 
-        // Unity AssetDatabase 必须使用相对路径
-        private const string PROFILE_FOLDER_PATH =
-            "Assets/GameMain/LDtkProject/gm_ldtk_project/VolumeProfiles";
-
         protected override void OnPostprocessLevel(GameObject root, LdtkJson projectJson)
         {
             if (!root.TryGetComponent<LDtkComponentLevel>(out var level))
@@ -87,5 +83,8 @@ namespace GameMain.Editor
 
             EditorUtility.SetDirty(volumeGo);
         }
+
+        private const string PROFILE_FOLDER_PATH =
+            "Assets/GameMain/LDtkProject/gm_ldtk_project/VolumeProfiles";
     }
 }
