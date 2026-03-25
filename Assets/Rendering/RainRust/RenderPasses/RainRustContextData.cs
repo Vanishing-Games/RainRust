@@ -24,6 +24,7 @@ namespace RainRust.Rendering
     public class RainRustContextData : ContextItem
     {
         public TextureHandle mainRt;
+        public TextureHandle receiverRt;
         public TextureHandlePingPong jfaRt;
         public TextureHandle finalJfaRt;
         public TextureHandle distanceRt;
@@ -32,6 +33,7 @@ namespace RainRust.Rendering
         public override void Reset()
         {
             mainRt = TextureHandle.nullHandle;
+            receiverRt = TextureHandle.nullHandle;
             jfaRt = new TextureHandlePingPong(TextureHandle.nullHandle, TextureHandle.nullHandle);
             finalJfaRt = TextureHandle.nullHandle;
             distanceRt = TextureHandle.nullHandle;

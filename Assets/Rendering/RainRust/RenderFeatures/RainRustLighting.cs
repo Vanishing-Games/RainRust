@@ -8,11 +8,20 @@ namespace RainRust.Rendering
 {
     public class RainRustLighting : ScriptableRendererFeature
     {
+        public enum BlendMode
+        {
+            Additive,
+            AlphaBlend,
+            Multiply
+        }
+
         [Serializable]
         public class RainRustLightingSettings
         {
             public RenderPassEvent injectionPoint = RenderPassEvent.BeforeRenderingOpaques;
-            public LayerMask layerMask = -1;
+            public LayerMask lightSourcesLayerMask = -1;
+            public LayerMask receiversLayerMask = -1;
+            public BlendMode blendMode = BlendMode.Additive;
         }
 
         public RainRustLightingSettings settings = new();
@@ -48,6 +57,7 @@ namespace RainRust.Rendering
             m_RainRustRenderingPass.renderPassEvent   = settings.injectionPoint;
 
             m_RainRustDrawObjectsPass.Setup(settings);
+            m_RainRustRenderingPass.Setup(settings);
             
             renderer.EnqueuePass(m_RainRustDrawObjectsPass);
             renderer.EnqueuePass(m_JfaInitPass);

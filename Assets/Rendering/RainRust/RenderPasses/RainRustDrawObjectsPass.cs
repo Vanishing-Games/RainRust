@@ -27,7 +27,9 @@ namespace RainRust.Rendering
             public UniversalResourceData resourceData;
             public TextureHandle rrMainRt;
             public TextureHandle rrMainDepthRt;
-            public RendererListHandle rendererListHandle;
+            public TextureHandle rrReceiverRt;
+            public RendererListHandle lightSourcesRendererList;
+            public RendererListHandle receiversRendererList;
         }
 
         public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
@@ -44,6 +46,7 @@ namespace RainRust.Rendering
                 cameraData,
                 out TextureHandle mainRtHandle,
                 out TextureHandle mainDepthRtHandle,
+                out TextureHandle receiverRtHandle,
                 out TextureHandle jfaFirstRtHandle,
                 out TextureHandle jfaSecondRtHandle,
                 out TextureHandle distanceRtHandle,
@@ -53,6 +56,7 @@ namespace RainRust.Rendering
             // Store the texture handle in the context data so subsequent passes can use it
             RainRustContextData rainRustData = frameData.Create<RainRustContextData>();
             rainRustData.mainRt = mainRtHandle;
+            rainRustData.receiverRt = receiverRtHandle;
             rainRustData.jfaRt = new TextureHandlePingPong(jfaFirstRtHandle, jfaSecondRtHandle);
             rainRustData.distanceRt = distanceRtHandle;
             rainRustData.lightingRt = lightingRtHandle;
@@ -60,44 +64,84 @@ namespace RainRust.Rendering
             // 3. Update keywords and other shader params
             SetupKeywordsAndParameters(ref m_CurrentRrSettings, ref cameraData);
 
-            // 4. Record the render pass
+            // 4. Record Light Sources Pass
             using (
                 var builder = renderGraph.AddRasterRenderPass<RainRustDrawObjectsPassData>(
-                    "RainRust Draw Objects Pass",
+                    "RainRust Draw Light Sources Pass",
                     out var passData
                 )
             )
             {
                 builder.AllowPassCulling(false);
-
-                // 1. Fill in the pass data
-                InitDrawObjectsPassData(
-                    cameraData,
-                    renderingData,
-                    lightData,
-                    resourceData,
-                    ref passData
-                );
+                InitDrawObjectsPassData(cameraData, renderingData, lightData, resourceData, ref passData);
                 passData.rrMainRt = mainRtHandle;
                 passData.rrMainDepthRt = mainDepthRtHandle;
 
-                // 2. Setup render targets
                 builder.SetRenderAttachment(mainRtHandle, 0, AccessFlags.Write);
                 builder.SetRenderAttachmentDepth(mainDepthRtHandle, AccessFlags.Write);
 
-                // 3. Declare input textures
-                // builder.UseTexture(passData.rrMainRt, AccessFlags.ReadWrite); // this is used by attachment
+                // Light Sources Renderer List
+                SortingCriteria sortingCriteria = passData.cameraData.defaultOpaqueSortFlags;
+                LayerMask lightSourcesLayerMask = m_Settings != null ? m_Settings.lightSourcesLayerMask : (LayerMask)(-1);
+                FilteringSettings lightSourcesFiltering = new(RenderQueueRange.all, lightSourcesLayerMask);
+                DrawingSettings lightSourcesDrawing = RenderingUtils.CreateDrawingSettings(
+                    new ShaderTagId("UniversalForward"),
+                    passData.renderingData,
+                    passData.cameraData,
+                    passData.lightData,
+                    sortingCriteria
+                );
+                lightSourcesDrawing.SetShaderPassName(1, new ShaderTagId("UniversalForwardOnly"));
+                lightSourcesDrawing.SetShaderPassName(2, new ShaderTagId("SRPDefaultUnlit"));
+                lightSourcesDrawing.SetShaderPassName(3, new ShaderTagId("Lit"));
 
-                // 4. Get renderer lists
-                InitRendererLists(ref passData, renderGraph);
+                passData.lightSourcesRendererList = renderGraph.CreateRendererList(
+                    new RendererListParams(passData.renderingData.cullResults, lightSourcesDrawing, lightSourcesFiltering)
+                );
+                builder.UseRendererList(passData.lightSourcesRendererList);
 
-                // 5. Use renderer list
-                builder.UseRendererList(passData.rendererListHandle);
-
-                // 6. Setup render function
                 builder.SetRenderFunc(
                     static (RainRustDrawObjectsPassData data, RasterGraphContext context) =>
-                        ExecutePass(data, context)
+                        context.cmd.DrawRendererList(data.lightSourcesRendererList)
+                );
+            }
+
+            // 5. Record Receivers Pass
+            using (
+                var builder = renderGraph.AddRasterRenderPass<RainRustDrawObjectsPassData>(
+                    "RainRust Draw Receivers Pass",
+                    out var passData
+                )
+            )
+            {
+                builder.AllowPassCulling(false);
+                InitDrawObjectsPassData(cameraData, renderingData, lightData, resourceData, ref passData);
+                passData.rrReceiverRt = receiverRtHandle;
+                passData.rrMainDepthRt = mainDepthRtHandle;
+
+                builder.SetRenderAttachment(receiverRtHandle, 0, AccessFlags.Write);
+                builder.SetRenderAttachmentDepth(mainDepthRtHandle, AccessFlags.Write);
+
+                // Receivers Renderer List
+                SortingCriteria sortingCriteria = passData.cameraData.defaultOpaqueSortFlags;
+                LayerMask receiversLayerMask = m_Settings != null ? m_Settings.receiversLayerMask : (LayerMask)(-1);
+                FilteringSettings receiversFiltering = new(RenderQueueRange.all, receiversLayerMask);
+                DrawingSettings receiversDrawing = RenderingUtils.CreateDrawingSettings(
+                    new ShaderTagId("RainRustLighting"),
+                    passData.renderingData,
+                    passData.cameraData,
+                    passData.lightData,
+                    sortingCriteria
+                );
+
+                passData.receiversRendererList = renderGraph.CreateRendererList(
+                    new RendererListParams(passData.renderingData.cullResults, receiversDrawing, receiversFiltering)
+                );
+                builder.UseRendererList(passData.receiversRendererList);
+
+                builder.SetRenderFunc(
+                    static (RainRustDrawObjectsPassData data, RasterGraphContext context) =>
+                        context.cmd.DrawRendererList(data.receiversRendererList)
                 );
             }
         }
@@ -108,29 +152,45 @@ namespace RainRust.Rendering
         )
         {
             SortingCriteria sortingCriteria = passData.cameraData.defaultOpaqueSortFlags;
-            // Use RenderQueueRange.all to include both Opaque and Transparent objects
-            // Use configured LayerMask for filtering
-            LayerMask layerMask = m_Settings != null ? m_Settings.layerMask : (LayerMask)(-1);
-            FilteringSettings filteringSettings = new(RenderQueueRange.all, layerMask);
-
-            DrawingSettings drawingSettings = RenderingUtils.CreateDrawingSettings(
+            
+            // Light Sources
+            LayerMask lightSourcesLayerMask = m_Settings != null ? m_Settings.lightSourcesLayerMask : (LayerMask)(-1);
+            FilteringSettings lightSourcesFiltering = new(RenderQueueRange.all, lightSourcesLayerMask);
+            DrawingSettings lightSourcesDrawing = RenderingUtils.CreateDrawingSettings(
                 new ShaderTagId("UniversalForward"),
                 passData.renderingData,
                 passData.cameraData,
                 passData.lightData,
                 sortingCriteria
             );
+            lightSourcesDrawing.SetShaderPassName(1, new ShaderTagId("UniversalForwardOnly"));
+            lightSourcesDrawing.SetShaderPassName(2, new ShaderTagId("SRPDefaultUnlit"));
+            lightSourcesDrawing.SetShaderPassName(3, new ShaderTagId("Lit"));
 
-            // Add other common URP tags to catch more shaders
-            drawingSettings.SetShaderPassName(1, new ShaderTagId("UniversalForwardOnly"));
-            drawingSettings.SetShaderPassName(2, new ShaderTagId("SRPDefaultUnlit"));
-            drawingSettings.SetShaderPassName(3, new ShaderTagId("Lit"));
-
-            passData.rendererListHandle = renderGraph.CreateRendererList(
+            passData.lightSourcesRendererList = renderGraph.CreateRendererList(
                 new RendererListParams(
                     passData.renderingData.cullResults,
-                    drawingSettings,
-                    filteringSettings
+                    lightSourcesDrawing,
+                    lightSourcesFiltering
+                )
+            );
+
+            // Receivers
+            LayerMask receiversLayerMask = m_Settings != null ? m_Settings.receiversLayerMask : (LayerMask)(-1);
+            FilteringSettings receiversFiltering = new(RenderQueueRange.all, receiversLayerMask);
+            DrawingSettings receiversDrawing = RenderingUtils.CreateDrawingSettings(
+                new ShaderTagId("RainRustLighting"),
+                passData.renderingData,
+                passData.cameraData,
+                passData.lightData,
+                sortingCriteria
+            );
+
+            passData.receiversRendererList = renderGraph.CreateRendererList(
+                new RendererListParams(
+                    passData.renderingData.cullResults,
+                    receiversDrawing,
+                    receiversFiltering
                 )
             );
         }
@@ -160,6 +220,7 @@ namespace RainRust.Rendering
             UniversalCameraData cameraData,
             out TextureHandle mainRtHandle,
             out TextureHandle mainDepthRtHandle,
+            out TextureHandle receiverRtHandle,
             out TextureHandle jfaFirstRtHandle,
             out TextureHandle jfaSecondRtHandle,
             out TextureHandle distanceRtHandle,
@@ -184,6 +245,15 @@ namespace RainRust.Rendering
                 renderGraph,
                 textureDescriptor,
                 "RainRust Main Texture",
+                true,
+                FilterMode.Bilinear,
+                TextureWrapMode.Clamp
+            );
+
+            receiverRtHandle = UniversalRenderer.CreateRenderGraphTexture(
+                renderGraph,
+                textureDescriptor,
+                "RainRust Receiver Texture",
                 true,
                 FilterMode.Bilinear,
                 TextureWrapMode.Clamp
@@ -244,8 +314,9 @@ namespace RainRust.Rendering
         {
             var cmd = context.cmd;
 
-            // Draw the objects in the list
-            cmd.DrawRendererList(data.rendererListHandle);
+            // Draw the objects in the lists
+            cmd.DrawRendererList(data.lightSourcesRendererList);
+            cmd.DrawRendererList(data.receiversRendererList);
         }
 
         private static readonly ProfilingSampler sDrawObjectsProfilingSampler = new(
