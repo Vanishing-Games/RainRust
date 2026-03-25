@@ -59,6 +59,7 @@ namespace PlayerControlByOris
                 mPCComponent.RespawnTimer--;
                 //之后改为执行一次
                 mPCComponent.mTranform.position = mPCComponent.RespawnPos;
+                mPCComponent.BeeToThrow.ChangeState(BeeState.FollowSt);
             }
 
             if (mPCComponent.RespawnTimer == 0)
