@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Core.Extensions;
 using UnityEngine;
 
 namespace Core
@@ -136,6 +137,10 @@ namespace Core
             }
 
             UpdateLayerProperties();
+
+            gameObject.SetLayerRecursively(LayerMask.NameToLayer("BackGround"));
+            gameObject.SetTagRecursively("BackGround");
+            gameObject.SetSortingLayerRecursively("BackGround");
         }
 
         private void UpdateLayerProperties()

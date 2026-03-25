@@ -13,6 +13,16 @@ MonoBehaviour:
   m_Name: RainRustLighting
   m_EditorClassIdentifier: RainRust.Rendering::RainRust.Rendering.RainRustLighting
   m_Active: 1
+  settings:
+    injectionPoint: 500
+    lightSourcesLayerMask:
+      serializedVersion: 2
+      m_Bits: 2147613951
+    receiversLayerMask:
+      serializedVersion: 2
+      m_Bits: 3221355775
+    receiverBlendMode: 1
+    lightingBlendMode: 0
 --- !u!114 &-550442475629455102
 MonoBehaviour:
   m_ObjectHideFlags: 0
