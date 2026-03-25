@@ -57,6 +57,9 @@ TagManager:
   - name: LogicMap
     uniqueID: 3573762187
     locked: 0
+  - name: BackGroundTile
+    uniqueID: 1674556267
+    locked: 0
   - name: Entity
     uniqueID: 935505379
     locked: 0
@@ -65,6 +68,9 @@ TagManager:
     locked: 0
   - name: ManualTile
     uniqueID: 2346397863
+    locked: 0
+  - name: ForeGround
+    uniqueID: 3569134307
     locked: 0
   m_RenderingLayers:
   - Default

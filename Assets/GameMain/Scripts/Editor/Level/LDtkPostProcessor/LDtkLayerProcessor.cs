@@ -53,13 +53,13 @@ namespace GameMain.Editor
                     case LDtkIdentifiers.AutoTiles_BG_A:
                         layer.gameObject.SetLayerRecursively(LayerMask.NameToLayer("AutoTile"));
                         layer.gameObject.SetTagRecursively("AutoTile");
-                        layer.gameObject.SetSortingLayerRecursively("AutoTile");
+                        layer.gameObject.SetSortingLayerRecursively("BackGroundTile");
 
                         break;
                     case LDtkIdentifiers.AutoTiles_BG_B:
                         layer.gameObject.SetLayerRecursively(LayerMask.NameToLayer("AutoTile"));
                         layer.gameObject.SetTagRecursively("AutoTile");
-                        layer.gameObject.SetSortingLayerRecursively("AutoTile");
+                        layer.gameObject.SetSortingLayerRecursively("BackGroundTile");
 
                         break;
                     case LDtkIdentifiers.AutoTiles_Wall_A:

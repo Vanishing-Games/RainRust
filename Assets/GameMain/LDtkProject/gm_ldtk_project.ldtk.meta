@@ -28,6 +28,8 @@ ScriptedImporter:
   _entities:
   - _key: LevelTransition
     _asset: {instanceID: 0}
+  - _key: Entity
+    _asset: {instanceID: 0}
   _enumGenerate: 1
   _enumPath: gm_ldtk_project/GmLDtkEnums.cs
   _enumNamespace: GameMain.LDtk
