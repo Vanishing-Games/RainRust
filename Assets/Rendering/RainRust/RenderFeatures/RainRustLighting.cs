@@ -12,7 +12,9 @@ namespace RainRust.Rendering
         {
             Additive,
             AlphaBlend,
-            Multiply
+            Multiply,
+            Screen,
+            Overlay
         }
 
         [Serializable]
@@ -21,7 +23,9 @@ namespace RainRust.Rendering
             public RenderPassEvent injectionPoint = RenderPassEvent.BeforeRenderingOpaques;
             public LayerMask lightSourcesLayerMask = -1;
             public LayerMask receiversLayerMask = -1;
-            public BlendMode blendMode = BlendMode.Additive;
+            [Header("Composition Settings")]
+            public BlendMode receiverBlendMode = BlendMode.AlphaBlend;
+            public BlendMode lightingBlendMode = BlendMode.Additive;
         }
 
         public RainRustLightingSettings settings = new();

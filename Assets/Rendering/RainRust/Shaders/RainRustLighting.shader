@@ -68,6 +68,9 @@ Shader "RainRust/RainRustLighting"
             color.a = alpha.r;
             #endif
 
+            // Discard transparent pixels so they don't write depth/stencil
+            clip(color.a - 0.1);
+
             return color;
         }
         ENDHLSL
@@ -78,8 +81,15 @@ Shader "RainRust/RainRustLighting"
             Name "RainRustLighting"
             Tags { "LightMode" = "RainRustLighting" }
 
+            Stencil
+            {
+                Ref 1
+                Comp Always
+                Pass Replace
+            }
+
             Blend SrcAlpha OneMinusSrcAlpha
-            ZWrite Off
+            ZWrite On
             Cull Off
 
             HLSLPROGRAM

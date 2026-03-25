@@ -21,7 +21,8 @@ MonoBehaviour:
     receiversLayerMask:
       serializedVersion: 2
       m_Bits: 3221355775
-    blendMode: 1
+    receiverBlendMode: 1
+    lightingBlendMode: 0
 --- !u!114 &-550442475629455102
 MonoBehaviour:
   m_ObjectHideFlags: 0

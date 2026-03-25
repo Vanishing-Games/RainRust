@@ -24,8 +24,10 @@ namespace RainRust.Rendering
             public Material material;
             public TextureHandle lightingRt;
             public TextureHandle receiverRt;
+            public TextureHandle receiverDepthRt;
             public TextureHandle cameraColor;
-            public RainRustLighting.BlendMode blendMode;
+            public RainRustLighting.BlendMode receiverBlendMode;
+            public RainRustLighting.BlendMode lightingBlendMode;
         }
 
         public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
@@ -61,12 +63,16 @@ namespace RainRust.Rendering
                 passData.material = m_RenderingMaterial;
                 passData.lightingRt = rainRustContextData.lightingRt;
                 passData.receiverRt = rainRustContextData.receiverRt;
+                passData.receiverDepthRt = rainRustContextData.mainDepthRt;
                 passData.cameraColor = cameraColor;
-                passData.blendMode =
-                    m_Settings != null ? m_Settings.blendMode : RainRustLighting.BlendMode.Additive;
+                passData.receiverBlendMode =
+                    m_Settings != null ? m_Settings.receiverBlendMode : RainRustLighting.BlendMode.AlphaBlend;
+                passData.lightingBlendMode =
+                    m_Settings != null ? m_Settings.lightingBlendMode : RainRustLighting.BlendMode.Additive;
 
                 builder.UseTexture(passData.lightingRt, AccessFlags.Read);
                 builder.UseTexture(passData.receiverRt, AccessFlags.Read);
+                builder.UseTexture(passData.receiverDepthRt, AccessFlags.Read);
                 builder.UseTexture(passData.cameraColor, AccessFlags.Read);
                 builder.SetRenderAttachment(tempColor, 0, AccessFlags.Write);
 
@@ -78,22 +84,39 @@ namespace RainRust.Rendering
                         data.material.SetTexture("_MainTex", data.cameraColor);
                         data.material.SetTexture("_LightingTex", data.lightingRt);
                         data.material.SetTexture("_ReceiverTex", data.receiverRt);
+                        data.material.SetTexture("_ReceiverDepthTex", data.receiverDepthRt);
 
-                        data.material.DisableKeyword("BLEND_ADDITIVE");
-                        data.material.DisableKeyword("BLEND_ALPHABLEND");
-                        data.material.DisableKeyword("BLEND_MULTIPLY");
+                        // Clear keywords
+                        data.material.DisableKeyword("RECEIVER_BLEND_ADDITIVE");
+                        data.material.DisableKeyword("RECEIVER_BLEND_ALPHABLEND");
+                        data.material.DisableKeyword("RECEIVER_BLEND_MULTIPLY");
+                        data.material.DisableKeyword("RECEIVER_BLEND_SCREEN");
+                        data.material.DisableKeyword("RECEIVER_BLEND_OVERLAY");
 
-                        switch (data.blendMode)
+                        data.material.DisableKeyword("LIGHTING_BLEND_ADDITIVE");
+                        data.material.DisableKeyword("LIGHTING_BLEND_ALPHABLEND");
+                        data.material.DisableKeyword("LIGHTING_BLEND_MULTIPLY");
+                        data.material.DisableKeyword("LIGHTING_BLEND_SCREEN");
+                        data.material.DisableKeyword("LIGHTING_BLEND_OVERLAY");
+
+                        // Set receiver blend keywords
+                        switch (data.receiverBlendMode)
                         {
-                            case RainRustLighting.BlendMode.Additive:
-                                data.material.EnableKeyword("BLEND_ADDITIVE");
-                                break;
-                            case RainRustLighting.BlendMode.AlphaBlend:
-                                data.material.EnableKeyword("BLEND_ALPHABLEND");
-                                break;
-                            case RainRustLighting.BlendMode.Multiply:
-                                data.material.EnableKeyword("BLEND_MULTIPLY");
-                                break;
+                            case RainRustLighting.BlendMode.Additive: data.material.EnableKeyword("RECEIVER_BLEND_ADDITIVE"); break;
+                            case RainRustLighting.BlendMode.AlphaBlend: data.material.EnableKeyword("RECEIVER_BLEND_ALPHABLEND"); break;
+                            case RainRustLighting.BlendMode.Multiply: data.material.EnableKeyword("RECEIVER_BLEND_MULTIPLY"); break;
+                            case RainRustLighting.BlendMode.Screen: data.material.EnableKeyword("RECEIVER_BLEND_SCREEN"); break;
+                            case RainRustLighting.BlendMode.Overlay: data.material.EnableKeyword("RECEIVER_BLEND_OVERLAY"); break;
+                        }
+
+                        // Set lighting blend keywords
+                        switch (data.lightingBlendMode)
+                        {
+                            case RainRustLighting.BlendMode.Additive: data.material.EnableKeyword("LIGHTING_BLEND_ADDITIVE"); break;
+                            case RainRustLighting.BlendMode.AlphaBlend: data.material.EnableKeyword("LIGHTING_BLEND_ALPHABLEND"); break;
+                            case RainRustLighting.BlendMode.Multiply: data.material.EnableKeyword("LIGHTING_BLEND_MULTIPLY"); break;
+                            case RainRustLighting.BlendMode.Screen: data.material.EnableKeyword("LIGHTING_BLEND_SCREEN"); break;
+                            case RainRustLighting.BlendMode.Overlay: data.material.EnableKeyword("LIGHTING_BLEND_OVERLAY"); break;
                         }
 
                         // Use a full-screen draw

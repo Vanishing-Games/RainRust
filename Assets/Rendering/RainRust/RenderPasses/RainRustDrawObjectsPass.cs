@@ -56,6 +56,7 @@ namespace RainRust.Rendering
             // Store the texture handle in the context data so subsequent passes can use it
             RainRustContextData rainRustData = frameData.Create<RainRustContextData>();
             rainRustData.mainRt = mainRtHandle;
+            rainRustData.mainDepthRt = mainDepthRtHandle;
             rainRustData.receiverRt = receiverRtHandle;
             rainRustData.jfaRt = new TextureHandlePingPong(jfaFirstRtHandle, jfaSecondRtHandle);
             rainRustData.distanceRt = distanceRtHandle;
