@@ -11,18 +11,18 @@ namespace GameMain.RunTime
     public class DebugUIManager : MonoBehaviour
     {
         private static DebugUIManager _instance;
-        private Dictionary<string, string> _debugEntries = new Dictionary<string, string>();
-        private List<string> _orderedKeys = new List<string>();
+        private Dictionary<string, string> _debugEntries = new();
+        private List<string> _orderedKeys = new();
 
         [Header("Style Settings")]
-        public Color backgroundColor = new Color(0, 0, 0, 0.7f);
+        public Color backgroundColor = new(0, 0, 0, 0.7f);
         public Color textColor = Color.white;
         public int fontSize = 14;
         public FontStyle fontStyle = FontStyle.Normal;
 
         [Header("Layout Settings")]
-        public Vector2 padding = new Vector2(10, 10);
-        public float minWidth = 150f;
+        public Vector2 padding = new(10, 10);
+        public float minWidth = 350f;
         public float spacing = 5f;
 
         private GUIStyle _boxStyle;
@@ -80,7 +80,7 @@ namespace GameMain.RunTime
             // Calculate Area Rect
             float w = Screen.width - padding.x * 2;
             float h = Screen.height - padding.y * 2;
-            Rect areaRect = new Rect(padding.x, padding.y, w, h);
+            Rect areaRect = new(padding.x, padding.y, w, h);
 
             GUILayout.BeginArea(areaRect);
 
@@ -99,15 +99,7 @@ namespace GameMain.RunTime
             {
                 foreach (var key in _orderedKeys)
                 {
-                    GUILayout.BeginHorizontal();
-                    GUILayout.Label(
-                        $"<b>{key}:</b>",
-                        _labelStyle,
-                        GUILayout.Width(minWidth * 0.4f)
-                    );
-                    GUILayout.Space(spacing);
-                    GUILayout.Label(_debugEntries[key], _labelStyle);
-                    GUILayout.EndHorizontal();
+                    GUILayout.Label($"<b>{key}:</b> {_debugEntries[key]}", _labelStyle);
                 }
             }
 
@@ -122,19 +114,25 @@ namespace GameMain.RunTime
                 _backgroundTexture = new Texture2D(1, 1);
             }
 
-            _backgroundTexture.SetPixel(0, 0, backgroundColor);
-            _backgroundTexture.Apply();
+            // Only apply texture changes if needed to be more efficient
+            Color currentColor = _backgroundTexture.GetPixel(0, 0);
+            if (currentColor != backgroundColor)
+            {
+                _backgroundTexture.SetPixel(0, 0, backgroundColor);
+                _backgroundTexture.Apply();
+            }
 
-            if (_boxStyle == null)
-                _boxStyle = new GUIStyle();
+            _boxStyle ??= new GUIStyle();
             _boxStyle.normal.background = _backgroundTexture;
             _boxStyle.padding = new RectOffset(8, 8, 8, 8);
 
             if (_labelStyle == null)
             {
-                _labelStyle = new GUIStyle();
-                _labelStyle.richText = true;
-                _labelStyle.wordWrap = false;
+                _labelStyle = new GUIStyle(GUI.skin.label)
+                {
+                    richText = true,
+                    wordWrap = false
+                };
             }
 
             _labelStyle.fontSize = fontSize;
