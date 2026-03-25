@@ -89,7 +89,7 @@ namespace RainRust.Rendering
                 passData.rrScaledDepthRt = scaledDepthRtHandle;
 
                 builder.SetRenderAttachment(mainRtHandle, 0, AccessFlags.Write);
-                builder.SetRenderAttachmentDepth(scaledDepthRtHandle, AccessFlags.Write);
+                // builder.SetRenderAttachmentDepth(scaledDepthRtHandle, AccessFlags.Write);
 
                 // Light Sources Renderer List
                 SortingCriteria sortingCriteria = passData.cameraData.defaultOpaqueSortFlags;
