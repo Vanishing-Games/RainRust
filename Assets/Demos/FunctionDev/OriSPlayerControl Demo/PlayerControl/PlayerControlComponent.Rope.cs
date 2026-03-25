@@ -15,7 +15,7 @@ namespace PlayerControlByOris
             || CurrentState == PlayerStateMachine.DashState;
 
         /// <returns>抓钩的枪口位置</returns>
-        public Vector3 GetGrappleTipPosition() => mTranform.position;
+        public Vector3 GetGrappleTipPosition() => mTranform.position - ThrowStartOffset;
 
         /// <returns>抓钩的终点位置</returns>
         public Vector3 GetGrapplePosition() =>
