@@ -97,17 +97,18 @@ namespace RainRust.Rendering
                     RenderQueueRange.all,
                     lightSourcesLayerMask
                 );
+
                 DrawingSettings lightSourcesDrawing = RenderingUtils.CreateDrawingSettings(
-                    new ShaderTagId("UniversalForward"),
+                    new ShaderTagId("RainRustLightSource"),
                     passData.renderingData,
                     passData.cameraData,
                     passData.lightData,
                     sortingCriteria
                 );
-                lightSourcesDrawing.SetShaderPassName(1, new ShaderTagId("UniversalForwardOnly"));
-                lightSourcesDrawing.SetShaderPassName(2, new ShaderTagId("SRPDefaultUnlit"));
-                lightSourcesDrawing.SetShaderPassName(3, new ShaderTagId("Lit"));
-                lightSourcesDrawing.SetShaderPassName(4, new ShaderTagId("RainRustLighting"));
+                lightSourcesDrawing.SetShaderPassName(1, new ShaderTagId("UniversalForward"));
+                lightSourcesDrawing.SetShaderPassName(2, new ShaderTagId("UniversalForwardOnly"));
+                lightSourcesDrawing.SetShaderPassName(3, new ShaderTagId("SRPDefaultUnlit"));
+                lightSourcesDrawing.SetShaderPassName(4, new ShaderTagId("Lit"));
 
                 passData.lightSourcesRendererList = renderGraph.CreateRendererList(
                     new RendererListParams(
@@ -154,6 +155,8 @@ namespace RainRust.Rendering
                     RenderQueueRange.all,
                     receiversLayerMask
                 );
+                
+                // 专门寻找接收者标签
                 DrawingSettings receiversDrawing = RenderingUtils.CreateDrawingSettings(
                     new ShaderTagId("RainRustLighting"),
                     passData.renderingData,
@@ -193,15 +196,15 @@ namespace RainRust.Rendering
                 lightSourcesLayerMask
             );
             DrawingSettings lightSourcesDrawing = RenderingUtils.CreateDrawingSettings(
-                new ShaderTagId("UniversalForward"),
+                new ShaderTagId("RainRustLightSource"),
                 passData.renderingData,
                 passData.cameraData,
                 passData.lightData,
                 sortingCriteria
             );
-            lightSourcesDrawing.SetShaderPassName(1, new ShaderTagId("UniversalForwardOnly"));
-            lightSourcesDrawing.SetShaderPassName(2, new ShaderTagId("SRPDefaultUnlit"));
-            lightSourcesDrawing.SetShaderPassName(3, new ShaderTagId("Lit"));
+            lightSourcesDrawing.SetShaderPassName(1, new ShaderTagId("UniversalForward"));
+            lightSourcesDrawing.SetShaderPassName(2, new ShaderTagId("UniversalForwardOnly"));
+            lightSourcesDrawing.SetShaderPassName(3, new ShaderTagId("SRPDefaultUnlit"));
 
             passData.lightSourcesRendererList = renderGraph.CreateRendererList(
                 new RendererListParams(

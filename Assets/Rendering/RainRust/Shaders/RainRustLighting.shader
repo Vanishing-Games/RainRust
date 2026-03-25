@@ -5,6 +5,7 @@ Shader "RainRust/RainRustLighting"
         [MainTexture] _MainTex("Sprite Texture", 2D) = "white" {}
         _Color("Tint", Color) = (1,1,1,1)
         [Toggle(_ACCEPT_LIGHTING)] _AcceptLighting("Accept Lighting", Float) = 1.0
+        [Toggle(_EMIT_LIGHTING)] _EmitLighting("Emit Lighting", Float) = 1.0
         
         [MaterialToggle] PixelSnap ("Pixel snap", Float) = 0
         [HideInInspector] _RendererColor ("RendererColor", Color) = (1,1,1,1)
@@ -68,14 +69,43 @@ Shader "RainRust/RainRustLighting"
             color.a = alpha.r;
             #endif
 
-            // Discard transparent pixels so they don't write depth/stencil
+            // Discard transparent pixels
             clip(color.a - 0.1);
 
             return color;
         }
         ENDHLSL
 
-        // Pass 1: 用于 RainRust 光照系统的自定义渲染
+        // Pass 1: 用于 RainRust 光源提取 (Light Sources Pass)
+        // 只有当材质开启了 _EMIT_LIGHTING 时，此 Pass 才会产生输出
+        Pass
+        {
+            Name "RainRustLightSource"
+            Tags { "LightMode" = "RainRustLightSource" }
+
+            Blend SrcAlpha OneMinusSrcAlpha
+            ZWrite On
+            Cull Off
+
+            HLSLPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+            #pragma multi_compile _ PIXELSNAP_ON
+            #pragma multi_compile _ ETC1_EXTERNAL_ALPHA
+            #pragma shader_feature _EMIT_LIGHTING
+
+            float4 frag(Varyings input) : SV_Target
+            {
+                #if !defined(_EMIT_LIGHTING)
+                discard; // 如果未开启发射光照，则在光源阶段不渲染
+                #endif
+                return frag_common(input);
+            }
+            ENDHLSL
+        }
+
+        // Pass 2: 用于 RainRust 接收者渲染 (Receivers Pass)
+        // 只有当材质开启了 _ACCEPT_LIGHTING 时，此 Pass 才会产生输出
         Pass
         {
             Name "RainRustLighting"
@@ -101,16 +131,15 @@ Shader "RainRust/RainRustLighting"
 
             float4 frag(Varyings input) : SV_Target
             {
-                // 如果没有勾选 Accept Lighting，则在这个 Pass 中不渲染
                 #if !defined(_ACCEPT_LIGHTING)
-                discard;
+                discard; // 如果未开启接受光照，则在接收者阶段不渲染
                 #endif
                 return frag_common(input);
             }
             ENDHLSL
         }
 
-        // Pass 2: 用于 URP 标准渲染（当不接受光照时）
+        // Pass 3: 用于 URP 标准渲染（ fallback / 预览）
         Pass
         {
             Name "UniversalForward"
@@ -129,7 +158,7 @@ Shader "RainRust/RainRustLighting"
 
             float4 frag(Varyings input) : SV_Target
             {
-                // 如果勾选了 Accept Lighting，则在这个 Pass 中不渲染（交给上面的 Pass 处理）
+                // 如果开启了接受光照，则在 URP 默认渲染中禁用自己（交给 RainRust 特性处理渲染）
                 #if defined(_ACCEPT_LIGHTING)
                 discard;
                 #endif
