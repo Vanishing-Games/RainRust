@@ -4,8 +4,8 @@ Shader "RainRust/RainRustLighting"
     {
         [MainTexture] _MainTex("Sprite Texture", 2D) = "white" {}
         _Color("Tint", Color) = (1,1,1,1)
-        [Toggle(_ACCEPT_LIGHTING)] _AcceptLighting("Accept Lighting", Float) = 1.0
         [Toggle(_EMIT_LIGHTING)] _EmitLighting("Emit Lighting", Float) = 1.0
+        [Toggle(_ACCEPT_LIGHTING)] _AcceptLighting("Accept Lighting(Toggle on cause this is useless)", Float) = 1.0
         
         [MaterialToggle] PixelSnap ("Pixel snap", Float) = 0
         [HideInInspector] _RendererColor ("RendererColor", Color) = (1,1,1,1)
