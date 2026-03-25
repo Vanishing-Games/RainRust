@@ -65,6 +65,10 @@ namespace Core
             "LevelTransitionProcessor",
             LdtkProcessor.Path
         );
+        public static readonly LogTag LDtkVolumGenProcessor = new(
+            "LDtkVolumGenProcessor",
+            LdtkProcessor.Path
+        );
         public static readonly LogTag LevelRoom = new("LevelRoom", LevelManager.Path);
         public static readonly LogTag LDtkChapterBackgroundProcessor = new(
             "LDtkChapterBackgroundProcessor",

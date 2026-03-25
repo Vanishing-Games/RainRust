@@ -10,28 +10,9 @@ namespace GameMain.RunTime
     [ExecuteInEditMode]
     public class DebugUIManager : MonoBehaviour
     {
-        private static DebugUIManager _instance;
-        private Dictionary<string, string> _debugEntries = new();
-        private List<string> _orderedKeys = new();
-
-        [Header("Style Settings")]
-        public Color backgroundColor = new(0, 0, 0, 0.7f);
-        public Color textColor = Color.white;
-        public int fontSize = 14;
-        public FontStyle fontStyle = FontStyle.Normal;
-
-        [Header("Layout Settings")]
-        public Vector2 padding = new(10, 10);
-        public float minWidth = 350f;
-        public float spacing = 5f;
-
-        private GUIStyle _boxStyle;
-        private GUIStyle _labelStyle;
-        private Texture2D _backgroundTexture;
-
         private void OnEnable()
         {
-            if (_instance != null && _instance != this)
+            if (m_Instance != null && m_Instance != this)
             {
                 if (Application.isPlaying)
                 {
@@ -39,7 +20,7 @@ namespace GameMain.RunTime
                     return;
                 }
             }
-            _instance = this;
+            m_Instance = this;
 
             if (Application.isPlaying)
             {
@@ -54,52 +35,52 @@ namespace GameMain.RunTime
         /// <param name="value">The object to display (ToString() will be called)</param>
         public static void Log(string name, object value)
         {
-            if (_instance == null)
+            if (m_Instance == null)
             {
-                _instance = FindFirstObjectByType<DebugUIManager>();
-                if (_instance == null)
+                m_Instance = FindFirstObjectByType<DebugUIManager>();
+                if (m_Instance == null)
                     return;
             }
 
             string valStr = value != null ? value.ToString() : "null";
 
-            if (!_instance._debugEntries.ContainsKey(name))
+            if (!m_Instance.m_DebugEntries.ContainsKey(name))
             {
-                _instance._orderedKeys.Add(name);
+                m_Instance.m_OrderedKeys.Add(name);
             }
-            _instance._debugEntries[name] = valStr;
+            m_Instance.m_DebugEntries[name] = valStr;
         }
 
         private void OnGUI()
         {
-            if (_orderedKeys.Count == 0 && !Application.isEditor)
+            if (m_OrderedKeys.Count == 0 && !Application.isEditor)
                 return;
 
             UpdateStyles();
 
             // Calculate Area Rect
-            float w = Screen.width - padding.x * 2;
-            float h = Screen.height - padding.y * 2;
-            Rect areaRect = new(padding.x, padding.y, w, h);
+            float w = Screen.width - m_Padding.x * 2;
+            float h = Screen.height - m_Padding.y * 2;
+            Rect areaRect = new(m_Padding.x, m_Padding.y, w, h);
 
             GUILayout.BeginArea(areaRect);
 
             // Outer Box with dynamic height
             GUILayout.BeginVertical(
-                _boxStyle,
-                GUILayout.MinWidth(minWidth),
+                m_BoxStyle,
+                GUILayout.MinWidth(m_MinWidth),
                 GUILayout.ExpandWidth(false)
             );
 
-            if (_orderedKeys.Count == 0)
+            if (m_OrderedKeys.Count == 0)
             {
-                GUILayout.Label("<color=grey><i>No active logs...</i></color>", _labelStyle);
+                GUILayout.Label("<color=grey><i>No active logs...</i></color>", m_LabelStyle);
             }
             else
             {
-                foreach (var key in _orderedKeys)
+                foreach (var key in m_OrderedKeys)
                 {
-                    GUILayout.Label($"<b>{key}:</b> {_debugEntries[key]}", _labelStyle);
+                    GUILayout.Label($"<b>{key}:</b> {m_DebugEntries[key]}", m_LabelStyle);
                 }
             }
 
@@ -109,44 +90,56 @@ namespace GameMain.RunTime
 
         private void UpdateStyles()
         {
-            if (_backgroundTexture == null)
+            if (m_BackgroundTexture == null)
             {
-                _backgroundTexture = new Texture2D(1, 1);
+                m_BackgroundTexture = new Texture2D(1, 1);
             }
 
             // Only apply texture changes if needed to be more efficient
-            Color currentColor = _backgroundTexture.GetPixel(0, 0);
-            if (currentColor != backgroundColor)
+            Color currentColor = m_BackgroundTexture.GetPixel(0, 0);
+            if (currentColor != m_BackgroundColor)
             {
-                _backgroundTexture.SetPixel(0, 0, backgroundColor);
-                _backgroundTexture.Apply();
+                m_BackgroundTexture.SetPixel(0, 0, m_BackgroundColor);
+                m_BackgroundTexture.Apply();
             }
 
-            _boxStyle ??= new GUIStyle();
-            _boxStyle.normal.background = _backgroundTexture;
-            _boxStyle.padding = new RectOffset(8, 8, 8, 8);
+            m_BoxStyle ??= new GUIStyle();
+            m_BoxStyle.normal.background = m_BackgroundTexture;
+            m_BoxStyle.padding = new RectOffset(8, 8, 8, 8);
 
-            if (_labelStyle == null)
-            {
-                _labelStyle = new GUIStyle(GUI.skin.label)
-                {
-                    richText = true,
-                    wordWrap = false
-                };
-            }
+            m_LabelStyle ??= new GUIStyle(GUI.skin.label) { richText = true, wordWrap = false };
 
-            _labelStyle.fontSize = fontSize;
-            _labelStyle.normal.textColor = textColor;
-            _labelStyle.fontStyle = fontStyle;
-            _labelStyle.alignment = TextAnchor.MiddleLeft;
+            m_LabelStyle.fontSize = m_FontSize;
+            m_LabelStyle.normal.textColor = m_TextColor;
+            m_LabelStyle.fontStyle = m_FontStyle;
+            m_LabelStyle.alignment = TextAnchor.MiddleLeft;
         }
 
         private void OnDestroy()
         {
-            if (_backgroundTexture != null)
+            if (m_BackgroundTexture != null)
             {
-                DestroyImmediate(_backgroundTexture);
+                DestroyImmediate(m_BackgroundTexture);
             }
         }
+
+        [Header("Style Settings")]
+        public Color m_BackgroundColor = new(0, 0, 0, 0.7f);
+        public Color m_TextColor = Color.white;
+        public int m_FontSize = 14;
+        public FontStyle m_FontStyle = FontStyle.Normal;
+
+        [Header("Layout Settings")]
+        public Vector2 m_Padding = new(10, 10);
+        public float m_MinWidth = 350f;
+        public float m_Spacing = 5f;
+
+        private static DebugUIManager m_Instance;
+        private Dictionary<string, string> m_DebugEntries = new();
+        private List<string> m_OrderedKeys = new();
+
+        private GUIStyle m_BoxStyle;
+        private GUIStyle m_LabelStyle;
+        private Texture2D m_BackgroundTexture;
     }
 }
