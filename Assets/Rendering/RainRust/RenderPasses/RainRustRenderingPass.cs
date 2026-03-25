@@ -1,3 +1,4 @@
+using Core;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.RenderGraphModule;
@@ -37,16 +38,32 @@ namespace RainRust.Rendering
         public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
         {
             if (m_Settings == null)
+            {
+                CLogger.LogError("[RainRust] RenderingPass: m_Settings is null!", LogTag.Rendering);
                 return;
+            }
 
             // Ensure material is created
             if (m_RenderingMaterial == null && m_Settings.compositionShader != null)
             {
                 m_RenderingMaterial = CoreUtils.CreateEngineMaterial(m_Settings.compositionShader);
+                if (m_RenderingMaterial == null)
+                    CLogger.LogError(
+                        "[RainRust] RenderingPass: Failed to create Composition Material!",
+                        LogTag.Rendering
+                    );
             }
 
             if (m_RenderingMaterial == null)
+            {
+                if (m_Settings.compositionShader == null)
+                    CLogger.LogError(
+                        "[RainRust] RenderingPass: Composition Shader is null!",
+                        LogTag.Rendering
+                    );
                 return;
+            }
+
 
             var rainRustContextData = frameData.Get<RainRustContextData>();
             var resourceData = frameData.Get<UniversalResourceData>();
@@ -104,21 +121,41 @@ namespace RainRust.Rendering
                         // Set receiver blend keywords
                         switch (data.receiverBlendMode)
                         {
-                            case RainRustLighting.BlendMode.Additive: data.material.EnableKeyword("RECEIVER_BLEND_ADDITIVE"); break;
-                            case RainRustLighting.BlendMode.AlphaBlend: data.material.EnableKeyword("RECEIVER_BLEND_ALPHABLEND"); break;
-                            case RainRustLighting.BlendMode.Multiply: data.material.EnableKeyword("RECEIVER_BLEND_MULTIPLY"); break;
-                            case RainRustLighting.BlendMode.Screen: data.material.EnableKeyword("RECEIVER_BLEND_SCREEN"); break;
-                            case RainRustLighting.BlendMode.Overlay: data.material.EnableKeyword("RECEIVER_BLEND_OVERLAY"); break;
+                            case RainRustLighting.BlendMode.Additive:
+                                data.material.EnableKeyword("RECEIVER_BLEND_ADDITIVE");
+                                break;
+                            case RainRustLighting.BlendMode.AlphaBlend:
+                                data.material.EnableKeyword("RECEIVER_BLEND_ALPHABLEND");
+                                break;
+                            case RainRustLighting.BlendMode.Multiply:
+                                data.material.EnableKeyword("RECEIVER_BLEND_MULTIPLY");
+                                break;
+                            case RainRustLighting.BlendMode.Screen:
+                                data.material.EnableKeyword("RECEIVER_BLEND_SCREEN");
+                                break;
+                            case RainRustLighting.BlendMode.Overlay:
+                                data.material.EnableKeyword("RECEIVER_BLEND_OVERLAY");
+                                break;
                         }
 
                         // Set lighting blend keywords
                         switch (data.lightingBlendMode)
                         {
-                            case RainRustLighting.BlendMode.Additive: data.material.EnableKeyword("LIGHTING_BLEND_ADDITIVE"); break;
-                            case RainRustLighting.BlendMode.AlphaBlend: data.material.EnableKeyword("LIGHTING_BLEND_ALPHABLEND"); break;
-                            case RainRustLighting.BlendMode.Multiply: data.material.EnableKeyword("LIGHTING_BLEND_MULTIPLY"); break;
-                            case RainRustLighting.BlendMode.Screen: data.material.EnableKeyword("LIGHTING_BLEND_SCREEN"); break;
-                            case RainRustLighting.BlendMode.Overlay: data.material.EnableKeyword("LIGHTING_BLEND_OVERLAY"); break;
+                            case RainRustLighting.BlendMode.Additive:
+                                data.material.EnableKeyword("LIGHTING_BLEND_ADDITIVE");
+                                break;
+                            case RainRustLighting.BlendMode.AlphaBlend:
+                                data.material.EnableKeyword("LIGHTING_BLEND_ALPHABLEND");
+                                break;
+                            case RainRustLighting.BlendMode.Multiply:
+                                data.material.EnableKeyword("LIGHTING_BLEND_MULTIPLY");
+                                break;
+                            case RainRustLighting.BlendMode.Screen:
+                                data.material.EnableKeyword("LIGHTING_BLEND_SCREEN");
+                                break;
+                            case RainRustLighting.BlendMode.Overlay:
+                                data.material.EnableKeyword("LIGHTING_BLEND_OVERLAY");
+                                break;
                         }
 
                         // Use a full-screen draw
@@ -137,6 +174,11 @@ namespace RainRust.Rendering
             if (m_BlitMaterial == null && m_Settings.blitShader != null)
             {
                 m_BlitMaterial = CoreUtils.CreateEngineMaterial(m_Settings.blitShader);
+                if (m_BlitMaterial == null)
+                    CLogger.LogError(
+                        "[RainRust] RenderingPass: Failed to create Blit Material!",
+                        LogTag.Rendering
+                    );
             }
 
             // Blit temp back to cameraColor

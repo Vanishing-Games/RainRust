@@ -22,7 +22,7 @@ MonoBehaviour:
   m_Scenes:
   - m_enabled: 1
     m_path: Assets/GameMain/Scenes/GameLevel2.unity
-  m_HasScriptingDefines: 1
+  m_HasScriptingDefines: 0
   m_ScriptingDefines: []
   m_PlayerSettingsYaml:
     m_Settings:
@@ -41,7 +41,7 @@ MonoBehaviour:
     - line: '|   productName: RainRust'
     - line: '|   defaultCursor: {instanceID: 0}'
     - line: '|   cursorHotspot: {x: 0, y: 0}'
-    - line: '|   m_SplashScreenBackgroundColor: {r: 0.8, g: 0.8, b: 0.8, a: 1}'
+    - line: '|   m_SplashScreenBackgroundColor: {r: 0, g: 0, b: 0, a: 1}'
     - line: '|   m_ShowUnitySplashScreen: 1'
     - line: '|   m_ShowUnitySplashLogo: 1'
     - line: '|   m_SplashScreenOverlayOpacity: 1'
@@ -70,11 +70,11 @@ MonoBehaviour:
     - line: '|     duration: 2'
     - line: '|   - logo: {fileID: 2348529388477986198, guid: 8a9cfaaa634c4824ead80e3c1b9082a4,
         type: 3}'
-    - line: '|     duration: 2'
+    - line: '|     duration: 3'
     - line: '|   m_VirtualRealitySplashScreen: {instanceID: 0}'
     - line: '|   m_HolographicTrackingLossScreen: {instanceID: 0}'
-    - line: '|   defaultScreenWidth: 1024'
-    - line: '|   defaultScreenHeight: 768'
+    - line: '|   defaultScreenWidth: 3840'
+    - line: '|   defaultScreenHeight: 2160'
     - line: '|   defaultScreenWidthWeb: 960'
     - line: '|   defaultScreenHeightWeb: 600'
     - line: '|   m_StereoRenderingPath: 0'
@@ -112,9 +112,9 @@ MonoBehaviour:
     - line: '|   androidAutoRotationBehavior: 1'
     - line: '|   androidPredictiveBackSupport: 1'
     - line: '|   androidApplicationEntry: 1'
-    - line: '|   defaultIsNativeResolution: 1'
+    - line: '|   defaultIsNativeResolution: 0'
     - line: '|   macRetinaSupport: 1'
-    - line: '|   runInBackground: 1'
+    - line: '|   runInBackground: 0'
     - line: '|   muteOtherAudioSources: 0'
     - line: '|   Prepare IOS For Recording: 0'
     - line: '|   Force IOS Speakers When Recording: 0'
@@ -125,7 +125,7 @@ MonoBehaviour:
     - line: '|   usePlayerLog: 1'
     - line: '|   dedicatedServerOptimizations: 0'
     - line: '|   bakeCollisionMeshes: 1'
-    - line: '|   forceSingleInstance: 0'
+    - line: '|   forceSingleInstance: 1'
     - line: '|   useFlipModelSwapchain: 1'
     - line: '|   resizableWindow: 0'
     - line: '|   useMacAppStoreValidation: 0'
@@ -139,7 +139,7 @@ MonoBehaviour:
     - line: '|   xboxEnableFitness: 0'
     - line: '|   visibleInBackground: 1'
     - line: '|   allowFullscreenSwitch: 1'
-    - line: '|   fullscreenMode: 2'
+    - line: '|   fullscreenMode: 1'
     - line: '|   xboxSpeechDB: 0'
     - line: '|   xboxEnableHeadOrientation: 0'
     - line: '|   xboxEnableGuest: 0'
@@ -1045,60 +1045,3 @@ MonoBehaviour:
         m_CopyPDBFiles: 0
         m_WindowsDevicePortalAddress: 
         m_WindowsDevicePortalUsername: 
---- !u!114 &178447774480973824
-MonoBehaviour:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 15010, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: Quality Settings
-  m_EditorClassIdentifier: UnityEditor.dll::UnityEditor.Build.Profile.BuildProfileQualitySettings
-  m_DefaultQualityLevel: Default
-  m_QualityLevels:
-  - Default
---- !u!114 &758790908711158149
-MonoBehaviour:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 15009, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: Graphics Settings
-  m_EditorClassIdentifier: UnityEditor.dll::UnityEditor.Build.Profile.BuildProfileGraphicsSettings
-  m_LightmapStripping: 0
-  m_LightmapKeepPlain: 1
-  m_LightmapKeepDirCombined: 1
-  m_LightmapKeepDynamicPlain: 1
-  m_LightmapKeepDynamicDirCombined: 1
-  m_LightmapKeepShadowMask: 1
-  m_LightmapKeepSubtractive: 1
-  m_FogStripping: 0
-  m_FogKeepLinear: 1
-  m_FogKeepExp: 1
-  m_FogKeepExp2: 1
-  m_InstancingStripping: 0
-  m_BrgStripping: 0
-  m_LogWhenShaderIsCompiled: 0
-  m_CameraRelativeLightCulling: 0
-  m_CameraRelativeShadowCulling: 0
-  m_VideoShadersIncludeMode: 2
-  m_AlwaysIncludedShaders:
-  - {fileID: 7, guid: 0000000000000000f000000000000000, type: 0}
-  - {fileID: 15104, guid: 0000000000000000f000000000000000, type: 0}
-  - {fileID: 15105, guid: 0000000000000000f000000000000000, type: 0}
-  - {fileID: 15106, guid: 0000000000000000f000000000000000, type: 0}
-  - {fileID: 10753, guid: 0000000000000000f000000000000000, type: 0}
-  - {fileID: 10770, guid: 0000000000000000f000000000000000, type: 0}
-  - {fileID: 10783, guid: 0000000000000000f000000000000000, type: 0}
-  m_LightProbeOutsideHullStrategy: 0
-  m_PreloadedShaders: []
-  m_PreloadShadersBatchTimeLimit: -1
-  m_ShaderBuildSettings:
-    keywordDeclarationOverrides: []
