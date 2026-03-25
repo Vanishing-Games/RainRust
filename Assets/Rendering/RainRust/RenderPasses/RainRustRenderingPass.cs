@@ -9,6 +9,10 @@ namespace RainRust.Rendering
 {
     public class RainRustRenderingPass : ScriptableRenderPass
     {
+        private Material m_RenderingMaterial;
+        private Material m_BlitMaterial;
+        private RainRustLighting.RainRustLightingSettings m_Settings;
+
         public RainRustRenderingPass()
         {
             renderPassEvent = RenderPassEvent.BeforeRenderingOpaques;
@@ -32,17 +36,17 @@ namespace RainRust.Rendering
 
         public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
         {
+            if (m_Settings == null)
+                return;
+
             // Ensure material is created
-            if (m_RenderingMaterial == null)
+            if (m_RenderingMaterial == null && m_Settings.compositionShader != null)
             {
-                var shader = Shader.Find(k_RenderingShaderName);
-                if (shader == null)
-                {
-                    Debug.LogError($"Shader not found: {k_RenderingShaderName}");
-                    return;
-                }
-                m_RenderingMaterial = CoreUtils.CreateEngineMaterial(shader);
+                m_RenderingMaterial = CoreUtils.CreateEngineMaterial(m_Settings.compositionShader);
             }
+
+            if (m_RenderingMaterial == null)
+                return;
 
             var rainRustContextData = frameData.Get<RainRustContextData>();
             var resourceData = frameData.Get<UniversalResourceData>();
@@ -65,10 +69,8 @@ namespace RainRust.Rendering
                 passData.receiverRt = rainRustContextData.receiverRt;
                 passData.receiverDepthRt = rainRustContextData.mainDepthRt;
                 passData.cameraColor = cameraColor;
-                passData.receiverBlendMode =
-                    m_Settings != null ? m_Settings.receiverBlendMode : RainRustLighting.BlendMode.AlphaBlend;
-                passData.lightingBlendMode =
-                    m_Settings != null ? m_Settings.lightingBlendMode : RainRustLighting.BlendMode.Additive;
+                passData.receiverBlendMode = m_Settings.receiverBlendMode;
+                passData.lightingBlendMode = m_Settings.lightingBlendMode;
 
                 builder.UseTexture(passData.lightingRt, AccessFlags.Read);
                 builder.UseTexture(passData.receiverRt, AccessFlags.Read);
@@ -132,13 +134,9 @@ namespace RainRust.Rendering
             }
 
             // Ensure blit material is available
-            if (m_BlitMaterial == null)
+            if (m_BlitMaterial == null && m_Settings.blitShader != null)
             {
-                var blitShader = Shader.Find("Hidden/Universal Render Pipeline/Blit");
-                if (blitShader != null)
-                {
-                    m_BlitMaterial = CoreUtils.CreateEngineMaterial(blitShader);
-                }
+                m_BlitMaterial = CoreUtils.CreateEngineMaterial(m_Settings.blitShader);
             }
 
             // Blit temp back to cameraColor
@@ -156,11 +154,5 @@ namespace RainRust.Rendering
             CoreUtils.Destroy(m_RenderingMaterial);
             CoreUtils.Destroy(m_BlitMaterial);
         }
-
-        private Material m_RenderingMaterial;
-        private Material m_BlitMaterial;
-        private RainRustLighting.RainRustLightingSettings m_Settings;
-
-        private const string k_RenderingShaderName = "Hidden/RainRust/Composition";
     }
 }
