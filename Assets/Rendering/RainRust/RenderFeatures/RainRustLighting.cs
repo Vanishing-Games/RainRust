@@ -14,27 +14,30 @@ namespace RainRust.Rendering
             AlphaBlend,
             Multiply,
             Screen,
-            Overlay
+            Overlay,
         }
 
         [Serializable]
         public class RainRustLightingSettings
         {
-            public RenderPassEvent injectionPoint = RenderPassEvent.BeforeRenderingOpaques;
+            // csharpier-ignore-start
+            public RenderPassEvent injectionPoint  = RenderPassEvent.BeforeRenderingOpaques;
             public LayerMask lightSourcesLayerMask = -1;
-            public LayerMask receiversLayerMask = -1;
+            public LayerMask receiversLayerMask    = -1;
+
             [Header("Composition Settings")]
             public BlendMode receiverBlendMode = BlendMode.AlphaBlend;
             public BlendMode lightingBlendMode = BlendMode.Additive;
+            // csharpier-ignore-end
         }
 
         public RainRustLightingSettings settings = new();
 
         /** Called when
-        * - When the Scriptable Renderer Feature loads the first time.
-        * - When you enable or disable the Scriptable Renderer Feature.
-        * - When you change a property in the Inspector window of the Renderer Feature.
-        */
+    * - When the Scriptable Renderer Feature loads the first time.
+    * - When you enable or disable the Scriptable Renderer Feature.
+    * - When you change a property in the Inspector window of the Renderer Feature.
+    */
         public override void Create()
         {
             // csharpier-ignore-start
@@ -52,6 +55,7 @@ namespace RainRust.Rendering
             ref RenderingData renderingData
         )
         {
+            // csharpier-ignore-start
             // Apply settings to all passes
             m_RainRustDrawObjectsPass.renderPassEvent = settings.injectionPoint;
             m_JfaInitPass.renderPassEvent             = settings.injectionPoint;
@@ -59,10 +63,11 @@ namespace RainRust.Rendering
             m_DistancePass.renderPassEvent            = settings.injectionPoint;
             m_RainRustRayTracingPass.renderPassEvent  = settings.injectionPoint;
             m_RainRustRenderingPass.renderPassEvent   = settings.injectionPoint;
+            // csharpier-ignore-end
 
             m_RainRustDrawObjectsPass.Setup(settings);
             m_RainRustRenderingPass.Setup(settings);
-            
+
             renderer.EnqueuePass(m_RainRustDrawObjectsPass);
             renderer.EnqueuePass(m_JfaInitPass);
             renderer.EnqueuePass(m_JfaPass);

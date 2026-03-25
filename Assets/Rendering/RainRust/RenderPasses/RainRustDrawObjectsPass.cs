@@ -21,15 +21,17 @@ namespace RainRust.Rendering
 
         class RainRustDrawObjectsPassData
         {
-            public UniversalCameraData cameraData;
+            // csharpier-ignore-start
+            public UniversalCameraData    cameraData;
             public UniversalRenderingData renderingData;
-            public UniversalLightData lightData;
-            public UniversalResourceData resourceData;
-            public TextureHandle rrMainRt;
-            public TextureHandle rrMainDepthRt;
-            public TextureHandle rrReceiverRt;
-            public RendererListHandle lightSourcesRendererList;
-            public RendererListHandle receiversRendererList;
+            public UniversalLightData     lightData;
+            public UniversalResourceData  resourceData;
+            public TextureHandle          rrMainRt;
+            public TextureHandle          rrMainDepthRt;
+            public TextureHandle          rrReceiverRt;
+            public RendererListHandle     lightSourcesRendererList;
+            public RendererListHandle     receiversRendererList;
+            // csharpier-ignore-end
         }
 
         public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)

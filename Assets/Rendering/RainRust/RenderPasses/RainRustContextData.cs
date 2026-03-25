@@ -33,13 +33,15 @@ namespace RainRust.Rendering
 
         public override void Reset()
         {
-            mainRt = TextureHandle.nullHandle;
+            // csharpier-ignore-start
+            mainRt      = TextureHandle.nullHandle;
             mainDepthRt = TextureHandle.nullHandle;
-            receiverRt = TextureHandle.nullHandle;
-            jfaRt = new TextureHandlePingPong(TextureHandle.nullHandle, TextureHandle.nullHandle);
-            finalJfaRt = TextureHandle.nullHandle;
-            distanceRt = TextureHandle.nullHandle;
-            lightingRt = TextureHandle.nullHandle;
+            receiverRt  = TextureHandle.nullHandle;
+            jfaRt       = new TextureHandlePingPong(TextureHandle.nullHandle, TextureHandle.nullHandle);
+            finalJfaRt  = TextureHandle.nullHandle;
+            distanceRt  = TextureHandle.nullHandle;
+            lightingRt  = TextureHandle.nullHandle;
+            // csharpier-ignore-end
         }
     }
 }
