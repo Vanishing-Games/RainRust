@@ -53,7 +53,7 @@ namespace Core
 
                 Vector3 movement = new(
                     cameraDelta.x * (1 - layer.parallaxFactorX),
-                    cameraDelta.y * (1 - layer.parallaxFactorY),
+                    cameraDelta.y * layer.parallaxFactorY,
                     0
                 );
 

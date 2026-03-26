@@ -13,7 +13,7 @@ namespace Core
         [Tooltip("水平视差系数 (0: 随相机移动/无穷远, 1: 在世界空间固定/近处)"), Range(0, 1)]
         public float parallaxFactorX;
 
-        [Tooltip("垂直视差系数 (0: 随相机移动/无穷远, 1: 在世界空间固定/近处)"), Range(0, 1)]
+        [Tooltip("垂直视差系数 (0: 随相机移动/无穷远, 1: 在世界空间固定/近处)"), Range(-1, 0)]
         public float parallaxFactorY;
 
         [Tooltip("边界处理模式 (仅水平方向)")]
