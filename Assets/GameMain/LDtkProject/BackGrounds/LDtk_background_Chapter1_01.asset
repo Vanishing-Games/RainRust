@@ -24,6 +24,10 @@ MonoBehaviour:
   sprite: {fileID: 21300000, guid: 75a350021569ccd4a8f6a6f60fb2188c, type: 3}
   parallaxFactorX: 1
   parallaxFactorY: 0
-  clampMode: 1
+  clampModeX: 1
+  clampModeY: 0
+  maxVerticalOffset: 8
+  worldMaxY: 58
+  worldMinY: -33
   blurMode: 0
   blurIntensity: 1.5
