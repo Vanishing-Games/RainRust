@@ -22,8 +22,8 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   sprite: {fileID: 21300000, guid: c34bf1c2bf96ca64b93fcad15ef7cfa5, type: 3}
-  parallaxFactorX: 0
-  parallaxFactorY: -0.232
+  parallaxFactorX: 0.6666667
+  parallaxFactorY: 0.12
   clampMode: 1
   blurMode: 0
   blurIntensity: 3.333333
