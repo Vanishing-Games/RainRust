@@ -78,5 +78,9 @@ namespace Core
             "LDtkMaterialSetProcessor",
             LdtkProcessor.Path
         );
+        public static readonly LogTag LDtkLevelRoomProcessor = new(
+            "LDtkLevelRoomProcessor",
+            LdtkProcessor.Path
+        );
     }
 }

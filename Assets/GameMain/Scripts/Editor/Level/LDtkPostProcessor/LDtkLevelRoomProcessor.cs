@@ -12,7 +12,7 @@ namespace GameMain.Editor
 {
     public class LDtkRoomProcessor : LDtkPostprocessor
     {
-        public override int GetPostprocessOrder() => 2;
+        public override int GetPostprocessOrder() => 4;
 
         private class RoomContext
         {
