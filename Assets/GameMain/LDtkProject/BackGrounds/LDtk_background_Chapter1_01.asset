@@ -26,4 +26,4 @@ MonoBehaviour:
   parallaxFactorY: 0
   clampMode: 1
   blurMode: 0
-  blurIntensity: 0.001
+  blurIntensity: 1.5
