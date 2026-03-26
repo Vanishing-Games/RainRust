@@ -18,6 +18,9 @@ namespace GameMain.Editor
             if (!root.TryGetComponent<LDtkComponentLevel>(out var level))
                 return;
 
+            if (!level.FieldInstances.GetBool("EnableLocalVolume"))
+                return;
+
             string volumeName = $"Volume_{level.Identifier}";
 
             CLogger.LogInfo(
