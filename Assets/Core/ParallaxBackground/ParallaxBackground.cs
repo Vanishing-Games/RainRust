@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using Core.Extensions;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace Core
 {
@@ -14,11 +17,6 @@ namespace Core
 
     public class ParallaxBackground : MonoBehaviour
     {
-        private static readonly int BlurIntensityProperty = Shader.PropertyToID("_BlurIntensity");
-        private static readonly int BlurModeProperty = Shader.PropertyToID("_BlurMode");
-        private MaterialPropertyBlock m_PropertyBlock;
-        private Material m_BlurMaterial;
-
         private void Start()
         {
             if (m_TargetCamera == null)
@@ -51,13 +49,31 @@ namespace Core
                     continue;
                 }
 
-                Vector3 movement = new(
-                    cameraDelta.x * (1 - layer.parallaxFactorX),
-                    cameraDelta.y * layer.parallaxFactorY,
-                    0
-                );
+                Vector3 currentPos = layer.layerObject.transform.position;
+                float newX = currentPos.x + cameraDelta.x * (1 - layer.parallaxFactorX);
+                float newY = currentPos.y;
 
-                layer.layerObject.transform.position += movement;
+                if (layer.clampModeY == ParallaxClampMode.None)
+                {
+                    // 计算摄像机在世界限制内的进度 t (0 到 1)
+                    float t = Mathf.InverseLerp(layer.worldMinY, layer.worldMaxY, cameraPosition.y);
+
+                    // 根据进度插值算出偏移量：最低点时偏移 maxVerticalOffset，最高点时偏移 -maxVerticalOffset
+                    // (视觉效果：摄像机上升时，背景在视野中相对下沉)
+                    float yOffset = Mathf.Lerp(
+                        layer.maxVerticalOffset,
+                        -layer.maxVerticalOffset,
+                        t
+                    );
+
+                    newY = cameraPosition.y + layer.initialRelativeY + yOffset;
+                }
+                else
+                {
+                    newY -= cameraDelta.y * layer.parallaxFactorY;
+                }
+
+                layer.layerObject.transform.position = new Vector3(newX, newY, currentPos.z);
 
                 HandleHorizontalWrapping(layer, cameraPosition);
             }
@@ -94,18 +110,28 @@ namespace Core
                 GameObject container = new($"Layer_{i}_{layer.sprite.name}");
                 container.transform.SetParent(transform);
 
-                if (m_TargetCamera != null && Application.isPlaying)
+                if (m_TargetCamera != null)
                 {
                     Vector3 camPos = m_TargetCamera.transform.position;
-                    container.transform.position = new Vector3(
-                        camPos.x,
-                        camPos.y,
-                        transform.position.z
-                    );
+                    if (Application.isPlaying)
+                    {
+                        container.transform.position = new Vector3(
+                            camPos.x,
+                            camPos.y,
+                            transform.position.z
+                        );
+                    }
+                    else
+                    {
+                        container.transform.localPosition = Vector3.zero;
+                    }
+
+                    layer.initialRelativeY = container.transform.position.y - camPos.y;
                 }
                 else
                 {
                     container.transform.localPosition = Vector3.zero;
+                    layer.initialRelativeY = 0f;
                 }
 
                 layer.layerObject = container;
@@ -114,7 +140,8 @@ namespace Core
                 if (layer.textureWidth <= 0)
                     continue;
 
-                int count = (layer.clampMode == ParallaxClampMode.None) ? 1 : 3;
+                // 根据 X 轴的 clampMode 决定生成几个 Sprite
+                int count = (layer.clampModeX == ParallaxClampMode.None) ? 1 : 3;
                 layer.renderers = new SpriteRenderer[count];
 
                 for (int j = 0; j < count; j++)
@@ -123,7 +150,7 @@ namespace Core
                     child.transform.SetParent(container.transform);
 
                     float xPos =
-                        (layer.clampMode == ParallaxClampMode.None)
+                        (layer.clampModeX == ParallaxClampMode.None)
                             ? 0
                             : (j - 1) * layer.textureWidth;
                     child.transform.localPosition = new Vector3(xPos, 0, 0);
@@ -188,7 +215,7 @@ namespace Core
 
         private void HandleHorizontalWrapping(ParallaxLayer layer, Vector3 cameraPosition)
         {
-            if (layer.clampMode == ParallaxClampMode.None || layer.renderers == null)
+            if (layer.clampModeX == ParallaxClampMode.None || layer.renderers == null)
                 return;
 
             float localCameraX = cameraPosition.x - layer.layerObject.transform.position.x;
@@ -208,7 +235,7 @@ namespace Core
                     pos.x += shiftCount * width;
                     sr.transform.localPosition = pos;
 
-                    if (layer.clampMode == ParallaxClampMode.Mirror)
+                    if (layer.clampModeX == ParallaxClampMode.Mirror)
                     {
                         int index = Mathf.RoundToInt(pos.x / width);
                         sr.flipX = Mathf.Abs(index) % 2 != 0;
@@ -216,6 +243,11 @@ namespace Core
                 }
             }
         }
+
+        private static readonly int BlurIntensityProperty = Shader.PropertyToID("_BlurIntensity");
+        private static readonly int BlurModeProperty = Shader.PropertyToID("_BlurMode");
+        private MaterialPropertyBlock m_PropertyBlock;
+        private Material m_BlurMaterial;
 
         public List<ParallaxLayer> Layers
         {
@@ -258,7 +290,7 @@ namespace Core
             if (m_Layers == null || m_Layers.Count == 0)
                 return;
 
-            UnityEditor.Undo.RecordObject(this, "Distribute Parallax Factors");
+            Undo.RecordObject(this, "Distribute Parallax Factors");
 
             if (m_Layers.Count == 1)
             {
@@ -273,7 +305,11 @@ namespace Core
                     m_Layers[i].parallaxFactorX = factor;
                     m_Layers[i].parallaxFactorY = factor;
                     m_Layers[i].blurIntensity = Math.Clamp((1.0f - factor) * 10f, 0.001f, 10f);
-                    m_Layers[i].clampMode = ParallaxClampMode.Repeat;
+
+                    m_Layers[i].clampModeX = ParallaxClampMode.Repeat;
+                    m_Layers[i].clampModeY = ParallaxClampMode.None;
+
+                    EditorUtility.SetDirty(m_Layers[i]); // 保证ScriptableObject的修改被保存
                 }
             }
 
@@ -281,6 +317,59 @@ namespace Core
             {
                 UpdateLayerProperties();
             }
+        }
+
+        [ContextMenu("一键计算并应用世界Y轴边界")]
+        public void CalculateAndApplyWorldBoundsY()
+        {
+            if (m_Layers == null || m_Layers.Count == 0)
+                return;
+
+            Renderer[] allRenderers = FindObjectsByType<Renderer>(FindObjectsSortMode.None);
+
+            float minY = float.MaxValue;
+            float maxY = float.MinValue;
+
+            foreach (var renderer in allRenderers)
+            {
+                // 跳过视差背景本身，避免递归干扰
+                if (
+                    renderer.gameObject.CompareTag("BackGround")
+                    || renderer.gameObject.layer == LayerMask.NameToLayer("BackGround")
+                )
+                {
+                    continue;
+                }
+
+                Bounds bounds = renderer.bounds;
+                if (bounds.min.y < minY)
+                    minY = bounds.min.y;
+                if (bounds.max.y > maxY)
+                    maxY = bounds.max.y;
+            }
+
+            if (minY == float.MaxValue && maxY == float.MinValue)
+            {
+                Debug.LogWarning("未能找到有效的渲染器来计算世界边界。");
+                return;
+            }
+
+            Undo.RecordObject(this, "Calculate World Bounds Y");
+
+            foreach (var layer in m_Layers)
+            {
+                if (layer != null && layer.clampModeY == ParallaxClampMode.None)
+                {
+                    Undo.RecordObject(layer, "Apply Bounds To Layer");
+                    layer.worldMinY = minY;
+                    layer.worldMaxY = maxY;
+                    EditorUtility.SetDirty(layer);
+                }
+            }
+
+            Debug.Log(
+                $"世界Y轴边界计算完成: MinY = {minY}, MaxY = {maxY}，已应用到所有 Y轴为 None 的图层。"
+            );
         }
 
         [ContextMenu("生成图层对象")]

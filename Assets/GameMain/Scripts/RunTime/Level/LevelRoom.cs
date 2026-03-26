@@ -1,6 +1,8 @@
+using System.Collections.Generic;
 using Core;
 using Sirenix.OdinInspector;
 using Unity.Cinemachine;
+using UnityEditorInternal;
 using UnityEngine;
 using CameraMode = GameMain.LDtk.CameraMode;
 
@@ -32,6 +34,31 @@ namespace GameMain.RunTime
             VirtualCamera.Priority.Value = LevelManager.Instance.GetCurrentMaxPriority();
         }
 
+        void Awake()
+        {
+            if (Transitions.Count == 0)
+            {
+                LevelTransition[] transitions =
+                    transform.GetComponentsInChildren<LevelTransition>();
+                Transitions.AddRange(transitions);
+            }
+
+            if (Transitions.Count == 0)
+            {
+                CLogger.LogInfo(
+                    "Disable room: " + gameObject.name + " for no transitions in room",
+                    LogTag.LevelRoom
+                );
+                gameObject.SetActive(false);
+                return;
+            }
+
+            Neighbors.Clear();
+            foreach (var trans in Transitions)
+                if (trans.Target != null)
+                    Neighbors.Add(trans.Target.transform.GetComponentInParent<LevelRoom>());
+        }
+
         [SerializeField, ReadOnly]
         private CameraMode _cameraMode;
 
@@ -40,6 +67,12 @@ namespace GameMain.RunTime
 
         [SerializeField, ReadOnly]
         private CinemachineCamera _virtualCamera;
+
+        [SerializeField, ReadOnly]
+        private List<LevelTransition> _transitions = new();
+
+        [SerializeField, ReadOnly]
+        private List<LevelRoom> _neighbors = new();
 
         public CameraMode CameraMode
         {
@@ -58,5 +91,8 @@ namespace GameMain.RunTime
             get => _virtualCamera;
             set => _virtualCamera = value;
         }
+
+        public List<LevelTransition> Transitions => _transitions;
+        public List<LevelRoom> Neighbors => _neighbors;
     }
 }
