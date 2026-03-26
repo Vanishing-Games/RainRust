@@ -82,6 +82,5 @@ namespace Core
             "LDtkLevelRoomProcessor",
             LdtkProcessor.Path
         );
-        
     }
 }
