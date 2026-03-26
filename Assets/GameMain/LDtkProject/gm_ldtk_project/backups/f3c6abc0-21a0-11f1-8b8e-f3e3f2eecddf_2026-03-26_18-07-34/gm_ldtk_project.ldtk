@@ -11,7 +11,7 @@
 	"iid": "f3c6abc0-21a0-11f1-8b8e-f3e3f2eecddf",
 	"jsonVersion": "1.5.3",
 	"appBuildId": 473703,
-	"nextUid": 458,
+	"nextUid": 459,
 	"identifierStyle": "Capitalize",
 	"toc": [],
 	"worldLayout": null,
@@ -8113,7 +8113,48 @@
 				"averageColors": "4222522252229221c211922192219221c2117221a21172215222722172228221c211922192218221c211a211f211a211322152215221a221a22172229222c211c2117211a2117211422152224221a221a22172210000f211d211d211d211d211"
 			}
 		}
-	], "enums": [{ "identifier": "CameraMode", "uid": 5, "values": [ { "id": "Fixed", "tileRect": null, "color": 12470831 }, { "id": "Follow", "tileRect": null, "color": 14120515 } ], "iconTilesetUid": null, "externalRelPath": null, "externalFileChecksum": null, "tags": [] }], "externalEnums": [], "levelFields": [] },
+	], "enums": [{ "identifier": "CameraMode", "uid": 5, "values": [ { "id": "Fixed", "tileRect": null, "color": 12470831 }, { "id": "Follow", "tileRect": null, "color": 14120515 } ], "iconTilesetUid": null, "externalRelPath": null, "externalFileChecksum": null, "tags": [] }], "externalEnums": [], "levelFields": [
+		{
+			"identifier": "EnableLocalVolume",
+			"doc": null,
+			"__type": "Bool",
+			"uid": 458,
+			"type": "F_Bool",
+			"isArray": false,
+			"canBeNull": false,
+			"arrayMinLength": null,
+			"arrayMaxLength": null,
+			"editorDisplayMode": "Hidden",
+			"editorDisplayScale": 1,
+			"editorDisplayPos": "Above",
+			"editorLinkStyle": "StraightArrow",
+			"editorDisplayColor": null,
+			"editorAlwaysShow": false,
+			"editorShowInWorld": true,
+			"editorCutLongValues": true,
+			"editorTextSuffix": null,
+			"editorTextPrefix": null,
+			"useForSmartColor": false,
+			"exportToToc": false,
+			"searchable": false,
+			"min": null,
+			"max": null,
+			"regex": null,
+			"acceptFileTypes": null,
+			"defaultOverride": {
+				"id": "V_Bool",
+				"params": [ false ]
+			},
+			"textLanguageMode": null,
+			"symmetricalRef": false,
+			"autoChainRef": true,
+			"allowOutOfLevelRef": true,
+			"allowedRefs": "OnlySame",
+			"allowedRefsEntityUid": null,
+			"allowedRefTags": [],
+			"tilesetUid": null
+		}
+	] },
 	"levels": [],
 	"worlds": [
 		{ "iid": "f3c6d2d0-21a0-11f1-8b8e-1f96bd563b0c", "identifier": "Chapter1", "defaultLevelWidth": 5120, "defaultLevelHeight": 2944, "worldGridWidth": 256, "worldGridHeight": 256, "worldLayout": "Free", "levels": [
@@ -8136,7 +8177,7 @@
 				"__smartColor": "#B0B7DB",
 				"__bgPos": null,
 				"externalRelPath": null,
-				"fieldInstances": [],
+				"fieldInstances": [{ "__identifier": "EnableLocalVolume", "__type": "Bool", "__value": false, "__tile": null, "defUid": 458, "realEditorValues": [] }],
 				"layerInstances": [
 					{
 						"__identifier": "AutoTiles_Wall_A",
@@ -9472,16 +9513,8 @@
 								"defUid": 6,
 								"px": [1152,2176],
 								"fieldInstances": [
-									{ "__identifier": "Target", "__type": "EntityRef", "__value": {
-										"entityIid": "6d99ef00-21a0-11f1-881e-a9342259a729",
-										"layerIid": "59e5b4f0-21a0-11f1-8b8e-677eb9ae82aa",
-										"levelIid": "f3c6d2d1-21a0-11f1-8b8e-3b5ef49994f8",
-										"worldIid": "f3c6d2d0-21a0-11f1-8b8e-1f96bd563b0c"
-									}, "__tile": null, "defUid": 7, "realEditorValues": [{
-										"id": "V_String",
-										"params": ["6d99ef00-21a0-11f1-881e-a9342259a729"]
-									}] },
-									{ "__identifier": "Index", "__type": "Int", "__value": null, "__tile": null, "defUid": 92, "realEditorValues": [] }
+									{ "__identifier": "Target", "__type": "EntityRef", "__value": null, "__tile": null, "defUid": 7, "realEditorValues": [null] },
+									{ "__identifier": "Index", "__type": "Int", "__value": 0, "__tile": null, "defUid": 92, "realEditorValues": [{ "id": "V_Int", "params": [0] }] }
 								],
 								"__worldX": -4736,
 								"__worldY": 3456
@@ -9616,7 +9649,10 @@
 				"__smartColor": "#B0B7DB",
 				"__bgPos": null,
 				"externalRelPath": null,
-				"fieldInstances": [],
+				"fieldInstances": [{ "__identifier": "EnableLocalVolume", "__type": "Bool", "__value": true, "__tile": null, "defUid": 458, "realEditorValues": [{
+					"id": "V_Bool",
+					"params": [ true ]
+				}] }],
 				"layerInstances": [
 					{
 						"__identifier": "AutoTiles_Wall_A",
@@ -10831,7 +10867,10 @@
 				"__smartColor": "#B0B7DB",
 				"__bgPos": null,
 				"externalRelPath": null,
-				"fieldInstances": [],
+				"fieldInstances": [{ "__identifier": "EnableLocalVolume", "__type": "Bool", "__value": false, "__tile": null, "defUid": 458, "realEditorValues": [{
+					"id": "V_Bool",
+					"params": [ false ]
+				}] }],
 				"layerInstances": [
 					{
 						"__identifier": "AutoTiles_Wall_A",
@@ -11987,7 +12026,7 @@
 				"__smartColor": "#B0B7DB",
 				"__bgPos": null,
 				"externalRelPath": null,
-				"fieldInstances": [],
+				"fieldInstances": [{ "__identifier": "EnableLocalVolume", "__type": "Bool", "__value": false, "__tile": null, "defUid": 458, "realEditorValues": [] }],
 				"layerInstances": [
 					{
 						"__identifier": "AutoTiles_Wall_A",
@@ -13265,7 +13304,7 @@
 				"__smartColor": "#B0B7DB",
 				"__bgPos": null,
 				"externalRelPath": null,
-				"fieldInstances": [],
+				"fieldInstances": [{ "__identifier": "EnableLocalVolume", "__type": "Bool", "__value": false, "__tile": null, "defUid": 458, "realEditorValues": [] }],
 				"layerInstances": [
 					{
 						"__identifier": "AutoTiles_Wall_A",
@@ -14326,7 +14365,7 @@
 				"__smartColor": "#B0B7DB",
 				"__bgPos": null,
 				"externalRelPath": null,
-				"fieldInstances": [],
+				"fieldInstances": [{ "__identifier": "EnableLocalVolume", "__type": "Bool", "__value": false, "__tile": null, "defUid": 458, "realEditorValues": [] }],
 				"layerInstances": [
 					{
 						"__identifier": "AutoTiles_Wall_A",
@@ -15798,7 +15837,7 @@
 				"__smartColor": "#B0B7DB",
 				"__bgPos": null,
 				"externalRelPath": null,
-				"fieldInstances": [],
+				"fieldInstances": [{ "__identifier": "EnableLocalVolume", "__type": "Bool", "__value": false, "__tile": null, "defUid": 458, "realEditorValues": [] }],
 				"layerInstances": [
 					{
 						"__identifier": "AutoTiles_Wall_A",
@@ -16311,7 +16350,7 @@
 				"__smartColor": "#B0B7DB",
 				"__bgPos": null,
 				"externalRelPath": null,
-				"fieldInstances": [],
+				"fieldInstances": [{ "__identifier": "EnableLocalVolume", "__type": "Bool", "__value": false, "__tile": null, "defUid": 458, "realEditorValues": [] }],
 				"layerInstances": [
 					{
 						"__identifier": "AutoTiles_Wall_A",
@@ -16899,7 +16938,7 @@
 				"__smartColor": "#B0B7DB",
 				"__bgPos": null,
 				"externalRelPath": null,
-				"fieldInstances": [],
+				"fieldInstances": [{ "__identifier": "EnableLocalVolume", "__type": "Bool", "__value": false, "__tile": null, "defUid": 458, "realEditorValues": [] }],
 				"layerInstances": [
 					{
 						"__identifier": "AutoTiles_Wall_A",
@@ -17900,7 +17939,7 @@
 				"__smartColor": "#B0B7DB",
 				"__bgPos": null,
 				"externalRelPath": null,
-				"fieldInstances": [],
+				"fieldInstances": [{ "__identifier": "EnableLocalVolume", "__type": "Bool", "__value": false, "__tile": null, "defUid": 458, "realEditorValues": [] }],
 				"layerInstances": [
 					{
 						"__identifier": "AutoTiles_Wall_A",
@@ -18968,7 +19007,7 @@
 				"__smartColor": "#B0B7DB",
 				"__bgPos": null,
 				"externalRelPath": null,
-				"fieldInstances": [],
+				"fieldInstances": [{ "__identifier": "EnableLocalVolume", "__type": "Bool", "__value": false, "__tile": null, "defUid": 458, "realEditorValues": [] }],
 				"layerInstances": [
 					{
 						"__identifier": "AutoTiles_Wall_A",
@@ -19969,7 +20008,7 @@
 				"__smartColor": "#B0B7DB",
 				"__bgPos": null,
 				"externalRelPath": null,
-				"fieldInstances": [],
+				"fieldInstances": [{ "__identifier": "EnableLocalVolume", "__type": "Bool", "__value": false, "__tile": null, "defUid": 458, "realEditorValues": [] }],
 				"layerInstances": [
 					{
 						"__identifier": "AutoTiles_Wall_A",
@@ -20469,7 +20508,7 @@
 				"__smartColor": "#B0B7DB",
 				"__bgPos": null,
 				"externalRelPath": null,
-				"fieldInstances": [],
+				"fieldInstances": [{ "__identifier": "EnableLocalVolume", "__type": "Bool", "__value": false, "__tile": null, "defUid": 458, "realEditorValues": [] }],
 				"layerInstances": [
 					{
 						"__identifier": "AutoTiles_Wall_A",
@@ -21270,7 +21309,7 @@
 				"__smartColor": "#B0B7DB",
 				"__bgPos": null,
 				"externalRelPath": null,
-				"fieldInstances": [],
+				"fieldInstances": [{ "__identifier": "EnableLocalVolume", "__type": "Bool", "__value": false, "__tile": null, "defUid": 458, "realEditorValues": [] }],
 				"layerInstances": [
 					{
 						"__identifier": "AutoTiles_Wall_A",
@@ -22054,7 +22093,7 @@
 				"__smartColor": "#B0B7DB",
 				"__bgPos": null,
 				"externalRelPath": null,
-				"fieldInstances": [],
+				"fieldInstances": [{ "__identifier": "EnableLocalVolume", "__type": "Bool", "__value": false, "__tile": null, "defUid": 458, "realEditorValues": [] }],
 				"layerInstances": [
 					{
 						"__identifier": "AutoTiles_Wall_A",
@@ -22655,7 +22694,7 @@
 				"__smartColor": "#B0B7DB",
 				"__bgPos": null,
 				"externalRelPath": null,
-				"fieldInstances": [],
+				"fieldInstances": [{ "__identifier": "EnableLocalVolume", "__type": "Bool", "__value": false, "__tile": null, "defUid": 458, "realEditorValues": [] }],
 				"layerInstances": [
 					{
 						"__identifier": "AutoTiles_Wall_A",
@@ -23856,7 +23895,7 @@
 				"__smartColor": "#B0B7DB",
 				"__bgPos": null,
 				"externalRelPath": null,
-				"fieldInstances": [],
+				"fieldInstances": [{ "__identifier": "EnableLocalVolume", "__type": "Bool", "__value": false, "__tile": null, "defUid": 458, "realEditorValues": [] }],
 				"layerInstances": [
 					{
 						"__identifier": "AutoTiles_Wall_A",
@@ -24532,7 +24571,7 @@
 				"__smartColor": "#B0B7DB",
 				"__bgPos": null,
 				"externalRelPath": null,
-				"fieldInstances": [],
+				"fieldInstances": [{ "__identifier": "EnableLocalVolume", "__type": "Bool", "__value": false, "__tile": null, "defUid": 458, "realEditorValues": [] }],
 				"layerInstances": [
 					{
 						"__identifier": "AutoTiles_Wall_A",
@@ -25130,7 +25169,7 @@
 				"__smartColor": "#B0B7DB",
 				"__bgPos": null,
 				"externalRelPath": null,
-				"fieldInstances": [],
+				"fieldInstances": [{ "__identifier": "EnableLocalVolume", "__type": "Bool", "__value": false, "__tile": null, "defUid": 458, "realEditorValues": [] }],
 				"layerInstances": [
 					{
 						"__identifier": "AutoTiles_Wall_A",
@@ -25889,7 +25928,7 @@
 				"__smartColor": "#B0B7DB",
 				"__bgPos": null,
 				"externalRelPath": null,
-				"fieldInstances": [],
+				"fieldInstances": [{ "__identifier": "EnableLocalVolume", "__type": "Bool", "__value": false, "__tile": null, "defUid": 458, "realEditorValues": [] }],
 				"layerInstances": [
 					{
 						"__identifier": "AutoTiles_Wall_A",
@@ -26219,7 +26258,7 @@
 				"__smartColor": "#B0B7DB",
 				"__bgPos": null,
 				"externalRelPath": null,
-				"fieldInstances": [],
+				"fieldInstances": [{ "__identifier": "EnableLocalVolume", "__type": "Bool", "__value": false, "__tile": null, "defUid": 458, "realEditorValues": [] }],
 				"layerInstances": [
 					{
 						"__identifier": "AutoTiles_Wall_A",
@@ -26445,7 +26484,7 @@
 				"__smartColor": "#B0B7DB",
 				"__bgPos": null,
 				"externalRelPath": null,
-				"fieldInstances": [],
+				"fieldInstances": [{ "__identifier": "EnableLocalVolume", "__type": "Bool", "__value": false, "__tile": null, "defUid": 458, "realEditorValues": [] }],
 				"layerInstances": [
 					{
 						"__identifier": "AutoTiles_Wall_A",
