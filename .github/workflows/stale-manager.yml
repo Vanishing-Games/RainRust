@@ -39,16 +39,17 @@ jobs:
             const project = projectRes.organization.projectsV2.nodes.find(p => p.title === projectName);
             const ddlField = project.fields.nodes.find(f => f.name === "DDL");
             
-            // 2. 获取带有 DDL 信息的 Project Items
+            // 2. 获取带有 DDL 信息的 Project Items (增加到 200)
             const itemsRes = await github.graphql(`
               query($projectId: ID!) {
                 node(id: $projectId) {
                   ... on ProjectV2 {
-                    items(first: 100) {
+                    items(first: 200) {
                       nodes {
                         content {
                           ... on Issue {
                             number
+                            repository { name }
                           }
                         }
                         fieldValues(first: 20) {
@@ -68,9 +69,12 @@ jobs:
 
             const ddlMap = {};
             itemsRes.node.items.nodes.forEach(item => {
-              if (item.content?.number) {
+              if (item.content?.number && item.content?.repository) {
                 const ddlValue = item.fieldValues.nodes.find(f => f.field?.id === ddlField.id);
-                if (ddlValue?.date) ddlMap[item.content.number] = ddlValue.date;
+                if (ddlValue?.date) {
+                  const key = `${item.content.repository.name}#${item.content.number}`;
+                  ddlMap[key] = ddlValue.date;
+                }
               }
             });
 
@@ -103,14 +107,17 @@ jobs:
 
               stats.checked++;
               const issueNumber = issue.number;
-              const ddlStr = ddlMap[issueNumber];
+              const ddlKey = `${repo}#${issueNumber}`;
+              const ddlStr = ddlMap[ddlKey];
               const hasStale = labels.includes('stale');
               
               // --- 1. 计算沉默时间 (最近的人类活动) ---
-              const comments = await github.rest.issues.listComments({
-                owner, repo, issue_number: issueNumber, per_page: 50
+              // 使用分页以确保获取到所有评论
+              const comments = await github.paginate(github.rest.issues.listComments, {
+                owner, repo, issue_number: issueNumber, per_page: 100
               });
-              const lastHumanComment = comments.data.reverse().find(c => !c.body.includes('[Action自动生成]'));
+              
+              const lastHumanComment = comments.reverse().find(c => !c.body.includes('[Action自动生成]'));
               const lastActiveDate = lastHumanComment ? new Date(lastHumanComment.created_at) : new Date(issue.created_at);
               const silentDays = Math.floor((now - lastActiveDate) / 86400000);
 
@@ -138,9 +145,11 @@ jobs:
                   stats.recovered++;
                   actionTaken = "✅ 恢复活跃 (移除 Stale)";
                 } else {
-                  // 检查 stale 标签添加了多久 (需要满足 1 天)
-                  const events = await github.rest.issues.listEvents({ owner, repo, issue_number: issueNumber });
-                  const staleEvent = events.data.reverse().find(e => e.event === 'labeled' && e.label?.name === 'stale');
+                  // 检查 stale 标签添加了多久 (使用分页)
+                  const events = await github.paginate(github.rest.issues.listEvents, {
+                    owner, repo, issue_number: issueNumber, per_page: 100
+                  });
+                  const staleEvent = events.reverse().find(e => e.event === 'labeled' && e.label?.name === 'stale');
                   
                   if (staleEvent) {
                     const staleAddedTime = new Date(staleEvent.created_at);
@@ -157,6 +166,9 @@ jobs:
                     } else {
                       actionTaken = `⏳ 等待中 (已标记 ${staleDurationHours}h)`;
                     }
+                  } else {
+                    // 如果找不到标记事件（可能太久远），但已经有标签了，保守起见不自动关闭
+                    actionTaken = "⏳ 等待中 (未找到标记事件)";
                   }
                 }
               } else if (shouldBeStale) {
