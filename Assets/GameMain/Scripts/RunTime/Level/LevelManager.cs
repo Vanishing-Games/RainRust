@@ -273,9 +273,7 @@ namespace GameMain.RunTime
             if (m_CurrentLevel == level)
                 return;
 
-            var tarPos = targetTransition.transform.position;
-            var curPos = m_CurrentLevelTransition.transform.position;
-            var posDiff = tarPos - curPos;
+            var posDiff = GetTransitionPositionDiff(targetTransition);
 
             m_LastSwitchFrame = Time.frameCount;
             m_CurrentLevel = level;
@@ -286,13 +284,30 @@ namespace GameMain.RunTime
 
             ActivateRoom(level);
 
-            MessageBroker.Global.Publish<LevelSwitchEvent>(
-                new(
-                    posDiff.x == 0
-                        ? LevelSwitchEvent.LevelSwitchDirection.Vertical
-                        : LevelSwitchEvent.LevelSwitchDirection.Horizontal
-                )
-            );
+            if (posDiff.HasValue)
+            {
+                var posDiffValue = posDiff.Value;
+                MessageBroker.Global.Publish<LevelSwitchEvent>(
+                    new(
+                        posDiffValue.x == 0
+                            ? LevelSwitchEvent.LevelSwitchDirection.Vertical
+                            : LevelSwitchEvent.LevelSwitchDirection.Horizontal
+                    )
+                );
+            }
+            else
+            {
+                CLogger.LogError(
+                    "SENDING LevelSwitchEvent FAILED\n"
+                        + "Something went wrong when calculating level transition difference, maybe a null ref issue. info follows:"
+                        + " \nCurLevel: "
+                        + m_CurrentLevelTransition
+                        + " \nTargetLevel: "
+                        + targetTransition,
+                    LogTag.LevelManager,
+                    LogTag.Event
+                );
+            }
 
 #if UNITY_EDITOR
             UpdateDebugUI();
@@ -320,6 +335,19 @@ namespace GameMain.RunTime
                     LogTag.LevelManager
                 );
             }
+        }
+
+        private Vector3? GetTransitionPositionDiff(LevelTransition targetTransition)
+        {
+            if (targetTransition == null)
+                return null;
+
+            if (m_CurrentLevelTransition == null)
+                return null;
+
+            var tarPos = targetTransition.transform.position;
+            var curPos = m_CurrentLevelTransition.transform.position;
+            return tarPos - curPos;
         }
 
         private int m_CurrentMaxPriority = 0;
