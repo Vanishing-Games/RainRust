@@ -273,6 +273,10 @@ namespace GameMain.RunTime
             if (m_CurrentLevel == level)
                 return;
 
+            var tarPos = targetTransition.transform.position;
+            var curPos = m_CurrentLevelTransition.transform.position;
+            var posDiff = tarPos - curPos;
+
             m_LastSwitchFrame = Time.frameCount;
             m_CurrentLevel = level;
             m_CurrentLevelTransition = targetTransition;
@@ -281,6 +285,14 @@ namespace GameMain.RunTime
             CLogger.LogInfo($"Switched to Level: {level.Identifier}", LogTag.LevelManager);
 
             ActivateRoom(level);
+
+            MessageBroker.Global.Publish<LevelSwitchEvent>(
+                new(
+                    posDiff.x == 0
+                        ? LevelSwitchEvent.LevelSwitchDirection.Vertical
+                        : LevelSwitchEvent.LevelSwitchDirection.Horizontal
+                )
+            );
 
 #if UNITY_EDITOR
             UpdateDebugUI();
