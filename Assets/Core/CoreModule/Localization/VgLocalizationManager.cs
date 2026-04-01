@@ -4,7 +4,5 @@ using UnityEngine;
 
 namespace Core
 {
-    public class VgLocalizationManager : MonoBehaviour
-    {
-    }
+    public class VgLocalizationManager : MonoBehaviour { }
 }

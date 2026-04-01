@@ -33,7 +33,7 @@ namespace Core
         {
             if (mPrefab == null)
             {
-                Logger.LogError("InstantiateGoCommand: Prefab is null!", LogTag.Command);
+                CLogger.LogError("InstantiateGoCommand: Prefab is null!", LogTag.Command);
                 return null;
             }
 

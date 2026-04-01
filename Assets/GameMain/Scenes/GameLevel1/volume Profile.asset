@@ -1,0 +1,172 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7fd9488000d3734a9e00ee676215985, type: 3}
+  m_Name: volume Profile
+  m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.VolumeProfile
+  components:
+  - {fileID: 2449630614766210822}
+  - {fileID: 4973364795150521376}
+  - {fileID: 6475767035647213024}
+  - {fileID: 1304712773917163064}
+--- !u!114 &1304712773917163064
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81180773991d8724ab7f2d216912b564, type: 3}
+  m_Name: ChromaticAberration
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.ChromaticAberration
+  active: 1
+  intensity:
+    m_OverrideState: 1
+    m_Value: 0.038
+--- !u!114 &2449630614766210822
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 554b97ecd49ba6a468b601574f7d1558, type: 3}
+  m_Name: RainRustVolume
+  m_EditorClassIdentifier: RainRust.Rendering::RainRust.Rendering.RainRustVolume
+  active: 1
+  isEnabled:
+    m_OverrideState: 1
+    m_Value: 1
+  noiseMode:
+    m_OverrideState: 1
+    m_Value: 2
+  noiseType:
+    m_OverrideState: 1
+    m_Value: 1
+  alphaMode:
+    m_OverrideState: 1
+    m_Value: 0
+  noiseTexture:
+    m_OverrideState: 1
+    m_Value: {fileID: 0}
+    dimension: 1
+  noiseTilingOffset:
+    m_OverrideState: 1
+    m_Value: {x: 1, y: 1, z: 1, w: 1}
+  noiseVelocity:
+    m_OverrideState: 1
+    m_Value: {x: 0.11, y: 0.26}
+  noiseScale:
+    m_OverrideState: 1
+    m_Value: 1.19
+  noiseIntensity:
+    m_OverrideState: 1
+    m_Value: 3.33
+  resolutionScalar:
+    m_OverrideState: 1
+    m_Value: 1
+  lightSamples:
+    m_OverrideState: 1
+    m_Value: 128
+  lightIntensity:
+    m_OverrideState: 1
+    m_Value: 5.33
+  lightFalloffAlpha:
+    m_OverrideState: 1
+    m_Value: 1
+  lightFalloffGamma:
+    m_OverrideState: 1
+    m_Value: 0.001
+  ambientColor:
+    m_OverrideState: 1
+    m_Value: {r: 0.14117648, g: 0.078431375, b: 0.03529412, a: 1}
+--- !u!114 &4973364795150521376
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b2db86121404754db890f4c8dfe81b2, type: 3}
+  m_Name: Bloom
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.Bloom
+  active: 1
+  skipIterations:
+    m_OverrideState: 1
+    m_Value: 1
+  threshold:
+    m_OverrideState: 1
+    m_Value: 0.68
+  intensity:
+    m_OverrideState: 1
+    m_Value: 0.91
+  scatter:
+    m_OverrideState: 1
+    m_Value: 0.604
+  clamp:
+    m_OverrideState: 1
+    m_Value: 65472
+  tint:
+    m_OverrideState: 1
+    m_Value: {r: 0.98039216, g: 0.9411765, b: 0.89411765, a: 1}
+  highQualityFiltering:
+    m_OverrideState: 1
+    m_Value: 0
+  filter:
+    m_OverrideState: 1
+    m_Value: 0
+  downscale:
+    m_OverrideState: 0
+    m_Value: 0
+  maxIterations:
+    m_OverrideState: 0
+    m_Value: 6
+  dirtTexture:
+    m_OverrideState: 1
+    m_Value: {fileID: 0}
+    dimension: 1
+  dirtIntensity:
+    m_OverrideState: 1
+    m_Value: 0
+--- !u!114 &6475767035647213024
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 899c54efeace73346a0a16faa3afe726, type: 3}
+  m_Name: Vignette
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.Vignette
+  active: 1
+  color:
+    m_OverrideState: 1
+    m_Value: {r: 0, g: 0, b: 0, a: 1}
+  center:
+    m_OverrideState: 1
+    m_Value: {x: 0.5, y: 0.5}
+  intensity:
+    m_OverrideState: 1
+    m_Value: 0.33
+  smoothness:
+    m_OverrideState: 1
+    m_Value: 0.2
+  rounded:
+    m_OverrideState: 1
+    m_Value: 0

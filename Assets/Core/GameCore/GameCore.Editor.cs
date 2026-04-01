@@ -1,28 +1,13 @@
 #if UNITY_EDITOR
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using UnityEngine;
 
 namespace Core
 {
     public partial class GameCore : MonoSingletonPersistent<GameCore>
     {
-        private static readonly string[] UnityLifecycleMethods =
-        {
-            "Awake",
-            "Start",
-            "Update",
-            "FixedUpdate",
-            "LateUpdate",
-            "OnEnable",
-            "OnDisable",
-            "OnDestroy",
-        };
-
         private bool GameRunInEditorCheck()
         {
             bool hasUnityLifecycleMethods = AppDomain
@@ -53,7 +38,7 @@ namespace Core
 
             if (hasUnityLifecycleMethods)
             {
-                Logger.LogError(
+                CLogger.LogError(
                     $"Game Running Condition failed, beacause unity lifecycle methods are found in class inherit from CoreModuleManagerBase",
                     LogTag.GameRunCheck
                 );
@@ -61,6 +46,18 @@ namespace Core
 
             return !hasUnityLifecycleMethods;
         }
+
+        private static readonly string[] UnityLifecycleMethods =
+        {
+            "Awake",
+            "Start",
+            "Update",
+            "FixedUpdate",
+            "LateUpdate",
+            "OnEnable",
+            "OnDisable",
+            "OnDestroy",
+        };
     }
 }
 

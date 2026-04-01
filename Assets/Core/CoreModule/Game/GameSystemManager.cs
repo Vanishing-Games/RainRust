@@ -5,8 +5,5 @@ using UnityEngine;
 
 namespace Core
 {
-    public class GameSystemManager 
-    {
-
-    }
+    public class GameSystemManager { }
 }

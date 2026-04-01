@@ -6,6 +6,15 @@ TagManager:
   tags:
   - Wall
   - Wave
+  - LogicMap
+  - AutoTile
+  - ManualTile
+  - Entity
+  - System
+  - asteroid
+  - ship
+  - Danger
+  - BackGround
   layers:
   - Default
   - TransparentFX
@@ -13,15 +22,18 @@ TagManager:
   - Progress Bar
   - Water
   - UI
-  - Character
-  - Static Object
-  - Dynamic Object
-  - Kinematic Object
+  - Player
+  - Entity
+  - 
+  - 
   - Wall
   - VerticalGrab
-  - Player
   - Hook
   - Wave
+  - AutoTile
+  - ManualTile
+  - LogicMap
+  - Respawn
   - 
   - 
   - 
@@ -33,15 +45,33 @@ TagManager:
   - 
   - 
   - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Volume
+  - BackGround
+  - System
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: BackGround
+    uniqueID: 2351853537
+    locked: 0
+  - name: LogicMap
+    uniqueID: 3573762187
+    locked: 0
+  - name: BackGroundTile
+    uniqueID: 1674556267
+    locked: 0
+  - name: Entity
+    uniqueID: 935505379
+    locked: 0
+  - name: AutoTile
+    uniqueID: 3372048073
+    locked: 0
+  - name: ManualTile
+    uniqueID: 2346397863
+    locked: 0
+  - name: ForeGround
+    uniqueID: 3569134307
     locked: 0
   m_RenderingLayers:
   - Default

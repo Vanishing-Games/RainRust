@@ -3,7 +3,7 @@
  * Copyright (c) 2025 Vanishing Games. All Rights Reserved.
  * @Author: VanishXiao
  * @Date: 2025-10-30 16:25:44
- * @LastEditTime: 2025-12-07 20:21:35
+ * @LastEditTime: 2026-03-25 01:34:37
  * --------------------------------------------------------------------------------
 -->
 > 《不尬的诗》
@@ -81,3 +81,20 @@ boss_enemy_eggman # enemy 比 boss 更宽泛；应改用 enemy_boss_eggman
 GreatArt_1 GreatArt_2 GreatArt_10 # 数位不一致
 sfx_env_forest_daytime_birds_chirping_loop_ambient_lowIntensity_01.wav # 太长
 ```
+
+# 代码开发规范
+
+## 结构与命名
+- **布局顺序**: 所有的字段 (Fields) 与属性 (Properties) 必须放在类的最底部。
+- **私有成员**: 私有或内部成员变量必须以 `m_` 开头 (例如 `m_IsTransitioning`)。
+
+## 逻辑与库
+- **事件系统**: 使用 **R3** 作为事件库。
+- **函数式编程 (FP)**: 优先考虑函数式编程风格。基础库（如 `Result`）位于 `Assets/Core/FP`。
+- **日志输出**: 统一使用 `CLogger`。
+    - 每次调用日志必须至少提供一个 `LogTag` 进行分类（例如 `LogTag.Game`）。
+
+## 代码质量
+- **注释规范**: 代码中不允许出现注释（除非是补充代码本身无法表达的必要信息）。
+- **优化建议**: 严格遵守项目中配置的 **Roslynator** 优化建议。
+- **代码格式化**: 必须使用 **CSharpier** 作为代码格式化工具。

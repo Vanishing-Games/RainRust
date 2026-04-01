@@ -1,0 +1,98 @@
+using System.Collections.Generic;
+using Core;
+using Sirenix.OdinInspector;
+using Unity.Cinemachine;
+using UnityEditorInternal;
+using UnityEngine;
+using CameraMode = GameMain.LDtk.CameraMode;
+
+namespace GameMain.RunTime
+{
+    public class LevelRoom : MonoBehaviour
+    {
+        public void DeActivate() { }
+
+        public void Activate()
+        {
+            if (VirtualCamera == null)
+            {
+                CLogger.LogError("LevelRoom don't have a ref of virtual cam", LogTag.LevelRoom);
+                return;
+            }
+
+            if (CameraMode == CameraMode.Follow)
+            {
+                VirtualCamera.Follow = GameMain.GetPlayer().transform;
+            }
+            else
+            {
+                VirtualCamera.Follow = null;
+                VirtualCamera.LookAt = null;
+            }
+
+            VirtualCamera.Priority.Enabled = true;
+            VirtualCamera.Priority.Value = LevelManager.Instance.GetCurrentMaxPriority();
+        }
+
+        void Awake()
+        {
+            if (Transitions.Count == 0)
+            {
+                LevelTransition[] transitions =
+                    transform.GetComponentsInChildren<LevelTransition>();
+                Transitions.AddRange(transitions);
+            }
+
+            if (Transitions.Count == 0)
+            {
+                CLogger.LogInfo(
+                    "Disable room: " + gameObject.name + " for no transitions in room",
+                    LogTag.LevelRoom
+                );
+                gameObject.SetActive(false);
+                return;
+            }
+
+            Neighbors.Clear();
+            foreach (var trans in Transitions)
+                if (trans.Target != null)
+                    Neighbors.Add(trans.Target.transform.GetComponentInParent<LevelRoom>());
+        }
+
+        [SerializeField, ReadOnly]
+        private CameraMode _cameraMode;
+
+        [SerializeField, ReadOnly]
+        private Bounds _borderBounds;
+
+        [SerializeField, ReadOnly]
+        private CinemachineCamera _virtualCamera;
+
+        [SerializeField, ReadOnly]
+        private List<LevelTransition> _transitions = new();
+
+        [SerializeField, ReadOnly]
+        private List<LevelRoom> _neighbors = new();
+
+        public CameraMode CameraMode
+        {
+            get => _cameraMode;
+            set => _cameraMode = value;
+        }
+
+        public Bounds BorderBounds
+        {
+            get => _borderBounds;
+            set => _borderBounds = value;
+        }
+
+        public CinemachineCamera VirtualCamera
+        {
+            get => _virtualCamera;
+            set => _virtualCamera = value;
+        }
+
+        public List<LevelTransition> Transitions => _transitions;
+        public List<LevelRoom> Neighbors => _neighbors;
+    }
+}

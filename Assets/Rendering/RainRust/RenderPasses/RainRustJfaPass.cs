@@ -16,6 +16,11 @@ namespace RainRust.Rendering
             renderPassEvent = RenderPassEvent.BeforeRenderingOpaques;
         }
 
+        public void Setup(RainRustLighting.RainRustLightingSettings settings)
+        {
+            m_Settings = settings;
+        }
+
         class PassData
         {
             public Material material;
@@ -26,6 +31,9 @@ namespace RainRust.Rendering
 
         public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
         {
+            if (m_Settings == null)
+                return;
+
             // Get the shared data from the previous pass
             var rainRustContextData = frameData.Get<RainRustContextData>();
 
@@ -42,6 +50,9 @@ namespace RainRust.Rendering
             Vector2 aspect = new(1f, (float)height / width); // Matches shader's _Aspect usage
 
             EnsureMaterials(iterations);
+
+            if (m_JfaMaterials == null || m_JfaMaterials.Count < iterations)
+                return;
 
             for (int i = 0; i < iterations; i++)
             {
@@ -74,15 +85,13 @@ namespace RainRust.Rendering
             if (m_JfaMaterials == null)
                 m_JfaMaterials = new List<Material>();
 
-            if (m_Shader == null)
+            if (m_Shader == null && m_Settings.jfaShader != null)
             {
-                m_Shader = Shader.Find(k_JfaShaderName);
-                if (m_Shader == null)
-                {
-                    Core.Logger.LogError($"Shader not found: {k_JfaShaderName}", LogTag.Rendering);
-                    return;
-                }
+                m_Shader = m_Settings.jfaShader;
             }
+
+            if (m_Shader == null)
+                return;
 
             while (m_JfaMaterials.Count < count)
             {
@@ -104,6 +113,6 @@ namespace RainRust.Rendering
 
         private List<Material> m_JfaMaterials;
         private Shader m_Shader;
-        private const string k_JfaShaderName = "Hidden/RainRust/JumpFloodAlgorithm";
+        private RainRustLighting.RainRustLightingSettings m_Settings;
     }
 }

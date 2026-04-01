@@ -1,0 +1,26 @@
+{
+    "name": "Test.Editor",
+    "rootNamespace": "Test.Editor",
+    "references": [
+        "GUID:198f161f050714b85981e87f526d009e",
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner",
+        "R3.Unity",
+        "Newtonsoft.Json"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

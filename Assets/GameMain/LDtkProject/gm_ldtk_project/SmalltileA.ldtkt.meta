@@ -1,0 +1,736 @@
+fileFormatVersion: 2
+guid: ffe0eb572c8cfe24eabbd112fa04dc76
+ScriptedImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 2
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+  script: {fileID: 11500000, guid: f3268c876daf4890b6af6cd462063137, type: 3}
+  _reimportOnDependencyChange: 1
+  _pixelsPerUnit: 128
+  _overrideTexture: {instanceID: 0}
+  _sprites:
+  - name: SmalltileA_0
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 0
+      y: 384
+      width: 128
+      height: 128
+    spriteID: 3065085a6e33fc141b13cd29340f323a
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: SmalltileA_1
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 128
+      y: 384
+      width: 128
+      height: 128
+    spriteID: 672dcdc444372f34da4607023ecdedc8
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: SmalltileA_2
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 256
+      y: 384
+      width: 128
+      height: 128
+    spriteID: 0c9ed893233795e4f9c2029e56d32634
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: SmalltileA_3
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 384
+      y: 384
+      width: 128
+      height: 128
+    spriteID: 9b238e1a044928540a09dfd67949319d
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: SmalltileA_4
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 512
+      y: 384
+      width: 128
+      height: 128
+    spriteID: 34bb08128ee11e642be0b63ba279cd84
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: SmalltileA_5
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 640
+      y: 384
+      width: 128
+      height: 128
+    spriteID: 3b8953c5921bbd44cafd3d87fecb4a85
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: SmalltileA_6
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 768
+      y: 384
+      width: 128
+      height: 128
+    spriteID: 3ad91462a30236e40a51e8e9beabc7ee
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: SmalltileA_7
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 896
+      y: 384
+      width: 128
+      height: 128
+    spriteID: 3aa0c7b255f1cb1448245823d39d46ad
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: SmalltileA_8
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1024
+      y: 384
+      width: 128
+      height: 128
+    spriteID: 03bf969262a6606449feee03532b00ff
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: SmalltileA_9
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1152
+      y: 384
+      width: 128
+      height: 128
+    spriteID: b637eb46adca4d84f8d0cc6e8ca0c240
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: SmalltileA_10
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1280
+      y: 384
+      width: 128
+      height: 128
+    spriteID: bd3fe307687716f439b1390e3888dd1c
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: SmalltileA_11
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1408
+      y: 384
+      width: 128
+      height: 128
+    spriteID: 7e86101287703c743aa84a978bae08f5
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: SmalltileA_12
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 0
+      y: 256
+      width: 128
+      height: 128
+    spriteID: 6cc26cd496070f44d84accd5e675a4c8
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: SmalltileA_13
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 128
+      y: 256
+      width: 128
+      height: 128
+    spriteID: a1e4819dc62b68e42a8218d118fc2828
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: SmalltileA_14
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 256
+      y: 256
+      width: 128
+      height: 128
+    spriteID: d3710d43c0d62544585098eb3eee4001
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: SmalltileA_15
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 384
+      y: 256
+      width: 128
+      height: 128
+    spriteID: d08f037128ae66142ba846e56458b0f1
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: SmalltileA_16
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 512
+      y: 256
+      width: 128
+      height: 128
+    spriteID: de2b1bb475baa674e99a475cfcb033a2
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: SmalltileA_17
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 640
+      y: 256
+      width: 128
+      height: 128
+    spriteID: 0290bbb421602ee4b956b750b7940adb
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: SmalltileA_18
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 768
+      y: 256
+      width: 128
+      height: 128
+    spriteID: d671e01b42a8e5148a4d7c25263a05a8
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: SmalltileA_19
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 896
+      y: 256
+      width: 128
+      height: 128
+    spriteID: 1e06ff548a6480a4a9596b2c7d96a6dc
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: SmalltileA_20
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1024
+      y: 256
+      width: 128
+      height: 128
+    spriteID: bf44f9b6524c9ca46b09780a81df858c
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: SmalltileA_21
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1152
+      y: 256
+      width: 128
+      height: 128
+    spriteID: 9810dacee12d12c47bd76bb9f850a8ab
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: SmalltileA_22
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1280
+      y: 256
+      width: 128
+      height: 128
+    spriteID: 72ac87667b8064a478bc1b53d4506429
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: SmalltileA_23
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1408
+      y: 256
+      width: 128
+      height: 128
+    spriteID: da0d15d15d37cda46868e0c5497c98db
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: SmalltileA_24
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 0
+      y: 128
+      width: 128
+      height: 128
+    spriteID: ac9b3c0680c77e0438b6a3c32a9ad193
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: SmalltileA_25
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 128
+      y: 128
+      width: 128
+      height: 128
+    spriteID: 862e51fbf6845654c980deac929553d7
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: SmalltileA_26
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 256
+      y: 128
+      width: 128
+      height: 128
+    spriteID: 7ee094caf77014e44ab054ffcefc9c3b
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: SmalltileA_27
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 384
+      y: 128
+      width: 128
+      height: 128
+    spriteID: ab67073802c355243ab81815e0546e7a
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: SmalltileA_28
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 512
+      y: 128
+      width: 128
+      height: 128
+    spriteID: ff5e23b5a5241fb4ba5f54daee461160
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: SmalltileA_29
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 640
+      y: 128
+      width: 128
+      height: 128
+    spriteID: 7f05e5da2ad6e01439845529b79db156
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: SmalltileA_30
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 768
+      y: 128
+      width: 128
+      height: 128
+    spriteID: dd1b42a5dfd98ec48b07a898648b2a91
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: SmalltileA_31
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 896
+      y: 128
+      width: 128
+      height: 128
+    spriteID: 27397b83c56bca74681a77affb284b03
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: SmalltileA_32
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1024
+      y: 128
+      width: 128
+      height: 128
+    spriteID: 08b56616f985b4e4997584beb1d1f44d
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: SmalltileA_33
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1152
+      y: 128
+      width: 128
+      height: 128
+    spriteID: 8d760a4404c1a9441827cddd4a1325a5
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: SmalltileA_34
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1280
+      y: 128
+      width: 128
+      height: 128
+    spriteID: 9df519025b6e268418f3eebad2e84d3b
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: SmalltileA_35
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1408
+      y: 128
+      width: 128
+      height: 128
+    spriteID: 0d533930c3efe354bb0c3403bbf30ee7
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: SmalltileA_36
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 128
+      height: 128
+    spriteID: 355f1a96fa7605b409ff5aa7b512e0b3
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: SmalltileA_37
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 128
+      y: 0
+      width: 128
+      height: 128
+    spriteID: 38b1822f2565c7c4c806981ee0403634
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: SmalltileA_38
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 256
+      y: 0
+      width: 128
+      height: 128
+    spriteID: 051fd0142b30b5045a326ab66f5e7672
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: SmalltileA_39
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 384
+      y: 0
+      width: 128
+      height: 128
+    spriteID: 8e026200ce3f46546a8e06b483ee5b67
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: SmalltileA_40
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 512
+      y: 0
+      width: 128
+      height: 128
+    spriteID: dc24f427d63ddba4bb7f934eba764ed9
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: SmalltileA_41
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 640
+      y: 0
+      width: 128
+      height: 128
+    spriteID: daf0ac2e27f67034ba513aed457608bc
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: SmalltileA_42
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 768
+      y: 0
+      width: 128
+      height: 128
+    spriteID: 15993da113f55424bb422884cf19efb5
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: SmalltileA_43
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 896
+      y: 0
+      width: 128
+      height: 128
+    spriteID: f8a8b5eb949cf1a45a859aa7650cac76
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: SmalltileA_44
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1024
+      y: 0
+      width: 128
+      height: 128
+    spriteID: a25a57c7dc5b5c14280b674624577de5
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: SmalltileA_45
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1152
+      y: 0
+      width: 128
+      height: 128
+    spriteID: 6332468c1c923c149909397112e05cdd
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: SmalltileA_46
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1280
+      y: 0
+      width: 128
+      height: 128
+    spriteID: f722ac54198d1294cb989f8c104641dd
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: SmalltileA_47
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1408
+      y: 0
+      width: 128
+      height: 128
+    spriteID: 9c2a37256bf4457438df65b8c14347d1
+    spriteOutline: []
+    tessellationDetail: 0
+  _secondaryTextures: []
+  _artifacts: {instanceID: 0}

@@ -1,0 +1,736 @@
+fileFormatVersion: 2
+guid: ef5bd66b2dbb4404bb0a7a6395b1ea21
+ScriptedImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 2
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+  script: {fileID: 11500000, guid: f3268c876daf4890b6af6cd462063137, type: 3}
+  _reimportOnDependencyChange: 1
+  _pixelsPerUnit: 128
+  _overrideTexture: {instanceID: 0}
+  _sprites:
+  - name: BGTilemap_B_0
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 0
+      y: 384
+      width: 128
+      height: 128
+    spriteID: 08c391934034fcf45b79a8d7a0bfe82f
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: BGTilemap_B_1
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 128
+      y: 384
+      width: 128
+      height: 128
+    spriteID: 3301ffa200aea074caa5177340a7b055
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: BGTilemap_B_2
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 256
+      y: 384
+      width: 128
+      height: 128
+    spriteID: a3b3d3b411b391f4ba968f909855b23c
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: BGTilemap_B_3
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 384
+      y: 384
+      width: 128
+      height: 128
+    spriteID: 3b505a4703448534c98f26c516f0a455
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: BGTilemap_B_4
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 512
+      y: 384
+      width: 128
+      height: 128
+    spriteID: eea8d408cdb7f16418e634c4048a4a0a
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: BGTilemap_B_5
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 640
+      y: 384
+      width: 128
+      height: 128
+    spriteID: 3d29111ba9625b843b1488820d1a78cf
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: BGTilemap_B_6
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 768
+      y: 384
+      width: 128
+      height: 128
+    spriteID: 85b4dc04aa1bc584fb07f34d9475ad90
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: BGTilemap_B_7
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 896
+      y: 384
+      width: 128
+      height: 128
+    spriteID: ca22264d601b67040b40b668e9f1c12e
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: BGTilemap_B_8
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1024
+      y: 384
+      width: 128
+      height: 128
+    spriteID: c8cace35ba4b83e45b267bea0ca50513
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: BGTilemap_B_9
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1152
+      y: 384
+      width: 128
+      height: 128
+    spriteID: 1891cc3f4c10a534a9e93a69569c01ab
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: BGTilemap_B_10
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1280
+      y: 384
+      width: 128
+      height: 128
+    spriteID: 8015825c83dc6c2408755bbb5ace0024
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: BGTilemap_B_11
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1408
+      y: 384
+      width: 128
+      height: 128
+    spriteID: c42c279d7bbbfd043948870e0e5336d9
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: BGTilemap_B_12
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 0
+      y: 256
+      width: 128
+      height: 128
+    spriteID: adfac1223ea88684eaa1851aa9e4ddfc
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: BGTilemap_B_13
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 128
+      y: 256
+      width: 128
+      height: 128
+    spriteID: 799fe3f92928a974bb6604cfd671e7c1
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: BGTilemap_B_14
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 256
+      y: 256
+      width: 128
+      height: 128
+    spriteID: aa5fb356023dd2549862ea574db5a505
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: BGTilemap_B_15
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 384
+      y: 256
+      width: 128
+      height: 128
+    spriteID: ec9ece7d0834ef2419600e5d29855196
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: BGTilemap_B_16
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 512
+      y: 256
+      width: 128
+      height: 128
+    spriteID: 53f550f0bcacb4445a0b004e372e5a09
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: BGTilemap_B_17
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 640
+      y: 256
+      width: 128
+      height: 128
+    spriteID: 69893f801d5b33141ba75626dd561289
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: BGTilemap_B_18
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 768
+      y: 256
+      width: 128
+      height: 128
+    spriteID: a446559bf79497548bc8502625459f58
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: BGTilemap_B_19
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 896
+      y: 256
+      width: 128
+      height: 128
+    spriteID: fb34c5b864393ea4c90782f991344f87
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: BGTilemap_B_20
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1024
+      y: 256
+      width: 128
+      height: 128
+    spriteID: 0423e2137a8c0de47822a840a28431dc
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: BGTilemap_B_21
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1152
+      y: 256
+      width: 128
+      height: 128
+    spriteID: 30207c0aecdb16940aac342224e8f89b
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: BGTilemap_B_22
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1280
+      y: 256
+      width: 128
+      height: 128
+    spriteID: 598bd481ccf4e764ba293b350d79464e
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: BGTilemap_B_23
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1408
+      y: 256
+      width: 128
+      height: 128
+    spriteID: 8fc1b9a93efa1214090bb433e9fb8e19
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: BGTilemap_B_24
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 0
+      y: 128
+      width: 128
+      height: 128
+    spriteID: de8f534fda46cc346b4ce1f826381cbb
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: BGTilemap_B_25
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 128
+      y: 128
+      width: 128
+      height: 128
+    spriteID: b62dda531f3e61e48ad208a92558db14
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: BGTilemap_B_26
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 256
+      y: 128
+      width: 128
+      height: 128
+    spriteID: c0f87e86eb0565f47a8d713b92b9a71f
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: BGTilemap_B_27
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 384
+      y: 128
+      width: 128
+      height: 128
+    spriteID: 003e7586c8accd643a4521b45d22b071
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: BGTilemap_B_28
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 512
+      y: 128
+      width: 128
+      height: 128
+    spriteID: 2874927ee6a986f45936e16733de5a1e
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: BGTilemap_B_29
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 640
+      y: 128
+      width: 128
+      height: 128
+    spriteID: d0b5a0f5176138d4cb239079b76cf568
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: BGTilemap_B_30
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 768
+      y: 128
+      width: 128
+      height: 128
+    spriteID: 26b6e2756963b4a448b081104b1d6bea
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: BGTilemap_B_31
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 896
+      y: 128
+      width: 128
+      height: 128
+    spriteID: fa878d57ebc8a9349b90ff1dd0882331
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: BGTilemap_B_32
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1024
+      y: 128
+      width: 128
+      height: 128
+    spriteID: a5281d9bcf826ae4daa6fa9b580cf5f4
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: BGTilemap_B_33
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1152
+      y: 128
+      width: 128
+      height: 128
+    spriteID: c3015ec6b4e8d084cb795da501b98136
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: BGTilemap_B_34
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1280
+      y: 128
+      width: 128
+      height: 128
+    spriteID: 57146ca74b9b3ea4e8ecd212c224d228
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: BGTilemap_B_35
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1408
+      y: 128
+      width: 128
+      height: 128
+    spriteID: 5d673f8e64c41134ca7eb3f299b00f74
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: BGTilemap_B_36
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 128
+      height: 128
+    spriteID: e505c8f9775ceaf4aa7d486d4588d0fc
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: BGTilemap_B_37
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 128
+      y: 0
+      width: 128
+      height: 128
+    spriteID: d23d4c37f7b1c064791d046f0f61a9dd
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: BGTilemap_B_38
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 256
+      y: 0
+      width: 128
+      height: 128
+    spriteID: d8c7c6a3872d6034bbc4bf6c66704f4a
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: BGTilemap_B_39
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 384
+      y: 0
+      width: 128
+      height: 128
+    spriteID: 1a4670665103625438a5160fb03e4f9e
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: BGTilemap_B_40
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 512
+      y: 0
+      width: 128
+      height: 128
+    spriteID: 78380b67abc9c5b4ea2eefab85e963fd
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: BGTilemap_B_41
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 640
+      y: 0
+      width: 128
+      height: 128
+    spriteID: 1aeaf64fd54f93f48b39f2cac7a28e4d
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: BGTilemap_B_42
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 768
+      y: 0
+      width: 128
+      height: 128
+    spriteID: 4a179d2e708c2da4597a59b202347662
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: BGTilemap_B_43
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 896
+      y: 0
+      width: 128
+      height: 128
+    spriteID: 4aba17f1c3a025048869bc2b842891c7
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: BGTilemap_B_44
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1024
+      y: 0
+      width: 128
+      height: 128
+    spriteID: 6c8e83733eac02c4784f567ad10072ac
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: BGTilemap_B_45
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1152
+      y: 0
+      width: 128
+      height: 128
+    spriteID: 9305f078714a6384781a5752a1078467
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: BGTilemap_B_46
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1280
+      y: 0
+      width: 128
+      height: 128
+    spriteID: 4849ad96c9d41be45b01d6f610d216df
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: BGTilemap_B_47
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1408
+      y: 0
+      width: 128
+      height: 128
+    spriteID: f571a31a697fc40469d641da5f33ac51
+    spriteOutline: []
+    tessellationDetail: 0
+  _secondaryTextures: []
+  _artifacts: {instanceID: 0}

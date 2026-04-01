@@ -35,6 +35,7 @@ namespace Core
         public static readonly LogTag Command = new("Command");
         public static readonly LogTag Rendering = new("Rendering");
         public static readonly LogTag Game = new("Game");
+        public static readonly LogTag Fuck = new("Fuck");
 
         // ========== Second Tags ==========
         public static readonly LogTag CodeUnfucker = new("CodeUnfucker", Editor.Path);
@@ -46,10 +47,40 @@ namespace Core
             "VgLoadProgressManager",
             Loading.Path
         );
+        public static readonly LogTag VgCameraManager = new("VgCameraManager", CoreModule.Path);
         public static readonly LogTag PlayerControl = new("PlayerControl", Game.Path);
+        public static readonly LogTag LdtkProcessor = new("LDtkProcessor", Editor.Path);
+        public static readonly LogTag PlayerManager = new("PlayerManager", Game.Path);
+        public static readonly LogTag LevelManager = new("LevelManager", Game.Path);
 
         // ========== Third Tags ==========
         public static readonly LogTag CodeUnfucker_3_Sample = new("Save", CodeUnfucker.Path); // MAX depth = 3
         public static readonly LogTag GameRunCheck = new("GameSystem", GameCoreStart.Path);
+        public static readonly LogTag LdtkRoomProcessor = new("RoomProcessor", LdtkProcessor.Path);
+        public static readonly LogTag LdtkLogicMapProcessor = new(
+            "LogicMapProcessor",
+            LdtkProcessor.Path
+        );
+        public static readonly LogTag LDtkTransitionProcessor = new(
+            "LevelTransitionProcessor",
+            LdtkProcessor.Path
+        );
+        public static readonly LogTag LDtkVolumGenProcessor = new(
+            "LDtkVolumGenProcessor",
+            LdtkProcessor.Path
+        );
+        public static readonly LogTag LevelRoom = new("LevelRoom", LevelManager.Path);
+        public static readonly LogTag LDtkChapterBackgroundProcessor = new(
+            "LDtkChapterBackgroundProcessor",
+            LdtkProcessor.Path
+        );
+        public static readonly LogTag LDtkMaterialSetProcessor = new(
+            "LDtkMaterialSetProcessor",
+            LdtkProcessor.Path
+        );
+        public static readonly LogTag LDtkLevelRoomProcessor = new(
+            "LDtkLevelRoomProcessor",
+            LdtkProcessor.Path
+        );
     }
 }

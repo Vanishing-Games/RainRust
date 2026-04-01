@@ -677,6 +677,8 @@ jobs:
 
       - name: 🧪 运行EditMode测试
         uses: game-ci/unity-test-runner@v4
+        id: edit-tests
+        continue-on-error: true
         env:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
@@ -684,9 +686,12 @@ jobs:
         with:
           unityVersion: ${{ steps.load-test-config.outputs.unity_version }}
           testMode: EditMode
+          artifactsPath: artifacts/editmode
 
       - name: 🎮 运行PlayMode测试  
         uses: game-ci/unity-test-runner@v4
+        id: play-tests
+        continue-on-error: true
         env:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
@@ -694,6 +699,67 @@ jobs:
         with:
           unityVersion: ${{ steps.load-test-config.outputs.unity_version }}
           testMode: PlayMode
+          artifactsPath: artifacts/playmode
+
+      - name: 📊 解析测试结果并生成摘要
+        if: always()
+        run: |
+          echo "🔍 正在解析测试结果 XML..."
+          
+          # 解析函数
+          parse_xml() {
+            local file=$1
+            if [ -f "$file" ]; then
+              local p=$(grep -oP 'passed="\d+"' "$file" | head -1 | grep -oP '\d+' || echo "0")
+              local f=$(grep -oP 'failed="\d+"' "$file" | head -1 | grep -oP '\d+' || echo "0")
+              local s=$(grep -oP 'skipped="\d+"' "$file" | head -1 | grep -oP '\d+' || echo "0")
+              local t=$(grep -oP 'total="\d+"' "$file" | head -1 | grep -oP '\d+' || echo "0")
+              echo "$p,$f,$s,$t"
+            else
+              echo "0,0,0,0"
+            fi
+          }
+          
+          EDIT_RES=$(parse_xml "artifacts/editmode/editmode.xml")
+          PLAY_RES=$(parse_xml "artifacts/playmode/playmode.xml")
+          
+          IFS=',' read -r EP EF ES ET <<< "$EDIT_RES"
+          IFS=',' read -r PP PF PS PT <<< "$PLAY_RES"
+          
+          TOTAL_F=$((EF + PF))
+          
+          echo "## 🧪 Unity单元测试详情" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ $TOTAL_F -eq 0 ]; then
+            echo "✅ **测试状态:** 全部通过" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **测试状态:** 发现 **$TOTAL_F** 个失败项" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| 模式 | 总数 | 通过 | 失败 | 跳过 | 通过率 |" >> $GITHUB_STEP_SUMMARY
+          echo "| :--- | :---: | :---: | :---: | :---: | :---: |" >> $GITHUB_STEP_SUMMARY
+          
+          calc_rate() {
+            if [ "$2" -gt 0 ]; then echo "$(( $1 * 100 / $2 ))%"; else echo "-"; fi
+          }
+          
+          echo "| EditMode | $ET | $EP | $EF | $ES | $(calc_rate $EP $ET) |" >> $GITHUB_STEP_SUMMARY
+          echo "| PlayMode | $PT | $PP | $PF | $PS | $(calc_rate $PP $PT) |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          echo "<details><summary>点击查看配置详情</summary>" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Unity版本:** \`${{ steps.load-test-config.outputs.unity_version }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **覆盖率报告:** \`${{ steps.load-test-config.outputs.generate_coverage }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "</details>" >> $GITHUB_STEP_SUMMARY
+          
+          # 如果有失败测试且不是跳过的，则退出码设为 1
+          if [ $TOTAL_F -gt 0 ]; then
+            echo "🚨 发现测试失败，将标记 Job 为失败。"
+            exit 1
+          fi
 
       - name: 📊 上传测试结果
         uses: actions/upload-artifact@v4
@@ -701,19 +767,6 @@ jobs:
         with:
           name: unity-test-results
           path: artifacts/
-
-      - name: 📋 测试结果摘要
-        if: always()
-        run: |
-          echo "## 🧪 Unity单元测试结果" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "✅ **测试状态:** 完成" >> $GITHUB_STEP_SUMMARY  
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**测试配置:**" >> $GITHUB_STEP_SUMMARY
-          echo "- Unity版本: \`${{ steps.load-test-config.outputs.unity_version }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "- EditMode路径: \`${{ steps.load-test-config.outputs.edit_mode_path }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "- PlayMode路径: \`${{ steps.load-test-config.outputs.play_mode_path }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "- 覆盖率报告: \`${{ steps.load-test-config.outputs.generate_coverage }}\`" >> $GITHUB_STEP_SUMMARY
 
   # =============================================================================
   # 阶段3: 构建测试 - 构建Windows和macOS版本  

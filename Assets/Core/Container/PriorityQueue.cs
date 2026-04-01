@@ -11,8 +11,7 @@ namespace Core
 
     namespace Core
     {
-        public class PriorityQueue<TElement, TPriority>
-            : IEnumerable<TElement>
+        public class PriorityQueue<TElement, TPriority> : IEnumerable<TElement>
         {
             private readonly List<(TElement Element, TPriority Priority)> mHeap;
             private readonly IComparer<TPriority> mComparer;

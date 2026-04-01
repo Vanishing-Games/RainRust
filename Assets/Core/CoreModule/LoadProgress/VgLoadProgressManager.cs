@@ -28,6 +28,12 @@ namespace Core
         : CoreModuleManagerBase<VgLoadProgressManager, ProgressBarLoadInfo, ProgressBarLoader>,
             IDisposable
     {
+        public override void RegisterLoadEvent()
+        {
+            base.RegisterLoadEvent();
+            Hide();
+        }
+
         public void Init()
         {
             if (m_Inited)
@@ -37,14 +43,14 @@ namespace Core
                 FindObjectsInactive.Include,
                 FindObjectsSortMode.None
             );
-            foreach (var progressable in progressables)
+            foreach (var progressable in m_Progressables)
                 m_Progressables.Add(progressable);
 
             StringBuilder sb = new();
             sb.AppendLine("VgLoadProgressManager Init with Progressables:");
             foreach (var progressable in m_Progressables)
                 sb.AppendLine($" - {progressable.GetType()}");
-            Logger.LogInfo(sb.ToString(), LogTag.VgLoadProgressManager);
+            CLogger.LogInfo(sb.ToString(), LogTag.VgLoadProgressManager);
 
             m_Inited = true;
         }
@@ -64,7 +70,7 @@ namespace Core
         {
             if (m_Hided)
             {
-                Logger.LogWarn(
+                CLogger.LogWarn(
                     "VgLoadProgressManager is hidden, but Tick is called",
                     LogTag.VgLoadProgressManager
                 );
@@ -79,7 +85,7 @@ namespace Core
         {
             if (m_Hided)
             {
-                Logger.LogWarn(
+                CLogger.LogWarn(
                     "VgLoadProgressManager is hidden, but UpdateProgress is called",
                     LogTag.VgLoadProgressManager
                 );
@@ -88,7 +94,7 @@ namespace Core
 
             if (progress < 0)
             {
-                Logger.LogWarn(
+                CLogger.LogWarn(
                     "Progress is less than 0, which is not allowed",
                     LogTag.VgLoadProgressManager
                 );

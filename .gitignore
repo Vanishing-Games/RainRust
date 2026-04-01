@@ -118,3 +118,6 @@ crashlytics-build.properties
 # Log files can be ignored.
 fmod_editor.log
 .fake
+
+# LDtk Backup
+/Assets/GameMain/LDtkProject/gm_ldtk_project/backups/

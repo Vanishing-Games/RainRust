@@ -16,7 +16,7 @@ namespace Core
     public enum InputAction
     {
         Jump,
-        Grab
+        Grab,
     }
 
     public enum InputDeviceType

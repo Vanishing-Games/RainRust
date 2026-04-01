@@ -5,7 +5,5 @@ using UnityEngine;
 
 namespace Core
 {
-    public abstract class GameModuleManagerBase : MonoBehaviour
-    {
-    }
+    public abstract class GameModuleManagerBase : MonoBehaviour { }
 }

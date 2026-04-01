@@ -29,7 +29,7 @@ namespace PlayerControlByOris
 
         protected override bool OnShouldDeactivate()
         {
-            return mPCComponent.WhistleAfterTimer == 0;
+            return mPCComponent.WhistleAfterTimer == 0 || !mPCComponent.IsOnGround;
         }
 
         protected override void OnDeactivate()
