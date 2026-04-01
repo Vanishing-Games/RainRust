@@ -36,12 +36,20 @@ namespace RainRust.Rendering
 
             // Get the shared data from the previous pass
             var rainRustContextData = frameData.Get<RainRustContextData>();
+            var cameraData = frameData.Get<UniversalCameraData>();
+
+            if (cameraData.isPreviewCamera)
+                return;
+
+            var oddSource = rainRustContextData.jfaRt.OddSource();
+            if (!oddSource.IsValid())
+                return;
 
             // Note: RainRustDrawObjectsPass has already swapped the ping-pong buffer after its blit.
             // So rainRustContextData.jfaRt.Previous() holds the initial seed data.
 
             // Resolution and JFA steps
-            var desc = renderGraph.GetTextureDesc(rainRustContextData.jfaRt.OddSource());
+            var desc = renderGraph.GetTextureDesc(oddSource);
             int width = desc.width;
             int height = desc.height;
             int maxDimension = Math.Max(width, height);
