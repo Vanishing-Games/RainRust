@@ -1,0 +1,91 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11145981673336645838492a2d98e247, type: 3}
+  m_Name: urp_rendererData_2d_default
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.2D.Runtime::UnityEngine.Rendering.Universal.Renderer2DData
+  debugShaders:
+    debugReplacementPS: {fileID: 4800000, guid: cf852408f2e174538bcd9b7fda1c5ae7,
+      type: 3}
+    hdrDebugViewPS: {fileID: 4800000, guid: 573620ae32aec764abd4d728906d2587, type: 3}
+    probeVolumeSamplingDebugComputeShader: {fileID: 7200000, guid: 53626a513ea68ce47b59dc1299fe3959,
+      type: 3}
+  probeVolumeResources:
+    probeVolumeDebugShader: {fileID: 0}
+    probeVolumeFragmentationDebugShader: {fileID: 0}
+    probeVolumeOffsetDebugShader: {fileID: 0}
+    probeVolumeSamplingDebugShader: {fileID: 0}
+    probeSamplingDebugMesh: {fileID: 0}
+    probeSamplingDebugTexture: {fileID: 0}
+    probeVolumeBlendStatesCS: {fileID: 0}
+  m_RendererFeatures:
+  - {fileID: 6723202156115275446}
+  m_RendererFeatureMap: b62e646cbd9c4d5d
+  m_UseNativeRenderPass: 0
+  m_LayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_TransparencySortMode: 0
+  m_TransparencySortAxis: {x: 0, y: 1, z: 0}
+  m_HDREmulationScale: 1
+  m_LightRenderTextureScale: 0.5
+  m_LightBlendStyles:
+  - name: Multiply
+    maskTextureChannel: 0
+    blendMode: 1
+  - name: Additive
+    maskTextureChannel: 0
+    blendMode: 0
+  - name: Multiply with Mask
+    maskTextureChannel: 1
+    blendMode: 1
+  - name: Additive with Mask
+    maskTextureChannel: 1
+    blendMode: 0
+  m_UseDepthStencilBuffer: 1
+  m_UseCameraSortingLayersTexture: 0
+  m_CameraSortingLayersTextureBound: -1
+  m_CameraSortingLayerDownsamplingMethod: 0
+  m_MaxLightRenderTextureCount: 16
+  m_MaxShadowRenderTextureCount: 1
+  m_PostProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
+  m_DefaultMaterialType: 0
+  m_DefaultCustomMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3,
+    type: 2}
+--- !u!114 &6723202156115275446
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5291e286ae7721a45b067027ccbff8a7, type: 3}
+  m_Name: RainRustLighting
+  m_EditorClassIdentifier: RainRust.Rendering::RainRust.Rendering.RainRustLighting
+  m_Active: 1
+  settings:
+    injectionPoint: 500
+    lightSourcesLayerMask:
+      serializedVersion: 2
+      m_Bits: 2147613951
+    receiversLayerMask:
+      serializedVersion: 2
+      m_Bits: 3221355775
+    receiverBlendMode: 1
+    lightingBlendMode: 0
+    jfaInitShader: {fileID: 4800000, guid: dd31d820cbe84594ab44e95677803384, type: 3}
+    jfaShader: {fileID: 4800000, guid: 8eca780a8019b4342aaae937ef5ea113, type: 3}
+    distanceShader: {fileID: 4800000, guid: e5b5c2dcbb8666748a8787686a9c2b44, type: 3}
+    rayTracingShader: {fileID: 4800000, guid: 86ce958f21ce23d4a8bb8b0d38411f75, type: 3}
+    compositionShader: {fileID: 4800000, guid: a61490a2ecb36094599f34a4839eed3b, type: 3}
+    blitShader: {fileID: 4800000, guid: c17132b1f77d20942aa75f8429c0f8bc, type: 3}

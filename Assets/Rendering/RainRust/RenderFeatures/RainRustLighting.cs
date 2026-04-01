@@ -62,6 +62,9 @@ namespace RainRust.Rendering
             ref RenderingData renderingData
         )
         {
+            if (renderingData.cameraData.isPreviewCamera)
+                return;
+
             if (settings == null)
             {
                 CLogger.LogError("[RainRust] Settings are null in AddRenderPasses!", LogTag.Rendering);

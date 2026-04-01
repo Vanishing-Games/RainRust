@@ -49,8 +49,16 @@ namespace RainRust.Rendering
                 return;
 
             var rainRustContextData = frameData.Get<RainRustContextData>();
+            var cameraData = frameData.Get<UniversalCameraData>();
 
-            var desc = renderGraph.GetTextureDesc(rainRustContextData.jfaRt.OddSource());
+            if (cameraData.isPreviewCamera)
+                return;
+
+            var oddSource = rainRustContextData.jfaRt.OddSource();
+            if (!oddSource.IsValid())
+                return;
+
+            var desc = renderGraph.GetTextureDesc(oddSource);
             int width = desc.width;
             int height = desc.height;
 
