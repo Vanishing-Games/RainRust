@@ -26,8 +26,9 @@ MonoBehaviour:
     probeSamplingDebugMesh: {fileID: 0}
     probeSamplingDebugTexture: {fileID: 0}
     probeVolumeBlendStatesCS: {fileID: 0}
-  m_RendererFeatures: []
-  m_RendererFeatureMap: 
+  m_RendererFeatures:
+  - {fileID: 6723202156115275446}
+  m_RendererFeatureMap: b62e646cbd9c4d5d
   m_UseNativeRenderPass: 0
   m_LayerMask:
     serializedVersion: 2
@@ -59,3 +60,32 @@ MonoBehaviour:
   m_DefaultMaterialType: 0
   m_DefaultCustomMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3,
     type: 2}
+--- !u!114 &6723202156115275446
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5291e286ae7721a45b067027ccbff8a7, type: 3}
+  m_Name: RainRustLighting
+  m_EditorClassIdentifier: RainRust.Rendering::RainRust.Rendering.RainRustLighting
+  m_Active: 1
+  settings:
+    injectionPoint: 500
+    lightSourcesLayerMask:
+      serializedVersion: 2
+      m_Bits: 3758357759
+    receiversLayerMask:
+      serializedVersion: 2
+      m_Bits: 3758357759
+    receiverBlendMode: 1
+    lightingBlendMode: 0
+    jfaInitShader: {fileID: 4800000, guid: dd31d820cbe84594ab44e95677803384, type: 3}
+    jfaShader: {fileID: 4800000, guid: 8eca780a8019b4342aaae937ef5ea113, type: 3}
+    distanceShader: {fileID: 4800000, guid: e5b5c2dcbb8666748a8787686a9c2b44, type: 3}
+    rayTracingShader: {fileID: 4800000, guid: 86ce958f21ce23d4a8bb8b0d38411f75, type: 3}
+    compositionShader: {fileID: 4800000, guid: a61490a2ecb36094599f34a4839eed3b, type: 3}
+    blitShader: {fileID: 4800000, guid: c17132b1f77d20942aa75f8429c0f8bc, type: 3}
