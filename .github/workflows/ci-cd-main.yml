@@ -638,8 +638,19 @@ jobs:
       - name: 检出代码
         uses: actions/checkout@v4
         with:
-          lfs: true
+          lfs: false
           submodules: recursive
+
+      - name: 🔧 配置自定义 Git LFS
+        env:
+          LFS_USER: ${{ secrets.LFS_USERNAME }}
+          LFS_PASS: ${{ secrets.LFS_PASSWORD }}
+        run: |
+          echo "🔧 设置 LFS URL (使用认证)..."
+          # 使用嵌入凭据的 URL 格式，Secrets 会被 GitHub 自动遮掩 (Masked)
+          git config lfs.url "http://${LFS_USER}:${LFS_PASS}@vanishxiao.top:3000/vanish/Rian_Rust_lfs.git/info/lfs"
+          git lfs install
+          git lfs pull
 
       - name: 📖 加载测试配置
         id: load-test-config  
@@ -795,8 +806,19 @@ jobs:
       - name: 检出代码
         uses: actions/checkout@v4
         with:
-          lfs: true
+          lfs: false
           submodules: recursive
+
+      - name: 🔧 配置自定义 Git LFS
+        env:
+          LFS_USER: ${{ secrets.LFS_USERNAME }}
+          LFS_PASS: ${{ secrets.LFS_PASSWORD }}
+        run: |
+          echo "🔧 设置 LFS URL (使用认证)..."
+          # 使用嵌入凭据的 URL 格式，Secrets 会被 GitHub 自动遮掩 (Masked)
+          git config lfs.url "http://${LFS_USER}:${LFS_PASS}@vanishxiao.top:3000/vanish/Rian_Rust_lfs.git/info/lfs"
+          git lfs install
+          git lfs pull
 
       - name: 📖 加载构建配置
         id: load-build-config
