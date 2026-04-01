@@ -67,12 +67,25 @@ namespace RainRust.Rendering
 
             var rainRustContextData = frameData.Get<RainRustContextData>();
             var resourceData = frameData.Get<UniversalResourceData>();
+            var cameraData = frameData.Get<UniversalCameraData>();
+
+            if (cameraData.isPreviewCamera)
+                return;
 
             var cameraColor = resourceData.cameraColor;
-            var desc = renderGraph.GetTextureDesc(cameraColor);
-            desc.name = "RainRust Composition Temp";
-            desc.clearBuffer = false;
-            TextureHandle tempColor = renderGraph.CreateTexture(desc);
+            if (!cameraColor.IsValid())
+                return;
+
+            RenderTextureDescriptor desc = cameraData.cameraTargetDescriptor;
+            desc.msaaSamples = 1;
+            desc.depthBufferBits = 0;
+
+            TextureHandle tempColor = UniversalRenderer.CreateRenderGraphTexture(
+                renderGraph,
+                desc,
+                "RainRust Composition Temp",
+                false
+            );
 
             using (
                 var builder = renderGraph.AddRasterRenderPass<RainRustRenderingPassData>(
