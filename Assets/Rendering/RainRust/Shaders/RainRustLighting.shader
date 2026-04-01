@@ -156,11 +156,11 @@ Shader "RainRust/RainRustLighting"
             ENDHLSL
         }
 
-        // Pass 3: URP 默认渲染（当不使用 RainRust 特性时显示）
+        // Pass 3: URP 2D 默认渲染（当不使用 RainRust 特性时显示）
         Pass
         {
-            Name "UniversalForward"
-            Tags { "LightMode" = "UniversalForward" }
+            Name "Universal2D" 
+            Tags { "LightMode" = "Universal2D" } 
 
             Blend SrcAlpha OneMinusSrcAlpha
             ZWrite Off
