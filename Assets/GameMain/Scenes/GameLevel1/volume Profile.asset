@@ -82,10 +82,10 @@ MonoBehaviour:
     m_Value: 128
   lightIntensity:
     m_OverrideState: 1
-    m_Value: 5.33
+    m_Value: 4.92
   lightFalloffAlpha:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 0.973
   lightFalloffGamma:
     m_OverrideState: 1
     m_Value: 0.001

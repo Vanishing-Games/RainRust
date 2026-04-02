@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 75a350021569ccd4a8f6a6f60fb2188c
+guid: 7d5cd3676829829469a1f7036e3c2e69
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -5312297342821815488
-    second: art_background_energyCore_01_0
+      213: -7835461450597999419
+    second: art_background_energyCore_08_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,7 +46,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -75,7 +75,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 0
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -96,30 +96,17 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: WindowsStoreApps
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: art_background_energyCore_01_0
+      name: art_background_energyCore_08_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 4252
-        height: 1798
+        height: 1314
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 04baad366bde646b0800000000000000
-      internalID: -5312297342821815488
+      spriteID: 5ccd6d12359d24390800000000000000
+      internalID: -7835461450597999419
       vertices: []
       indices: 
       edges: []
@@ -138,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -148,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      art_background_energyCore_01_0: -5312297342821815488
+      art_background_energyCore_08_0: -7835461450597999419
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
