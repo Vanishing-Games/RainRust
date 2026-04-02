@@ -27,7 +27,7 @@ MonoBehaviour:
   clampModeX: 1
   clampModeY: 0
   maxVerticalOffset: 8
-  worldMaxY: 58
-  worldMinY: -33
+  worldMaxY: 62
+  worldMinY: -51
   blurMode: 0
   blurIntensity: 0.001
