@@ -8,7 +8,7 @@ namespace GameMain.RunTime
 {
     /// <summary>
     /// Handles LDtk entity data for a MovePlatformer.
-    /// Expects LDtk fields: _MoveSpeed (Float), _WaitTime (Float), _LoopType (Enum), _AutoStart (Bool), _PathPoints (PointArray).
+    /// Expects LDtk fields: _MoveSpeed (Float), _WaitTime (Float), _LoopType (Enum), _AutoStart (Bool), _PathPoints (PointRefArray).
     /// </summary>
     [RequireComponent(typeof(MovePlatformer))]
     public class MovePlatformerLdtkLoadHandler : LDtkEntityDataHandler
