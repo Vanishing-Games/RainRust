@@ -82,5 +82,9 @@ namespace Core
             "LDtkLevelRoomProcessor",
             LdtkProcessor.Path
         );
+        public static readonly LogTag LDtkAutoEntityProcessor = new(
+            "AutoEntityProcessor",
+            LdtkProcessor.Path
+        );
     }
 }
