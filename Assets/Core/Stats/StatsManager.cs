@@ -149,7 +149,9 @@ namespace Core
 
                 if (publishEvent && oldValue != newValue)
                 {
-                    MessageBroker.Global.Publish(new StatChangedEvent(key, oldValue, newValue, stat.Type));
+                    MessageBroker.Global.Publish(
+                        new StatChangedEvent(key, oldValue, newValue, stat.Type)
+                    );
                 }
             }
         }

@@ -13,7 +13,10 @@ namespace GameMain.RunTime
         {
             if (other.CompareTag("Player"))
             {
-                CLogger.LogInfo($"Player reached save point: {PointName} ({NickName})", LogTag.Game);
+                CLogger.LogInfo(
+                    $"Player reached save point: {PointName} ({NickName})",
+                    LogTag.Game
+                );
                 SaveManager.Instance.WriteSlotSaveAsync().Forget();
             }
         }

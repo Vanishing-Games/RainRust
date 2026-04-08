@@ -25,7 +25,7 @@ namespace Core
             try
             {
                 CLogger.LogInfo("[GameCore] Saving game before quit...", LogTag.GameQuit);
-                
+
                 // Save slot and global data before quitting
                 await SaveManager.Instance.WriteSlotSaveAsync().Timeout(TimeSpan.FromSeconds(5));
                 await SaveManager.Instance.WriteGlobalSaveAsync().Timeout(TimeSpan.FromSeconds(2));

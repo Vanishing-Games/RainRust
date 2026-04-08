@@ -37,7 +37,7 @@ namespace GameMain.RunTime
         {
             InitLevelManager();
             SetUp(chapterId, levelId, levelSpawnPointIndex);
-            
+
             var player = GameMain.GetPlayer();
             if (player != null && m_CurrentLevelTransition != null)
             {
@@ -155,7 +155,10 @@ namespace GameMain.RunTime
 
         private void SetUpWithSavePoint(string savePointName)
         {
-            var allSavePoints = FindObjectsByType<SavePoint>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            var allSavePoints = FindObjectsByType<SavePoint>(
+                FindObjectsInactive.Include,
+                FindObjectsSortMode.None
+            );
             SavePoint targetSavePoint = null;
 
             foreach (var sp in allSavePoints)
@@ -188,7 +191,10 @@ namespace GameMain.RunTime
             var level = targetSavePoint.GetComponentInParent<LDtkComponentLevel>();
             if (level == null)
             {
-                CLogger.LogError($"SavePoint {savePointName} is not in a level", LogTag.LevelManager);
+                CLogger.LogError(
+                    $"SavePoint {savePointName} is not in a level",
+                    LogTag.LevelManager
+                );
                 return;
             }
 
@@ -295,7 +301,7 @@ namespace GameMain.RunTime
             if (transitionsList.Count > 0)
             {
                 transitionsList.Sort((a, b) => a.Index.CompareTo(b.Index));
-                
+
                 int clampedIndex = Mathf.Clamp(levelSpawnPointIndex, 0, transitionsList.Count - 1);
                 if (levelSpawnPointIndex != clampedIndex)
                 {

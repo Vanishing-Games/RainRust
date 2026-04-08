@@ -11,7 +11,10 @@ namespace GameMain.RunTime
             new StartLevelCommand(savePointName).Execute();
         }
 
-        [ConsoleMethod("start_level_by_index", "Directly start a level by chapterId, levelId and spawnIndex")]
+        [ConsoleMethod(
+            "start_level_by_index",
+            "Directly start a level by chapterId, levelId and spawnIndex"
+        )]
         public static void StartLevelByIndex(string chapterId, string levelId, int spawnIndex)
         {
             LevelManager.Instance.StartLevel(chapterId, levelId, spawnIndex);
