@@ -18,6 +18,7 @@ namespace GameMain.RunTime
         // Entity Identifiers
         public const string LevelTransition = "LevelTransition"; // 关卡出入口
         public const string SavePoint = "SavePoint"; // Save point, where store player's level progress.
+        public const string EntityPlaceHolder0 = "EntityPlaceHolder0";
 
         // Enum Identifiers
         public const string Enum_CameraMode = "CameraMode";

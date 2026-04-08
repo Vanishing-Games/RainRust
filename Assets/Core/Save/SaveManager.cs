@@ -30,7 +30,9 @@ namespace Core
             InitializeDirectory();
             RefreshSaveSlots();
 
-            m_SaveRequestSubscription = MessageBroker.Global.Subscribe<SaveRequestEvent>(OnSaveRequested);
+            m_SaveRequestSubscription = MessageBroker.Global.Subscribe<SaveRequestEvent>(
+                OnSaveRequested
+            );
 
             LoadGlobalSaveAsync().Forget();
         }
@@ -144,7 +146,9 @@ namespace Core
                     TypeNameHandling = TypeNameHandling.Auto,
                 };
 
-                string json = await UniTask.RunOnThreadPool(() => JsonConvert.SerializeObject(container, settings));
+                string json = await UniTask.RunOnThreadPool(() =>
+                    JsonConvert.SerializeObject(container, settings)
+                );
                 await File.WriteAllTextAsync(tempPath, json);
 
                 if (File.Exists(fullPath))
@@ -164,7 +168,10 @@ namespace Core
                     RefreshSaveSlots();
                 }
 
-                CLogger.LogInfo($"{(isGlobal ? "Global" : "Slot")} save success: {fullPath}", LogTag.Game);
+                CLogger.LogInfo(
+                    $"{(isGlobal ? "Global" : "Slot")} save success: {fullPath}",
+                    LogTag.Game
+                );
                 MessageBroker.Global.Publish(new AfterWriteSaveEvent(slotName, true, isGlobal));
                 return true;
             }
@@ -199,8 +206,8 @@ namespace Core
                     TypeNameHandling = TypeNameHandling.Auto,
                 };
 
-                var container = await UniTask.RunOnThreadPool(
-                    () => JsonConvert.DeserializeObject<SaveContainer>(json, settings)
+                var container = await UniTask.RunOnThreadPool(() =>
+                    JsonConvert.DeserializeObject<SaveContainer>(json, settings)
                 );
                 if (container == null)
                 {
@@ -219,7 +226,10 @@ namespace Core
 
                 MessageBroker.Global.Publish(new OnLoadSaveEvent(container, isGlobal));
 
-                CLogger.LogInfo($"{(isGlobal ? "Global" : "Slot")} load success: {fullPath}", LogTag.Game);
+                CLogger.LogInfo(
+                    $"{(isGlobal ? "Global" : "Slot")} load success: {fullPath}",
+                    LogTag.Game
+                );
                 MessageBroker.Global.Publish(new AfterLoadSaveEvent(slotName, true, isGlobal));
                 return true;
             }
