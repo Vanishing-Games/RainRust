@@ -12,20 +12,10 @@ namespace Test.PlayMode
         [UnityTest]
         public IEnumerator SaveManager_PersistsAcrossSceneLoads()
         {
-            // Get instance
             var instance = SaveManager.Instance;
             Assert.IsNotNull(instance);
 
             var go = instance.gameObject;
-
-            // In PlayMode, MonoSingletonPersistent should have called DontDestroyOnLoad
-            // We can't easily check DontDestroyOnLoad flag but we can simulate scene change
-
-            // Create a temporary object to see if it gets destroyed while SaveManager survives
-            var tempGO = new GameObject("Temp");
-
-            // Load a new "empty" scene or just simulate by clearing everything else
-            // For simplicity in this test environment, we just check if it's persistent
             Assert.IsTrue(go.transform.parent == null, "Persistent singleton should be at root");
 
             yield return null;
@@ -37,7 +27,6 @@ namespace Test.PlayMode
             var go = new GameObject("SaveManager_Runtime");
             var sm = go.AddComponent<SaveManager>();
 
-            // Use reflection to set mode to Runtime and RootPath to PersistentDataPath
             var modeField = typeof(SaveManager).GetField(
                 "m_SaveMode",
                 System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance
@@ -57,6 +46,7 @@ namespace Test.PlayMode
             yield return null;
         }
 
+        /* Commented out due to Save System refactor (removal of ISavable and Register system)
         [UnityTest]
         public IEnumerator SaveManager_AutomaticRegistration_FromMonoBehaviour()
         {
@@ -69,9 +59,9 @@ namespace Test.PlayMode
             yield return null;
 
             // Save and see if it's there
-            SaveManager.Instance.Save("auto_reg_test");
+            SaveManager.Instance.WriteSlotSaveAsync().Forget();
 
-            string path = Path.Combine(SaveManager.Instance.SaveDirectory, "auto_reg_test.json");
+            string path = Path.Combine(SaveManager.Instance.SaveDirectory, "default.json");
             Assert.IsTrue(File.Exists(path));
             Assert.IsTrue(File.ReadAllText(path).Contains("AutoRegTest"));
 
@@ -79,7 +69,7 @@ namespace Test.PlayMode
             yield return null;
         }
 
-        private class TestSavableComponent : MonoBehaviour, ISavable
+        private class TestSavableComponent : MonoBehaviour
         {
             public string saveID;
             public string SaveID => saveID;
@@ -90,14 +80,15 @@ namespace Test.PlayMode
 
             private void Start()
             {
-                SaveManager.Instance.Register(this);
+                // SaveManager.Instance.Register(this);
             }
 
             private void OnDestroy()
             {
-                if (SaveManager.Instance != null)
-                    SaveManager.Instance.Unregister(this);
+                // if (SaveManager.Instance != null)
+                //     SaveManager.Instance.Unregister(this);
             }
         }
+        */
     }
 }

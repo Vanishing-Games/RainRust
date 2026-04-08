@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Core;
 using GameMain.RunTime;
 using LDtkUnity;
@@ -20,7 +19,7 @@ namespace GameMain.Editor
             );
             LDtkComponentLevel level = root.GetComponent<LDtkComponentLevel>();
 
-            HashSet<int> indexCheck = new();
+            int indexCounter = 0;
 
             foreach (LDtkComponentLayer layer in level.LayerInstances)
             {
@@ -44,22 +43,7 @@ namespace GameMain.Editor
                         collider.size = size;
 
                         var levelTransition = transitionGo.AddComponent<LevelTransition>();
-                        LDtkFields fields = transitionGo.GetComponent<LDtkFields>();
-                        if (fields != null)
-                        {
-                            if (fields.TryGetInt("Index", out var index))
-                            {
-                                if (indexCheck.Contains(index))
-                                {
-                                    CLogger.LogError(
-                                        $"关卡 {level.Identifier} 中存在重复的 Transition Index: {index}. 请在 LDtk 中检查并修改.",
-                                        LogTag.LDtkTransitionProcessor
-                                    );
-                                }
-                                indexCheck.Add(index);
-                                levelTransition.Index = index;
-                            }
-                        }
+                        levelTransition.Index = indexCounter++;
 
                         EditorUtility.SetDirty(levelTransition);
                     }
@@ -89,8 +73,7 @@ namespace GameMain.Editor
                     if (targetIidComponent != null)
                     {
                         GameObject targetTransitionGo = targetIidComponent.gameObject;
-                        var targetComp = targetTransitionGo.GetComponent<LevelTransition>();
-                        if (targetComp != null)
+                        if (targetTransitionGo.TryGetComponent<LevelTransition>(out var targetComp))
                         {
                             transition.Target = targetComp;
                         }

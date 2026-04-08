@@ -74,6 +74,6 @@ namespace GameMain.RunTime
         public LevelTransition Target;
 
         [LabelText("索引 (Index)")]
-        public int? Index;
+        public int Index;
     }
 }
