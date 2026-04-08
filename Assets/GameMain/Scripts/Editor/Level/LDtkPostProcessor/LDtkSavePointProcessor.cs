@@ -6,7 +6,6 @@ using LDtkUnity.Editor;
 using UnityEditor;
 using UnityEngine;
 
-
 namespace GameMain.Editor
 {
     public class LDtkSavePointProcessor : LDtkPostprocessor
@@ -19,9 +18,10 @@ namespace GameMain.Editor
                 $"Post process LDtk level for SavePoints: {root.name}",
                 LogTag.LDtkTransitionProcessor
             );
-            
+
             LDtkComponentLevel level = root.GetComponent<LDtkComponentLevel>();
-            if (level == null) return;
+            if (level == null)
+                return;
 
             var world = level.GetComponentInParent<LDtkComponentWorld>();
             string worldId = world != null ? world.Identifier : "World";
@@ -36,7 +36,7 @@ namespace GameMain.Editor
 
                 foreach (LDtkComponentEntity entity in layer.EntityInstances)
                 {
-                    if (entity != null && entity.Identifier == "SavePoint")
+                    if (entity != null && entity.Identifier == LDtkIdentifiers.SavePoint)
                     {
                         var go = entity.gameObject;
                         var size = entity.Size;
@@ -50,7 +50,7 @@ namespace GameMain.Editor
 
                         var savePoint = go.AddComponent<SavePoint>();
                         savePoint.PointName = $"{worldId}_{levelId}_SavePoint{indexCounter}";
-                        
+
                         LDtkFields fields = go.GetComponent<LDtkFields>();
                         if (fields != null)
                         {
