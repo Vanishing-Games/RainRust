@@ -123,4 +123,5 @@ fmod_editor.log
 /Assets/GameMain/LDtkProject/gm_ldtk_project/backups/
 
 # Claude
+/CLAUDE.md
 .claude/

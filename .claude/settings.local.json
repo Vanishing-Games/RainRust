@@ -5,7 +5,8 @@
       "Bash(claude plugin:*)",
       "Bash(dotnet --version)",
       "Bash(dotnet tool:*)",
-      "Bash(xargs grep:*)"
+      "Bash(xargs grep:*)",
+      "Bash(grep:*)"
     ]
   }
 }
