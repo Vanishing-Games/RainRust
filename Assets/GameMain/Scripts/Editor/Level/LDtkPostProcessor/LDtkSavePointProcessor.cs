@@ -19,8 +19,7 @@ namespace GameMain.Editor
                 LogTag.LDtkTransitionProcessor
             );
 
-            LDtkComponentLevel level = root.GetComponent<LDtkComponentLevel>();
-            if (level == null)
+            if (!root.TryGetComponent<LDtkComponentLevel>(out var level))
                 return;
 
             var world = level.GetComponentInParent<LDtkComponentWorld>();
@@ -51,8 +50,7 @@ namespace GameMain.Editor
                         var savePoint = go.AddComponent<SavePoint>();
                         savePoint.PointName = $"{worldId}_{levelId}_SavePoint{indexCounter}";
 
-                        LDtkFields fields = go.GetComponent<LDtkFields>();
-                        if (fields != null)
+                        if (go.TryGetComponent<LDtkFields>(out var fields))
                         {
                             if (fields.TryGetString("SavePointNickName", out var nickName))
                             {

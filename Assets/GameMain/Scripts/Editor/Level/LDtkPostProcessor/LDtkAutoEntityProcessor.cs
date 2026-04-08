@@ -16,8 +16,7 @@ namespace GameMain.Editor
 
         protected override void OnPostprocessLevel(GameObject root, LdtkJson projectJson)
         {
-            LDtkComponentLevel level = root.GetComponent<LDtkComponentLevel>();
-            if (level == null)
+            if (!root.TryGetComponent<LDtkComponentLevel>(out var level))
             {
                 return;
             }
@@ -70,8 +69,10 @@ namespace GameMain.Editor
 
                 GameObject newEntity = (GameObject)
                     PrefabUtility.InstantiatePrefab(prefabAsset, runtimeContainer);
-                newEntity.transform.position = ldtkEntity.transform.position;
-                newEntity.transform.rotation = ldtkEntity.transform.rotation;
+                newEntity.transform.SetPositionAndRotation(
+                    ldtkEntity.transform.position,
+                    ldtkEntity.transform.rotation
+                );
                 newEntity.transform.localScale = ldtkEntity.transform.localScale;
                 newEntity.name = $"{prefabAsset.name}_{ldtkEntity.Iid.Iid}";
 

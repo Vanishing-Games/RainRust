@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Core;
 using LDtkUnity;
 using UnityEngine;
-using CameraMode = GameMain.LDtk.CameraMode;
 
 namespace GameMain.RunTime
 {
@@ -289,8 +288,7 @@ namespace GameMain.RunTime
                 {
                     if (entity != null && entity.Identifier == LDtkIdentifiers.LevelTransition)
                     {
-                        var transition = entity.GetComponent<LevelTransition>();
-                        if (transition != null)
+                        if (entity.TryGetComponent<LevelTransition>(out var transition))
                         {
                             transitionsList.Add(transition);
                         }

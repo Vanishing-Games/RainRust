@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Core;
 using GameMain.RunTime;
 using LDtkUnity;
@@ -74,8 +73,7 @@ namespace GameMain.Editor
                     if (targetIidComponent != null)
                     {
                         GameObject targetTransitionGo = targetIidComponent.gameObject;
-                        var targetComp = targetTransitionGo.GetComponent<LevelTransition>();
-                        if (targetComp != null)
+                        if (targetTransitionGo.TryGetComponent<LevelTransition>(out var targetComp))
                         {
                             transition.Target = targetComp;
                         }
