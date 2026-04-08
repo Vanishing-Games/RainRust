@@ -1,20 +1,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json.Linq;
+using R3;
 using UnityEngine;
 
 namespace Core
 {
-    public class StatsManager : MonoBehaviour, ISavable<StatsSaveData>
+    public class StatsManager : MonoSingletonPersistent<StatsManager>
     {
-        private void Awake()
+        protected override void Awake()
         {
-            if (m_Instance != null && m_Instance != this)
-            {
-                Destroy(gameObject);
-                return;
-            }
-            m_Instance = this;
+            base.Awake();
 
             foreach (var stat in m_InitialStats)
             {
@@ -25,19 +21,7 @@ namespace Core
             }
 
             CacheTimerKeys();
-        }
-
-        private void Start()
-        {
-            SaveManager.Instance.Register(this);
-        }
-
-        private void OnDestroy()
-        {
-            if (m_Instance == this && SaveManager.Instance != null)
-            {
-                SaveManager.Instance.Unregister(this);
-            }
+            SubscribeToSaveEvents();
         }
 
         private void Update()
@@ -45,42 +29,6 @@ namespace Core
             foreach (var key in m_CachedTimerKeys)
             {
                 UpdateStat(key, m_Stats[key].Value + Time.deltaTime, false);
-            }
-        }
-
-        public StatsSaveData CaptureSaveData()
-        {
-            return new StatsSaveData { Stats = m_Stats.Values.ToList() };
-        }
-
-        public void RestoreSaveData(StatsSaveData data)
-        {
-            if (data?.Stats == null)
-                return;
-
-            foreach (var record in data.Stats)
-            {
-                if (m_Stats.ContainsKey(record.Key))
-                {
-                    m_Stats[record.Key].Value = record.Value;
-                }
-                else
-                {
-                    m_Stats.Add(record.Key, record);
-                }
-            }
-            CacheTimerKeys();
-        }
-
-        void ISavable.RestoreState(object state)
-        {
-            if (state is JObject jObject)
-            {
-                RestoreSaveData(jObject.ToObject<StatsSaveData>());
-            }
-            else if (state is StatsSaveData data)
-            {
-                RestoreSaveData(data);
             }
         }
 
@@ -130,6 +78,68 @@ namespace Core
             }
         }
 
+        private void SubscribeToSaveEvents()
+        {
+            MessageBroker.Global.Subscribe<BeforeWriteSaveEvent>(OnBeforeWriteSave).AddTo(this);
+            MessageBroker.Global.Subscribe<OnLoadSaveEvent>(OnLoadSave).AddTo(this);
+        }
+
+        private void OnBeforeWriteSave(BeforeWriteSaveEvent evt)
+        {
+            if (evt.IsGlobal)
+            {
+                return;
+            }
+
+            SaveManager.Instance.UpdateSaveValue(m_SaveID, CaptureSaveData());
+        }
+
+        private void OnLoadSave(OnLoadSaveEvent evt)
+        {
+            if (evt.IsGlobal)
+            {
+                return;
+            }
+
+            if (evt.Container.Data.TryGetValue(m_SaveID, out var state))
+            {
+                if (state is JObject jObject)
+                {
+                    RestoreSaveData(jObject.ToObject<StatsSaveData>());
+                }
+                else if (state is StatsSaveData data)
+                {
+                    RestoreSaveData(data);
+                }
+            }
+        }
+
+        private StatsSaveData CaptureSaveData()
+        {
+            return new StatsSaveData { Stats = m_Stats.Values.ToList() };
+        }
+
+        private void RestoreSaveData(StatsSaveData data)
+        {
+            if (data?.Stats == null)
+            {
+                return;
+            }
+
+            foreach (var record in data.Stats)
+            {
+                if (m_Stats.ContainsKey(record.Key))
+                {
+                    m_Stats[record.Key].Value = record.Value;
+                }
+                else
+                {
+                    m_Stats.Add(record.Key, record);
+                }
+            }
+            CacheTimerKeys();
+        }
+
         private void UpdateStat(string key, float newValue, bool publishEvent = true)
         {
             if (m_Stats.TryGetValue(key, out var stat))
@@ -139,9 +149,7 @@ namespace Core
 
                 if (publishEvent && oldValue != newValue)
                 {
-                    MessageBroker.Global.Publish(
-                        new StatChangedEvent(key, oldValue, newValue, stat.Type)
-                    );
+                    MessageBroker.Global.Publish(new StatChangedEvent(key, oldValue, newValue, stat.Type));
                 }
             }
         }
@@ -154,25 +162,6 @@ namespace Core
                 .ToList();
         }
 
-        public static StatsManager Instance
-        {
-            get
-            {
-                if (m_Instance == null)
-                {
-                    m_Instance = FindFirstObjectByType<StatsManager>();
-                    if (m_Instance == null)
-                    {
-                        GameObject go = new("StatsManager");
-                        m_Instance = go.AddComponent<StatsManager>();
-                    }
-                }
-                return m_Instance;
-            }
-        }
-
-        public string SaveID => "GlobalStats";
-
         [Header("Default Stats")]
         [SerializeField]
         private List<StatRecord> m_InitialStats = new()
@@ -184,8 +173,8 @@ namespace Core
             new StatRecord(StatKeys.PlayerWhistle, StatType.Counter, "Whistles"),
         };
 
-        private static StatsManager m_Instance;
         private readonly Dictionary<string, StatRecord> m_Stats = new();
         private List<string> m_CachedTimerKeys = new();
+        private readonly string m_SaveID = "GlobalStats";
     }
 }

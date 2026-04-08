@@ -24,18 +24,11 @@ namespace Core
         {
             try
             {
-                MessageBroker.Global.Publish(new SaveRequestEvent());
-
-                bool saveCompleted = false;
-                var subscription = MessageBroker.Global.Subscribe<SaveRequestEvent>(
-                    _ => { },
-                    () => saveCompleted = true
-                );
-
-                using (subscription)
-                {
-                    await UniTask.WaitUntil(() => saveCompleted).Timeout(TimeSpan.FromSeconds(10));
-                }
+                CLogger.LogInfo("[GameCore] Saving game before quit...", LogTag.GameQuit);
+                
+                // Save slot and global data before quitting
+                await SaveManager.Instance.WriteSlotSaveAsync().Timeout(TimeSpan.FromSeconds(5));
+                await SaveManager.Instance.WriteGlobalSaveAsync().Timeout(TimeSpan.FromSeconds(2));
             }
             catch (Exception ex)
             {

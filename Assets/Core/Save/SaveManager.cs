@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Cysharp.Threading.Tasks;
 using Newtonsoft.Json;
 using R3;
 using Sirenix.OdinInspector;
@@ -9,30 +10,6 @@ using UnityEngine;
 
 namespace Core
 {
-    public struct SaveEvent : IEvent
-    {
-        public SaveEvent(string slot, bool success)
-        {
-            Slot = slot;
-            Success = success;
-        }
-
-        public string Slot { get; }
-        public bool Success { get; }
-    }
-
-    public struct LoadEvent : IEvent
-    {
-        public LoadEvent(string slot, bool success)
-        {
-            Slot = slot;
-            Success = success;
-        }
-
-        public string Slot { get; }
-        public bool Success { get; }
-    }
-
     public enum SaveMode
     {
         Editor,
@@ -45,23 +22,6 @@ namespace Core
         DataPathRelative,
     }
 
-    [Serializable]
-    public class PlatformPathInfo
-    {
-        [TableColumnWidth(120, false)]
-        [ReadOnly]
-        public string Platform;
-
-        [ReadOnly]
-        public string Path;
-
-        public PlatformPathInfo(string platform, string path)
-        {
-            Platform = platform;
-            Path = path;
-        }
-    }
-
     public class SaveManager : MonoSingletonPersistent<SaveManager>
     {
         protected override void Awake()
@@ -69,68 +29,112 @@ namespace Core
             base.Awake();
             InitializeDirectory();
             RefreshSaveSlots();
-            UpdatePlatformPathPreviews();
+
+            m_SaveRequestSubscription = MessageBroker.Global.Subscribe<SaveRequestEvent>(OnSaveRequested);
+
+            LoadGlobalSaveAsync().Forget();
         }
 
-        [Button("Save To Current Slot", ButtonSizes.Medium), GUIColor(0.4f, 0.8f, 1)]
-        [BoxGroup("Actions")]
-        public void SaveCurrent()
+        private void OnDestroy()
         {
-            Save(m_SelectedSlot, m_SelectedSlot);
+            m_SaveRequestSubscription?.Dispose();
+        }
+
+        public void UpdateSaveValue<T>(string key, T value, bool isGlobal = false)
+        {
+            var container = isGlobal ? m_GlobalContainer : m_CurrentSlotContainer;
+            container.Data[key] = value;
+
+            if (isGlobal)
+            {
+                m_IsGlobalDirty = true;
+            }
+            else
+            {
+                m_IsSlotDirty = true;
+            }
+
+            MessageBroker.Global.Publish(new SaveValueUpdatedEvent(key, value, isGlobal));
+        }
+
+        public T GetSaveValue<T>(string key, T defaultValue = default, bool isGlobal = false)
+        {
+            var container = isGlobal ? m_GlobalContainer : m_CurrentSlotContainer;
+            if (container.Data.TryGetValue(key, out var val))
+            {
+                if (val is T typedVal)
+                {
+                    return typedVal;
+                }
+
+                try
+                {
+                    string json = JsonConvert.SerializeObject(val);
+                    return JsonConvert.DeserializeObject<T>(json);
+                }
+                catch
+                {
+                    return defaultValue;
+                }
+            }
+            return defaultValue;
+        }
+
+        public bool HasKey(string key, bool isGlobal = false)
+        {
+            var container = isGlobal ? m_GlobalContainer : m_CurrentSlotContainer;
+            return container.Data.ContainsKey(key);
+        }
+
+        [Button("Save Current Slot", ButtonSizes.Medium), GUIColor(0.4f, 0.8f, 1)]
+        [BoxGroup("Actions")]
+        public async UniTask<bool> WriteSlotSaveAsync()
+        {
+            return await WriteSaveFileAsync(m_CurrentSlot, false);
+        }
+
+        [Button("Save Global", ButtonSizes.Medium), GUIColor(1f, 0.8f, 0.4f)]
+        [BoxGroup("Actions")]
+        public async UniTask<bool> WriteGlobalSaveAsync()
+        {
+            return await WriteSaveFileAsync(m_GlobalSaveName, true);
         }
 
         [Button("Load Selected Slot", ButtonSizes.Medium), GUIColor(0.4f, 1f, 0.4f)]
         [BoxGroup("Actions")]
         [EnableIf("@!string.IsNullOrEmpty(m_SelectedSlot)")]
-        public void LoadSelected()
+        public async UniTask<bool> LoadSelectedSlotAsync()
         {
-            Load(m_SelectedSlot);
+            return await LoadSaveFileAsync(m_SelectedSlot, false);
         }
 
-        [Button("Delete Selected Slot", ButtonSizes.Small), GUIColor(1f, 0.4f, 0.4f)]
-        [BoxGroup("Actions")]
-        [EnableIf("@!string.IsNullOrEmpty(m_SelectedSlot)")]
-        public void DeleteSelected()
+        private async void OnSaveRequested(SaveRequestEvent evt)
         {
-            string fullPath = GetSavePath(m_SelectedSlot);
-            if (File.Exists(fullPath))
+            if (evt.IsGlobal)
             {
-                File.Delete(fullPath);
-                CLogger.LogInfo($"Deleted save slot: {m_SelectedSlot}", LogTag.Game);
-                RefreshSaveSlots();
+                await WriteGlobalSaveAsync();
+            }
+            else
+            {
+                await WriteSaveFileAsync(evt.SlotName ?? m_CurrentSlot, false);
             }
         }
 
-        [Button("Save As New Slot", ButtonSizes.Small)]
-        [BoxGroup("Actions/New Save")]
-        public void SaveNew(string newSlotName, string displayName = "")
+        private async UniTask<bool> WriteSaveFileAsync(string slotName, bool isGlobal)
         {
-            if (string.IsNullOrEmpty(newSlotName))
-                return;
-            Save(newSlotName, displayName);
-            m_SelectedSlot = newSlotName;
-        }
+            MessageBroker.Global.Publish(new BeforeWriteSaveEvent(slotName, isGlobal));
 
-        public void Save(string slotName, string displayName = "")
-        {
             string fullPath = GetSavePath(slotName);
             string tempPath = fullPath + ".tmp";
+            var container = isGlobal ? m_GlobalContainer : m_CurrentSlotContainer;
 
             try
             {
-                var container = new SaveContainer();
-                container.Meta = new SaveMeta(slotName)
+                container.Meta.SlotName = slotName;
+                container.Meta.LastSavedTime = DateTime.Now;
+                if (!isGlobal)
                 {
-                    DisplayName = string.IsNullOrEmpty(displayName)
-                        ? $"Save_{slotName}"
-                        : displayName,
-                    LastSavedTime = DateTime.Now,
-                    PlayTimeInSeconds = StatsManager.GetValue(StatKeys.GameDuration),
-                };
-
-                foreach (var savable in m_Savables)
-                {
-                    container.Data[savable.SaveID] = savable.CaptureState();
+                    container.Meta.PlayTimeInSeconds = StatsManager.GetValue(StatKeys.GameDuration);
                 }
 
                 var settings = new JsonSerializerSettings
@@ -140,180 +144,99 @@ namespace Core
                     TypeNameHandling = TypeNameHandling.Auto,
                 };
 
-                string directory = Path.GetDirectoryName(fullPath);
-                if (!Directory.Exists(directory))
-                    Directory.CreateDirectory(directory);
-
-                string json = JsonConvert.SerializeObject(container, settings);
-                File.WriteAllText(tempPath, json);
+                string json = await UniTask.RunOnThreadPool(() => JsonConvert.SerializeObject(container, settings));
+                await File.WriteAllTextAsync(tempPath, json);
 
                 if (File.Exists(fullPath))
+                {
                     File.Delete(fullPath);
+                }
                 File.Move(tempPath, fullPath);
 
-                m_CurrentSlot = slotName;
-                RefreshSaveSlots();
+                if (isGlobal)
+                {
+                    m_IsGlobalDirty = false;
+                }
+                else
+                {
+                    m_IsSlotDirty = false;
+                    m_CurrentSlot = slotName;
+                    RefreshSaveSlots();
+                }
 
-                CLogger.LogInfo($"Game saved to {fullPath}", LogTag.Game);
-                MessageBroker.Global.Publish(new SaveEvent(slotName, true));
+                CLogger.LogInfo($"{(isGlobal ? "Global" : "Slot")} save success: {fullPath}", LogTag.Game);
+                MessageBroker.Global.Publish(new AfterWriteSaveEvent(slotName, true, isGlobal));
+                return true;
             }
             catch (Exception e)
             {
                 CLogger.LogError($"Save failed: {e.Message}", LogTag.Game);
                 if (File.Exists(tempPath))
+                {
                     File.Delete(tempPath);
-                MessageBroker.Global.Publish(new SaveEvent(slotName, false));
+                }
+                MessageBroker.Global.Publish(new AfterWriteSaveEvent(slotName, false, isGlobal));
+                return false;
             }
         }
 
-        public void Load(string slotName)
+        private async UniTask<bool> LoadSaveFileAsync(string slotName, bool isGlobal)
         {
             string fullPath = GetSavePath(slotName);
             if (!File.Exists(fullPath))
             {
                 CLogger.LogWarn($"Save file not found: {fullPath}", LogTag.Game);
-                return;
+                return false;
             }
+
+            MessageBroker.Global.Publish(new BeforeLoadSaveEvent(slotName, isGlobal));
 
             try
             {
-                string json = File.ReadAllText(fullPath);
+                string json = await File.ReadAllTextAsync(fullPath);
                 var settings = new JsonSerializerSettings
                 {
                     TypeNameHandling = TypeNameHandling.Auto,
                 };
 
-                var container = JsonConvert.DeserializeObject<SaveContainer>(json, settings);
+                var container = await UniTask.RunOnThreadPool(
+                    () => JsonConvert.DeserializeObject<SaveContainer>(json, settings)
+                );
                 if (container == null)
-                    return;
-
-                foreach (var savable in m_Savables)
                 {
-                    if (container.Data.TryGetValue(savable.SaveID, out var state))
-                    {
-                        savable.RestoreState(state);
-                    }
+                    return false;
                 }
 
-                m_CurrentSlot = slotName;
-                CLogger.LogInfo($"Game loaded from {fullPath}", LogTag.Game);
-                MessageBroker.Global.Publish(new LoadEvent(slotName, true));
+                if (isGlobal)
+                {
+                    m_GlobalContainer = container;
+                }
+                else
+                {
+                    m_CurrentSlotContainer = container;
+                    m_CurrentSlot = slotName;
+                }
+
+                MessageBroker.Global.Publish(new OnLoadSaveEvent(container, isGlobal));
+
+                CLogger.LogInfo($"{(isGlobal ? "Global" : "Slot")} load success: {fullPath}", LogTag.Game);
+                MessageBroker.Global.Publish(new AfterLoadSaveEvent(slotName, true, isGlobal));
+                return true;
             }
             catch (Exception e)
             {
                 CLogger.LogError($"Load failed: {e.Message}", LogTag.Game);
-                MessageBroker.Global.Publish(new LoadEvent(slotName, false));
+                MessageBroker.Global.Publish(new AfterLoadSaveEvent(slotName, false, isGlobal));
+                return false;
             }
         }
 
-        public void Register(ISavable savable)
+        private async UniTask LoadGlobalSaveAsync()
         {
-            if (string.IsNullOrEmpty(savable.SaveID))
+            if (File.Exists(GetSavePath(m_GlobalSaveName)))
             {
-                CLogger.LogWarn($"Savable {savable.GetType().Name} has no SaveID!", LogTag.Game);
-                return;
+                await LoadSaveFileAsync(m_GlobalSaveName, true);
             }
-
-            if (!m_Savables.Contains(savable))
-            {
-                m_Savables.Add(savable);
-            }
-        }
-
-        public void Unregister(ISavable savable)
-        {
-            m_Savables.Remove(savable);
-        }
-
-        [Button]
-        [BoxGroup("Slot Management")]
-        public void RefreshSaveSlots()
-        {
-            m_AvailableSlots.Clear();
-            string dir = SaveDirectory;
-            if (!Directory.Exists(dir))
-                return;
-
-            var files = Directory.GetFiles(dir, $"*{m_Extension}");
-            foreach (var file in files)
-            {
-                try
-                {
-                    string json = File.ReadAllText(file);
-                    var container = JsonConvert.DeserializeObject<SaveContainer>(json);
-                    if (container?.Meta != null)
-                    {
-                        m_AvailableSlots.Add(container.Meta);
-                    }
-                }
-                catch (Exception e)
-                {
-                    CLogger.LogWarn(
-                        $"Failed to read save meta from {file}: {e.Message}",
-                        LogTag.Game
-                    );
-                }
-            }
-        }
-
-        private IEnumerable<string> GetSlotNames()
-        {
-            // Auto refresh when opening dropdown in Editor
-            if (!Application.isPlaying)
-                RefreshSaveSlots();
-
-            if (m_AvailableSlots == null || m_AvailableSlots.Count == 0)
-                return new[] { "default" };
-
-            return m_AvailableSlots.Select(x => x.SlotName);
-        }
-
-        [OnInspectorGUI]
-        private void UpdatePlatformPathPreviews()
-        {
-            m_PlatformPreviews.Clear();
-            m_PlatformPreviews.Add(
-                new PlatformPathInfo(
-                    "Windows",
-                    Path.Combine(
-                        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                        "..",
-                        "LocalLow",
-                        Application.companyName,
-                        Application.productName,
-                        m_SaveFolderRelativePath
-                    )
-                )
-            );
-            m_PlatformPreviews.Add(
-                new PlatformPathInfo(
-                    "macOS",
-                    Path.Combine(
-                        Environment.GetFolderPath(Environment.SpecialFolder.Personal),
-                        "Library",
-                        "Application Support",
-                        Application.companyName,
-                        Application.productName,
-                        m_SaveFolderRelativePath
-                    )
-                )
-            );
-            m_PlatformPreviews.Add(
-                new PlatformPathInfo(
-                    "Android",
-                    "/storage/emulated/0/Android/data/"
-                        + Application.identifier
-                        + "/files/"
-                        + m_SaveFolderRelativePath
-                )
-            );
-            m_PlatformPreviews.Add(
-                new PlatformPathInfo(
-                    "iOS",
-                    "Data/Containers/Data/Application/.../Library/Application Support/"
-                        + m_SaveFolderRelativePath
-                )
-            );
         }
 
         private void InitializeDirectory()
@@ -330,9 +253,60 @@ namespace Core
             return Path.Combine(SaveDirectory, $"{slotName}{m_Extension}");
         }
 
-        [ShowInInspector, ReadOnly]
+        [Button("Refresh Slots")]
+        [BoxGroup("Slot Management")]
+        public void RefreshSaveSlots()
+        {
+            m_AvailableSlots.Clear();
+            string dir = SaveDirectory;
+            if (!Directory.Exists(dir))
+            {
+                return;
+            }
+
+            var files = Directory.GetFiles(dir, $"*{m_Extension}");
+            foreach (var file in files)
+            {
+                string fileName = Path.GetFileNameWithoutExtension(file);
+                if (fileName == m_GlobalSaveName)
+                {
+                    continue;
+                }
+
+                try
+                {
+                    string json = File.ReadAllText(file);
+                    var container = JsonConvert.DeserializeObject<SaveContainer>(json);
+                    if (container?.Meta != null)
+                    {
+                        m_AvailableSlots.Add(container.Meta);
+                    }
+                }
+                catch { }
+            }
+        }
+
+        private IEnumerable<string> GetSlotNames()
+        {
+            if (!Application.isPlaying)
+            {
+                RefreshSaveSlots();
+            }
+
+            if (m_AvailableSlots == null || m_AvailableSlots.Count == 0)
+            {
+                return new[] { "default" };
+            }
+
+            return m_AvailableSlots.Select(x => x.SlotName);
+        }
+
+        public string CurrentSlotName => m_CurrentSlot;
+        public bool IsSlotDirty => m_IsSlotDirty;
+        public bool IsGlobalDirty => m_IsGlobalDirty;
+
         [BoxGroup("Status")]
-        [InfoBox("Current Active Path: $SaveDirectory")]
+        [ShowInInspector, ReadOnly]
         public string SaveDirectory
         {
             get
@@ -352,46 +326,45 @@ namespace Core
             }
         }
 
-        [Header("Slot Selection")]
+        [ShowInInspector, ReadOnly, TabGroup("Runtime Status")]
+        private SaveContainer m_CurrentSlotContainer = new();
+
+        [ShowInInspector, ReadOnly, TabGroup("Runtime Status")]
+        private SaveContainer m_GlobalContainer = new();
+
+        [ShowInInspector, ReadOnly, TabGroup("Runtime Status")]
+        private bool m_IsSlotDirty;
+
+        [ShowInInspector, ReadOnly, TabGroup("Runtime Status")]
+        private bool m_IsGlobalDirty;
+
+        [SerializeField, BoxGroup("Settings")]
+        private SaveMode m_SaveMode = SaveMode.Editor;
+
+        [SerializeField, BoxGroup("Settings")]
+        private RootPathType m_RootPathType = RootPathType.PersistentDataPath;
+
+        [SerializeField, BoxGroup("Settings")]
+        private string m_SaveFolderRelativePath = "Saves";
+
+        [SerializeField, BoxGroup("Settings")]
+        private string m_GlobalSaveName = "global_settings";
+
+        [SerializeField, BoxGroup("Settings")]
+        private string m_Extension = ".json";
+
+        [SerializeField, ReadOnly, BoxGroup("Status")]
+        private string m_CurrentSlot = "default";
+
+        [SerializeField, ReadOnly, BoxGroup("Slot Management")]
+        [TableList]
+        private List<SaveMeta> m_AvailableSlots = new();
+
         [SerializeField]
         [BoxGroup("Actions")]
         [ValueDropdown("GetSlotNames")]
         private string m_SelectedSlot = "default";
 
-        [Header("Mode Configuration")]
-        [SerializeField]
-        [BoxGroup("Configuration")]
-        [EnumToggleButtons]
-        private SaveMode m_SaveMode = SaveMode.Editor;
-
-        [SerializeField]
-        [BoxGroup("Configuration")]
-        private RootPathType m_RootPathType = RootPathType.PersistentDataPath;
-
-        [Header("Settings")]
-        [SerializeField]
-        [BoxGroup("Configuration")]
-        private string m_SaveFolderRelativePath = "Saves";
-
-        [SerializeField]
-        [BoxGroup("Configuration")]
-        private string m_Extension = ".json";
-
-        [SerializeField, ReadOnly]
-        [BoxGroup("Status")]
-        private string m_CurrentSlot = "default";
-
-        [SerializeField, ReadOnly]
-        [BoxGroup("Slot Management")]
-        [TableList]
-        private List<SaveMeta> m_AvailableSlots = new();
-
-        [SerializeField, ReadOnly]
-        [BoxGroup("Platform Previews")]
-        [TableList(IsReadOnly = true, AlwaysExpanded = true)]
-        private List<PlatformPathInfo> m_PlatformPreviews = new();
-
-        private static SaveManager m_Instance;
-        private readonly List<ISavable> m_Savables = new();
+        private IDisposable m_SaveRequestSubscription;
     }
 }
