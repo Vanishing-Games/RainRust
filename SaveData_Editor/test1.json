@@ -1,0 +1,46 @@
+{
+  "Meta": {
+    "SlotName": "test1",
+    "DisplayName": null,
+    "PlayTimeInSeconds": 8.2374677658081055,
+    "LastSavedTime": "2026-04-08T20:02:00.0583575+08:00",
+    "SaveFileVersion": "1.0.0"
+  },
+  "Data": {
+    "GlobalStats": {
+      "$type": "Core.StatsSaveData, Core",
+      "Stats": [
+        {
+          "Key": "GameDuration",
+          "Value": 8.237468,
+          "Type": 1,
+          "DisplayName": "Game Duration"
+        },
+        {
+          "Key": "RespawnCount",
+          "Value": 0.0,
+          "Type": 0,
+          "DisplayName": "Respawns"
+        },
+        {
+          "Key": "PlayerJump",
+          "Value": 0.0,
+          "Type": 0,
+          "DisplayName": "Jumps"
+        },
+        {
+          "Key": "PlayerHook",
+          "Value": 0.0,
+          "Type": 0,
+          "DisplayName": "Hook Shots"
+        },
+        {
+          "Key": "PlayerWhistle",
+          "Value": 0.0,
+          "Type": 0,
+          "DisplayName": "Whistles"
+        }
+      ]
+    }
+  }
+}

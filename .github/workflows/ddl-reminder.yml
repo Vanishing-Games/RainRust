@@ -62,7 +62,7 @@ jobs:
               query {
                 node(id: "${projectId}") {
                   ... on ProjectV2 {
-                    items(first: 200) {
+                    items(first: 100) {
                       nodes {
                         id
                         content {
@@ -138,8 +138,14 @@ jobs:
               }
 
               if (isOverdue) {
-                if (!currentLabels.includes('ddl: overdue')) {
+                const comments = await github.rest.issues.listComments({ owner, repo, issue_number: issueNumber, per_page: 50 });
+                // 使用更稳健的匹配方式，忽略 markdown 加粗
+                const alreadyNotified = comments.data.some(c => c.body.includes('奶茶喝了') || c.body.includes('有**奶茶**喝了'));
+
+                if (!alreadyNotified) {
                   message = `${titlePrefix} \n ${assignees} 🚨💥 **DDL到此为止了**！💀🛑\n@${coreTeam} 🍵🧋有**奶茶**喝了🥤🎉`;
+                }
+                if (!currentLabels.includes('ddl: overdue')) {
                   await github.rest.issues.addLabels({ owner, repo, issue_number: issueNumber, labels: ['ddl: overdue'] });
                 }
               } else if (diffDays === 0) {

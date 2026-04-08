@@ -34,7 +34,7 @@ TagManager:
   - ManualTile
   - LogicMap
   - Respawn
-  - 
+  - Effect
   - 
   - 
   - 
@@ -72,6 +72,9 @@ TagManager:
     locked: 0
   - name: ForeGround
     uniqueID: 3569134307
+    locked: 0
+  - name: Effect
+    uniqueID: 529500037
     locked: 0
   m_RenderingLayers:
   - Default

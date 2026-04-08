@@ -38,8 +38,5 @@
 		<property name="maximumThreshold">
 			<value>10</value>
 		</property>
-		<relationship name="sidechains">
-			<destination>{ebf609a3-1683-4b21-9b12-d49b35315615}</destination>
-		</relationship>
 	</object>
 </objects>

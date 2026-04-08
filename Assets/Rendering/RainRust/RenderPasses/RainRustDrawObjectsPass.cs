@@ -39,6 +39,13 @@ namespace RainRust.Rendering
         {
             // 1. Get datas needed for the pass
             var cameraData = frameData.Get<UniversalCameraData>();
+
+            // Always create context data to avoid null reference in subsequent passes
+            RainRustContextData rainRustData = frameData.Create<RainRustContextData>();
+
+            if (cameraData.isPreviewCamera)
+                return;
+
             var renderingData = frameData.Get<UniversalRenderingData>();
             var lightData = frameData.Get<UniversalLightData>();
             var resourceData = frameData.Get<UniversalResourceData>();
@@ -58,7 +65,6 @@ namespace RainRust.Rendering
             );
 
             // Store the texture handle in the context data so subsequent passes can use it
-            RainRustContextData rainRustData = frameData.Create<RainRustContextData>();
             rainRustData.mainRt = mainRtHandle;
             rainRustData.mainDepthRt = mainDepthRtHandle;
             rainRustData.receiverRt = receiverRtHandle;

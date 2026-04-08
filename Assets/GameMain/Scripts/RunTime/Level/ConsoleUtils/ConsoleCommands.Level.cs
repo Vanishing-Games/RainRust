@@ -1,17 +1,22 @@
 using IngameDebugConsole;
-using UnityEngine;
 
 namespace GameMain.RunTime
 {
     public static class LevelConsoleCommands
     {
+        [ConsoleMethod("start_level", "Directly start a level by save point name")]
+        public static void StartLevel(string savePointName)
+        {
+            new StartLevelCommand(savePointName).Execute();
+        }
+
         [ConsoleMethod(
-            "start_level",
+            "start_level_by_index",
             "Directly start a level by chapterId, levelId and spawnIndex"
         )]
-        public static void StartLevel(string chapterId, string levelId, int spawnIndex)
+        public static void StartLevelByIndex(string chapterId, string levelId, int spawnIndex)
         {
-            new StartLevelCommand(chapterId, levelId, spawnIndex).Execute();
+            LevelManager.Instance.StartLevel(chapterId, levelId, spawnIndex);
         }
 
         [ConsoleMethod("load_level", "Load a level via LoadManager with pipeline process")]
@@ -24,12 +29,6 @@ namespace GameMain.RunTime
         public static void EndLevel()
         {
             new EndLevelCommand().Execute();
-        }
-
-        [ConsoleMethod("switch_level", "Switch current level")]
-        public static void SwitchLevel(string chapterId, string levelId, int spawnIndex)
-        {
-            new SwitchLevelCommand(chapterId, levelId, spawnIndex).Execute();
         }
     }
 }

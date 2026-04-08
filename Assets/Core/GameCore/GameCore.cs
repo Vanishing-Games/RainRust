@@ -1,9 +1,6 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using R3;
-using UnityEngine;
 
 namespace Core
 {
@@ -24,18 +21,11 @@ namespace Core
         {
             try
             {
-                MessageBroker.Global.Publish(new SaveRequestEvent());
+                CLogger.LogInfo("[GameCore] Saving game before quit...", LogTag.GameQuit);
 
-                bool saveCompleted = false;
-                var subscription = MessageBroker.Global.Subscribe<SaveRequestEvent>(
-                    _ => { },
-                    () => saveCompleted = true
-                );
-
-                using (subscription)
-                {
-                    await UniTask.WaitUntil(() => saveCompleted).Timeout(TimeSpan.FromSeconds(10));
-                }
+                // Save slot and global data before quitting
+                await SaveManager.Instance.WriteSlotSaveAsync().Timeout(TimeSpan.FromSeconds(5));
+                await SaveManager.Instance.WriteGlobalSaveAsync().Timeout(TimeSpan.FromSeconds(2));
             }
             catch (Exception ex)
             {

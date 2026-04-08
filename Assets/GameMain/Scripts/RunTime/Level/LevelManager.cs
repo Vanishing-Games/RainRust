@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Core;
 using LDtkUnity;
 using UnityEngine;
-using CameraMode = GameMain.LDtk.CameraMode;
 
 namespace GameMain.RunTime
 {
@@ -17,7 +16,18 @@ namespace GameMain.RunTime
         }
 
         /// <summary>
-        /// 进入指定关卡 (通过 Index)
+        /// 开启一个关卡（通过 SavePoint）
+        /// </summary>
+        /// <param name="savePointName">SavePoint的NickName或PointName</param>
+        public void StartLevel(string savePointName)
+        {
+            InitLevelManager();
+            SetUpWithSavePoint(savePointName);
+            StartLevelInternal();
+        }
+
+        /// <summary>
+        /// 开启一个关卡 (通过 Index, 保留兼容并添加 Clamp 逻辑)
         /// </summary>
         /// <param name="chapterId"></param>
         /// <param name="levelId"></param>
@@ -26,11 +36,18 @@ namespace GameMain.RunTime
         {
             InitLevelManager();
             SetUp(chapterId, levelId, levelSpawnPointIndex);
+
+            var player = GameMain.GetPlayer();
+            if (player != null && m_CurrentLevelTransition != null)
+            {
+                player.transform.position = m_CurrentLevelTransition.GetPlayerFeetSpawnPoint();
+            }
+
             StartLevelInternal();
         }
 
         /// <summary>
-        /// 进入指定关卡 (直接通过 LevelTransition)
+        /// 进入指定关卡 (通过 LevelTransition)
         /// </summary>
         /// <param name="transition"></param>
         public void StartLevel(LevelTransition transition)
@@ -53,6 +70,12 @@ namespace GameMain.RunTime
             m_CurrentLevel = level;
             m_CurrentLevelTransition = transition;
             m_CurrentWorld = level.GetComponentInParent<LDtkComponentWorld>();
+
+            var player = GameMain.GetPlayer();
+            if (player != null && m_CurrentLevelTransition != null)
+            {
+                player.transform.position = m_CurrentLevelTransition.GetPlayerFeetSpawnPoint();
+            }
 
             StartLevelInternal();
         }
@@ -77,7 +100,6 @@ namespace GameMain.RunTime
         private void StartLevelInternal()
         {
             m_LastSwitchFrame = Time.frameCount;
-            SetUpPlayer();
             ActivateRoom(m_CurrentLevel);
 
 #if UNITY_EDITOR
@@ -102,7 +124,7 @@ namespace GameMain.RunTime
             );
             DebugUIManager.Log(
                 "Camera Mode",
-                m_CurrentLevelTransition != null ? m_CurrentRoom.CameraMode : "None"
+                m_CurrentRoom != null ? m_CurrentRoom.CameraMode : "None"
             );
         }
 #endif
@@ -130,6 +152,62 @@ namespace GameMain.RunTime
                 m_LdtkProject = ldtkProjects[0];
         }
 
+        private void SetUpWithSavePoint(string savePointName)
+        {
+            var allSavePoints = FindObjectsByType<SavePoint>(
+                FindObjectsInactive.Include,
+                FindObjectsSortMode.None
+            );
+            SavePoint targetSavePoint = null;
+
+            foreach (var sp in allSavePoints)
+            {
+                if (sp.NickName == savePointName)
+                {
+                    targetSavePoint = sp;
+                    break;
+                }
+            }
+
+            if (targetSavePoint == null)
+            {
+                foreach (var sp in allSavePoints)
+                {
+                    if (sp.PointName == savePointName)
+                    {
+                        targetSavePoint = sp;
+                        break;
+                    }
+                }
+            }
+
+            if (targetSavePoint == null)
+            {
+                CLogger.LogError($"Can't Find SavePoint: {savePointName}", LogTag.LevelManager);
+                return;
+            }
+
+            var level = targetSavePoint.GetComponentInParent<LDtkComponentLevel>();
+            if (level == null)
+            {
+                CLogger.LogError(
+                    $"SavePoint {savePointName} is not in a level",
+                    LogTag.LevelManager
+                );
+                return;
+            }
+
+            m_CurrentWorld = level.GetComponentInParent<LDtkComponentWorld>();
+            m_CurrentLevel = level;
+            m_CurrentLevelTransition = null;
+
+            var player = GameMain.GetPlayer();
+            if (player != null)
+            {
+                player.transform.position = targetSavePoint.transform.position;
+            }
+        }
+
         private void SetUp(string chapterId, string levelId, int levelSpawnPointIndex)
         {
             m_CurrentWorld = GetChapeter(chapterId);
@@ -155,12 +233,6 @@ namespace GameMain.RunTime
                 );
                 return;
             }
-        }
-
-        private void SetUpPlayer()
-        {
-            var player = GameMain.GetPlayer();
-            player.transform.position = m_CurrentLevelTransition.GetPlayerFeetSpawnPoint();
         }
 
         private LDtkComponentWorld GetChapeter(string chapterId)
@@ -216,35 +288,27 @@ namespace GameMain.RunTime
                 {
                     if (entity != null && entity.Identifier == LDtkIdentifiers.LevelTransition)
                     {
-                        var transition = entity.GetComponent<LevelTransition>();
-                        if (transition != null)
+                        if (entity.TryGetComponent<LevelTransition>(out var transition))
                         {
-                            // Priority 1: Match by the explicit Index property
-                            if (
-                                transition.Index.HasValue
-                                && transition.Index.Value == levelSpawnPointIndex
-                            )
-                            {
-                                return transition;
-                            }
                             transitionsList.Add(transition);
                         }
                     }
                 }
             }
 
-            // Priority 2: Fallback to list order if no exact Index match was found
             if (transitionsList.Count > 0)
             {
-                if (levelSpawnPointIndex >= transitionsList.Count)
+                transitionsList.Sort((a, b) => a.Index.CompareTo(b.Index));
+
+                int clampedIndex = Mathf.Clamp(levelSpawnPointIndex, 0, transitionsList.Count - 1);
+                if (levelSpawnPointIndex != clampedIndex)
                 {
                     CLogger.LogWarn(
-                        $"Spawn Index {levelSpawnPointIndex} not found by ID, and is bigger than level's transition count. Falling back to modulo.",
+                        $"Spawn Index {levelSpawnPointIndex} is out of bounds for level {m_CurrentLevel.Identifier} (max {transitionsList.Count - 1}). Clamped to {clampedIndex}.",
                         LogTag.LevelManager
                     );
-                    levelSpawnPointIndex %= transitionsList.Count;
                 }
-                return transitionsList[levelSpawnPointIndex];
+                return transitionsList[clampedIndex];
             }
 
             CLogger.LogError(
@@ -255,7 +319,7 @@ namespace GameMain.RunTime
         }
 
         /// <summary>
-        /// 切换到指定关卡
+        /// 切换到指定关卡 (仅进行 room 的切换，不处理其他初始化)
         /// </summary>
         /// <param name="targetTransition"></param>
         public void SwitchLevel(LevelTransition targetTransition)
@@ -273,9 +337,7 @@ namespace GameMain.RunTime
             if (m_CurrentLevel == level)
                 return;
 
-            var tarPos = targetTransition.transform.position;
-            var curPos = m_CurrentLevelTransition.transform.position;
-            var posDiff = tarPos - curPos;
+            var posDiff = GetTransitionPositionDiff(targetTransition);
 
             m_LastSwitchFrame = Time.frameCount;
             m_CurrentLevel = level;
@@ -286,13 +348,30 @@ namespace GameMain.RunTime
 
             ActivateRoom(level);
 
-            MessageBroker.Global.Publish<LevelSwitchEvent>(
-                new(
-                    posDiff.x == 0
-                        ? LevelSwitchEvent.LevelSwitchDirection.Vertical
-                        : LevelSwitchEvent.LevelSwitchDirection.Horizontal
-                )
-            );
+            if (posDiff.HasValue)
+            {
+                var posDiffValue = posDiff.Value;
+                MessageBroker.Global.Publish<LevelSwitchEvent>(
+                    new(
+                        posDiffValue.x == 0
+                            ? LevelSwitchEvent.LevelSwitchDirection.Vertical
+                            : LevelSwitchEvent.LevelSwitchDirection.Horizontal
+                    )
+                );
+            }
+            else
+            {
+                CLogger.LogError(
+                    "SENDING LevelSwitchEvent FAILED\n"
+                        + "Something went wrong when calculating level transition difference, maybe a null ref issue. info follows:"
+                        + " \nCurLevel: "
+                        + m_CurrentLevelTransition
+                        + " \nTargetLevel: "
+                        + targetTransition,
+                    LogTag.LevelManager,
+                    LogTag.Event
+                );
+            }
 
 #if UNITY_EDITOR
             UpdateDebugUI();
@@ -320,6 +399,19 @@ namespace GameMain.RunTime
                     LogTag.LevelManager
                 );
             }
+        }
+
+        private Vector3? GetTransitionPositionDiff(LevelTransition targetTransition)
+        {
+            if (targetTransition == null)
+                return null;
+
+            if (m_CurrentLevelTransition == null)
+                return null;
+
+            var tarPos = targetTransition.transform.position;
+            var curPos = m_CurrentLevelTransition.transform.position;
+            return tarPos - curPos;
         }
 
         private int m_CurrentMaxPriority = 0;
