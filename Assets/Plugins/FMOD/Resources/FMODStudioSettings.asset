@@ -451,12 +451,12 @@ MonoBehaviour:
   m_Name: FMODStudioSettings
   m_EditorClassIdentifier: 
   switchSettingsMigration: 1
-  HasSourceProject: 1
+  HasSourceProject: 0
   HasPlatforms: 1
-  sourceProjectPath: FMOD Project/FMOD Project.fspro
-  sourceBankPath: FMOD Project/Build
+  sourceProjectPath: FMOD/fmod.fspro
+  sourceBankPath: FMOD/Build
   sourceBankPathUnformatted: 
-  BankRefreshCooldown: 5
+  BankRefreshCooldown: 1
   ShowBankRefreshWindow: 1
   AutomaticEventLoading: 1
   BankLoadType: 0
@@ -478,13 +478,7 @@ MonoBehaviour:
   MasterBanks:
   - Master
   Banks:
-  - Dialogue_CN
-  - Dialogue_EN
-  - Dialogue_JP
-  - Music
-  - SFX
-  - Vehicles
-  - VO
+  - Test
   BanksToLoad: []
   LiveUpdatePort: 9264
   EnableMemoryTracking: 0
