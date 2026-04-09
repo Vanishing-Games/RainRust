@@ -1,3 +1,0 @@
-welcome,en_welcome.ogg
-main menu,en_main_menu.ogg
-goodbye,en_goodbye.ogg
