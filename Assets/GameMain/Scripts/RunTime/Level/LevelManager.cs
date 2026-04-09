@@ -351,18 +351,18 @@ namespace GameMain.RunTime
             if (posDiff.HasValue)
             {
                 var posDiffValue = posDiff.Value;
-                MessageBroker.Global.Publish<LevelSwitchEvent>(
+                MessageBroker.Global.Publish<LevelEvents.LevelSwitchedEvent>(
                     new(
                         posDiffValue.x == 0
-                            ? LevelSwitchEvent.LevelSwitchDirection.Vertical
-                            : LevelSwitchEvent.LevelSwitchDirection.Horizontal
+                            ? LevelEvents.LevelSwitchDirection.Vertical
+                            : LevelEvents.LevelSwitchDirection.Horizontal
                     )
                 );
             }
             else
             {
                 CLogger.LogError(
-                    "SENDING LevelSwitchEvent FAILED\n"
+                    "SENDING LevelSwitchedEvent FAILED\n"
                         + "Something went wrong when calculating level transition difference, maybe a null ref issue. info follows:"
                         + " \nCurLevel: "
                         + m_CurrentLevelTransition

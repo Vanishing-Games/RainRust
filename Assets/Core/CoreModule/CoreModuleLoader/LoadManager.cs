@@ -7,7 +7,7 @@ namespace Core
 {
     public class LoadManager : MonoSingletonLasy<LoadManager>
     {
-        public void PrepareForLoad(LoadRequestEvent loadEvent)
+        public void PrepareForLoad(CoreModuleLoaderEvents.LoadRequestEvent loadEvent)
         {
             SubscribeEvents();
             m_LoadInfos.AddRange(loadEvent.m_LoadInfos);
@@ -77,7 +77,7 @@ namespace Core
 
         private void Load()
         {
-            MessageBroker.Global.PublishComplete(new LoadStartEvent());
+            MessageBroker.Global.PublishComplete(new CoreModuleLoaderEvents.LoadPostStartEvent());
             LoadAsync().Forget();
         }
 
@@ -85,37 +85,37 @@ namespace Core
         {
             try
             {
-                MessageBroker.Global.Publish(new LoadProgressEvent("Loaders Preparing..."));
+                MessageBroker.Global.Publish(new CoreModuleLoaderEvents.LoadProgressEvent("Loaders Preparing..."));
                 foreach (var loader in m_Loaders)
                 {
                     await loader.BeforeLoad();
                 }
 
-                MessageBroker.Global.Publish(new LoadProgressEvent("Loading Scenes..."));
+                MessageBroker.Global.Publish(new CoreModuleLoaderEvents.LoadProgressEvent("Loading Scenes..."));
                 foreach (var loader in m_Loaders)
                 {
                     await loader.LoadScene();
                 }
 
-                MessageBroker.Global.Publish(new LoadProgressEvent("Reading Resources..."));
+                MessageBroker.Global.Publish(new CoreModuleLoaderEvents.LoadProgressEvent("Reading Resources..."));
                 foreach (var loader in m_Loaders)
                 {
                     await loader.LoadResource();
                 }
 
-                MessageBroker.Global.Publish(new LoadProgressEvent("Loading Prefabs..."));
+                MessageBroker.Global.Publish(new CoreModuleLoaderEvents.LoadProgressEvent("Loading Prefabs..."));
                 foreach (var loader in m_Loaders)
                 {
                     await loader.LoadPrefab();
                 }
 
-                MessageBroker.Global.Publish(new LoadProgressEvent("Instantiating Prefabs..."));
+                MessageBroker.Global.Publish(new CoreModuleLoaderEvents.LoadProgressEvent("Instantiating Prefabs..."));
                 foreach (var loader in m_Loaders)
                 {
                     await loader.InstantiatePrefab();
                 }
 
-                MessageBroker.Global.Publish(new LoadProgressEvent("Initializing..."));
+                MessageBroker.Global.Publish(new CoreModuleLoaderEvents.LoadProgressEvent("Initializing..."));
                 foreach (var loader in m_Loaders)
                 {
                     await loader.InitLoadedThings();
@@ -123,22 +123,22 @@ namespace Core
 
                 Reset();
 
-                MessageBroker.Global.PublishComplete(new LoadProgressEvent("Loading Done"));
-                MessageBroker.Global.Complete<LoadRequestEvent>();
+                MessageBroker.Global.PublishComplete(new CoreModuleLoaderEvents.LoadProgressEvent("Loading Done"));
+                MessageBroker.Global.Complete<CoreModuleLoaderEvents.LoadRequestEvent>();
             }
             catch (Exception ex)
             {
                 CLogger.LogError($"Loading failed with exception: \n {ex.Message}", LogTag.Loading);
                 Reset();
 
-                MessageBroker.Global.PublishErrorStop<LoadProgressEvent>(this, ex);
-                MessageBroker.Global.PublishErrorStop<LoadRequestEvent>(this, ex);
+                MessageBroker.Global.PublishErrorStop<CoreModuleLoaderEvents.LoadProgressEvent>(this, ex);
+                MessageBroker.Global.PublishErrorStop<CoreModuleLoaderEvents.LoadRequestEvent>(this, ex);
             }
         }
 
         private void SubscribeEvents()
         {
-            m_LoadRequestEventSubscription = MessageBroker.Global.Subscribe<LoadRequestEvent>(
+            m_LoadRequestEventSubscription = MessageBroker.Global.Subscribe<CoreModuleLoaderEvents.LoadRequestEvent>(
                 OnLoadRequest,
                 OnLoadRequestError,
                 OnLoadRequestComplete
@@ -155,7 +155,7 @@ namespace Core
             CLogger.LogError("LoadRequestError", LogTag.Loading);
         }
 
-        private void OnLoadRequest(LoadRequestEvent loadEvent)
+        private void OnLoadRequest(CoreModuleLoaderEvents.LoadRequestEvent loadEvent)
         {
             var waitMs = (int)loadEvent.m_LoadSettings.maxWaitTimeInMs;
             if (waitMs <= 0)
@@ -174,7 +174,7 @@ namespace Core
                     );
                     CLogger.LogError(ex.Message, LogTag.Loading);
 
-                    MessageBroker.Global.PublishErrorStop<LoadRequestEvent>(this, ex);
+                    MessageBroker.Global.PublishErrorStop<CoreModuleLoaderEvents.LoadRequestEvent>(this, ex);
                     Reset();
                 }
             });

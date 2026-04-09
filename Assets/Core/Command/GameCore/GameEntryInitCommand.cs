@@ -25,7 +25,7 @@ namespace Core
             {
                 loadProgressManager.Show();
 
-                LoadRequestEvent loadEvent = new("Loading Game Start Scene");
+                CoreModuleLoaderEvents.LoadRequestEvent loadEvent = new("Loading Game Start Scene");
                 loadEvent.AddLoadInfo(new SceneLoadInfo("GameStartScene"));
                 var loadGameEntry = new LoadRequestCommand(loadEvent);
 
@@ -59,7 +59,7 @@ namespace Core
                 LogTag.GameCoreStart
             );
 
-            var loadEvent = new LoadRequestEvent("Load Progress Bar");
+            var loadEvent = new CoreModuleLoaderEvents.LoadRequestEvent("Load Progress Bar");
             loadEvent.AddLoadInfo(new ProgressBarLoadInfo());
             var loadProgressBar = new LoadRequestCommand(loadEvent);
 

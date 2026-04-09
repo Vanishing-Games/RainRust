@@ -9,10 +9,11 @@ namespace GameMain.RunTime
         private void Start()
         {
             CLogger.LogInfo(
-                "[GameStartInvoker] Start, Publishing GameStartInitEvent...",
+                "[GameStartInvoker] Start, Publishing GamePostInitEvent...",
                 LogTag.GameCoreStart
-            );
-            MessageBroker.Global.Publish(new GameStartInitEvent());
+                );
+
+                MessageBroker.Global.Publish(new GameCoreEvents.GameCorePostInitEvent());
         }
     }
 }
