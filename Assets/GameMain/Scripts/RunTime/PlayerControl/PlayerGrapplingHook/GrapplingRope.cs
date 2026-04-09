@@ -42,10 +42,7 @@ namespace GameMain.RunTime
         /// 什么时候开始绘制绳子
         /// </summary>
         /// <returns></returns>
-        bool ShouldDrawRope()
-        {
-            return m_PlayerControlComponent.IsThrowing();
-        }
+        bool ShouldDrawRope() => m_PlayerControlComponent?.IsThrowing() ?? false;
 
         void DrawRope()
         {
