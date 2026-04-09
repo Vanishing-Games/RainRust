@@ -11,9 +11,9 @@ namespace GameMain.RunTime
             CLogger.LogInfo(
                 "[GameLevelInvoker] Start, Publishing GameLevelPreInitEvent...",
                 LogTag.GameCoreStart
-                );
+            );
 
-                MessageBroker.Global.Publish(new GameCoreEvents.GameCoreLevelPreInitEvent());
+            MessageBroker.Global.Publish(new GameCoreEvents.GameCoreLevelPreInitEvent());
         }
     }
 }

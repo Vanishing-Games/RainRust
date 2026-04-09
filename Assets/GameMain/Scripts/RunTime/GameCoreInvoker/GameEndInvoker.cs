@@ -11,9 +11,9 @@ namespace GameMain.RunTime
             CLogger.LogInfo(
                 "[GameEndInvoker] Start, Publishing GamePostEndEvent...",
                 LogTag.GameCoreStart
-                );
+            );
 
-                MessageBroker.Global.Publish(new GameCoreEvents.GameCorePostEndEvent());
+            MessageBroker.Global.Publish(new GameCoreEvents.GameCorePostEndEvent());
         }
     }
 }

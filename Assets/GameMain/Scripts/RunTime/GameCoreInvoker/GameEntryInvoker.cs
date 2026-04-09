@@ -11,9 +11,9 @@ namespace GameMain.RunTime
             CLogger.LogInfo(
                 "[GameEntryInvoker] Start, Publishing GamePreInitEvent...",
                 LogTag.GameCoreStart
-                );
+            );
 
-                MessageBroker.Global.Publish(new GameCoreEvents.GameCorePreInitEvent());
+            MessageBroker.Global.Publish(new GameCoreEvents.GameCorePreInitEvent());
         }
     }
 }

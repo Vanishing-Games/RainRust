@@ -80,8 +80,12 @@ namespace Core
 
         private void SubscribeToSaveEvents()
         {
-            MessageBroker.Global.Subscribe<SaveSystemEvents.SavePreWriteEvent>(OnBeforeWriteSave).AddTo(this);
-            MessageBroker.Global.Subscribe<SaveSystemEvents.SaveOnLoadEvent>(OnLoadSave).AddTo(this);
+            MessageBroker
+                .Global.Subscribe<SaveSystemEvents.SavePreWriteEvent>(OnBeforeWriteSave)
+                .AddTo(this);
+            MessageBroker
+                .Global.Subscribe<SaveSystemEvents.SaveOnLoadEvent>(OnLoadSave)
+                .AddTo(this);
         }
 
         private void OnBeforeWriteSave(SaveSystemEvents.SavePreWriteEvent evt)

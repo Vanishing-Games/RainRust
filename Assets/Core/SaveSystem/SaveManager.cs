@@ -30,9 +30,8 @@ namespace Core
             InitializeDirectory();
             RefreshSaveSlots();
 
-            m_SaveRequestSubscription = MessageBroker.Global.Subscribe<SaveSystemEvents.SaveRequestEvent>(
-                OnSaveRequested
-            );
+            m_SaveRequestSubscription =
+                MessageBroker.Global.Subscribe<SaveSystemEvents.SaveRequestEvent>(OnSaveRequested);
 
             LoadGlobalSaveAsync().Forget();
         }
@@ -56,7 +55,9 @@ namespace Core
                 m_IsSlotDirty = true;
             }
 
-            MessageBroker.Global.Publish(new SaveSystemEvents.SaveValueUpdatedEvent(key, value, isGlobal));
+            MessageBroker.Global.Publish(
+                new SaveSystemEvents.SaveValueUpdatedEvent(key, value, isGlobal)
+            );
         }
 
         public T GetSaveValue<T>(string key, T defaultValue = default, bool isGlobal = false)
@@ -124,7 +125,9 @@ namespace Core
 
         private async UniTask<bool> WriteSaveFileAsync(string slotName, bool isGlobal)
         {
-            MessageBroker.Global.Publish(new SaveSystemEvents.SavePreWriteEvent(slotName, isGlobal));
+            MessageBroker.Global.Publish(
+                new SaveSystemEvents.SavePreWriteEvent(slotName, isGlobal)
+            );
 
             string fullPath = GetSavePath(slotName);
             string tempPath = fullPath + ".tmp";
@@ -172,7 +175,9 @@ namespace Core
                     $"{(isGlobal ? "Global" : "Slot")} save success: {fullPath}",
                     LogTag.Game
                 );
-                MessageBroker.Global.Publish(new SaveSystemEvents.SavePostWriteEvent(slotName, true, isGlobal));
+                MessageBroker.Global.Publish(
+                    new SaveSystemEvents.SavePostWriteEvent(slotName, true, isGlobal)
+                );
                 return true;
             }
             catch (Exception e)
@@ -182,7 +187,9 @@ namespace Core
                 {
                     File.Delete(tempPath);
                 }
-                MessageBroker.Global.Publish(new SaveSystemEvents.SavePostWriteEvent(slotName, false, isGlobal));
+                MessageBroker.Global.Publish(
+                    new SaveSystemEvents.SavePostWriteEvent(slotName, false, isGlobal)
+                );
                 return false;
             }
         }
@@ -224,19 +231,25 @@ namespace Core
                     m_CurrentSlot = slotName;
                 }
 
-                MessageBroker.Global.Publish(new SaveSystemEvents.SaveOnLoadEvent(container, isGlobal));
+                MessageBroker.Global.Publish(
+                    new SaveSystemEvents.SaveOnLoadEvent(container, isGlobal)
+                );
 
                 CLogger.LogInfo(
                     $"{(isGlobal ? "Global" : "Slot")} load success: {fullPath}",
                     LogTag.Game
                 );
-                MessageBroker.Global.Publish(new SaveSystemEvents.SavePostLoadEvent(slotName, true, isGlobal));
+                MessageBroker.Global.Publish(
+                    new SaveSystemEvents.SavePostLoadEvent(slotName, true, isGlobal)
+                );
                 return true;
             }
             catch (Exception e)
             {
                 CLogger.LogError($"Load failed: {e.Message}", LogTag.Game);
-                MessageBroker.Global.Publish(new SaveSystemEvents.SavePostLoadEvent(slotName, false, isGlobal));
+                MessageBroker.Global.Publish(
+                    new SaveSystemEvents.SavePostLoadEvent(slotName, false, isGlobal)
+                );
                 return false;
             }
         }

@@ -24,7 +24,9 @@ namespace Core
             CLogger.LogVerbose($"SystemMonoModule: {GetType()} OnDestroy", LogTag.Loading);
         }
 
-        protected virtual void OnReceiveLoadRequest(CoreModuleLoaderEvents.LoadRequestEvent loadEventInfo)
+        protected virtual void OnReceiveLoadRequest(
+            CoreModuleLoaderEvents.LoadRequestEvent loadEventInfo
+        )
         {
             var info = loadEventInfo.GetLoadInfo(GetLoaderType());
 
@@ -76,11 +78,12 @@ namespace Core
 
         public virtual void RegisterLoadEvent()
         {
-            m_LoadEventSubscription = MessageBroker.Global.Subscribe<CoreModuleLoaderEvents.LoadRequestEvent>(
-                OnReceiveLoadRequest,
-                OnLoadingError,
-                OnLoadingEnd
-            );
+            m_LoadEventSubscription =
+                MessageBroker.Global.Subscribe<CoreModuleLoaderEvents.LoadRequestEvent>(
+                    OnReceiveLoadRequest,
+                    OnLoadingError,
+                    OnLoadingEnd
+                );
 
             CLogger.LogVerbose($"SystemMonoModule: {GetType()} RegisterLoadEvent", LogTag.Loading);
         }

@@ -13,30 +13,35 @@ namespace Core
         {
             base.Awake();
 
-            m_InitEventSubscription = MessageBroker.Global.Subscribe<GameCoreEvents.GameCorePreInitEvent>(_ =>
-            {
-                new GameEntryInitCommand().Execute();
-            });
+            m_InitEventSubscription =
+                MessageBroker.Global.Subscribe<GameCoreEvents.GameCorePreInitEvent>(_ =>
+                {
+                    new GameEntryInitCommand().Execute();
+                });
 
-            m_StartEventSubscription = MessageBroker.Global.Subscribe<GameCoreEvents.GameCorePostInitEvent>(_ =>
-            {
-                // TODO: Handle GamePostInitEvent if needed
-            });
+            m_StartEventSubscription =
+                MessageBroker.Global.Subscribe<GameCoreEvents.GameCorePostInitEvent>(_ =>
+                {
+                    // TODO: Handle GamePostInitEvent if needed
+                });
 
-            m_LevelEventSubscription = MessageBroker.Global.Subscribe<GameCoreEvents.GameCoreLevelPreInitEvent>(_ =>
-            {
-                // TODO: Handle GameLevelPreInitEvent if needed
-            });
+            m_LevelEventSubscription =
+                MessageBroker.Global.Subscribe<GameCoreEvents.GameCoreLevelPreInitEvent>(_ =>
+                {
+                    // TODO: Handle GameLevelPreInitEvent if needed
+                });
 
-            m_EndEventSubscription = MessageBroker.Global.Subscribe<GameCoreEvents.GameCorePostEndEvent>(_ =>
-            {
-                // TODO: Handle GamePostEndEvent if needed
-            });
+            m_EndEventSubscription =
+                MessageBroker.Global.Subscribe<GameCoreEvents.GameCorePostEndEvent>(_ =>
+                {
+                    // TODO: Handle GamePostEndEvent if needed
+                });
 
-            m_CustomEventSubscription = MessageBroker.Global.Subscribe<GameCoreEvents.GameCoreCustomInitEvent>(_ =>
-            {
-                // TODO: Handle GameCustomInitEvent if needed
-            });
+            m_CustomEventSubscription =
+                MessageBroker.Global.Subscribe<GameCoreEvents.GameCoreCustomInitEvent>(_ =>
+                {
+                    // TODO: Handle GameCustomInitEvent if needed
+                });
         }
 
         protected async void Start()

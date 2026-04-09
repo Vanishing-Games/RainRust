@@ -11,9 +11,9 @@ namespace GameMain.RunTime
             CLogger.LogInfo(
                 "[GameStartInvoker] Start, Publishing GamePostInitEvent...",
                 LogTag.GameCoreStart
-                );
+            );
 
-                MessageBroker.Global.Publish(new GameCoreEvents.GameCorePostInitEvent());
+            MessageBroker.Global.Publish(new GameCoreEvents.GameCorePostInitEvent());
         }
     }
 }
