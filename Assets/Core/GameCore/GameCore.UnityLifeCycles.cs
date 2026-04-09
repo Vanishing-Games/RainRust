@@ -14,25 +14,25 @@ namespace Core
             base.Awake();
 
             m_InitEventSubscription =
-                MessageBroker.Global.Subscribe<GameCoreEvents.GameCorePreInitEvent>(_ =>
+                MessageBroker.Global.Subscribe<GameCoreInvokerEvents.GameCorePreInitEvent>(_ =>
                 {
                     new GameEntryInitCommand().Execute();
                 });
 
             m_StartEventSubscription =
-                MessageBroker.Global.Subscribe<GameCoreEvents.GameCorePostInitEvent>(_ =>
+                MessageBroker.Global.Subscribe<GameCoreInvokerEvents.GameCorePostInitEvent>(_ =>
                 {
                     // TODO: Handle GamePostInitEvent if needed
                 });
 
             m_LevelEventSubscription =
-                MessageBroker.Global.Subscribe<GameCoreEvents.GameCoreLevelPreInitEvent>(_ =>
+                MessageBroker.Global.Subscribe<GameCoreInvokerEvents.GameCoreLevelPreInitEvent>(_ =>
                 {
                     // TODO: Handle GameLevelPreInitEvent if needed
                 });
 
             m_EndEventSubscription =
-                MessageBroker.Global.Subscribe<GameCoreEvents.GameCorePostEndEvent>(_ =>
+                MessageBroker.Global.Subscribe<GameCoreInvokerEvents.GameCorePostEndEvent>(_ =>
                 {
                     // TODO: Handle GamePostEndEvent if needed
                 });

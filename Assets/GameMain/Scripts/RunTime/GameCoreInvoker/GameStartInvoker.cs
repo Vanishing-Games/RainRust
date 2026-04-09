@@ -13,7 +13,7 @@ namespace GameMain.RunTime
                 LogTag.GameCoreStart
             );
 
-            MessageBroker.Global.Publish(new GameCoreEvents.GameCorePostInitEvent());
+            MessageBroker.Global.Publish(new GameCoreInvokerEvents.GameCorePostInitEvent());
         }
     }
 }
