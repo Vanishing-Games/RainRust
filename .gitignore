@@ -126,3 +126,6 @@ fmod_editor.log
 # Claude
 /CLAUDE.md
 .claude
+
+# Save Data
+/SaveData_Editor/
