@@ -1,8 +1,8 @@
 namespace Core
 {
-	public enum AudioPlayMode
-	{
-		OneShot,
-		Managed,
-	}
+    public enum AudioPlayMode
+    {
+        OneShot,
+        Managed,
+    }
 }

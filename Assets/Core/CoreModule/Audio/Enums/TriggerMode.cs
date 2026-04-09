@@ -1,9 +1,9 @@
 namespace Core
 {
-	public enum TriggerMode
-	{
-		OnNext,
-		OnComplete,
-		OnError,
-	}
+    public enum TriggerMode
+    {
+        OnNext,
+        OnComplete,
+        OnError,
+    }
 }
