@@ -35,7 +35,7 @@ MonoBehaviour:
       Data: 2|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: GameMain.Editor.GETE_PlayJump, GameMain.Editor
+      Data: GameMain.Editor.GameEditorTestEvents+GETE_PlayJump, GameMain.Editor
     - Name: 
       Entry: 8
       Data: 
@@ -86,7 +86,7 @@ MonoBehaviour:
       Data: 4|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: GameMain.Editor.GETE_PlayCoin, GameMain.Editor
+      Data: GameMain.Editor.GameEditorTestEvents+GETE_PlayCoin, GameMain.Editor
     - Name: 
       Entry: 8
       Data: 
@@ -137,7 +137,7 @@ MonoBehaviour:
       Data: 6|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: GameMain.Editor.GETE_PlayExplosion, GameMain.Editor
+      Data: GameMain.Editor.GameEditorTestEvents+GETE_PlayExplosion, GameMain.Editor
     - Name: 
       Entry: 8
       Data: 
@@ -188,7 +188,7 @@ MonoBehaviour:
       Data: 8|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: GameMain.Editor.GETE_PlayBgm, GameMain.Editor
+      Data: GameMain.Editor.GameEditorTestEvents+GETE_PlayBgm, GameMain.Editor
     - Name: 
       Entry: 8
       Data: 
@@ -236,7 +236,7 @@ MonoBehaviour:
       Data: 10|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: GameMain.Editor.GETE_StopBgm, GameMain.Editor
+      Data: GameMain.Editor.GameEditorTestEvents+GETE_StopBgm, GameMain.Editor
     - Name: 
       Entry: 8
       Data: 
