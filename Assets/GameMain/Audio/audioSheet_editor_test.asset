@@ -1,0 +1,260 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e819770822a816141b8e8be79a3c1461, type: 3}
+  m_Name: audioSheet_editor_test
+  m_EditorClassIdentifier: Core::Core.AudioEventSheet
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes:
+    - Name: Entries
+      Entry: 7
+      Data: 0|System.Collections.Generic.List`1[[Core.AudioEntry, Core]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 4
+    - Name: 
+      Entry: 7
+      Data: 1|Core.DefaultAudioEntry, Core
+    - Name: ListenEventType
+      Entry: 7
+      Data: 2|System.RuntimeType, mscorlib
+    - Name: 
+      Entry: 1
+      Data: GameMain.Editor.GETE_PlayJump, GameMain.Editor
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: TriggerMode
+      Entry: 3
+      Data: 0
+    - Name: FmodEvent
+      Entry: 7
+      Data: FMODUnity.EventReference, FMODUnity
+    - Name: Guid
+      Entry: 7
+      Data: FMOD.GUID, FMODUnity
+    - Name: Data1
+      Entry: 3
+      Data: 863667559
+    - Name: Data2
+      Entry: 3
+      Data: 1112018296
+    - Name: Data3
+      Entry: 3
+      Data: 332963474
+    - Name: Data4
+      Entry: 3
+      Data: 1437010513
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: Path
+      Entry: 1
+      Data: event:/Test/SFX/jump
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: PlayMode
+      Entry: 3
+      Data: 0
+    - Name: Managed
+      Entry: 6
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 3|Core.DefaultAudioEntry, Core
+    - Name: ListenEventType
+      Entry: 7
+      Data: 4|System.RuntimeType, mscorlib
+    - Name: 
+      Entry: 1
+      Data: GameMain.Editor.GETE_PlayCoin, GameMain.Editor
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: TriggerMode
+      Entry: 3
+      Data: 0
+    - Name: FmodEvent
+      Entry: 7
+      Data: FMODUnity.EventReference, FMODUnity
+    - Name: Guid
+      Entry: 7
+      Data: FMOD.GUID, FMODUnity
+    - Name: Data1
+      Entry: 3
+      Data: 1060971036
+    - Name: Data2
+      Entry: 3
+      Data: 1219412734
+    - Name: Data3
+      Entry: 3
+      Data: 1216110777
+    - Name: Data4
+      Entry: 3
+      Data: -498706123
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: Path
+      Entry: 1
+      Data: event:/Test/SFX/pickCoin
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: PlayMode
+      Entry: 3
+      Data: 0
+    - Name: Managed
+      Entry: 6
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 5|Core.DefaultAudioEntry, Core
+    - Name: ListenEventType
+      Entry: 7
+      Data: 6|System.RuntimeType, mscorlib
+    - Name: 
+      Entry: 1
+      Data: GameMain.Editor.GETE_PlayExplosion, GameMain.Editor
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: TriggerMode
+      Entry: 3
+      Data: 0
+    - Name: FmodEvent
+      Entry: 7
+      Data: FMODUnity.EventReference, FMODUnity
+    - Name: Guid
+      Entry: 7
+      Data: FMOD.GUID, FMODUnity
+    - Name: Data1
+      Entry: 3
+      Data: 1325512571
+    - Name: Data2
+      Entry: 3
+      Data: 1331539944
+    - Name: Data3
+      Entry: 3
+      Data: 1919121052
+    - Name: Data4
+      Entry: 3
+      Data: 503579589
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: Path
+      Entry: 1
+      Data: event:/Test/SFX/explode
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: PlayMode
+      Entry: 3
+      Data: 0
+    - Name: Managed
+      Entry: 6
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 7|Core.DefaultAudioEntry, Core
+    - Name: ListenEventType
+      Entry: 7
+      Data: 8|System.RuntimeType, mscorlib
+    - Name: 
+      Entry: 1
+      Data: GameMain.Editor.GETE_PlayBgm, GameMain.Editor
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: TriggerMode
+      Entry: 3
+      Data: 0
+    - Name: FmodEvent
+      Entry: 7
+      Data: FMODUnity.EventReference, FMODUnity
+    - Name: Guid
+      Entry: 7
+      Data: FMOD.GUID, FMODUnity
+    - Name: Data1
+      Entry: 3
+      Data: -218108870
+    - Name: Data2
+      Entry: 3
+      Data: 1095016436
+    - Name: Data3
+      Entry: 3
+      Data: -895679559
+    - Name: Data4
+      Entry: 3
+      Data: -879449196
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: Path
+      Entry: 1
+      Data: event:/Test/BGM/giftshop
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: PlayMode
+      Entry: 3
+      Data: 1
+    - Name: Managed
+      Entry: 7
+      Data: 9|Core.ManagedConfig, Core
+    - Name: Id
+      Entry: 1
+      Data: event:/Test/BGM/giftshop
+    - Name: StopEventType
+      Entry: 7
+      Data: 10|System.RuntimeType, mscorlib
+    - Name: 
+      Entry: 1
+      Data: GameMain.Editor.GETE_StopBgm, GameMain.Editor
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: StopMode
+      Entry: 3
+      Data: 0
+    - Name: RestartIfPlaying
+      Entry: 5
+      Data: true
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
