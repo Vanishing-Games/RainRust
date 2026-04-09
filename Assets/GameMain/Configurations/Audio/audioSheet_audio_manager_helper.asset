@@ -1,0 +1,611 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e819770822a816141b8e8be79a3c1461, type: 3}
+  m_Name: audioSheet_audio_manager_helper
+  m_EditorClassIdentifier: Core::Core.AudioEventSheet
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes:
+    - Name: Entries
+      Entry: 7
+      Data: 0|System.Collections.Generic.List`1[[Core.AudioEntry, Core]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 14
+    - Name: 
+      Entry: 7
+      Data: 1|Core.DefaultAudioEntry, Core
+    - Name: ListenEventType
+      Entry: 7
+      Data: 2|System.RuntimeType, mscorlib
+    - Name: 
+      Entry: 1
+      Data: GameMain.RunTime.AudioManagerHelperEvents+BgmPlayDefaultEvent, GameMain.RunTime
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: TriggerMode
+      Entry: 3
+      Data: 0
+    - Name: FmodEvent
+      Entry: 7
+      Data: FMODUnity.EventReference, FMODUnity
+    - Name: Guid
+      Entry: 7
+      Data: FMOD.GUID, FMODUnity
+    - Name: Data1
+      Entry: 3
+      Data: 0
+    - Name: Data2
+      Entry: 3
+      Data: 0
+    - Name: Data3
+      Entry: 3
+      Data: 0
+    - Name: Data4
+      Entry: 3
+      Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: Path
+      Entry: 6
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: PlayMode
+      Entry: 3
+      Data: 1
+    - Name: Managed
+      Entry: 7
+      Data: 3|Core.ManagedConfig, Core
+    - Name: Id
+      Entry: 1
+      Data: bgm
+    - Name: StopEventType
+      Entry: 7
+      Data: 4|System.RuntimeType, mscorlib
+    - Name: 
+      Entry: 1
+      Data: GameMain.RunTime.AudioManagerHelperEvents+BgmStopEvent, GameMain.RunTime
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: StopMode
+      Entry: 3
+      Data: 0
+    - Name: RestartIfPlaying
+      Entry: 5
+      Data: false
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 5|Core.DirectPlayManagedEntry, Core
+    - Name: ListenEventType
+      Entry: 7
+      Data: 6|System.RuntimeType, mscorlib
+    - Name: 
+      Entry: 1
+      Data: GameMain.RunTime.AudioManagerHelperEvents+BgmPlayEvent, GameMain.RunTime
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: TriggerMode
+      Entry: 3
+      Data: 0
+    - Name: Managed
+      Entry: 7
+      Data: 7|Core.ManagedConfig, Core
+    - Name: Id
+      Entry: 1
+      Data: bgm
+    - Name: StopEventType
+      Entry: 9
+      Data: 4
+    - Name: StopMode
+      Entry: 3
+      Data: 0
+    - Name: RestartIfPlaying
+      Entry: 5
+      Data: false
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 8|Core.SetParameterFromEventEntry, Core
+    - Name: ListenEventType
+      Entry: 7
+      Data: 9|System.RuntimeType, mscorlib
+    - Name: 
+      Entry: 1
+      Data: GameMain.RunTime.AudioManagerHelperEvents+BgmSetIntensityEvent, GameMain.RunTime
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: TriggerMode
+      Entry: 3
+      Data: 0
+    - Name: ManagedId
+      Entry: 1
+      Data: bgm
+    - Name: ParameterName
+      Entry: 1
+      Data: intensity
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 10|Core.DefaultAudioEntry, Core
+    - Name: ListenEventType
+      Entry: 7
+      Data: 11|System.RuntimeType, mscorlib
+    - Name: 
+      Entry: 1
+      Data: GameMain.RunTime.AudioManagerHelperEvents+AmbiencePlayDefaultEvent, GameMain.RunTime
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: TriggerMode
+      Entry: 3
+      Data: 0
+    - Name: FmodEvent
+      Entry: 7
+      Data: FMODUnity.EventReference, FMODUnity
+    - Name: Guid
+      Entry: 7
+      Data: FMOD.GUID, FMODUnity
+    - Name: Data1
+      Entry: 3
+      Data: 0
+    - Name: Data2
+      Entry: 3
+      Data: 0
+    - Name: Data3
+      Entry: 3
+      Data: 0
+    - Name: Data4
+      Entry: 3
+      Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: Path
+      Entry: 6
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: PlayMode
+      Entry: 3
+      Data: 1
+    - Name: Managed
+      Entry: 7
+      Data: 12|Core.ManagedConfig, Core
+    - Name: Id
+      Entry: 1
+      Data: ambience
+    - Name: StopEventType
+      Entry: 7
+      Data: 13|System.RuntimeType, mscorlib
+    - Name: 
+      Entry: 1
+      Data: GameMain.RunTime.AudioManagerHelperEvents+AmbienceStopEvent, GameMain.RunTime
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: StopMode
+      Entry: 3
+      Data: 0
+    - Name: RestartIfPlaying
+      Entry: 5
+      Data: false
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 14|Core.DirectPlayManagedEntry, Core
+    - Name: ListenEventType
+      Entry: 7
+      Data: 15|System.RuntimeType, mscorlib
+    - Name: 
+      Entry: 1
+      Data: GameMain.RunTime.AudioManagerHelperEvents+AmbiencePlayEvent, GameMain.RunTime
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: TriggerMode
+      Entry: 3
+      Data: 0
+    - Name: Managed
+      Entry: 7
+      Data: 16|Core.ManagedConfig, Core
+    - Name: Id
+      Entry: 1
+      Data: ambience
+    - Name: StopEventType
+      Entry: 9
+      Data: 13
+    - Name: StopMode
+      Entry: 3
+      Data: 0
+    - Name: RestartIfPlaying
+      Entry: 5
+      Data: false
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 17|Core.SetParameterFromEventEntry, Core
+    - Name: ListenEventType
+      Entry: 7
+      Data: 18|System.RuntimeType, mscorlib
+    - Name: 
+      Entry: 1
+      Data: GameMain.RunTime.AudioManagerHelperEvents+AmbienceSetIntensityEvent,
+        GameMain.RunTime
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: TriggerMode
+      Entry: 3
+      Data: 0
+    - Name: ManagedId
+      Entry: 1
+      Data: ambience
+    - Name: ParameterName
+      Entry: 1
+      Data: intensity
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 19|Core.DefaultAudioEntry, Core
+    - Name: ListenEventType
+      Entry: 7
+      Data: 20|System.RuntimeType, mscorlib
+    - Name: 
+      Entry: 1
+      Data: GameMain.RunTime.AudioManagerHelperEvents+UiConfirmSoundDefaultEvent,
+        GameMain.RunTime
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: TriggerMode
+      Entry: 3
+      Data: 0
+    - Name: FmodEvent
+      Entry: 7
+      Data: FMODUnity.EventReference, FMODUnity
+    - Name: Guid
+      Entry: 7
+      Data: FMOD.GUID, FMODUnity
+    - Name: Data1
+      Entry: 3
+      Data: 0
+    - Name: Data2
+      Entry: 3
+      Data: 0
+    - Name: Data3
+      Entry: 3
+      Data: 0
+    - Name: Data4
+      Entry: 3
+      Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: Path
+      Entry: 6
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: PlayMode
+      Entry: 3
+      Data: 0
+    - Name: Managed
+      Entry: 6
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 21|Core.DefaultAudioEntry, Core
+    - Name: ListenEventType
+      Entry: 7
+      Data: 22|System.RuntimeType, mscorlib
+    - Name: 
+      Entry: 1
+      Data: GameMain.RunTime.AudioManagerHelperEvents+UiCancelSoundDefaultEvent,
+        GameMain.RunTime
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: TriggerMode
+      Entry: 3
+      Data: 0
+    - Name: FmodEvent
+      Entry: 7
+      Data: FMODUnity.EventReference, FMODUnity
+    - Name: Guid
+      Entry: 7
+      Data: FMOD.GUID, FMODUnity
+    - Name: Data1
+      Entry: 3
+      Data: 0
+    - Name: Data2
+      Entry: 3
+      Data: 0
+    - Name: Data3
+      Entry: 3
+      Data: 0
+    - Name: Data4
+      Entry: 3
+      Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: Path
+      Entry: 6
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: PlayMode
+      Entry: 3
+      Data: 0
+    - Name: Managed
+      Entry: 6
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 23|Core.DefaultAudioEntry, Core
+    - Name: ListenEventType
+      Entry: 7
+      Data: 24|System.RuntimeType, mscorlib
+    - Name: 
+      Entry: 1
+      Data: GameMain.RunTime.AudioManagerHelperEvents+UiHoverSoundDefaultEvent, GameMain.RunTime
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: TriggerMode
+      Entry: 3
+      Data: 0
+    - Name: FmodEvent
+      Entry: 7
+      Data: FMODUnity.EventReference, FMODUnity
+    - Name: Guid
+      Entry: 7
+      Data: FMOD.GUID, FMODUnity
+    - Name: Data1
+      Entry: 3
+      Data: 0
+    - Name: Data2
+      Entry: 3
+      Data: 0
+    - Name: Data3
+      Entry: 3
+      Data: 0
+    - Name: Data4
+      Entry: 3
+      Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: Path
+      Entry: 6
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: PlayMode
+      Entry: 3
+      Data: 0
+    - Name: Managed
+      Entry: 6
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 25|Core.DefaultAudioEntry, Core
+    - Name: ListenEventType
+      Entry: 7
+      Data: 26|System.RuntimeType, mscorlib
+    - Name: 
+      Entry: 1
+      Data: GameMain.RunTime.AudioManagerHelperEvents+UiErrorSoundDefaultEvent, GameMain.RunTime
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: TriggerMode
+      Entry: 3
+      Data: 0
+    - Name: FmodEvent
+      Entry: 7
+      Data: FMODUnity.EventReference, FMODUnity
+    - Name: Guid
+      Entry: 7
+      Data: FMOD.GUID, FMODUnity
+    - Name: Data1
+      Entry: 3
+      Data: 0
+    - Name: Data2
+      Entry: 3
+      Data: 0
+    - Name: Data3
+      Entry: 3
+      Data: 0
+    - Name: Data4
+      Entry: 3
+      Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: Path
+      Entry: 6
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: PlayMode
+      Entry: 3
+      Data: 0
+    - Name: Managed
+      Entry: 6
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 27|Core.DefaultAudioEntry, Core
+    - Name: ListenEventType
+      Entry: 7
+      Data: 28|System.RuntimeType, mscorlib
+    - Name: 
+      Entry: 1
+      Data: GameMain.RunTime.AudioManagerHelperEvents+StingerPlayDefaultEvent, GameMain.RunTime
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: TriggerMode
+      Entry: 3
+      Data: 0
+    - Name: FmodEvent
+      Entry: 7
+      Data: FMODUnity.EventReference, FMODUnity
+    - Name: Guid
+      Entry: 7
+      Data: FMOD.GUID, FMODUnity
+    - Name: Data1
+      Entry: 3
+      Data: 0
+    - Name: Data2
+      Entry: 3
+      Data: 0
+    - Name: Data3
+      Entry: 3
+      Data: 0
+    - Name: Data4
+      Entry: 3
+      Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: Path
+      Entry: 6
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: PlayMode
+      Entry: 3
+      Data: 0
+    - Name: Managed
+      Entry: 6
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 29|Core.DirectPlay3DOneShotEntry, Core
+    - Name: ListenEventType
+      Entry: 7
+      Data: 30|System.RuntimeType, mscorlib
+    - Name: 
+      Entry: 1
+      Data: GameMain.RunTime.AudioManagerHelperEvents+SfxAtPositionEvent, GameMain.RunTime
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: TriggerMode
+      Entry: 3
+      Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 31|Core.DirectPlayOneShotEntry, Core
+    - Name: ListenEventType
+      Entry: 7
+      Data: 32|System.RuntimeType, mscorlib
+    - Name: 
+      Entry: 1
+      Data: GameMain.RunTime.AudioManagerHelperEvents+PlayFmodOneShotEvent, GameMain.RunTime
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: TriggerMode
+      Entry: 3
+      Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 33|Core.DirectSetParameterEntry, Core
+    - Name: ListenEventType
+      Entry: 7
+      Data: 34|System.RuntimeType, mscorlib
+    - Name: 
+      Entry: 1
+      Data: GameMain.RunTime.AudioManagerHelperEvents+SetManagedParameterEvent, GameMain.RunTime
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: TriggerMode
+      Entry: 3
+      Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 

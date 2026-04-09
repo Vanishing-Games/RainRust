@@ -10,7 +10,7 @@ namespace Core
 {
     public class VgAudioManager : MonoSingletonPersistent<VgAudioManager>
     {
-        public void PlayManaged(string id, EventReference fmodEvent, ManagedConfig config)
+        internal void PlayManaged(string id, EventReference fmodEvent, ManagedConfig config)
         {
             if (m_ManagedInstances.ContainsKey(id))
             {
@@ -25,7 +25,7 @@ namespace Core
             CLogger.LogInfo($"PlayManaged: {id}", LogTag.Audio);
         }
 
-        public void PlayManaged3D(
+        internal void PlayManaged3D(
             string id,
             EventReference fmodEvent,
             Vector3 position,
@@ -46,7 +46,7 @@ namespace Core
             CLogger.LogInfo($"PlayManaged3D: {id}", LogTag.Audio);
         }
 
-        public void PlayManagedCustom(
+        internal void PlayManagedCustom(
             string id,
             EventReference fmodEvent,
             FmodParameterPair[] parameters,
@@ -75,7 +75,7 @@ namespace Core
             CLogger.LogInfo($"PlayManagedCustom: {id}", LogTag.Audio);
         }
 
-        public void SetManagedParameter(string id, FmodParameterPair[] parameters)
+        internal void SetManagedParameter(string id, FmodParameterPair[] parameters)
         {
             if (!m_ManagedInstances.TryGetValue(id, out var instance))
             {
@@ -90,7 +90,7 @@ namespace Core
                 instance.setParameterByName(p.Name, p.Value);
         }
 
-        public void StopManaged(string id, FMOD.Studio.STOP_MODE stopMode)
+        internal void StopManaged(string id, FMOD.Studio.STOP_MODE stopMode)
         {
             if (!m_ManagedInstances.TryGetValue(id, out var instance))
             {
