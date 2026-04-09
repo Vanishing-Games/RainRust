@@ -351,11 +351,11 @@ namespace GameMain.RunTime
             if (posDiff.HasValue)
             {
                 var posDiffValue = posDiff.Value;
-                MessageBroker.Global.Publish<LevelEvents.LevelSwitchedEvent>(
+                MessageBroker.Global.Publish<LevelManagerEvents.LevelManagerLevelSwitchedEvent>(
                     new(
                         posDiffValue.x == 0
-                            ? LevelEvents.LevelSwitchDirection.Vertical
-                            : LevelEvents.LevelSwitchDirection.Horizontal
+                            ? LevelManagerEvents.LevelSwitchDirection.Vertical
+                            : LevelManagerEvents.LevelSwitchDirection.Horizontal
                     )
                 );
             }

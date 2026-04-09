@@ -26,7 +26,50 @@ MonoBehaviour:
       Data: 0|System.Collections.Generic.List`1[[Core.AudioEntry, Core]], mscorlib
     - Name: 
       Entry: 12
+      Data: 3
+    - Name: 
+      Entry: 7
+      Data: 1|Core.StringManagedAudioEntry, Core
+    - Name: ListenEventType
+      Entry: 7
+      Data: 2|System.RuntimeType, mscorlib
+    - Name: 
+      Entry: 1
+      Data: GameMain.RunTime.LevelManagerEvents+LevelManagerPreEnterChapterEvent,
+        GameMain.RunTime
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: TriggerMode
+      Entry: 3
       Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 3|Core.StringManagedAudioEntry, Core
+    - Name: ListenEventType
+      Entry: 6
+      Data: 
+    - Name: TriggerMode
+      Entry: 3
+      Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 4|Core.StringManagedAudioEntry, Core
+    - Name: ListenEventType
+      Entry: 6
+      Data: 
+    - Name: TriggerMode
+      Entry: 3
+      Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
     - Name: 
       Entry: 13
       Data: 

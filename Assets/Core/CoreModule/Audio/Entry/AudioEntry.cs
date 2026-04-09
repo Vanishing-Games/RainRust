@@ -11,7 +11,7 @@ namespace Core
     {
         public abstract void Execute(IEvent e, VgAudioManager manager);
 
-        private static IEnumerable<ValueDropdownItem<Type>> GetEventTypes() =>
+        protected static IEnumerable<ValueDropdownItem<Type>> GetEventTypes() =>
             AppDomain
                 .CurrentDomain.GetAssemblies()
                 .SelectMany(a => a.GetTypes())
