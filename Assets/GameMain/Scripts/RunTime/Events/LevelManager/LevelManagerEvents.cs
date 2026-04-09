@@ -2,7 +2,7 @@ using Core;
 
 namespace GameMain.RunTime
 {
-    public static class LevelEvents
+    public static class LevelManagerEvents
     {
         public enum LevelSwitchDirection
         {

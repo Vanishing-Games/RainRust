@@ -50,22 +50,22 @@ MonoBehaviour:
       Data: FMOD.GUID, FMODUnity
     - Name: Data1
       Entry: 3
-      Data: 0
+      Data: -218108870
     - Name: Data2
       Entry: 3
-      Data: 0
+      Data: 1095016436
     - Name: Data3
       Entry: 3
-      Data: 0
+      Data: -895679559
     - Name: Data4
       Entry: 3
-      Data: 0
+      Data: -879449196
     - Name: 
       Entry: 8
       Data: 
     - Name: Path
-      Entry: 6
-      Data: 
+      Entry: 1
+      Data: event:/Test/BGM/defaultTheme
     - Name: 
       Entry: 8
       Data: 
@@ -182,22 +182,22 @@ MonoBehaviour:
       Data: FMOD.GUID, FMODUnity
     - Name: Data1
       Entry: 3
-      Data: 0
+      Data: 1800237189
     - Name: Data2
       Entry: 3
-      Data: 0
+      Data: 1074280254
     - Name: Data3
       Entry: 3
-      Data: 0
+      Data: 1531584384
     - Name: Data4
       Entry: 3
-      Data: 0
+      Data: -437331288
     - Name: 
       Entry: 8
       Data: 
     - Name: Path
-      Entry: 6
-      Data: 
+      Entry: 1
+      Data: event:/Test/Ambience/defaultAmbience
     - Name: 
       Entry: 8
       Data: 
