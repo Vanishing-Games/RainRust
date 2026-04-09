@@ -2,8 +2,8 @@
   "Meta": {
     "SlotName": "test1",
     "DisplayName": null,
-    "PlayTimeInSeconds": 8.2374677658081055,
-    "LastSavedTime": "2026-04-08T20:02:00.0583575+08:00",
+    "PlayTimeInSeconds": 39.338420867919922,
+    "LastSavedTime": "2026-04-10T05:46:14.9587271+08:00",
     "SaveFileVersion": "1.0.0"
   },
   "Data": {
@@ -12,7 +12,7 @@
       "Stats": [
         {
           "Key": "GameDuration",
-          "Value": 8.237468,
+          "Value": 39.33842,
           "Type": 1,
           "DisplayName": "Game Duration"
         },
