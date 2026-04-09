@@ -3,7 +3,7 @@
  * Copyright (c) 2025 Vanishing Games. All Rights Reserved.
  * @Author: VanishXiao
  * @Date: 2025-10-30 16:25:44
- * @LastEditTime: 2026-04-10 04:58:07
+ * @LastEditTime: 2026-04-10 05:07:52
  * --------------------------------------------------------------------------------
 -->
 > 《不尬的诗》
@@ -102,8 +102,8 @@ sfx_env_forest_daytime_birds_chirping_loop_ambient_lowIntensity_01.wav # 太长
 - **内部组织**: 文件内部必须使用与文件名同名的 `static class` 包裹所有具体的事件定义。
 - **事件命名**: 
   - 遵循 `[主体][动作]Event` 格式。
-  - **生命周期事件**: 必须使用 `Pre` 或 `Post` 前缀。
-    - *示例*: `GamePreInitEvent`, `GamePostInitEvent`
+  - **生命周期事件**: 推荐使用 `Pre` 或 `On` 或 `Post` 前缀。
+    - *示例*: `GamePreInitEvent`, `GameOnInitEvent`, `GamePostInitEvent`
   - 事件推荐定义为 `struct` 以优化性能。
   - 事件命名必须具备上下文独立性：事件的名称（Struct/Class Name）必须自包含完整的业务语义（主体+动作），严禁依赖外层包裹的 static class 名称来暗示其含义
 - **命名空间**: 命名空间必须与该 `.asmdef` 定义的 **Root Namespace** 保持一致，不额外增加 `.Events` 后缀。
