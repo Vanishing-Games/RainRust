@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <objects serializationModel="Studio.02.03.00">
-	<object class="AudioFile" id="{04ed272a-af5e-4795-8930-cd7eb4f8af24}">
+	<object class="AudioFile" id="{fffc3ee3-3454-47ef-83ff-e7c37092afbc}">
 		<property name="assetPath">
-			<value>Test/SFX/GamePlay/explosion.wav</value>
+			<value>Test/SFX/GamePlay/hitHurt_1.wav</value>
 		</property>
 		<property name="frequencyInKHz">
 			<value>44.0999985</value>
@@ -11,7 +11,7 @@
 			<value>1</value>
 		</property>
 		<property name="length">
-			<value>0.44691609977324265</value>
+			<value>0.17535147392290248</value>
 		</property>
 		<relationship name="masterAssetFolder">
 			<destination>{135c980b-e629-4c54-a575-e11274f7016e}</destination>

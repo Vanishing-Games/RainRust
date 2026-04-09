@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <objects serializationModel="Studio.02.03.00">
-	<object class="AudioFile" id="{04ed272a-af5e-4795-8930-cd7eb4f8af24}">
+	<object class="AudioFile" id="{c35d859e-de2d-4fa7-a2ea-64b2fa243752}">
 		<property name="assetPath">
-			<value>Test/SFX/GamePlay/explosion.wav</value>
+			<value>Test/BGM/Vol 1 - 08 - Blood Cultures - Alcian Blue.mp3</value>
+		</property>
+		<property name="isStreaming">
+			<value>true</value>
 		</property>
 		<property name="frequencyInKHz">
 			<value>44.0999985</value>
 		</property>
 		<property name="channelCount">
-			<value>1</value>
+			<value>2</value>
 		</property>
 		<property name="length">
-			<value>0.44691609977324265</value>
+			<value>284.08163265306121</value>
 		</property>
 		<relationship name="masterAssetFolder">
 			<destination>{135c980b-e629-4c54-a575-e11274f7016e}</destination>
