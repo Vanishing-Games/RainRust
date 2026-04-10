@@ -38,7 +38,6 @@ namespace GameMain.Editor.Tools
                     PlayMode = AudioPlayMode.Managed,
                     Managed = new ManagedConfig
                     {
-                        Id = "bgm",
                         StopEventType = typeof(AudioManagerHelperEvents.BgmStopEvent),
                         StopMode = FMOD.Studio.STOP_MODE.ALLOWFADEOUT,
                         RestartIfPlaying = false,
@@ -52,7 +51,6 @@ namespace GameMain.Editor.Tools
                     ListenEventType = typeof(AudioManagerHelperEvents.BgmPlayEvent),
                     Managed = new ManagedConfig
                     {
-                        Id = "bgm",
                         StopEventType = typeof(AudioManagerHelperEvents.BgmStopEvent),
                         StopMode = FMOD.Studio.STOP_MODE.ALLOWFADEOUT,
                         RestartIfPlaying = false,
@@ -77,7 +75,6 @@ namespace GameMain.Editor.Tools
                     PlayMode = AudioPlayMode.Managed,
                     Managed = new ManagedConfig
                     {
-                        Id = "ambience",
                         StopEventType = typeof(AudioManagerHelperEvents.AmbienceStopEvent),
                         StopMode = FMOD.Studio.STOP_MODE.ALLOWFADEOUT,
                         RestartIfPlaying = false,
@@ -91,7 +88,6 @@ namespace GameMain.Editor.Tools
                     ListenEventType = typeof(AudioManagerHelperEvents.AmbiencePlayEvent),
                     Managed = new ManagedConfig
                     {
-                        Id = "ambience",
                         StopEventType = typeof(AudioManagerHelperEvents.AmbienceStopEvent),
                         StopMode = FMOD.Studio.STOP_MODE.ALLOWFADEOUT,
                         RestartIfPlaying = false,

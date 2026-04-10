@@ -10,55 +10,53 @@ namespace Core
 {
     public class VgAudioManager : MonoSingletonPersistent<VgAudioManager>
     {
-        internal void PlayManaged(string id, EventReference fmodEvent, ManagedConfig config)
+        internal void PlayManaged(EventReference fmodEvent, ManagedConfig config)
         {
-            if (m_ManagedInstances.ContainsKey(id))
+            if (m_ManagedInstances.ContainsKey(fmodEvent.Path))
             {
                 if (!config.RestartIfPlaying)
                     return;
-                StopManaged(id, config.StopMode);
+                StopManaged(fmodEvent.Path, config.StopMode);
             }
 
             var instance = RuntimeManager.CreateInstance(fmodEvent);
             instance.start();
-            m_ManagedInstances[id] = instance;
-            CLogger.LogInfo($"PlayManaged: {id}", LogTag.Audio);
+            m_ManagedInstances[fmodEvent.Path] = instance;
+            CLogger.LogInfo($"PlayManaged: {fmodEvent.Path}", LogTag.Audio);
         }
 
         internal void PlayManaged3D(
-            string id,
             EventReference fmodEvent,
             Vector3 position,
             ManagedConfig config
         )
         {
-            if (m_ManagedInstances.ContainsKey(id))
+            if (m_ManagedInstances.ContainsKey(fmodEvent.Path))
             {
                 if (!config.RestartIfPlaying)
                     return;
-                StopManaged(id, config.StopMode);
+                StopManaged(fmodEvent.Path, config.StopMode);
             }
 
             var instance = RuntimeManager.CreateInstance(fmodEvent);
             instance.set3DAttributes(RuntimeUtils.To3DAttributes(position));
             instance.start();
-            m_ManagedInstances[id] = instance;
-            CLogger.LogInfo($"PlayManaged3D: {id}", LogTag.Audio);
+            m_ManagedInstances[fmodEvent.Path] = instance;
+            CLogger.LogInfo($"PlayManaged3D: {fmodEvent.Path}", LogTag.Audio);
         }
 
         internal void PlayManagedCustom(
-            string id,
             EventReference fmodEvent,
             FmodParameterPair[] parameters,
             Vector3? position,
             ManagedConfig config
         )
         {
-            if (m_ManagedInstances.ContainsKey(id))
+            if (m_ManagedInstances.ContainsKey(fmodEvent.Path))
             {
                 if (!config.RestartIfPlaying)
                     return;
-                StopManaged(id, config.StopMode);
+                StopManaged(fmodEvent.Path, config.StopMode);
             }
 
             var instance = RuntimeManager.CreateInstance(fmodEvent);
@@ -71,8 +69,8 @@ namespace Core
                 instance.set3DAttributes(RuntimeUtils.To3DAttributes(position.Value));
 
             instance.start();
-            m_ManagedInstances[id] = instance;
-            CLogger.LogInfo($"PlayManagedCustom: {id}", LogTag.Audio);
+            m_ManagedInstances[fmodEvent.Path] = instance;
+            CLogger.LogInfo($"PlayManagedCustom: {fmodEvent.Path}", LogTag.Audio);
         }
 
         internal void SetManagedParameter(string id, FmodParameterPair[] parameters)
@@ -147,6 +145,15 @@ namespace Core
 
                 foreach (var entry in sheet.Entries)
                 {
+                    if (entry == null)
+                    {
+                        CLogger.LogWarn(
+                            $"Null entry found in sheet '{sheet.name}', skipping.",
+                            LogTag.Audio
+                        );
+                        continue;
+                    }
+
                     string entryType = entry?.GetType().Name ?? "null";
                     string listenEvent = entry?.ListenEventType?.Name ?? "null";
                     string triggerMode = entry?.TriggerMode.ToString() ?? "null";
@@ -187,7 +194,7 @@ namespace Core
                 )
                 .MakeGenericMethod(entry.ListenEventType);
             var disposable = (IDisposable)method.Invoke(this, new object[] { entry });
-            m_Subscriptions.Add(disposable);
+            m_Subscriptions.Add((entry.ListenEventType.Name, disposable));
         }
 
         private IDisposable SubscribeEntryGeneric<TEvent>(AudioEntry entry)
@@ -221,8 +228,42 @@ namespace Core
                 )
                 .MakeGenericMethod(entry.Managed.StopEventType);
             var disposable = (IDisposable)
-                method.Invoke(this, new object[] { entry.Managed.Id, entry.Managed.StopMode });
-            m_Subscriptions.Add(disposable);
+                method.Invoke(this, new object[] { entry.FmodEvent.Path, entry.Managed.StopMode });
+            m_Subscriptions.Add((entry.FmodEvent.Path, disposable));
+        }
+
+        internal void RegisterStopSubscription(
+            string subscriptionId,
+            Type eventType,
+            FMOD.Studio.STOP_MODE stopMode = FMOD.Studio.STOP_MODE.ALLOWFADEOUT
+        )
+        {
+            if (subscriptionId == null || eventType == null)
+            {
+                CLogger.LogWarn(
+                    $"RegisterStopSubscription: Invalid parameters. subscriptionId: {subscriptionId}, eventType: {eventType}",
+                    LogTag.Audio
+                );
+                return;
+            }
+            else if (m_Subscriptions.Exists(s => s.Item1 == subscriptionId))
+            {
+                CLogger.LogWarn(
+                    $"RegisterStopSubscription: Subscription ID '{subscriptionId}' already exists. Skipping registration.",
+                    LogTag.Audio
+                );
+                return;
+            }
+
+            var method = typeof(VgAudioManager)
+                .GetMethod(
+                    nameof(SubscribeStopGeneric),
+                    BindingFlags.NonPublic | BindingFlags.Instance
+                )
+                .MakeGenericMethod(eventType);
+            var disposable = (IDisposable)
+                method.Invoke(this, new object[] { subscriptionId, stopMode });
+            m_Subscriptions.Add((subscriptionId, disposable));
         }
 
         private IDisposable SubscribeStopGeneric<TEvent>(string id, FMOD.Studio.STOP_MODE stopMode)
@@ -234,7 +275,7 @@ namespace Core
         private void UnregisterAll()
         {
             foreach (var sub in m_Subscriptions)
-                sub.Dispose();
+                sub.Item2.Dispose();
             m_Subscriptions.Clear();
         }
 
@@ -255,7 +296,7 @@ namespace Core
         [BoxGroup("DEBUG")]
         [ReadOnly]
         [ShowInInspector]
-        private readonly List<IDisposable> m_Subscriptions = new();
+        private readonly List<(string, IDisposable)> m_Subscriptions = new();
 
         [BoxGroup("DEBUG")]
         [ReadOnly]

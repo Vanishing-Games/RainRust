@@ -23,7 +23,7 @@ namespace Core
                 return;
             }
 
-            manager.PlayManaged(Managed.Id, FmodEvent, Managed);
+            manager.PlayManaged(FmodEvent, Managed);
         }
     }
 }

@@ -28,7 +28,7 @@ namespace Core
                 return;
             }
 
-            manager.PlayManaged3D(Managed.Id, FmodEvent, posEvent.Position, Managed);
+            manager.PlayManaged3D(FmodEvent, posEvent.Position, Managed);
         }
     }
 }

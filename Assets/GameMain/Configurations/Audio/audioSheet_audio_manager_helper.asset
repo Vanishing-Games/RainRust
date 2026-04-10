@@ -50,22 +50,22 @@ MonoBehaviour:
       Data: FMOD.GUID, FMODUnity
     - Name: Data1
       Entry: 3
-      Data: -218108870
+      Data: 0
     - Name: Data2
       Entry: 3
-      Data: 1095016436
+      Data: 0
     - Name: Data3
       Entry: 3
-      Data: -895679559
+      Data: 0
     - Name: Data4
       Entry: 3
-      Data: -879449196
+      Data: 0
     - Name: 
       Entry: 8
       Data: 
     - Name: Path
-      Entry: 1
-      Data: event:/Test/BGM/defaultTheme
+      Entry: 6
+      Data: 
     - Name: 
       Entry: 8
       Data: 
@@ -75,9 +75,6 @@ MonoBehaviour:
     - Name: Managed
       Entry: 7
       Data: 3|Core.ManagedConfig, Core
-    - Name: Id
-      Entry: 1
-      Data: bgm
     - Name: StopEventType
       Entry: 7
       Data: 4|System.RuntimeType, mscorlib
@@ -117,9 +114,6 @@ MonoBehaviour:
     - Name: Managed
       Entry: 7
       Data: 7|Core.ManagedConfig, Core
-    - Name: Id
-      Entry: 1
-      Data: bgm
     - Name: StopEventType
       Entry: 9
       Data: 4
@@ -182,22 +176,22 @@ MonoBehaviour:
       Data: FMOD.GUID, FMODUnity
     - Name: Data1
       Entry: 3
-      Data: 1800237189
+      Data: 0
     - Name: Data2
       Entry: 3
-      Data: 1074280254
+      Data: 0
     - Name: Data3
       Entry: 3
-      Data: 1531584384
+      Data: 0
     - Name: Data4
       Entry: 3
-      Data: -437331288
+      Data: 0
     - Name: 
       Entry: 8
       Data: 
     - Name: Path
-      Entry: 1
-      Data: event:/Test/Ambience/defaultAmbience
+      Entry: 6
+      Data: 
     - Name: 
       Entry: 8
       Data: 
@@ -207,9 +201,6 @@ MonoBehaviour:
     - Name: Managed
       Entry: 7
       Data: 12|Core.ManagedConfig, Core
-    - Name: Id
-      Entry: 1
-      Data: ambience
     - Name: StopEventType
       Entry: 7
       Data: 13|System.RuntimeType, mscorlib
@@ -249,9 +240,6 @@ MonoBehaviour:
     - Name: Managed
       Entry: 7
       Data: 16|Core.ManagedConfig, Core
-    - Name: Id
-      Entry: 1
-      Data: ambience
     - Name: StopEventType
       Entry: 9
       Data: 13

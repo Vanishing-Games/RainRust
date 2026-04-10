@@ -9,19 +9,14 @@ namespace Core
     [Serializable]
     public class StringManagedAudioEntry : AudioEntry
     {
-        private const int RetryMaxAttempts = 10;
-        private const int RetryDelayMs = 200;
-
-        public StringManagedAudioEntry() { }
-
         public override void Execute(IEvent e, VgAudioManager manager)
         {
             if (e is IStringValueEvent stringEvent)
             {
                 CLogger.LogInfo(
-                    "StringManagedAudioEntry: Executing string managed audio entry. Listened event: "
+                    "StringManagedAudioEntry: Executing. ListenEvent: "
                         + ListenEventType.Name
-                        + ", String value: "
+                        + ", Value: "
                         + stringEvent.Value,
                     LogTag.AudioEntry
                 );
@@ -31,9 +26,9 @@ namespace Core
             else
             {
                 CLogger.LogWarn(
-                    "StringManagedAudioEntry: Received event is not of type IStringValueEvent. Listened event: "
+                    "StringManagedAudioEntry: Event is not IStringValueEvent. ListenEvent: "
                         + ListenEventType.Name
-                        + ", Actual event type: "
+                        + ", Actual: "
                         + e.GetType().Name,
                     LogTag.AudioEntry
                 );
@@ -42,10 +37,9 @@ namespace Core
 
         private async UniTaskVoid PlayWithRetryAsync(string value, VgAudioManager manager)
         {
-            var eventName = "event:/Test/BGM/" + value;
+            var eventName = EventPathPrefix + value;
             var managed = new ManagedConfig
             {
-                Id = value,
                 RestartIfPlaying = true,
                 StopEventType = StopEventType,
             };
@@ -55,7 +49,8 @@ namespace Core
                 try
                 {
                     var eventRef = EventReference.Find(eventName);
-                    manager.PlayManaged(managed.Id, eventRef, managed);
+                    manager.PlayManaged(eventRef, managed);
+                    manager.RegisterStopSubscription(eventName, StopEventType);
                     return;
                 }
                 catch (InvalidOperationException)
@@ -73,6 +68,12 @@ namespace Core
                 LogTag.AudioEntry
             );
         }
+
+        private const int RetryMaxAttempts = 10;
+        private const int RetryDelayMs = 200;
+
+        [InfoBox("EventPath prefix appended before the string value from the event.")]
+        public string EventPathPrefix = "event:/Test/BGM/";
 
         [OdinSerialize]
         [ValueDropdown(nameof(GetEventTypes))]

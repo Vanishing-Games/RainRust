@@ -16,8 +16,6 @@ namespace Core
                 .Where(t => typeof(IEvent).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract)
                 .Select(t => new ValueDropdownItem<Type>(t.Name, t));
 
-        public string Id;
-
         [OdinSerialize]
         [ValueDropdown(nameof(GetEventTypes))]
         public Type StopEventType;

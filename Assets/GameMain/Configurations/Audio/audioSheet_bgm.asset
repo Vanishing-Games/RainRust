@@ -43,6 +43,9 @@ MonoBehaviour:
     - Name: TriggerMode
       Entry: 3
       Data: 0
+    - Name: EventPathPrefix
+      Entry: 1
+      Data: event:/Test/BGM/
     - Name: StopEventType
       Entry: 7
       Data: 3|System.RuntimeType, mscorlib

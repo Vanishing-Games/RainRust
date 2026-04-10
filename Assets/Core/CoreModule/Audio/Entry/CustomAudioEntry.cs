@@ -35,7 +35,7 @@ namespace Core
                 return;
             }
 
-            manager.PlayManagedCustom(Managed.Id, FmodEvent, parameters, position, Managed);
+            manager.PlayManagedCustom(FmodEvent, parameters, position, Managed);
         }
 
         private static void ApplyParameters(

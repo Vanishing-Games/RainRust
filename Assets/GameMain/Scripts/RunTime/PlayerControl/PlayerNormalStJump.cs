@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Core;
 using UnityEngine;
 using VanishingGames.ECC.Runtime;
 
@@ -24,6 +25,8 @@ namespace GameMain.RunTime
             velocity.x += MoveX * JumpBoostSpeedX;
             mPCComponent.CtrlVelocity = velocity;
             mPCComponent.CoyoteJumpInputRevTimer = 0;
+
+            MessageBroker.Global.Publish(new PlayerControlEvents.PlayerStartJumpEvent());
         }
 
         protected override void OnDeactivate()
