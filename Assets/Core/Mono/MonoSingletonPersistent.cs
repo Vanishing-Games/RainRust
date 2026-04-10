@@ -41,7 +41,7 @@ namespace Core
                 instance = this as T;
                 DontDestroyMe(transform);
             }
-            else
+            else if (instance != this)
             {
                 Destroy(gameObject);
             }

@@ -45,8 +45,8 @@ namespace Core
         public static readonly LogTag GameCoreStart = new("GameCoreStart", GameCore.Path);
         public static readonly LogTag GameCoreDestroy = new("GameCoreDestroy", GameCore.Path);
         public static readonly LogTag GameQuit = new("GameQuit", GameCore.Path);
-        public static readonly LogTag VgLoadProgressManager = new(
-            "VgLoadProgressManager",
+        public static readonly LogTag VgLoadingSplashManager = new(
+            "VgLoadingSplashManager",
             Loading.Path
         );
         public static readonly LogTag VgCameraManager = new("VgCameraManager", CoreModule.Path);

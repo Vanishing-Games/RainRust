@@ -1,102 +1,17 @@
-using System;
-using Cysharp.Threading.Tasks;
+using UnityEngine;
 
 namespace Core
 {
-    public abstract class CoreModuleManagerBase<T, TLoadInfo, TLoader> : MonoSingletonPersistent<T>
+    public abstract class CoreModuleManagerBase<T> : MonoSingletonPersistent<T>
         where T : MonoSingletonPersistent<T>
-        where TLoadInfo : ILoadInfo
-        where TLoader : LoaderBase<TLoadInfo>
     {
         protected override void Awake()
         {
             base.Awake();
-
-            RegisterLoadEvent();
-
-            CLogger.LogVerbose($"SystemMonoModule: {GetType()} Awake", LogTag.Loading);
-        }
-
-        private void OnDestroy()
-        {
-            UnregisterLoadEvent();
-
-            CLogger.LogVerbose($"SystemMonoModule: {GetType()} OnDestroy", LogTag.Loading);
-        }
-
-        protected virtual void OnReceiveLoadRequest(
-            CoreModuleLoaderEvents.LoadRequestEvent loadEventInfo
-        )
-        {
-            var info = loadEventInfo.GetLoadInfo(GetLoaderType());
-
-            if (info != null)
+            if (this is ICoreModuleSystem system)
             {
-                CLogger.LogVerbose(
-                    $"[CoreModuleManagerBase] {GetType()} ReceiveLoadInfo",
-                    LogTag.CoreModule
-                );
-                CreateLoader(info);
+                GameCore.Instance.RegisterSystem(system);
             }
         }
-
-        protected abstract LoaderType GetLoaderType();
-
-        protected abstract void OnLoadingError(Exception exception);
-
-        protected virtual async void OnLoadingEnd()
-        {
-            UnregisterLoadEvent();
-
-            // Wait for MessageBroker to clear up the event to ensure subscribing new event
-            await UniTask.Yield();
-            RegisterLoadEvent();
-        }
-
-        protected virtual void CreateLoader(ILoadInfo loadInfo)
-        {
-            if (loadInfo is TLoadInfo typedLoadInfo)
-            {
-                var loader = GetComponent<TLoader>();
-                if (loader != null)
-                {
-                    Destroy(loader);
-                }
-
-                loader = gameObject.AddComponent<TLoader>();
-                loader.InitLoader(typedLoadInfo);
-                loader.SendLoader();
-            }
-            else
-            {
-                MessageBroker.Global.PublishErrorResume<CoreModuleLoaderEvents.LoadRequestEvent>(
-                    this,
-                    new LoadFailedException($"LoadInfo is not a {typeof(TLoadInfo).Name}")
-                );
-            }
-        }
-
-        public virtual void RegisterLoadEvent()
-        {
-            m_LoadEventSubscription =
-                MessageBroker.Global.Subscribe<CoreModuleLoaderEvents.LoadRequestEvent>(
-                    OnReceiveLoadRequest,
-                    OnLoadingError,
-                    OnLoadingEnd
-                );
-
-            CLogger.LogVerbose($"SystemMonoModule: {GetType()} RegisterLoadEvent", LogTag.Loading);
-        }
-
-        public virtual void UnregisterLoadEvent()
-        {
-            if (m_LoadEventSubscription != null)
-            {
-                m_LoadEventSubscription.Dispose();
-                m_LoadEventSubscription = null;
-            }
-        }
-
-        private System.IDisposable m_LoadEventSubscription;
     }
 }

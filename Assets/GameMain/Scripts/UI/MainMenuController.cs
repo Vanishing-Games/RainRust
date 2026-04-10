@@ -13,7 +13,8 @@ public class MainMenuController : MonoBehaviour
     private void OnEnable()
     {
         _document = GetComponent<UIDocument>();
-        if (_document == null) return;
+        if (_document == null)
+            return;
 
         var root = _document.rootVisualElement;
 
@@ -32,7 +33,8 @@ public class MainMenuController : MonoBehaviour
 
     private void OnStartNewGameClicked()
     {
-        Debug.Log("Start New Game Clicked");
+        var command = new GameMain.RunTime.GameFlowCommands.StartGameCommand("Chapter1", "level0");
+        command.Execute();
     }
 
     private void OnContinueClicked()
@@ -53,10 +55,10 @@ public class MainMenuController : MonoBehaviour
     private void OnQuitClicked()
     {
         Debug.Log("Quit Clicked");
-        #if UNITY_EDITOR
-            UnityEditor.EditorApplication.isPlaying = false;
-        #else
-            Application.Quit();
-        #endif
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
     }
 }
