@@ -27,7 +27,8 @@ namespace Zenject
             IEnumerable<Type> instantiateCallbackTypes,
             IEnumerable<TypeValuePair> extraArguments,
             IPrefabProvider prefabProvider,
-            Action<InjectContext, object> instantiateCallback)
+            Action<InjectContext, object> instantiateCallback
+        )
         {
             _prefabProvider = prefabProvider;
             _extraArguments = extraArguments.ToList();
@@ -58,13 +59,23 @@ namespace Zenject
             return _prefabProvider.GetPrefab();
         }
 
-        public GameObject Instantiate(InjectContext context, List<TypeValuePair> args, out Action injectAction)
+        public GameObject Instantiate(
+            InjectContext context,
+            List<TypeValuePair> args,
+            out Action injectAction
+        )
         {
-            Assert.That(_argumentTarget == null || _argumentTarget.DerivesFromOrEqual(context.MemberType));
+            Assert.That(
+                _argumentTarget == null || _argumentTarget.DerivesFromOrEqual(context.MemberType)
+            );
 
             bool shouldMakeActive;
             var gameObject = _container.CreateAndParentPrefab(
-                GetPrefab(), _gameObjectBindInfo, context, out shouldMakeActive);
+                GetPrefab(),
+                _gameObjectBindInfo,
+                context,
+                out shouldMakeActive
+            );
             Assert.IsNotNull(gameObject);
 
             injectAction = () =>
@@ -78,7 +89,8 @@ namespace Zenject
                 {
                     Assert.That(
                         allArgs.IsEmpty(),
-                        "Unexpected arguments provided to prefab instantiator.  Arguments are not allowed if binding multiple components in the same binding");
+                        "Unexpected arguments provided to prefab instantiator.  Arguments are not allowed if binding multiple components in the same binding"
+                    );
                 }
 
                 if (_argumentTarget == null || allArgs.IsEmpty())
@@ -88,7 +100,12 @@ namespace Zenject
                 else
                 {
                     _container.InjectGameObjectForComponentExplicit(
-                        gameObject, _argumentTarget, allArgs, context, null);
+                        gameObject,
+                        _argumentTarget,
+                        allArgs,
+                        context,
+                        null
+                    );
 
                     Assert.That(allArgs.Count == 0);
                 }

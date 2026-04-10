@@ -40,7 +40,12 @@ namespace Zenject
             Identifier = identifier;
         }
 
-        public InjectContext(DiContainer container, Type memberType, object identifier, bool optional)
+        public InjectContext(
+            DiContainer container,
+            Type memberType,
+            object identifier,
+            bool optional
+        )
             : this(container, memberType, identifier)
         {
             Optional = optional;

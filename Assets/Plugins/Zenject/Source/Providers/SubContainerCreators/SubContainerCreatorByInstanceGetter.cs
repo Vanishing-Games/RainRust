@@ -10,12 +10,17 @@ namespace Zenject
         readonly Func<InjectContext, DiContainer> _subcontainerGetter;
 
         public SubContainerCreatorByInstanceGetter(
-            Func<InjectContext, DiContainer> subcontainerGetter)
+            Func<InjectContext, DiContainer> subcontainerGetter
+        )
         {
             _subcontainerGetter = subcontainerGetter;
         }
 
-        public DiContainer CreateSubContainer(List<TypeValuePair> args, InjectContext context, out Action injectAction)
+        public DiContainer CreateSubContainer(
+            List<TypeValuePair> args,
+            InjectContext context,
+            out Action injectAction
+        )
         {
             Assert.That(args.IsEmpty());
 
@@ -28,4 +33,3 @@ namespace Zenject
         }
     }
 }
-

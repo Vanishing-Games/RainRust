@@ -59,7 +59,8 @@ namespace Cysharp.Threading.Tasks.Internal
                 }
                 finally
                 {
-                    if (lockTaken) locks[index].Exit(false);
+                    if (lockTaken)
+                        locks[index].Exit(false);
                 }
             }
 
@@ -97,7 +98,8 @@ namespace Cysharp.Threading.Tasks.Internal
                 }
                 finally
                 {
-                    if (lockTaken) locks[index].Exit(false);
+                    if (lockTaken)
+                        locks[index].Exit(false);
                 }
             }
         }
@@ -124,24 +126,42 @@ namespace Cysharp.Threading.Tasks.Internal
         {
             switch (size)
             {
-                case 8: return 0;
-                case 16: return 1;
-                case 32: return 2;
-                case 64: return 3;
-                case 128: return 4;
-                case 256: return 5;
-                case 512: return 6;
-                case 1024: return 7;
-                case 2048: return 8;
-                case 4096: return 9;
-                case 8192: return 10;
-                case 16384: return 11;
-                case 32768: return 12;
-                case 65536: return 13;
-                case 131072: return 14;
-                case 262144: return 15;
-                case 524288: return 16;
-                case 1048576: return 17; // max array length
+                case 8:
+                    return 0;
+                case 16:
+                    return 1;
+                case 32:
+                    return 2;
+                case 64:
+                    return 3;
+                case 128:
+                    return 4;
+                case 256:
+                    return 5;
+                case 512:
+                    return 6;
+                case 1024:
+                    return 7;
+                case 2048:
+                    return 8;
+                case 4096:
+                    return 9;
+                case 8192:
+                    return 10;
+                case 16384:
+                    return 11;
+                case 32768:
+                    return 12;
+                case 65536:
+                    return 13;
+                case 131072:
+                    return 14;
+                case 262144:
+                    return 15;
+                case 524288:
+                    return 16;
+                case 1048576:
+                    return 17; // max array length
                 default:
                     return -1;
             }

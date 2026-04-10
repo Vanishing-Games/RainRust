@@ -9,6 +9,7 @@ namespace LDtkUnity.Editor
         {
             GL.PushMatrix();
         }
+
         public void Dispose()
         {
             GL.PopMatrix();

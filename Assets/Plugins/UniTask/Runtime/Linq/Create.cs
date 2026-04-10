@@ -1,12 +1,14 @@
-﻿using Cysharp.Threading.Tasks.Internal;
-using System;
+﻿using System;
 using System.Threading;
+using Cysharp.Threading.Tasks.Internal;
 
 namespace Cysharp.Threading.Tasks.Linq
 {
     public static partial class UniTaskAsyncEnumerable
     {
-        public static IUniTaskAsyncEnumerable<T> Create<T>(Func<IAsyncWriter<T>, CancellationToken, UniTask> create)
+        public static IUniTaskAsyncEnumerable<T> Create<T>(
+            Func<IAsyncWriter<T>, CancellationToken, UniTask> create
+        )
         {
             Error.ThrowArgumentNullException(create, nameof(create));
             return new Create<T>(create);
@@ -27,7 +29,9 @@ namespace Cysharp.Threading.Tasks.Linq
             this.create = create;
         }
 
-        public IUniTaskAsyncEnumerator<T> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+        public IUniTaskAsyncEnumerator<T> GetAsyncEnumerator(
+            CancellationToken cancellationToken = default
+        )
         {
             return new _Create(create, cancellationToken);
         }
@@ -40,7 +44,10 @@ namespace Cysharp.Threading.Tasks.Linq
             int state = -1;
             AsyncWriter writer;
 
-            public _Create(Func<IAsyncWriter<T>, CancellationToken, UniTask> create, CancellationToken cancellationToken)
+            public _Create(
+                Func<IAsyncWriter<T>, CancellationToken, UniTask> create,
+                CancellationToken cancellationToken
+            )
             {
                 this.create = create;
                 this.cancellationToken = cancellationToken;
@@ -58,7 +65,8 @@ namespace Cysharp.Threading.Tasks.Linq
 
             public UniTask<bool> MoveNextAsync()
             {
-                if (state == -2) return default;
+                if (state == -2)
+                    return default;
 
                 completionSource.Reset();
                 MoveNext();
@@ -72,16 +80,16 @@ namespace Cysharp.Threading.Tasks.Linq
                     switch (state)
                     {
                         case -1: // init
+                        {
+                            writer = new AsyncWriter(this);
+                            RunWriterTask(create(writer, cancellationToken)).Forget();
+                            if (Volatile.Read(ref state) == -2)
                             {
-                                writer = new AsyncWriter(this);
-                                RunWriterTask(create(writer, cancellationToken)).Forget();
-                                if (Volatile.Read(ref state) == -2)
-                                {
-                                    return; // complete synchronously
-                                }
-                                state = 0; // wait YieldAsync, it set TrySetResult(true)
-                                return;
+                                return; // complete synchronously
                             }
+                            state = 0; // wait YieldAsync, it set TrySetResult(true)
+                            return;
+                        }
                         case 0:
                             writer.SignalWriter();
                             return;
@@ -138,7 +146,7 @@ namespace Cysharp.Threading.Tasks.Linq
             {
                 this.enumerator = enumerator;
             }
-            
+
             public void Dispose()
             {
                 var status = core.GetStatus(core.Version);
@@ -146,7 +154,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 {
                     core.TrySetCanceled();
                 }
-            }            
+            }
 
             public void GetResult(short token)
             {

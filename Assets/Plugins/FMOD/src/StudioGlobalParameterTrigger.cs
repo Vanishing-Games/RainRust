@@ -5,7 +5,7 @@ using UnityEngine.Serialization;
 namespace FMODUnity
 {
     [AddComponentMenu("FMOD Studio/FMOD Studio Global Parameter Trigger")]
-    public class StudioGlobalParameterTrigger: EventHandler
+    public class StudioGlobalParameterTrigger : EventHandler
     {
         [ParamRef]
         [FormerlySerializedAs("parameter")]
@@ -17,7 +17,10 @@ namespace FMODUnity
         public float Value;
 
         private FMOD.Studio.PARAMETER_DESCRIPTION parameterDescription;
-        public FMOD.Studio.PARAMETER_DESCRIPTION ParameterDescription { get { return parameterDescription; } }
+        public FMOD.Studio.PARAMETER_DESCRIPTION ParameterDescription
+        {
+            get { return parameterDescription; }
+        }
 
         protected override void HandleGameEvent(EmitterGameEvent gameEvent)
         {
@@ -36,18 +39,40 @@ namespace FMODUnity
                 bool paramIDNeedsLookup = string.IsNullOrEmpty(parameterDescription.name);
                 if (paramIDNeedsLookup)
                 {
-                    result = RuntimeManager.StudioSystem.getParameterDescriptionByName(Parameter, out parameterDescription);
+                    result = RuntimeManager.StudioSystem.getParameterDescriptionByName(
+                        Parameter,
+                        out parameterDescription
+                    );
                     if (result != FMOD.RESULT.OK)
                     {
-                        RuntimeUtils.LogError(string.Format(("[FMOD] StudioGlobalParameterTrigger failed to lookup parameter {0} : result = {1}"), Parameter, result));
+                        RuntimeUtils.LogError(
+                            string.Format(
+                                (
+                                    "[FMOD] StudioGlobalParameterTrigger failed to lookup parameter {0} : result = {1}"
+                                ),
+                                Parameter,
+                                result
+                            )
+                        );
                         return;
                     }
                 }
 
-                result = RuntimeManager.StudioSystem.setParameterByID(parameterDescription.id, Value);
+                result = RuntimeManager.StudioSystem.setParameterByID(
+                    parameterDescription.id,
+                    Value
+                );
                 if (result != FMOD.RESULT.OK)
                 {
-                    RuntimeUtils.LogError(string.Format(("[FMOD] StudioGlobalParameterTrigger failed to set parameter {0} : result = {1}"), Parameter, result));
+                    RuntimeUtils.LogError(
+                        string.Format(
+                            (
+                                "[FMOD] StudioGlobalParameterTrigger failed to set parameter {0} : result = {1}"
+                            ),
+                            Parameter,
+                            result
+                        )
+                    );
                     return;
                 }
             }

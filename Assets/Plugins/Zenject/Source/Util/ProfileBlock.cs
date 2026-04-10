@@ -17,20 +17,11 @@ namespace Zenject
         static ProfileBlock _instance = new ProfileBlock();
         static Dictionary<int, string> _nameCache = new Dictionary<int, string>();
 
-        ProfileBlock()
-        {
-        }
+        ProfileBlock() { }
 
-        public static Thread UnityMainThread
-        {
-            get; set;
-        }
+        public static Thread UnityMainThread { get; set; }
 
-        public static Regex ProfilePattern
-        {
-            get;
-            set;
-        }
+        public static Regex ProfilePattern { get; set; }
 
         static int GetHashCode(object p1, object p2)
         {
@@ -60,8 +51,7 @@ namespace Zenject
 #if ZEN_TESTS_OUTSIDE_UNITY
             return null;
 #else
-            if (UnityMainThread == null
-                || !UnityMainThread.Equals(Thread.CurrentThread))
+            if (UnityMainThread == null || !UnityMainThread.Equals(Thread.CurrentThread))
             {
                 return null;
             }
@@ -94,8 +84,7 @@ namespace Zenject
 #if ZEN_TESTS_OUTSIDE_UNITY
             return null;
 #else
-            if (UnityMainThread == null
-                || !UnityMainThread.Equals(Thread.CurrentThread))
+            if (UnityMainThread == null || !UnityMainThread.Equals(Thread.CurrentThread))
             {
                 return null;
             }
@@ -128,8 +117,7 @@ namespace Zenject
 #if ZEN_TESTS_OUTSIDE_UNITY
             return null;
 #else
-            if (UnityMainThread == null
-                || !UnityMainThread.Equals(Thread.CurrentThread))
+            if (UnityMainThread == null || !UnityMainThread.Equals(Thread.CurrentThread))
             {
                 return null;
             }
@@ -165,20 +153,12 @@ namespace Zenject
         }
 
 #else
-        ProfileBlock(string sampleName, bool rootBlock)
-        {
-        }
+        ProfileBlock(string sampleName, bool rootBlock) { }
 
         ProfileBlock(string sampleName)
-            : this(sampleName, false)
-        {
-        }
+            : this(sampleName, false) { }
 
-        public static Regex ProfilePattern
-        {
-            get;
-            set;
-        }
+        public static Regex ProfilePattern { get; set; }
 
         public static ProfileBlock Start()
         {
@@ -202,9 +182,7 @@ namespace Zenject
             return null;
         }
 
-        public void Dispose()
-        {
-        }
+        public void Dispose() { }
 #endif
     }
 }

@@ -6,51 +6,47 @@ using UnityEngine;
 
 namespace AmplifyShaderEditor
 {
-	[Serializable]
-	public class FallbackInt : IFallbackVars
-	{
-		[SerializeField]
-		private int m_current;
-		[SerializeField]
-		private int m_previous;
+    [Serializable]
+    public class FallbackInt : IFallbackVars
+    {
+        [SerializeField]
+        private int m_current;
 
-		public FallbackInt()
-		{
-			m_current = 0;
-			m_previous = 0;
-		}
+        [SerializeField]
+        private int m_previous;
 
-		public FallbackInt( int data )
-		{
-			m_current = data;
-			m_previous = data;
-		}
+        public FallbackInt()
+        {
+            m_current = 0;
+            m_previous = 0;
+        }
 
-		public void Revert()
-		{
-			int aux = m_current;
-			m_current = m_previous;
-			m_previous = aux;
-		}
+        public FallbackInt(int data)
+        {
+            m_current = data;
+            m_previous = data;
+        }
 
+        public void Revert()
+        {
+            int aux = m_current;
+            m_current = m_previous;
+            m_previous = aux;
+        }
 
-		public int Current
-		{
-			get
-			{
-				return m_current;
-			}
+        public int Current
+        {
+            get { return m_current; }
+            set
+            {
+                m_previous = m_current;
+                m_current = value;
+            }
+        }
 
-			set
-			{
-				m_previous = m_current;
-				m_current = value;
-			}
-		}
-
-		public override string ToString()
-		{
-			return m_current.ToString();
-		}
-	}
+        public override string ToString()
+        {
+            return m_current.ToString();
+        }
+    }
 }

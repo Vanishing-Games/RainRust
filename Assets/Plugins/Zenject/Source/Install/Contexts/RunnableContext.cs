@@ -7,7 +7,9 @@ namespace Zenject
 {
     public abstract class RunnableContext : Context
     {
-        [Tooltip("When false, wait until run method is explicitly called. Otherwise run on initialize")]
+        [Tooltip(
+            "When false, wait until run method is explicitly called. Otherwise run on initialize"
+        )]
         [SerializeField]
         bool _autoRun = true;
 
@@ -30,8 +32,7 @@ namespace Zenject
 
         public void Run()
         {
-            Assert.That(!Initialized,
-                "The context already has been initialized!");
+            Assert.That(!Initialized, "The context already has been initialized!");
 
             RunInternal();
 
@@ -40,7 +41,8 @@ namespace Zenject
 
         protected abstract void RunInternal();
 
-        public static T CreateComponent<T>(GameObject gameObject) where T : RunnableContext
+        public static T CreateComponent<T>(GameObject gameObject)
+            where T : RunnableContext
         {
             _staticAutoRun = false;
 

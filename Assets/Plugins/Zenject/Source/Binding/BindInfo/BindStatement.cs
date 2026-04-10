@@ -41,7 +41,8 @@ namespace Zenject
             if (_bindingFinalizer == null)
             {
                 throw Assert.CreateException(
-                    "Unfinished binding!  Some required information was left unspecified.");
+                    "Unfinished binding!  Some required information was left unspecified."
+                );
             }
         }
 

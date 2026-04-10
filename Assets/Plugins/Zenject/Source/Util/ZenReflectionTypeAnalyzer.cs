@@ -33,8 +33,16 @@ namespace Zenject.Internal
 
         public static ReflectionTypeInfo GetReflectionInfo(Type type)
         {
-            Assert.That(!type.IsEnum(), "Tried to analyze enum type '{0}'.  This is not supported", type);
-            Assert.That(!type.IsArray, "Tried to analyze array type '{0}'.  This is not supported", type);
+            Assert.That(
+                !type.IsEnum(),
+                "Tried to analyze enum type '{0}'.  This is not supported",
+                type
+            );
+            Assert.That(
+                !type.IsArray,
+                "Tried to analyze array type '{0}'.  This is not supported",
+                type
+            );
 
             var baseType = type.BaseType();
 
@@ -44,8 +52,13 @@ namespace Zenject.Internal
             }
 
             return new ReflectionTypeInfo(
-                type, baseType, GetConstructorInfo(type), GetMethodInfos(type),
-                GetFieldInfos(type), GetPropertyInfos(type));
+                type,
+                baseType,
+                GetConstructorInfo(type),
+                GetMethodInfos(type),
+                GetFieldInfos(type),
+                GetPropertyInfos(type)
+            );
         }
 
         static List<ReflectionTypeInfo.InjectPropertyInfo> GetPropertyInfos(Type type)
@@ -53,7 +66,10 @@ namespace Zenject.Internal
             return type.DeclaredInstanceProperties()
                 .Where(x => _injectAttributeTypes.Any(a => x.HasAttribute(a)))
                 .Select(x => new ReflectionTypeInfo.InjectPropertyInfo(
-                    x, GetInjectableInfoForMember(type, x))).ToList();
+                    x,
+                    GetInjectableInfoForMember(type, x)
+                ))
+                .ToList();
         }
 
         static List<ReflectionTypeInfo.InjectFieldInfo> GetFieldInfos(Type type)
@@ -61,7 +77,9 @@ namespace Zenject.Internal
             return type.DeclaredInstanceFields()
                 .Where(x => _injectAttributeTypes.Any(a => x.HasAttribute(a)))
                 .Select(x => new ReflectionTypeInfo.InjectFieldInfo(
-                    x, GetInjectableInfoForMember(type, x)))
+                    x,
+                    GetInjectableInfoForMember(type, x)
+                ))
                 .ToList();
         }
 
@@ -74,7 +92,8 @@ namespace Zenject.Internal
             // otherwise a base class method marked with [Inject] would cause all overridden
             // derived methods to be added as well
             var methodInfos = type.DeclaredInstanceMethods()
-                .Where(x => _injectAttributeTypes.Any(a => x.GetCustomAttributes(a, false).Any())).ToList();
+                .Where(x => _injectAttributeTypes.Any(a => x.GetCustomAttributes(a, false).Any()))
+                .ToList();
 
             for (int i = 0; i < methodInfos.Count; i++)
             {
@@ -83,15 +102,22 @@ namespace Zenject.Internal
 
                 if (injectAttr != null)
                 {
-                    Assert.That(!injectAttr.Optional && injectAttr.Id == null && injectAttr.Source == InjectSources.Any,
-                        "Parameters of InjectAttribute do not apply to constructors and methodInfos");
+                    Assert.That(
+                        !injectAttr.Optional
+                            && injectAttr.Id == null
+                            && injectAttr.Source == InjectSources.Any,
+                        "Parameters of InjectAttribute do not apply to constructors and methodInfos"
+                    );
                 }
 
-                var injectParamInfos = methodInfo.GetParameters()
-                    .Select(x => CreateInjectableInfoForParam(type, x)).ToList();
+                var injectParamInfos = methodInfo
+                    .GetParameters()
+                    .Select(x => CreateInjectableInfoForParam(type, x))
+                    .ToList();
 
                 injectMethodInfos.Add(
-                    new ReflectionTypeInfo.InjectMethodInfo(methodInfo, injectParamInfos));
+                    new ReflectionTypeInfo.InjectMethodInfo(methodInfo, injectParamInfos)
+                );
             }
 
             return injectMethodInfos;
@@ -105,20 +131,27 @@ namespace Zenject.Internal
 
             if (constructor != null)
             {
-                args.AddRange(constructor.GetParameters().Select(
-                    x => CreateInjectableInfoForParam(type, x)));
+                args.AddRange(
+                    constructor.GetParameters().Select(x => CreateInjectableInfoForParam(type, x))
+                );
             }
 
             return new ReflectionTypeInfo.InjectConstructorInfo(constructor, args);
         }
 
         static ReflectionTypeInfo.InjectParameterInfo CreateInjectableInfoForParam(
-            Type parentType, ParameterInfo paramInfo)
+            Type parentType,
+            ParameterInfo paramInfo
+        )
         {
             var injectAttributes = paramInfo.AllAttributes<InjectAttributeBase>().ToList();
 
-            Assert.That(injectAttributes.Count <= 1,
-                "Found multiple 'Inject' attributes on type parameter '{0}' of type '{1}'.  Parameter should only have one", paramInfo.Name, parentType);
+            Assert.That(
+                injectAttributes.Count <= 1,
+                "Found multiple 'Inject' attributes on type parameter '{0}' of type '{1}'.  Parameter should only have one",
+                paramInfo.Name,
+                parentType
+            );
 
             var injectAttr = injectAttributes.SingleOrDefault();
 
@@ -133,7 +166,9 @@ namespace Zenject.Internal
                 sourceType = injectAttr.Source;
             }
 
-            bool isOptionalWithADefaultValue = (paramInfo.Attributes & ParameterAttributes.HasDefault) == ParameterAttributes.HasDefault;
+            bool isOptionalWithADefaultValue =
+                (paramInfo.Attributes & ParameterAttributes.HasDefault)
+                == ParameterAttributes.HasDefault;
 
             return new ReflectionTypeInfo.InjectParameterInfo(
                 paramInfo,
@@ -143,15 +178,21 @@ namespace Zenject.Internal
                     paramInfo.Name,
                     paramInfo.ParameterType,
                     isOptionalWithADefaultValue ? paramInfo.DefaultValue : null,
-                    sourceType));
+                    sourceType
+                )
+            );
         }
 
         static InjectableInfo GetInjectableInfoForMember(Type parentType, MemberInfo memInfo)
         {
             var injectAttributes = memInfo.AllAttributes<InjectAttributeBase>().ToList();
 
-            Assert.That(injectAttributes.Count <= 1,
-            "Found multiple 'Inject' attributes on type field '{0}' of type '{1}'.  Field should only container one Inject attribute", memInfo.Name, parentType);
+            Assert.That(
+                injectAttributes.Count <= 1,
+                "Found multiple 'Inject' attributes on type field '{0}' of type '{1}'.  Field should only container one Inject attribute",
+                memInfo.Name,
+                parentType
+            );
 
             var injectAttr = injectAttributes.SingleOrDefault();
 
@@ -166,8 +207,10 @@ namespace Zenject.Internal
                 sourceType = injectAttr.Source;
             }
 
-            Type memberType = memInfo is FieldInfo
-                ? ((FieldInfo)memInfo).FieldType : ((PropertyInfo)memInfo).PropertyType;
+            Type memberType =
+                memInfo is FieldInfo
+                    ? ((FieldInfo)memInfo).FieldType
+                    : ((PropertyInfo)memInfo).PropertyType;
 
             return new InjectableInfo(
                 isOptional,
@@ -175,7 +218,8 @@ namespace Zenject.Internal
                 memInfo.Name,
                 memberType,
                 null,
-                sourceType);
+                sourceType
+            );
         }
 
         static ConstructorInfo TryGetInjectConstructor(Type type)
@@ -207,7 +251,11 @@ namespace Zenject.Internal
 
             if (constructors.HasMoreThan(1))
             {
-                var explicitConstructor = (from c in constructors where _injectAttributeTypes.Any(a => c.HasAttribute(a)) select c).SingleOrDefault();
+                var explicitConstructor = (
+                    from c in constructors
+                    where _injectAttributeTypes.Any(a => c.HasAttribute(a))
+                    select c
+                ).SingleOrDefault();
 
                 if (explicitConstructor != null)
                 {

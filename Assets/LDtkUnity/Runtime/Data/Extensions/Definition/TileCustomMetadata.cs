@@ -3,8 +3,5 @@
 namespace LDtkUnity
 {
     [ExcludeFromDocs]
-    public partial class TileCustomMetadata
-    {
-
-    }
+    public partial class TileCustomMetadata { }
 }

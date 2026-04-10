@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using UnityEngine;
 using UnityEditor;
 using UnityEditor.Build;
-
+using UnityEngine;
 #if (UNITY_VISUALSCRIPTING_EXIST)
 using Unity.VisualScripting;
 #elif (UNITY_BOLT_EXIST)
@@ -57,7 +56,10 @@ namespace FMODUnity
 
             if (!previousSymbols.Contains("UNITY_BOLT_EXIST"))
             {
-                PlayerSettings.SetScriptingDefineSymbols(namedBuildTarget, previousSymbols + ";UNITY_BOLT_EXIST");
+                PlayerSettings.SetScriptingDefineSymbols(
+                    namedBuildTarget,
+                    previousSymbols + ";UNITY_BOLT_EXIST"
+                );
             }
             Settings.Instance.BoltUnitOptionsBuildPending = true;
             AssetDatabase.Refresh();
@@ -67,8 +69,13 @@ namespace FMODUnity
         private static void BuildBoltUnitOptions()
         {
 #if (UNITY_BOLT_EXIST)
-            DictionaryAsset projectSettings = AssetDatabase.LoadAssetAtPath(PathUtility.FromProject(LudiqCore.Paths.projectSettings), typeof(DictionaryAsset)) as DictionaryAsset;
-            List<LooseAssemblyName> assemblyOptions = projectSettings.dictionary["assemblyOptions"] as List<LooseAssemblyName>;
+            DictionaryAsset projectSettings =
+                AssetDatabase.LoadAssetAtPath(
+                    PathUtility.FromProject(LudiqCore.Paths.projectSettings),
+                    typeof(DictionaryAsset)
+                ) as DictionaryAsset;
+            List<LooseAssemblyName> assemblyOptions =
+                projectSettings.dictionary["assemblyOptions"] as List<LooseAssemblyName>;
 #else
             List<LooseAssemblyName> assemblyOptions = BoltCore.Configuration.assemblyOptions;
 #endif
@@ -93,7 +100,9 @@ namespace FMODUnity
             List<Type> allTypes = new List<Type>(GetTypesForNamespace(fmodUnityAssembly, "FMOD"));
             allTypes.AddRange(GetTypesForNamespace(fmodUnityAssembly, "FMOD.Studio"));
             allTypes.AddRange(GetTypesForNamespace(fmodUnityAssembly, "FMODUnity"));
-            allTypes.AddRange(GetTypesForNamespace(fmodUnityResonanceAssembly, "FMODUnityResonance"));
+            allTypes.AddRange(
+                GetTypesForNamespace(fmodUnityResonanceAssembly, "FMODUnityResonance")
+            );
 
             foreach (Type type in allTypes)
             {
@@ -112,10 +121,16 @@ namespace FMODUnity
 #endif
         }
 
-        private static IEnumerable<Type> GetTypesForNamespace(Assembly assembly, string requestedNamespace)
+        private static IEnumerable<Type> GetTypesForNamespace(
+            Assembly assembly,
+            string requestedNamespace
+        )
         {
-            return assembly.GetTypes()
-                    .Where(t => string.Equals(t.Namespace, requestedNamespace, StringComparison.Ordinal));
+            return assembly
+                .GetTypes()
+                .Where(t =>
+                    string.Equals(t.Namespace, requestedNamespace, StringComparison.Ordinal)
+                );
         }
 #endif
 

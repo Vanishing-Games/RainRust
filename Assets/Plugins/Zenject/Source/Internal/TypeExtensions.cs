@@ -95,11 +95,14 @@ namespace ModestTree
         public static MethodInfo[] DeclaredInstanceMethods(this Type type)
         {
 #if UNITY_WSA && ENABLE_DOTNET && !UNITY_EDITOR
-            return type.GetRuntimeMethods()
-                .Where(x => x.DeclaringType == type).ToArray();
+            return type.GetRuntimeMethods().Where(x => x.DeclaringType == type).ToArray();
 #else
             return type.GetMethods(
-                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+                BindingFlags.Public
+                    | BindingFlags.NonPublic
+                    | BindingFlags.Instance
+                    | BindingFlags.DeclaredOnly
+            );
 #endif
         }
 
@@ -107,11 +110,14 @@ namespace ModestTree
         {
 #if UNITY_WSA && ENABLE_DOTNET && !UNITY_EDITOR
             // There doesn't appear to be an IsStatic member on PropertyInfo
-            return type.GetRuntimeProperties()
-                .Where(x => x.DeclaringType == type).ToArray();
+            return type.GetRuntimeProperties().Where(x => x.DeclaringType == type).ToArray();
 #else
             return type.GetProperties(
-                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+                BindingFlags.Public
+                    | BindingFlags.NonPublic
+                    | BindingFlags.Instance
+                    | BindingFlags.DeclaredOnly
+            );
 #endif
         }
 
@@ -119,10 +125,15 @@ namespace ModestTree
         {
 #if UNITY_WSA && ENABLE_DOTNET && !UNITY_EDITOR
             return type.GetRuntimeFields()
-                .Where(x => x.DeclaringType == type && !x.IsStatic).ToArray();
+                .Where(x => x.DeclaringType == type && !x.IsStatic)
+                .ToArray();
 #else
             return type.GetFields(
-                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+                BindingFlags.Public
+                    | BindingFlags.NonPublic
+                    | BindingFlags.Instance
+                    | BindingFlags.DeclaredOnly
+            );
 #endif
         }
 
@@ -150,6 +161,7 @@ namespace ModestTree
             return type.IsGenericType;
 #endif
         }
+
         public static bool IsGenericTypeDefinition(this Type type)
         {
 #if UNITY_WSA && ENABLE_DOTNET && !UNITY_EDITOR
@@ -243,7 +255,8 @@ namespace ModestTree
             return type.GetTypeInfo().DeclaredConstructors.ToArray();
 #else
             return type.GetConstructors(
-                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance
+            );
 #endif
         }
 
@@ -278,7 +291,12 @@ namespace ModestTree
 
         public static IEnumerable<Type> GetParentTypes(this Type type)
         {
-            if (type == null || type.BaseType() == null || type == typeof(object) || type.BaseType() == typeof(object))
+            if (
+                type == null
+                || type.BaseType() == null
+                || type == typeof(object)
+                || type.BaseType() == typeof(object)
+            )
             {
                 yield break;
             }
@@ -314,8 +332,7 @@ namespace ModestTree
             return provider.AllAttributes<T>().OnlyOrDefault();
         }
 
-        public static bool HasAttribute(
-            this MemberInfo provider, params Type[] attributeTypes)
+        public static bool HasAttribute(this MemberInfo provider, params Type[] attributeTypes)
         {
             return provider.AllAttributes(attributeTypes).Any();
         }
@@ -326,15 +343,16 @@ namespace ModestTree
             return provider.AllAttributes(typeof(T)).Any();
         }
 
-        public static IEnumerable<T> AllAttributes<T>(
-            this MemberInfo provider)
+        public static IEnumerable<T> AllAttributes<T>(this MemberInfo provider)
             where T : Attribute
         {
             return provider.AllAttributes(typeof(T)).Cast<T>();
         }
 
         public static IEnumerable<Attribute> AllAttributes(
-            this MemberInfo provider, params Type[] attributeTypes)
+            this MemberInfo provider,
+            params Type[] attributeTypes
+        )
         {
             Attribute[] allAttributes;
 #if NETFX_CORE
@@ -347,13 +365,14 @@ namespace ModestTree
                 return allAttributes;
             }
 
-            return allAttributes.Where(a => attributeTypes.Any(x => a.GetType().DerivesFromOrEqual(x)));
+            return allAttributes.Where(a =>
+                attributeTypes.Any(x => a.GetType().DerivesFromOrEqual(x))
+            );
         }
 
         // We could avoid this duplication here by using ICustomAttributeProvider but this class
         // does not exist on the WP8 platform
-        public static bool HasAttribute(
-            this ParameterInfo provider, params Type[] attributeTypes)
+        public static bool HasAttribute(this ParameterInfo provider, params Type[] attributeTypes)
         {
             return provider.AllAttributes(attributeTypes).Any();
         }
@@ -364,15 +383,16 @@ namespace ModestTree
             return provider.AllAttributes(typeof(T)).Any();
         }
 
-        public static IEnumerable<T> AllAttributes<T>(
-            this ParameterInfo provider)
+        public static IEnumerable<T> AllAttributes<T>(this ParameterInfo provider)
             where T : Attribute
         {
             return provider.AllAttributes(typeof(T)).Cast<T>();
         }
 
         public static IEnumerable<Attribute> AllAttributes(
-            this ParameterInfo provider, params Type[] attributeTypes)
+            this ParameterInfo provider,
+            params Type[] attributeTypes
+        )
         {
             Attribute[] allAttributes;
 #if NETFX_CORE
@@ -385,7 +405,9 @@ namespace ModestTree
                 return allAttributes;
             }
 
-            return allAttributes.Where(a => attributeTypes.Any(x => a.GetType().DerivesFromOrEqual(x)));
+            return allAttributes.Where(a =>
+                attributeTypes.Any(x => a.GetType().DerivesFromOrEqual(x))
+            );
         }
     }
 }

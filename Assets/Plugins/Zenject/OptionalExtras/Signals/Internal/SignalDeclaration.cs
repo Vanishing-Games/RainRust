@@ -22,8 +22,8 @@ namespace Zenject
 
         public SignalDeclaration(
             SignalDeclarationBindInfo bindInfo,
-            [InjectOptional]
-            ZenjectSettings zenjectSettings)
+            [InjectOptional] ZenjectSettings zenjectSettings
+        )
         {
             zenjectSettings = zenjectSettings ?? ZenjectSettings.Default;
             _settings = zenjectSettings.Signals ?? ZenjectSettings.SignalSettings.Default;
@@ -41,10 +41,7 @@ namespace Zenject
         }
 #endif
 
-        public int TickPriority
-        {
-            get; private set;
-        }
+        public int TickPriority { get; private set; }
 
         public bool IsAsync
         {
@@ -60,8 +57,12 @@ namespace Zenject
         {
             if (_settings.RequireStrictUnsubscribe)
             {
-                Assert.That(_subscriptions.IsEmpty(),
-                    "Found {0} signal handlers still added to declaration {1}", _subscriptions.Count, _bindingId);
+                Assert.That(
+                    _subscriptions.IsEmpty(),
+                    "Found {0} signal handlers still added to declaration {1}",
+                    _subscriptions.Count,
+                    _bindingId
+                );
             }
             else
             {
@@ -105,16 +106,21 @@ namespace Zenject
 #if ZEN_SIGNALS_ADD_UNIRX
                 && !_stream.HasObservers
 #endif
-                )
+            )
             {
                 if (_missingHandlerResponses == SignalMissingHandlerResponses.Warn)
                 {
-                    Log.Warn("Fired signal '{0}' but no subscriptions found!  If this is intentional then either add OptionalSubscriber() to the binding or change the default in ZenjectSettings", signal.GetType());
+                    Log.Warn(
+                        "Fired signal '{0}' but no subscriptions found!  If this is intentional then either add OptionalSubscriber() to the binding or change the default in ZenjectSettings",
+                        signal.GetType()
+                    );
                 }
                 else if (_missingHandlerResponses == SignalMissingHandlerResponses.Throw)
                 {
                     throw Assert.CreateException(
-                        "Fired signal '{0}' but no subscriptions found!  If this is intentional then either add OptionalSubscriber() to the binding or change the default in ZenjectSettings", signal.GetType());
+                        "Fired signal '{0}' but no subscriptions found!  If this is intentional then either add OptionalSubscriber() to the binding or change the default in ZenjectSettings",
+                        signal.GetType()
+                    );
                 }
             }
 
@@ -173,8 +179,6 @@ namespace Zenject
             _subscriptions.RemoveWithConfirm(subscription);
         }
 
-        public class Factory : PlaceholderFactory<SignalDeclarationBindInfo, SignalDeclaration>
-        {
-        }
+        public class Factory : PlaceholderFactory<SignalDeclarationBindInfo, SignalDeclaration> { }
     }
 }

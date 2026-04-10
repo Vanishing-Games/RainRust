@@ -10,8 +10,8 @@ namespace Cysharp.Threading.Tasks.Triggers
     {
         TriggerEvent<T> triggerEvent;
 
-        internal protected bool calledAwake;
-        internal protected bool calledDestroy;
+        protected internal bool calledAwake;
+        protected internal bool calledDestroy;
 
         void Awake()
         {
@@ -20,7 +20,8 @@ namespace Cysharp.Threading.Tasks.Triggers
 
         void OnDestroy()
         {
-            if (calledDestroy) return;
+            if (calledDestroy)
+                return;
             calledDestroy = true;
 
             triggerEvent.SetCompleted();
@@ -51,12 +52,17 @@ namespace Cysharp.Threading.Tasks.Triggers
             triggerEvent.SetResult(value);
         }
 
-        public IUniTaskAsyncEnumerator<T> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+        public IUniTaskAsyncEnumerator<T> GetAsyncEnumerator(
+            CancellationToken cancellationToken = default
+        )
         {
             return new AsyncTriggerEnumerator(this, cancellationToken);
         }
 
-        sealed class AsyncTriggerEnumerator : MoveNextSource, IUniTaskAsyncEnumerator<T>, ITriggerHandler<T>
+        sealed class AsyncTriggerEnumerator
+            : MoveNextSource,
+                IUniTaskAsyncEnumerator<T>,
+                ITriggerHandler<T>
         {
             static Action<object> cancellationCallback = CancellationCallback;
 
@@ -66,7 +72,10 @@ namespace Cysharp.Threading.Tasks.Triggers
             bool called;
             bool isDisposed;
 
-            public AsyncTriggerEnumerator(AsyncTriggerBase<T> parent, CancellationToken cancellationToken)
+            public AsyncTriggerEnumerator(
+                AsyncTriggerBase<T> parent,
+                CancellationToken cancellationToken
+            )
             {
                 this.parent = parent;
                 this.cancellationToken = cancellationToken;
@@ -118,7 +127,10 @@ namespace Cysharp.Threading.Tasks.Triggers
                     parent.AddHandler(this);
                     if (cancellationToken.CanBeCanceled)
                     {
-                        registration = cancellationToken.RegisterWithoutCaptureExecutionContext(cancellationCallback, this);
+                        registration = cancellationToken.RegisterWithoutCaptureExecutionContext(
+                            cancellationCallback,
+                            this
+                        );
                     }
                 }
 
@@ -150,7 +162,8 @@ namespace Cysharp.Threading.Tasks.Triggers
 
             public bool MoveNext()
             {
-                if (trigger.calledAwake) return false;
+                if (trigger.calledAwake)
+                    return false;
                 if (trigger == null)
                 {
                     trigger.OnDestroy();
@@ -175,7 +188,10 @@ namespace Cysharp.Threading.Tasks.Triggers
         }
     }
 
-    public sealed partial class AsyncTriggerHandler<T> : IUniTaskSource<T>, ITriggerHandler<T>, IDisposable
+    public sealed partial class AsyncTriggerHandler<T>
+        : IUniTaskSource<T>,
+            ITriggerHandler<T>,
+            IDisposable
     {
         static Action<object> cancellationCallback = CancellationCallback;
 
@@ -211,7 +227,11 @@ namespace Cysharp.Threading.Tasks.Triggers
             TaskTracker.TrackActiveTask(this, 3);
         }
 
-        internal AsyncTriggerHandler(AsyncTriggerBase<T> trigger, CancellationToken cancellationToken, bool callOnce)
+        internal AsyncTriggerHandler(
+            AsyncTriggerBase<T> trigger,
+            CancellationToken cancellationToken,
+            bool callOnce
+        )
         {
             if (cancellationToken.IsCancellationRequested)
             {
@@ -227,7 +247,10 @@ namespace Cysharp.Threading.Tasks.Triggers
 
             if (cancellationToken.CanBeCanceled)
             {
-                registration = cancellationToken.RegisterWithoutCaptureExecutionContext(cancellationCallback, this);
+                registration = cancellationToken.RegisterWithoutCaptureExecutionContext(
+                    cancellationCallback,
+                    this
+                );
             }
 
             TaskTracker.TrackActiveTask(this, 3);

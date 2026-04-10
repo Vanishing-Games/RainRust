@@ -1,19 +1,23 @@
-﻿using Cysharp.Threading.Tasks.Internal;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Runtime.ExceptionServices;
 using System.Threading;
+using Cysharp.Threading.Tasks.Internal;
 
 namespace Cysharp.Threading.Tasks
 {
     public partial struct UniTask
     {
-        public static IUniTaskAsyncEnumerable<WhenEachResult<T>> WhenEach<T>(IEnumerable<UniTask<T>> tasks)
+        public static IUniTaskAsyncEnumerable<WhenEachResult<T>> WhenEach<T>(
+            IEnumerable<UniTask<T>> tasks
+        )
         {
             return new WhenEachEnumerable<T>(tasks);
         }
 
-        public static IUniTaskAsyncEnumerable<WhenEachResult<T>> WhenEach<T>(params UniTask<T>[] tasks)
+        public static IUniTaskAsyncEnumerable<WhenEachResult<T>> WhenEach<T>(
+            params UniTask<T>[] tasks
+        )
         {
             return new WhenEachEnumerable<T>(tasks);
         }
@@ -38,7 +42,8 @@ namespace Cysharp.Threading.Tasks
 
         public WhenEachResult(Exception exception)
         {
-            if (exception == null) throw new ArgumentNullException(nameof(exception));
+            if (exception == null)
+                throw new ArgumentNullException(nameof(exception));
             this.Result = default;
             this.Exception = exception;
         }
@@ -77,7 +82,7 @@ namespace Cysharp.Threading.Tasks
     {
         NotRunning,
         Running,
-        Completed
+        Completed,
     }
 
     internal sealed class WhenEachEnumerable<T> : IUniTaskAsyncEnumerable<WhenEachResult<T>>
@@ -89,7 +94,9 @@ namespace Cysharp.Threading.Tasks
             this.source = source;
         }
 
-        public IUniTaskAsyncEnumerator<WhenEachResult<T>> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+        public IUniTaskAsyncEnumerator<WhenEachResult<T>> GetAsyncEnumerator(
+            CancellationToken cancellationToken = default
+        )
         {
             return new Enumerator(source, cancellationToken);
         }
@@ -120,7 +127,9 @@ namespace Cysharp.Threading.Tasks
                 {
                     state = WhenEachState.Running;
                     channel = Channel.CreateSingleConsumerUnbounded<WhenEachResult<T>>();
-                    channelEnumerator = channel.Reader.ReadAllAsync().GetAsyncEnumerator(cancellationToken);
+                    channelEnumerator = channel
+                        .Reader.ReadAllAsync()
+                        .GetAsyncEnumerator(cancellationToken);
 
                     if (source is UniTask<T>[] array)
                     {

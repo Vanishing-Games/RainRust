@@ -10,9 +10,7 @@ namespace Zenject
         readonly DiContainer _container;
         readonly Func<InjectContext, TReturn> _method;
 
-        public MethodProvider(
-            Func<InjectContext, TReturn> method,
-            DiContainer container)
+        public MethodProvider(Func<InjectContext, TReturn> method, DiContainer container)
         {
             _container = container;
             _method = method;
@@ -34,7 +32,11 @@ namespace Zenject
         }
 
         public void GetAllInstancesWithInjectSplit(
-            InjectContext context, List<TypeValuePair> args, out Action injectAction, List<object> buffer)
+            InjectContext context,
+            List<TypeValuePair> args,
+            out Action injectAction,
+            List<object> buffer
+        )
         {
             Assert.IsEmpty(args);
             Assert.IsNotNull(context);
@@ -42,7 +44,10 @@ namespace Zenject
             Assert.That(typeof(TReturn).DerivesFromOrEqual(context.MemberType));
 
             injectAction = null;
-            if (_container.IsValidating && !TypeAnalyzer.ShouldAllowDuringValidation(context.MemberType))
+            if (
+                _container.IsValidating
+                && !TypeAnalyzer.ShouldAllowDuringValidation(context.MemberType)
+            )
             {
                 buffer.Add(new ValidationMarker(typeof(TReturn)));
             }

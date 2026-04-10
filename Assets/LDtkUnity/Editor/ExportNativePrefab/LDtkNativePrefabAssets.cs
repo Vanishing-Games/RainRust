@@ -16,17 +16,21 @@ namespace LDtkUnity.Editor
         private readonly string _path;
         private readonly Sprite _oldSprite;
         private readonly Texture2D _newTexture;
-        
+
         private List<Sprite> _artTileSprites = new List<Sprite>();
         private List<Tile> _artTiles = new List<Tile>();
         private List<Tile> _intGridTiles = new List<Tile>();
         private List<Sprite> _backgroundArtifacts = new List<Sprite>();
-        
+
         public List<Tile> ArtTiles => _artTiles.ToList();
         public List<Tile> IntGridTiles => _intGridTiles.ToList();
         public List<Sprite> BackgroundArtifacts => _backgroundArtifacts.ToList();
 
-        public LDtkNativePrefabAssets(LDtkProjectImporter importer, LDtkArtifactAssets assets, string path)
+        public LDtkNativePrefabAssets(
+            LDtkProjectImporter importer,
+            LDtkArtifactAssets assets,
+            string path
+        )
         {
             _importer = importer;
             _path = path;
@@ -42,13 +46,13 @@ namespace LDtkUnity.Editor
                 LDtkDebug.LogError("Null Importer");
                 return;
             }
-            
+
             if (_assets == null)
             {
                 LDtkDebug.LogError("Null ArtifactAssets");
                 return;
             }
-            
+
             try
             {
                 AssetDatabase.StartAssetEditing();
@@ -58,7 +62,7 @@ namespace LDtkUnity.Editor
             {
                 AssetDatabase.StopAssetEditing();
             }
-            
+
             //now that this is done, we can make the prefab factory replace the old ones with these newly created prefabs
             AssetDatabase.Refresh();
         }
@@ -107,7 +111,7 @@ namespace LDtkUnity.Editor
                 {
                     intGridTile.sprite = newDefaultSprite;
                 }
-            } 
+            }
             
             //we've generated the default sprite which is used by multiple, simply add to the list since it's already created
             _backgroundArtifacts.Add(newDefaultSprite);
@@ -115,18 +119,24 @@ namespace LDtkUnity.Editor
             */
         }
 
-        private T CloneArtifact<T>(T artifact, string extraPath, string assetName = null) where T : Object
+        private T CloneArtifact<T>(T artifact, string extraPath, string assetName = null)
+            where T : Object
         {
             return CloneArtifacts(new[] { artifact }.ToList(), extraPath, assetName).First();
         }
-        
-        private List<T> CloneArtifacts<T>(List<T> artifacts, string extraPath, string assetName = null) where T : Object
+
+        private List<T> CloneArtifacts<T>(
+            List<T> artifacts,
+            string extraPath,
+            string assetName = null
+        )
+            where T : Object
         {
             if (artifacts.IsNullOrEmpty())
             {
                 return new List<T>();
             }
-            
+
             string parentPath = $"{_path}{extraPath}";
             LDtkPathUtility.TryCreateDirectory(parentPath);
 
@@ -137,7 +147,7 @@ namespace LDtkUnity.Editor
                 {
                     continue;
                 }
-                
+
                 string cloneName = assetName != null ? assetName : artifact.name;
                 string destinationPath = $"{parentPath}/{cloneName}.asset";
 
@@ -147,7 +157,7 @@ namespace LDtkUnity.Editor
                 clone.name = cloneName;
 
                 T loadedAsset = AssetDatabase.LoadAssetAtPath<T>(destinationPath);
-                
+
                 if (loadedAsset)
                 {
                     EditorUtility.CopySerializedIfDifferent(clone, loadedAsset);
@@ -164,22 +174,26 @@ namespace LDtkUnity.Editor
         }
 
         //if it's an LDtk asset, then turn it into a native asset, otherwise if it's already native, then instantiate
-        private Object CreateClone<T>(T artifact) where T : Object
+        private Object CreateClone<T>(T artifact)
+            where T : Object
         {
             //return a sprite in this way because instantiating a sprite that is packed to an atlas makes a unity error appear AssetDatabase.CreateAsset
             //return a sprite clone, and also make a sprite atlas asset somewhere
             if (artifact is Sprite oldSprite)
             {
-                return LDtkTextureUtility.CreateSprite(oldSprite.texture, oldSprite.rect, GetNormalizedPivotOfSprite(oldSprite), oldSprite.pixelsPerUnit);
+                return LDtkTextureUtility.CreateSprite(
+                    oldSprite.texture,
+                    oldSprite.rect,
+                    GetNormalizedPivotOfSprite(oldSprite),
+                    oldSprite.pixelsPerUnit
+                );
             }
-            
-            
-            
+
             if (typeof(TileBase).IsAssignableFrom(typeof(T)))
             {
                 return CreateNativeTile(artifact);
             }
-            
+
             T clone = Object.Instantiate(artifact);
             return clone;
         }
@@ -189,7 +203,8 @@ namespace LDtkUnity.Editor
             return sprite.pivot / sprite.rect.size;
         }
 
-        private static Tile CreateNativeTile<T>(T artifact) where T : Object
+        private static Tile CreateNativeTile<T>(T artifact)
+            where T : Object
         {
             TileBase tile = artifact as TileBase;
             if (tile == null)
@@ -200,7 +215,7 @@ namespace LDtkUnity.Editor
 
             TileData tileData = default;
             tile.GetTileData(default, null, ref tileData);
-            
+
             Tile nativeTile = ScriptableObject.CreateInstance<Tile>();
             nativeTile.name = artifact.name;
             nativeTile.sprite = tileData.sprite;

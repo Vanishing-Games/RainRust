@@ -18,4 +18,3 @@ namespace Zenject
         public abstract void InstallBindings();
     }
 }
-

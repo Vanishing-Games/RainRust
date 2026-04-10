@@ -21,7 +21,11 @@ namespace Zenject
             _subCreator = subCreator;
         }
 
-        public DiContainer CreateSubContainer(List<TypeValuePair> args, InjectContext context, out Action injectAction)
+        public DiContainer CreateSubContainer(
+            List<TypeValuePair> args,
+            InjectContext context,
+            out Action injectAction
+        )
         {
             // We can't really support arguments if we are using the cached value since
             // the arguments might change when called after the first time
@@ -34,13 +38,19 @@ namespace Zenject
                 if (_subContainer == null)
                 {
 #if !ZEN_MULTITHREADING
-                    Assert.That(!_isLookingUp,
-                        "Found unresolvable circular dependency when looking up sub container!  Object graph:\n {0}", context.GetObjectGraphString());
+                    Assert.That(
+                        !_isLookingUp,
+                        "Found unresolvable circular dependency when looking up sub container!  Object graph:\n {0}",
+                        context.GetObjectGraphString()
+                    );
                     _isLookingUp = true;
 #endif
 
                     _subContainer = _subCreator.CreateSubContainer(
-                            new List<TypeValuePair>(), context, out injectAction);
+                        new List<TypeValuePair>(),
+                        context,
+                        out injectAction
+                    );
 
 #if !ZEN_MULTITHREADING
                     _isLookingUp = false;
@@ -48,7 +58,7 @@ namespace Zenject
 
                     Assert.IsNotNull(_subContainer);
                 }
-                else 
+                else
                 {
                     injectAction = null;
                 }

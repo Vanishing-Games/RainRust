@@ -5,5 +5,14 @@
     /// values: `Cover`, `FitInside`, `Repeat`, `Stretch`, `FullSizeCropped`,
     /// `FullSizeUncropped`, `NineSlice`
     /// </summary>
-    public enum TileRenderMode { Cover, FitInside, FullSizeCropped, FullSizeUncropped, NineSlice, Repeat, Stretch };
+    public enum TileRenderMode
+    {
+        Cover,
+        FitInside,
+        FullSizeCropped,
+        FullSizeUncropped,
+        NineSlice,
+        Repeat,
+        Stretch,
+    };
 }

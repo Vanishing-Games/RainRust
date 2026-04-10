@@ -12,11 +12,20 @@ namespace Zenject
         readonly GameObjectCreationParameters _gameObjectBindInfo;
 
         public AddToNewGameObjectComponentProvider(
-            DiContainer container, Type componentType,
-            IEnumerable<TypeValuePair> extraArguments, GameObjectCreationParameters gameObjectBindInfo,
+            DiContainer container,
+            Type componentType,
+            IEnumerable<TypeValuePair> extraArguments,
+            GameObjectCreationParameters gameObjectBindInfo,
             object concreteIdentifier,
-            Action<InjectContext, object> instantiateCallback)
-            : base(container, componentType, extraArguments, concreteIdentifier, instantiateCallback)
+            Action<InjectContext, object> instantiateCallback
+        )
+            : base(
+                container,
+                componentType,
+                extraArguments,
+                concreteIdentifier,
+                instantiateCallback
+            )
         {
             _gameObjectBindInfo = gameObjectBindInfo;
         }

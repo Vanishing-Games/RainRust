@@ -6,21 +6,19 @@ using UnityEngine;
 namespace Zenject
 {
     [NoReflectionBaking]
-    public class TransformScopeConcreteIdArgConditionCopyNonLazyBinder : ScopeConcreteIdArgConditionCopyNonLazyBinder
+    public class TransformScopeConcreteIdArgConditionCopyNonLazyBinder
+        : ScopeConcreteIdArgConditionCopyNonLazyBinder
     {
         public TransformScopeConcreteIdArgConditionCopyNonLazyBinder(
             BindInfo bindInfo,
-            GameObjectCreationParameters gameObjectInfo)
+            GameObjectCreationParameters gameObjectInfo
+        )
             : base(bindInfo)
         {
             GameObjectInfo = gameObjectInfo;
         }
 
-        protected GameObjectCreationParameters GameObjectInfo
-        {
-            get;
-            private set;
-        }
+        protected GameObjectCreationParameters GameObjectInfo { get; private set; }
 
         public ScopeConcreteIdArgConditionCopyNonLazyBinder UnderTransform(Transform parent)
         {
@@ -28,13 +26,17 @@ namespace Zenject
             return this;
         }
 
-        public ScopeConcreteIdArgConditionCopyNonLazyBinder UnderTransform(Func<InjectContext, Transform> parentGetter)
+        public ScopeConcreteIdArgConditionCopyNonLazyBinder UnderTransform(
+            Func<InjectContext, Transform> parentGetter
+        )
         {
             GameObjectInfo.ParentTransformGetter = parentGetter;
             return this;
         }
 
-        public ScopeConcreteIdArgConditionCopyNonLazyBinder UnderTransformGroup(string transformGroupname)
+        public ScopeConcreteIdArgConditionCopyNonLazyBinder UnderTransformGroup(
+            string transformGroupname
+        )
         {
             GameObjectInfo.GroupName = transformGroupname;
             return this;

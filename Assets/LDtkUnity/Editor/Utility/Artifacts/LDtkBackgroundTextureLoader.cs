@@ -61,7 +61,6 @@ namespace LDtkUnity.Editor
             return tex;
         }
 
-
         private delegate Texture2D ExternalLoadMethod<in T>(T data);
 
         private void TryAdd<T>(T data, string relPath, ExternalLoadMethod<T> textureLoadAction)
@@ -116,11 +115,17 @@ namespace LDtkUnity.Editor
                 return;
             }
 
-            LDtkDebug.LogWarning($"Referenced texture type is not Sprite. It is recommended to use Sprite mode for texture: \"{tex.name}\"", tex);
+            LDtkDebug.LogWarning(
+                $"Referenced texture type is not Sprite. It is recommended to use Sprite mode for texture: \"{tex.name}\"",
+                tex
+            );
 
             if (importer.npotScale != TextureImporterNPOTScale.None)
             {
-                LDtkDebug.LogError($"Referenced texture Non-Power of Two is not None, which will corrupt the tileset art! Fix this for: \"{_assetPath}\"", tex);
+                LDtkDebug.LogError(
+                    $"Referenced texture Non-Power of Two is not None, which will corrupt the tileset art! Fix this for: \"{_assetPath}\"",
+                    tex
+                );
             }
         }
     }

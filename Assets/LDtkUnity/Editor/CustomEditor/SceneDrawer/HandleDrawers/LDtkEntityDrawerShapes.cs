@@ -16,7 +16,7 @@ namespace LDtkUnity.Editor
             public bool Hollow;
             public float FillOpacity;
             public float LineOpacity;
-        } 
+        }
 
         public LDtkEntityDrawerShapes(Transform transform, Data data)
         {
@@ -35,10 +35,10 @@ namespace LDtkUnity.Editor
             {
                 return;
             }
-            
+
             float lineAlpha = _data.LineOpacity;
             float fillAlpha = GetFillAlpha();
-            
+
             Vector2 size = _data.Size;
 
             Vector2 offset = LDtkCoordConverter.EntityPivotOffset(_data.Pivot, _data.Size);
@@ -73,7 +73,7 @@ namespace LDtkUnity.Editor
                 case RenderMode.Rectangle:
                     HandleAAUtil.DrawAABox(pos, size, thickness, fillAlpha, lineAlpha);
                     break;
-                
+
                 case RenderMode.Tile:
                     HandleAAUtil.DrawAABox(pos, size, thickness, fillAlpha, lineAlpha);
                     break;

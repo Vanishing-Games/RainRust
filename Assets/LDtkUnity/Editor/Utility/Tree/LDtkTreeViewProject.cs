@@ -6,13 +6,14 @@ namespace LDtkUnity.Editor
     {
         private readonly LdtkJson _json;
         private readonly string _projectName;
-        
-        public LDtkTreeViewProject(TreeViewState state, LdtkJson json, string projectName) : base(state)
+
+        public LDtkTreeViewProject(TreeViewState state, LdtkJson json, string projectName)
+            : base(state)
         {
             _json = json;
             _projectName = projectName;
         }
-        
+
         protected override void BuildFirstRoot(TreeViewItem parent)
         {
             BuildProject(parent);
@@ -24,7 +25,7 @@ namespace LDtkUnity.Editor
             projectItem.displayName = _projectName;
             projectItem.icon = LDtkIconUtility.LoadListIcon();
             root.AddChild(projectItem);
-            
+
             BuildWorlds(projectItem);
         }
 
@@ -43,10 +44,10 @@ namespace LDtkUnity.Editor
             worldItem.displayName = world.Identifier;
             worldItem.icon = LDtkIconUtility.LoadWorldIcon();
             parent.AddChild(worldItem);
-            
+
             BuildLevels(worldItem, world);
         }
-        
+
         private void BuildLevels(TreeViewItem worldItem, World world)
         {
             Depth++;

@@ -8,26 +8,26 @@ namespace Zenject
     public enum ValidationErrorResponses
     {
         Log,
-        Throw
+        Throw,
     }
 
     public enum RootResolveMethods
     {
         NonLazyOnly,
-        All
+        All,
     }
 
     public enum SignalDefaultSyncModes
     {
         Synchronous,
-        Asynchronous
+        Asynchronous,
     }
 
     public enum SignalMissingHandlerResponses
     {
         Ignore,
         Throw,
-        Warn
+        Warn,
     }
 
     [Serializable]
@@ -67,21 +67,21 @@ namespace Zenject
             RootResolveMethods validationRootResolveMethod = RootResolveMethods.NonLazyOnly,
             bool displayWarningWhenResolvingDuringInstall = true,
             bool ensureDeterministicDestructionOrderOnApplicationQuit = false,
-            SignalSettings signalSettings = null)
+            SignalSettings signalSettings = null
+        )
         {
             _validationErrorResponse = validationErrorResponse;
             _validationRootResolveMethod = validationRootResolveMethod;
             _displayWarningWhenResolvingDuringInstall = displayWarningWhenResolvingDuringInstall;
-            _ensureDeterministicDestructionOrderOnApplicationQuit =ensureDeterministicDestructionOrderOnApplicationQuit;
+            _ensureDeterministicDestructionOrderOnApplicationQuit =
+                ensureDeterministicDestructionOrderOnApplicationQuit;
             _signalSettings = signalSettings ?? SignalSettings.Default;
         }
 
         // Need to define an emtpy constructor since this is created by unity serialization
         // even if the above constructor has defaults for all
         public ZenjectSettings()
-            : this(ValidationErrorResponses.Log)
-        {
-        }
+            : this(ValidationErrorResponses.Log) { }
 
         public SignalSettings Signals
         {
@@ -147,11 +147,13 @@ namespace Zenject
 
             public SignalSettings(
                 SignalDefaultSyncModes defaultSyncMode,
-                SignalMissingHandlerResponses missingHandlerDefaultResponse = SignalMissingHandlerResponses.Warn,
+                SignalMissingHandlerResponses missingHandlerDefaultResponse =
+                    SignalMissingHandlerResponses.Warn,
                 bool requireStrictUnsubscribe = false,
                 // Run right after all the unspecified tick priorities so that the effects of the
                 // signal are handled during the same frame when they are triggered
-                int defaultAsyncTickPriority = 1)
+                int defaultAsyncTickPriority = 1
+            )
             {
                 _defaultSyncMode = defaultSyncMode;
                 _missingHandlerDefaultResponse = missingHandlerDefaultResponse;
@@ -162,9 +164,7 @@ namespace Zenject
             // Need to define an emtpy constructor since this is created by unity serialization
             // even if the above constructor has defaults for all
             public SignalSettings()
-                : this(SignalDefaultSyncModes.Synchronous)
-            {
-            }
+                : this(SignalDefaultSyncModes.Synchronous) { }
 
             public int DefaultAsyncTickPriority
             {

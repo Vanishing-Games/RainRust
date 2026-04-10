@@ -4,9 +4,7 @@ namespace Zenject
     public class DeclareSignalAsyncTickPriorityCopyBinder : SignalTickPriorityCopyBinder
     {
         public DeclareSignalAsyncTickPriorityCopyBinder(SignalDeclarationBindInfo signalBindInfo)
-            : base(signalBindInfo)
-        {
-        }
+            : base(signalBindInfo) { }
 
         public SignalTickPriorityCopyBinder RunAsync()
         {
@@ -21,4 +19,3 @@ namespace Zenject
         }
     }
 }
-

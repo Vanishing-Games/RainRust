@@ -10,13 +10,14 @@ namespace LDtkUnity
     public sealed class LDtkComponentLayerTilesetTiles : MonoBehaviour
     {
         //todo this needs more actual data, the TileInstance. A or T values
-        
-        [SerializeField] private Tilemap _tilemap;
-        
+
+        [SerializeField]
+        private Tilemap _tilemap;
+
         private Dictionary<Type, Vector3Int[]> _positionsOfEnumValues;
-        
+
         public Tilemap Tilemap => _tilemap;
-        
+
         internal void OnImport(Tilemap tilemap)
         {
             _tilemap = tilemap;
@@ -26,7 +27,8 @@ namespace LDtkUnity
         /// Get all Tilemap positions in this layer that use a particular Enum value
         /// </summary>
         /// <returns></returns>
-        public Vector3Int[] GetCoordinatesOfEnumValue<TEnum>() where TEnum : struct
+        public Vector3Int[] GetCoordinatesOfEnumValue<TEnum>()
+            where TEnum : struct
         {
             Type type = typeof(TEnum);
             if (!type.IsEnum)
@@ -36,7 +38,7 @@ namespace LDtkUnity
             }
 
             TryCacheCoordsOfType(type);
-            
+
             return _positionsOfEnumValues[type];
         }
 
@@ -52,7 +54,7 @@ namespace LDtkUnity
         {
             List<Vector3Int> positions = new List<Vector3Int>();
             Vector3Int coordinate = Vector3Int.zero;
-            
+
             BoundsInt bounds = _tilemap.cellBounds;
             for (int x = bounds.xMin; x < bounds.xMax; x++)
             {
@@ -60,7 +62,7 @@ namespace LDtkUnity
                 for (int y = bounds.yMin; y < bounds.yMax; y++)
                 {
                     coordinate.y = y;
-                        
+
                     LDtkTilesetTile tile = _tilemap.GetTile<LDtkTilesetTile>(coordinate);
                     if (tile != null && tile.HasEnumTagValue(enumType))
                     {
@@ -73,7 +75,7 @@ namespace LDtkUnity
             {
                 _positionsOfEnumValues = new Dictionary<Type, Vector3Int[]>(1);
             }
-            
+
             _positionsOfEnumValues[enumType] = positions.ToArray();
         }
 
@@ -83,13 +85,15 @@ namespace LDtkUnity
         /// </summary>
         public LDtkTilesetTile[] GetTilesetTiles(Vector3Int coord)
         {
-            LDtkTilesetTile[] tiles = new LDtkTilesetTile[_tilemap.cellBounds.zMax - _tilemap.cellBounds.zMin];
+            LDtkTilesetTile[] tiles = new LDtkTilesetTile[
+                _tilemap.cellBounds.zMax - _tilemap.cellBounds.zMin
+            ];
 
             for (int z = _tilemap.cellBounds.zMin; z < _tilemap.cellBounds.zMax; z++)
             {
                 Vector3Int pos = new Vector3Int(coord.x, coord.y, z);
                 LDtkTilesetTile tile = _tilemap.GetTile<LDtkTilesetTile>(pos);
-                
+
                 // Add the tile to the array at the corresponding index
                 tiles[z - _tilemap.cellBounds.zMin] = tile;
             }

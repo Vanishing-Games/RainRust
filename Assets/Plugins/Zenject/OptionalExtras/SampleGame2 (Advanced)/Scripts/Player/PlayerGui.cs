@@ -65,16 +65,36 @@ namespace Zenject.SpaceFighter
 
         public void OnGUI()
         {
-            var healthLabelBounds = new Rect(_leftPadding, Screen.height - _bottomPadding, _labelWidth, _labelHeight);
+            var healthLabelBounds = new Rect(
+                _leftPadding,
+                Screen.height - _bottomPadding,
+                _labelWidth,
+                _labelHeight
+            );
             GUI.Label(healthLabelBounds, "Health: {0:0}".Fmt(_player.Health));
 
-            var killLabelBounds = new Rect(healthLabelBounds.xMin, healthLabelBounds.yMin - _killCountOffset, _labelWidth, _labelHeight);
+            var killLabelBounds = new Rect(
+                healthLabelBounds.xMin,
+                healthLabelBounds.yMin - _killCountOffset,
+                _labelWidth,
+                _labelHeight
+            );
             GUI.Label(killLabelBounds, "Kill Count: {0}".Fmt(_killCount));
 
-            var boundsBackground = new Rect(healthLabelBounds.xMax, healthLabelBounds.yMin, _textureWidth, _textureHeight);
+            var boundsBackground = new Rect(
+                healthLabelBounds.xMax,
+                healthLabelBounds.yMin,
+                _textureWidth,
+                _textureHeight
+            );
             GUI.DrawTexture(boundsBackground, _textureBackground);
 
-            var boundsForeground = new Rect(boundsBackground.xMin, boundsBackground.yMin, (_player.Health / 100.0f) * _textureWidth, _textureHeight);
+            var boundsForeground = new Rect(
+                boundsBackground.xMin,
+                boundsBackground.yMin,
+                (_player.Health / 100.0f) * _textureWidth,
+                _textureHeight
+            );
             GUI.DrawTexture(boundsForeground, _textureForeground);
         }
     }

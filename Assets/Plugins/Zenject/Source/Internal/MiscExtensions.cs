@@ -74,7 +74,10 @@ namespace ModestTree
             Assert.That(removed);
         }
 
-        public static void RemoveWithConfirm<TKey, TVal>(this IDictionary<TKey, TVal> dictionary, TKey key)
+        public static void RemoveWithConfirm<TKey, TVal>(
+            this IDictionary<TKey, TVal> dictionary,
+            TKey key
+        )
         {
             bool removed = dictionary.Remove(key);
             Assert.That(removed);
@@ -86,7 +89,10 @@ namespace ModestTree
             Assert.That(removed);
         }
 
-        public static TVal GetValueAndRemove<TKey, TVal>(this IDictionary<TKey, TVal> dictionary, TKey key)
+        public static TVal GetValueAndRemove<TKey, TVal>(
+            this IDictionary<TKey, TVal> dictionary,
+            TKey key
+        )
         {
             TVal val = dictionary[key];
             dictionary.RemoveWithConfirm(key);

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 using UnityEditor;
+using UnityEngine;
 
 namespace FMODUnity
 {
@@ -44,13 +44,13 @@ namespace FMODUnity
             public string guid;
         }
 
-        public CreateEventPopup()
-        {
-        }
+        public CreateEventPopup() { }
 
         private void BuildTree()
         {
-            var rootGuid = EditorUtils.GetScriptOutput("studio.project.workspace.masterEventFolder.id");
+            var rootGuid = EditorUtils.GetScriptOutput(
+                "studio.project.workspace.masterEventFolder.id"
+            );
             rootFolder = new FolderEntry();
             rootFolder.guid = rootGuid;
             BuildTreeItem(rootFolder);
@@ -74,8 +74,13 @@ namespace FMODUnity
                     return output;
                 }";
 
-            string bankList = EditorUtils.GetScriptOutput(string.Format("({0})()", buildBankTreeFunc));
-            string[] bankListSplit = bankList.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            string bankList = EditorUtils.GetScriptOutput(
+                string.Format("({0})()", buildBankTreeFunc)
+            );
+            string[] bankListSplit = bankList.Split(
+                new char[] { ',' },
+                StringSplitOptions.RemoveEmptyEntries
+            );
             foreach (var bank in bankListSplit)
             {
                 var entry = new BankEntry();
@@ -88,7 +93,9 @@ namespace FMODUnity
         private void BuildTreeItem(FolderEntry entry)
         {
             // lookup the entry
-            EditorUtils.GetScriptOutput(string.Format("cur = studio.project.lookup(\"{0}\");", entry.guid));
+            EditorUtils.GetScriptOutput(
+                string.Format("cur = studio.project.lookup(\"{0}\");", entry.guid)
+            );
 
             // get child count
             string itemCountString = EditorUtils.GetScriptOutput("cur.items.length;");
@@ -101,7 +108,9 @@ namespace FMODUnity
                 EditorUtils.GetScriptOutput(String.Format("child = cur.items[{0}]", item));
 
                 // check if it's a folder
-                string isFolder = EditorUtils.GetScriptOutput("child.isOfExactType(\"EventFolder\")");
+                string isFolder = EditorUtils.GetScriptOutput(
+                    "child.isOfExactType(\"EventFolder\")"
+                );
                 if (isFolder == "false")
                 {
                     continue;
@@ -118,7 +127,7 @@ namespace FMODUnity
             }
 
             // Recurse for child entries
-            foreach(var childEntry in entry.entries)
+            foreach (var childEntry in entry.entries)
             {
                 BuildTreeItem(childEntry);
             }
@@ -129,7 +138,11 @@ namespace FMODUnity
             var borderIcon = EditorUtils.LoadImage("Border.png");
             var border = new GUIStyle(GUI.skin.box);
             border.normal.background = borderIcon;
-            GUI.Box(new Rect(1, 1, position.width - 1, position.height - 1), GUIContent.none, border);
+            GUI.Box(
+                new Rect(1, 1, position.width - 1, position.height - 1),
+                GUIContent.none,
+                border
+            );
 
             if (Event.current.type == EventType.Layout)
             {
@@ -155,7 +168,9 @@ namespace FMODUnity
 
             var nextEntry = currentFolder;
 
-            var filteredEntries = currentFolder.entries.FindAll((x) => x.name.StartsWith(currentFilter, StringComparison.CurrentCultureIgnoreCase));
+            var filteredEntries = currentFolder.entries.FindAll(
+                (x) => x.name.StartsWith(currentFilter, StringComparison.CurrentCultureIgnoreCase)
+            );
 
             // Process key strokes for the folder list
             {
@@ -176,9 +191,16 @@ namespace FMODUnity
                     if (Event.current.type == EventType.KeyDown)
                     {
                         lastHover = Math.Min(lastHover + 1, filteredEntries.Count - 1);
-                        if (filteredEntries[lastHover].rect.y + filteredEntries[lastHover].rect.height > scrollPos.y + scrollRect.height)
+                        if (
+                            filteredEntries[lastHover].rect.y
+                                + filteredEntries[lastHover].rect.height
+                            > scrollPos.y + scrollRect.height
+                        )
                         {
-                            scrollPos.y = filteredEntries[lastHover].rect.y - scrollRect.height + filteredEntries[lastHover].rect.height * 2;
+                            scrollPos.y =
+                                filteredEntries[lastHover].rect.y
+                                - scrollRect.height
+                                + filteredEntries[lastHover].rect.height * 2;
                         }
                     }
                     Event.current.Use();
@@ -218,7 +240,10 @@ namespace FMODUnity
 
             {
                 EditorGUILayout.LabelField("Bank");
-                selectedBank = EditorGUILayout.Popup(selectedBank, banks.Select(x => x.name).ToArray());
+                selectedBank = EditorGUILayout.Popup(
+                    selectedBank,
+                    banks.Select(x => x.name).ToArray()
+                );
             }
 
             bool updateEventPath = false;
@@ -237,7 +262,8 @@ namespace FMODUnity
             {
                 resetCursor = false;
 
-                var textEditor = (TextEditor)GUIUtility.GetStateObject(typeof(TextEditor), GUIUtility.keyboardControl);
+                var textEditor = (TextEditor)
+                    GUIUtility.GetStateObject(typeof(TextEditor), GUIUtility.keyboardControl);
                 if (textEditor != null)
                 {
                     textEditor.MoveCursorToPosition(new Vector2(9999, 9999));
@@ -251,7 +277,7 @@ namespace FMODUnity
                 var bg = new GUIStyle(GUI.skin.box);
                 Rect bgRect = new Rect(currentRect);
                 bgRect.x = 2;
-                bgRect.width = position.width-4;
+                bgRect.width = position.width - 4;
                 GUI.Box(bgRect, GUIContent.none, bg);
 
                 Rect textureRect = currentRect;
@@ -264,10 +290,17 @@ namespace FMODUnity
                 Rect labelRect = currentRect;
                 labelRect.x += arrowIcon.width;
                 labelRect.width -= arrowIcon.width;
-                GUI.Label(labelRect, currentFolder.name != null ? currentFolder.name : "Folders", EditorStyles.boldLabel);
+                GUI.Label(
+                    labelRect,
+                    currentFolder.name != null ? currentFolder.name : "Folders",
+                    EditorStyles.boldLabel
+                );
 
-                if (Event.current.type == EventType.MouseDown && currentRect.Contains(Event.current.mousePosition) &&
-                    currentFolder.parent != null)
+                if (
+                    Event.current.type == EventType.MouseDown
+                    && currentRect.Contains(Event.current.mousePosition)
+                    && currentFolder.parent != null
+                )
                 {
                     nextEntry = currentFolder.parent;
                     Event.current.Use();
@@ -286,12 +319,21 @@ namespace FMODUnity
                 var entry = filteredEntries[i];
                 var content = new GUIContent(entry.name);
                 var rect = EditorGUILayout.GetControlRect();
-                if ((rect.Contains(Event.current.mousePosition) && Event.current.type == EventType.MouseMove) || i == lastHover)
+                if (
+                    (
+                        rect.Contains(Event.current.mousePosition)
+                        && Event.current.type == EventType.MouseMove
+                    )
+                    || i == lastHover
+                )
                 {
                     lastHover = i;
 
                     GUI.Label(rect, content, hover);
-                    if (rect.Contains(Event.current.mousePosition) && Event.current.type == EventType.MouseDown)
+                    if (
+                        rect.Contains(Event.current.mousePosition)
+                        && Event.current.type == EventType.MouseDown
+                    )
                     {
                         nextEntry = entry;
                     }
@@ -343,7 +385,13 @@ namespace FMODUnity
 
             if (!string.IsNullOrEmpty(eventGuid))
             {
-                EditorUtils.GetScriptOutput(String.Format("studio.project.lookup(\"{0}\").relationships.banks.add(studio.project.lookup(\"{1}\"));", eventGuid, banks[selectedBank].guid));
+                EditorUtils.GetScriptOutput(
+                    String.Format(
+                        "studio.project.lookup(\"{0}\").relationships.banks.add(studio.project.lookup(\"{1}\"));",
+                        eventGuid,
+                        banks[selectedBank].guid
+                    )
+                );
                 EditorUtils.GetScriptOutput("studio.project.build();");
 
                 if (!eventFolder.EndsWith("/"))
@@ -363,12 +411,17 @@ namespace FMODUnity
             int endFolders = eventFolder.LastIndexOf("/");
             currentFilter = eventFolder.Substring(endFolders + 1);
 
-            var folders = eventFolder.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+            var folders = eventFolder.Split(
+                new char[] { '/' },
+                StringSplitOptions.RemoveEmptyEntries
+            );
             FolderEntry entry = rootFolder;
             int i;
             for (i = 0; i < folders.Length; i++)
             {
-                var newEntry = entry.entries.Find((x) => x.name.Equals(folders[i], StringComparison.CurrentCultureIgnoreCase));
+                var newEntry = entry.entries.Find(
+                    (x) => x.name.Equals(folders[i], StringComparison.CurrentCultureIgnoreCase)
+                );
                 if (newEntry == null)
                 {
                     break;
@@ -378,7 +431,10 @@ namespace FMODUnity
             currentFolder = entry;
 
             // Treat an exact filter match as being in that folder and clear the filter
-            if (entry.name != null && entry.name.Equals(currentFilter, StringComparison.CurrentCultureIgnoreCase))
+            if (
+                entry.name != null
+                && entry.name.Equals(currentFilter, StringComparison.CurrentCultureIgnoreCase)
+            )
             {
                 currentFilter = "";
             }

@@ -11,13 +11,14 @@ namespace LDtkUnity
     {
         internal const string PROPERTY_IID = nameof(_iid);
 
-        [SerializeField] private string _iid;
+        [SerializeField]
+        private string _iid;
 
         /// <value>
         /// The unique identifier of this GameObject.
         /// </value>
         public string Iid => _iid;
-        
+
         private void OnEnable()
         {
             LDtkIidComponentBank.Add(this);
@@ -27,7 +28,7 @@ namespace LDtkUnity
         {
             LDtkIidComponentBank.Remove(this);
         }
-        
+
         internal void SetIid(ILDtkIid iid)
         {
             _iid = iid.Iid;

@@ -14,11 +14,11 @@ namespace Cysharp.Threading.Tasks.Linq
     {
         public static readonly IUniTaskAsyncEnumerable<T> Instance = new Never<T>();
 
-        Never()
-        {
-        }
+        Never() { }
 
-        public IUniTaskAsyncEnumerator<T> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+        public IUniTaskAsyncEnumerator<T> GetAsyncEnumerator(
+            CancellationToken cancellationToken = default
+        )
         {
             return new _Never(cancellationToken);
         }
@@ -38,11 +38,14 @@ namespace Cysharp.Threading.Tasks.Linq
             {
                 var tcs = new UniTaskCompletionSource<bool>();
 
-                cancellationToken.Register(state =>
-                {
-                    var task = (UniTaskCompletionSource<bool>)state;
-                    task.TrySetCanceled(cancellationToken);
-                }, tcs);
+                cancellationToken.Register(
+                    state =>
+                    {
+                        var task = (UniTaskCompletionSource<bool>)state;
+                        task.TrySetCanceled(cancellationToken);
+                    },
+                    tcs
+                );
 
                 return tcs.Task;
             }

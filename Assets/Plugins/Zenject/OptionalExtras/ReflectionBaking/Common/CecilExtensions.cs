@@ -24,8 +24,14 @@ namespace Zenject.ReflectionBaking
                 var genericInstance = (GenericInstanceType)type;
 
                 return string.Format(
-                    "{0}.{1}[{2}]", genericInstance.Namespace, type.Name,
-                    String.Join(",", genericInstance.GenericArguments.Select(p => GetReflectionName(p)).ToArray()));
+                    "{0}.{1}[{2}]",
+                    genericInstance.Namespace,
+                    type.Name,
+                    String.Join(
+                        ",",
+                        genericInstance.GenericArguments.Select(p => GetReflectionName(p)).ToArray()
+                    )
+                );
             }
 
             return type.FullName;
@@ -63,29 +69,40 @@ namespace Zenject.ReflectionBaking
             return module.Import(type);
         }
 
-        public static MethodReference ImportMethod<T>(this ModuleDefinition module, string methodName)
+        public static MethodReference ImportMethod<T>(
+            this ModuleDefinition module,
+            string methodName
+        )
         {
             return module.ImportMethod(typeof(T), methodName);
         }
 
         public static MethodReference ImportMethod(
-            this ModuleDefinition module, Type type, string methodName)
+            this ModuleDefinition module,
+            Type type,
+            string methodName
+        )
         {
-            return module.Import(
-                module.ImportType(type).Resolve().GetMethod(methodName));
+            return module.Import(module.ImportType(type).Resolve().GetMethod(methodName));
         }
 
         public static MethodReference ImportMethod<T>(
-            this ModuleDefinition module, string methodName, int numArgs)
+            this ModuleDefinition module,
+            string methodName,
+            int numArgs
+        )
         {
             return module.ImportMethod(typeof(T), methodName, numArgs);
         }
 
         public static MethodReference ImportMethod(
-            this ModuleDefinition module, Type type, string methodName, int numArgs)
+            this ModuleDefinition module,
+            Type type,
+            string methodName,
+            int numArgs
+        )
         {
-            return module.Import(
-                module.ImportType(type).Resolve().GetMethod(methodName, numArgs));
+            return module.Import(module.ImportType(type).Resolve().GetMethod(methodName, numArgs));
         }
 
         public static MethodDefinition GetMethod(this TypeDefinition instance, string name)
@@ -102,14 +119,20 @@ namespace Zenject.ReflectionBaking
             return null;
         }
 
-        public static MethodDefinition GetMethod(this TypeDefinition instance, string name, params Type[] parameterTypes)
+        public static MethodDefinition GetMethod(
+            this TypeDefinition instance,
+            string name,
+            params Type[] parameterTypes
+        )
         {
             for (int i = 0; i < instance.Methods.Count; i++)
             {
                 MethodDefinition methodDefinition = instance.Methods[i];
 
-                if (!string.Equals(methodDefinition.Name, name, StringComparison.Ordinal) ||
-                    parameterTypes.Length != methodDefinition.Parameters.Count)
+                if (
+                    !string.Equals(methodDefinition.Name, name, StringComparison.Ordinal)
+                    || parameterTypes.Length != methodDefinition.Parameters.Count
+                )
                 {
                     continue;
                 }
@@ -118,7 +141,13 @@ namespace Zenject.ReflectionBaking
                 for (int x = methodDefinition.Parameters.Count - 1; x >= 0; x--)
                 {
                     ParameterDefinition parameter = methodDefinition.Parameters[x];
-                    if (!string.Equals(parameter.ParameterType.Name, parameterTypes[x].Name, StringComparison.Ordinal))
+                    if (
+                        !string.Equals(
+                            parameter.ParameterType.Name,
+                            parameterTypes[x].Name,
+                            StringComparison.Ordinal
+                        )
+                    )
                     {
                         break;
                     }
@@ -132,21 +161,33 @@ namespace Zenject.ReflectionBaking
             return null;
         }
 
-        public static MethodDefinition GetMethod(this TypeDefinition instance, string name, params TypeReference[] parameterTypes)
+        public static MethodDefinition GetMethod(
+            this TypeDefinition instance,
+            string name,
+            params TypeReference[] parameterTypes
+        )
         {
             if (instance.Methods != null)
             {
                 for (int i = 0; i < instance.Methods.Count; i++)
                 {
                     MethodDefinition methodDefinition = instance.Methods[i];
-                    if (string.Equals(methodDefinition.Name, name, StringComparison.Ordinal) // Names Match
-                        && parameterTypes.Length == methodDefinition.Parameters.Count) // The same number of parameters
+                    if (
+                        string.Equals(methodDefinition.Name, name, StringComparison.Ordinal) // Names Match
+                        && parameterTypes.Length == methodDefinition.Parameters.Count
+                    ) // The same number of parameters
                     {
                         MethodDefinition result = methodDefinition;
                         for (int x = methodDefinition.Parameters.Count - 1; x >= 0; x--)
                         {
                             ParameterDefinition parameter = methodDefinition.Parameters[x];
-                            if (!string.Equals(parameter.ParameterType.Name, parameterTypes[x].Name, StringComparison.Ordinal))
+                            if (
+                                !string.Equals(
+                                    parameter.ParameterType.Name,
+                                    parameterTypes[x].Name,
+                                    StringComparison.Ordinal
+                                )
+                            )
                             {
                                 break;
                             }
@@ -162,13 +203,20 @@ namespace Zenject.ReflectionBaking
             return null;
         }
 
-        public static MethodDefinition GetMethod(this TypeDefinition instance, string name, int argCount)
+        public static MethodDefinition GetMethod(
+            this TypeDefinition instance,
+            string name,
+            int argCount
+        )
         {
             for (int i = 0; i < instance.Methods.Count; i++)
             {
                 MethodDefinition methodDef = instance.Methods[i];
 
-                if (string.CompareOrdinal(methodDef.Name, name) == 0 && methodDef.Parameters.Count == argCount)
+                if (
+                    string.CompareOrdinal(methodDef.Name, name) == 0
+                    && methodDef.Parameters.Count == argCount
+                )
                 {
                     return methodDef;
                 }
@@ -176,14 +224,20 @@ namespace Zenject.ReflectionBaking
             return null;
         }
 
-        public static PropertyDefinition GetPropertyDefinition(this TypeDefinition instance, string name)
+        public static PropertyDefinition GetPropertyDefinition(
+            this TypeDefinition instance,
+            string name
+        )
         {
             for (int i = 0; i < instance.Properties.Count; i++)
             {
                 PropertyDefinition preopertyDef = instance.Properties[i];
 
                 // Properties can only have one argument or they are an indexer.
-                if (string.CompareOrdinal(preopertyDef.Name, name) == 0 && preopertyDef.Parameters.Count == 0)
+                if (
+                    string.CompareOrdinal(preopertyDef.Name, name) == 0
+                    && preopertyDef.Parameters.Count == 0
+                )
                 {
                     return preopertyDef;
                 }
@@ -200,9 +254,12 @@ namespace Zenject.ReflectionBaking
 
             Collection<CustomAttribute> attributes = instance.CustomAttributes;
 
-            for(int i = 0;  i < attributes.Count; i++)
+            for (int i = 0; i < attributes.Count; i++)
             {
-                if (attributes[i].AttributeType.FullName.Equals(typeof(T).FullName, StringComparison.Ordinal))
+                if (
+                    attributes[i]
+                        .AttributeType.FullName.Equals(typeof(T).FullName, StringComparison.Ordinal)
+                )
                 {
                     return true;
                 }
@@ -212,10 +269,11 @@ namespace Zenject.ReflectionBaking
         }
 
         public static MethodReference ChangeDeclaringType(
-            this MethodReference methodDef, TypeReference typeRef)
+            this MethodReference methodDef,
+            TypeReference typeRef
+        )
         {
-            var newMethodRef = new MethodReference(
-                methodDef.Name, methodDef.ReturnType, typeRef);
+            var newMethodRef = new MethodReference(methodDef.Name, methodDef.ReturnType, typeRef);
 
             newMethodRef.HasThis = methodDef.HasThis;
 
@@ -230,10 +288,11 @@ namespace Zenject.ReflectionBaking
         }
 
         public static FieldReference ChangeDeclaringType(
-            this FieldReference fieldDef, TypeReference typeRef)
+            this FieldReference fieldDef,
+            TypeReference typeRef
+        )
         {
-            return new FieldReference(
-                fieldDef.Name, fieldDef.FieldType, typeRef);
+            return new FieldReference(fieldDef.Name, fieldDef.FieldType, typeRef);
         }
 
         public static CustomAttribute GetCustomAttribute<T>(this ICustomAttributeProvider instance)
@@ -247,7 +306,10 @@ namespace Zenject.ReflectionBaking
 
             for (int i = 0; i < attributes.Count; i++)
             {
-                if (attributes[i].AttributeType.FullName.Equals(typeof(T).FullName, StringComparison.Ordinal))
+                if (
+                    attributes[i]
+                        .AttributeType.FullName.Equals(typeof(T).FullName, StringComparison.Ordinal)
+                )
                 {
                     return attributes[i];
                 }
@@ -256,7 +318,8 @@ namespace Zenject.ReflectionBaking
         }
 
         public static IEnumerable<TypeReference> GetSpecificBaseTypesAndSelf(
-            this TypeReference specificTypeRef)
+            this TypeReference specificTypeRef
+        )
         {
             yield return specificTypeRef;
 
@@ -267,7 +330,8 @@ namespace Zenject.ReflectionBaking
         }
 
         public static IEnumerable<TypeReference> GetSpecificBaseTypes(
-            this TypeReference specificTypeRef)
+            this TypeReference specificTypeRef
+        )
         {
             var specificBaseTypeRef = specificTypeRef.TryGetSpecificBaseType();
 
@@ -282,7 +346,9 @@ namespace Zenject.ReflectionBaking
             }
         }
 
-        public static IEnumerable<TypeReference> AllNestParentsAndSelf(this TypeReference specificTypeRef)
+        public static IEnumerable<TypeReference> AllNestParentsAndSelf(
+            this TypeReference specificTypeRef
+        )
         {
             yield return specificTypeRef;
 
@@ -321,8 +387,7 @@ namespace Zenject.ReflectionBaking
         {
             var typeDef = specificTypeRef.Resolve();
 
-            if (typeDef.BaseType == null
-                || typeDef.BaseType.FullName == "System.Object")
+            if (typeDef.BaseType == null || typeDef.BaseType.FullName == "System.Object")
             {
                 return null;
             }
@@ -341,7 +406,8 @@ namespace Zenject.ReflectionBaking
                     {
                         for (int i = 0; i < typeDef.GenericParameters.Count; i++)
                         {
-                            genericArgMap[typeDef.GenericParameters[i].Name] = specificTypeRefGenericInstance.GenericArguments[i];
+                            genericArgMap[typeDef.GenericParameters[i].Name] =
+                                specificTypeRefGenericInstance.GenericArguments[i];
                         }
                     }
                 }
@@ -353,7 +419,9 @@ namespace Zenject.ReflectionBaking
         }
 
         public static TypeReference FillInGenericParameters(
-            TypeReference type, Dictionary<string, TypeReference> genericArgMap)
+            TypeReference type,
+            Dictionary<string, TypeReference> genericArgMap
+        )
         {
             var genericType = type as GenericInstanceType;
             Assert.IsNotNull(genericType);
@@ -366,7 +434,12 @@ namespace Zenject.ReflectionBaking
 
                 if (arg.IsGenericParameter)
                 {
-                    Assert.That(genericArgMap.ContainsKey(arg.Name), "Could not find key '{0}' for type '{1}'", arg.Name, type.FullName);
+                    Assert.That(
+                        genericArgMap.ContainsKey(arg.Name),
+                        "Could not find key '{0}' for type '{1}'",
+                        arg.Name,
+                        type.FullName
+                    );
 
                     genericTypeClone.GenericArguments.Add(genericArgMap[arg.Name]);
                 }

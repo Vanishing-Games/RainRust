@@ -12,14 +12,12 @@ namespace LDtkUnity.Editor
         {
             Shader shader = Shader.Find("Hidden/Internal-Colored");
             _mat = new Material(shader);
-
         }
-        
+
         public void Dispose()
         {
             Object.DestroyImmediate(_mat);
         }
-        
 
         public void DrawInInspector(Rect rect, Action glDrawAction)
         {
@@ -27,7 +25,7 @@ namespace LDtkUnity.Editor
             {
                 return;
             }
-            
+
             using (new GLClipScope(rect))
             {
                 using (new GLMatrixScope())

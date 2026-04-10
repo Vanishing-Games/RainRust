@@ -9,7 +9,8 @@ namespace UnityHFSM.Samples.Sample3d
 
         // Important: The constructor must call StateBase's constructor (here: base(...))
         // because it declares whether the state needsExitTime
-        public CustomSendData(MonoBehaviour mono) : base(needsExitTime: false)
+        public CustomSendData(MonoBehaviour mono)
+            : base(needsExitTime: false)
         {
             // We need to have access to the MonoBehaviour so that we can rotate it.
             // => Keep a reference

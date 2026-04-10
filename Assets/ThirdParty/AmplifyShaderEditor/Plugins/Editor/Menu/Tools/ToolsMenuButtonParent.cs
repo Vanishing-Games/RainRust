@@ -5,71 +5,77 @@ using UnityEngine;
 
 namespace AmplifyShaderEditor
 {
-	public class ToolsMenuButtonParent
-	{
-		protected AmplifyShaderEditorWindow m_parentWindow = null;
-		private float m_buttonSpacing = 10;
-		private int m_currentState = 0;
-		private bool m_isInitialized = false;
-		protected GUIContent m_content;
-		public ToolsMenuButtonParent( AmplifyShaderEditorWindow parentWindow, string text, string tooltip, float buttonSpacing )
-		{
-			m_parentWindow = parentWindow;
-			m_content = new GUIContent( text, tooltip );
+    public class ToolsMenuButtonParent
+    {
+        protected AmplifyShaderEditorWindow m_parentWindow = null;
+        private float m_buttonSpacing = 10;
+        private int m_currentState = 0;
+        private bool m_isInitialized = false;
+        protected GUIContent m_content;
 
-			if ( buttonSpacing > 0 )
-				m_buttonSpacing = buttonSpacing;
-		}
+        public ToolsMenuButtonParent(
+            AmplifyShaderEditorWindow parentWindow,
+            string text,
+            string tooltip,
+            float buttonSpacing
+        )
+        {
+            m_parentWindow = parentWindow;
+            m_content = new GUIContent(text, tooltip);
 
-		public virtual void Draw()
-		{
-			if ( !m_isInitialized )
-			{
-				Init();
-			}
+            if (buttonSpacing > 0)
+                m_buttonSpacing = buttonSpacing;
+        }
 
-			//GUILayout.Space( m_buttonSpacing );
-		}
+        public virtual void Draw()
+        {
+            if (!m_isInitialized)
+            {
+                Init();
+            }
 
-		public virtual void Draw( Vector2 pos )
-		{
-			Draw( pos.x, pos.y );
-		}
+            //GUILayout.Space( m_buttonSpacing );
+        }
 
-		public virtual void Draw( float x ,float y )
-		{
-			if ( !m_isInitialized )
-			{
-				Init();
-			}
-		}
-		
-		protected virtual void Init()
-		{
-			m_isInitialized = false;
-		}
+        public virtual void Draw(Vector2 pos)
+        {
+            Draw(pos.x, pos.y);
+        }
 
-		public virtual void SetStateOnButton( int state, string tooltip )
-		{
-			m_currentState = state;
-			m_content.tooltip = tooltip;
-		}
+        public virtual void Draw(float x, float y)
+        {
+            if (!m_isInitialized)
+            {
+                Init();
+            }
+        }
 
-		public virtual void SetStateOnButton( int state )
-		{
-			m_currentState = state;
-		}
+        protected virtual void Init()
+        {
+            m_isInitialized = false;
+        }
 
-		public virtual void Destroy() { }
+        public virtual void SetStateOnButton(int state, string tooltip)
+        {
+            m_currentState = state;
+            m_content.tooltip = tooltip;
+        }
 
-		public float ButtonSpacing
-		{
-			get { return m_buttonSpacing; }
-		}
+        public virtual void SetStateOnButton(int state)
+        {
+            m_currentState = state;
+        }
 
-		public int CurrentState
-		{
-			get { return m_currentState; }
-		}
-	}
+        public virtual void Destroy() { }
+
+        public float ButtonSpacing
+        {
+            get { return m_buttonSpacing; }
+        }
+
+        public int CurrentState
+        {
+            get { return m_currentState; }
+        }
+    }
 }

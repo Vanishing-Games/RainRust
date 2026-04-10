@@ -39,7 +39,8 @@ namespace Cysharp.Threading.Tasks.Internal
                     if (waitingList.Length == waitingListCount)
                     {
                         var newLength = waitingListCount * 2;
-                        if ((uint)newLength > MaxArrayLength) newLength = MaxArrayLength;
+                        if ((uint)newLength > MaxArrayLength)
+                            newLength = MaxArrayLength;
 
                         var newArray = new Action[newLength];
                         Array.Copy(waitingList, newArray, waitingListCount);
@@ -54,7 +55,8 @@ namespace Cysharp.Threading.Tasks.Internal
                     if (actionList.Length == actionListCount)
                     {
                         var newLength = actionListCount * 2;
-                        if ((uint)newLength > MaxArrayLength) newLength = MaxArrayLength;
+                        if ((uint)newLength > MaxArrayLength)
+                            newLength = MaxArrayLength;
 
                         var newArray = new Action[newLength];
                         Array.Copy(actionList, newArray, actionListCount);
@@ -66,7 +68,8 @@ namespace Cysharp.Threading.Tasks.Internal
             }
             finally
             {
-                if (lockTaken) gate.Exit(false);
+                if (lockTaken)
+                    gate.Exit(false);
             }
         }
 
@@ -149,21 +152,36 @@ namespace Cysharp.Threading.Tasks.Internal
         }
 
         void Initialization() => RunCore();
+
         void LastInitialization() => RunCore();
+
         void EarlyUpdate() => RunCore();
+
         void LastEarlyUpdate() => RunCore();
+
         void FixedUpdate() => RunCore();
+
         void LastFixedUpdate() => RunCore();
+
         void PreUpdate() => RunCore();
+
         void LastPreUpdate() => RunCore();
+
         void Update() => RunCore();
+
         void LastUpdate() => RunCore();
+
         void PreLateUpdate() => RunCore();
+
         void LastPreLateUpdate() => RunCore();
+
         void PostLateUpdate() => RunCore();
+
         void LastPostLateUpdate() => RunCore();
+
 #if UNITY_2020_2_OR_NEWER
         void TimeUpdate() => RunCore();
+
         void LastTimeUpdate() => RunCore();
 #endif
 
@@ -175,18 +193,19 @@ namespace Cysharp.Threading.Tasks.Internal
                 try
                 {
                     gate.Enter(ref lockTaken);
-                    if (actionListCount == 0) return;
+                    if (actionListCount == 0)
+                        return;
                     dequing = true;
                 }
                 finally
                 {
-                    if (lockTaken) gate.Exit(false);
+                    if (lockTaken)
+                        gate.Exit(false);
                 }
             }
 
             for (int i = 0; i < actionListCount; i++)
             {
-
                 var action = actionList[i];
                 actionList[i] = null;
                 try
@@ -216,10 +235,10 @@ namespace Cysharp.Threading.Tasks.Internal
                 }
                 finally
                 {
-                    if (lockTaken) gate.Exit(false);
+                    if (lockTaken)
+                        gate.Exit(false);
                 }
             }
         }
     }
 }
-

@@ -30,9 +30,12 @@ namespace Cysharp.Threading.Tasks.Triggers
 
         public UniTask StartAsync()
         {
-            if (called) return UniTask.CompletedTask;
+            if (called)
+                return UniTask.CompletedTask;
 
-            return ((IAsyncOneShotTrigger)new AsyncTriggerHandler<AsyncUnit>(this, true)).OneShotAsync();
+            return (
+                (IAsyncOneShotTrigger)new AsyncTriggerHandler<AsyncUnit>(this, true)
+            ).OneShotAsync();
         }
     }
 }

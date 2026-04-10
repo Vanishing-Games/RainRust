@@ -35,7 +35,11 @@ namespace FMODUnity
             Settings.AddPlatformTemplate<PlatformAppleTV>("e7a046c753c3c3d4aacc91f6597f310d");
         }
 
-        internal override string DisplayName { get { return "Apple TV"; } }
+        internal override string DisplayName
+        {
+            get { return "Apple TV"; }
+        }
+
         internal override void DeclareRuntimePlatforms(Settings settings)
         {
             settings.DeclareRuntimePlatform(RuntimePlatform.tvOS, this);
@@ -47,14 +51,21 @@ namespace FMODUnity
             yield return BuildTarget.tvOS;
         }
 
-        internal override Legacy.Platform LegacyIdentifier { get { return Legacy.Platform.AppleTV; } }
+        internal override Legacy.Platform LegacyIdentifier
+        {
+            get { return Legacy.Platform.AppleTV; }
+        }
 
         protected override BinaryAssetFolderInfo GetBinaryAssetFolder(BuildTarget buildTarget)
         {
             return new BinaryAssetFolderInfo("tvos", "Plugins/tvOS");
         }
 
-        protected override IEnumerable<FileRecord> GetBinaryFiles(BuildTarget buildTarget, bool allVariants, string suffix)
+        protected override IEnumerable<FileRecord> GetBinaryFiles(
+            BuildTarget buildTarget,
+            bool allVariants,
+            string suffix
+        )
         {
             if (allVariants || PlayerSettings.tvOS.sdkVersion == tvOSSdkVersion.Device)
             {
@@ -63,7 +74,9 @@ namespace FMODUnity
 
             if (allVariants || PlayerSettings.tvOS.sdkVersion == tvOSSdkVersion.Simulator)
             {
-                yield return new FileRecord(string.Format("libfmodstudiounitypluginsimulator{0}.a", suffix));
+                yield return new FileRecord(
+                    string.Format("libfmodstudiounitypluginsimulator{0}.a", suffix)
+                );
             }
         }
 
@@ -74,7 +87,10 @@ namespace FMODUnity
 #endif
 
 #if !UNITY_EDITOR
-        internal override void LoadPlugins(FMOD.System coreSystem, Action<FMOD.RESULT, string> reportResult)
+        internal override void LoadPlugins(
+            FMOD.System coreSystem,
+            Action<FMOD.RESULT, string> reportResult
+        )
         {
             PlatformIOS.StaticLoadPlugins(this, coreSystem, reportResult);
         }
@@ -83,14 +99,12 @@ namespace FMODUnity
 #if UNITY_EDITOR
         internal override OutputType[] ValidOutputTypes
         {
-            get
-            {
-                return sValidOutputTypes;
-            }
+            get { return sValidOutputTypes; }
         }
 
-        private static OutputType[] sValidOutputTypes = {
-           new OutputType() { displayName = "Core Audio", outputType = FMOD.OUTPUTTYPE.COREAUDIO },
+        private static OutputType[] sValidOutputTypes =
+        {
+            new OutputType() { displayName = "Core Audio", outputType = FMOD.OUTPUTTYPE.COREAUDIO },
         };
 #endif
     }

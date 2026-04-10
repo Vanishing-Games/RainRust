@@ -24,8 +24,7 @@ namespace Zenject
             get { return _signalId; }
         }
 
-        public void OnSpawned(
-            Action<object> callback, SignalDeclaration declaration)
+        public void OnSpawned(Action<object> callback, SignalDeclaration declaration)
         {
             Assert.IsNull(_callback);
             _callback = callback;
@@ -75,8 +74,7 @@ namespace Zenject
             _callback(signal);
         }
 
-        public class Pool : PoolableMemoryPool<Action<object>, SignalDeclaration, SignalSubscription>
-        {
-        }
+        public class Pool
+            : PoolableMemoryPool<Action<object>, SignalDeclaration, SignalSubscription> { }
     }
 }

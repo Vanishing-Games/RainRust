@@ -7,301 +7,365 @@ using UnityEngine;
 
 namespace AmplifyShaderEditor
 {
-	[Serializable]
-	[NodeAttributes( "Toggle Switch", "Logical Operators", "Switch between any of its input ports" )]
-	public class ToggleSwitchNode : PropertyNode
-	{
-		private const string InputPortName = "In ";
-		private const string CurrSelectedStr = "Toggle Value";
-		private const string GenerateKeywordStr = "Generate Keyword"; 
-		//private const string LerpOp = "lerp({0},{1},{2})";
-		private const string LerpOp = "(( {2} )?( {1} ):( {0} ))";
+    [Serializable]
+    [NodeAttributes("Toggle Switch", "Logical Operators", "Switch between any of its input ports")]
+    public class ToggleSwitchNode : PropertyNode
+    {
+        private const string InputPortName = "In ";
+        private const string CurrSelectedStr = "Toggle Value";
+        private const string GenerateKeywordStr = "Generate Keyword";
 
-		[SerializeField]
-		private string[] AvailableInputsLabels = { "In 0", "In 1" };
+        //private const string LerpOp = "lerp({0},{1},{2})";
+        private const string LerpOp = "(( {2} )?( {1} ):( {0} ))";
 
-		[SerializeField]
-		private int[] AvailableInputsValues = { 0, 1 };
+        [SerializeField]
+        private string[] AvailableInputsLabels = { "In 0", "In 1" };
 
-		[SerializeField]
-		private int m_currentSelectedInput = 0;
+        [SerializeField]
+        private int[] AvailableInputsValues = { 0, 1 };
 
-		[SerializeField]
-		private WirePortDataType m_mainDataType = WirePortDataType.FLOAT;
+        [SerializeField]
+        private int m_currentSelectedInput = 0;
 
-		[SerializeField]
-		private bool m_generateKeyword = true;
+        [SerializeField]
+        private WirePortDataType m_mainDataType = WirePortDataType.FLOAT;
 
-		private int m_cachedPropertyId = -1;
+        [SerializeField]
+        private bool m_generateKeyword = true;
 
-		private GUIContent m_popContent;
+        private int m_cachedPropertyId = -1;
 
-		private Rect m_varRect;
-		private Rect m_imgRect;
-		private bool m_editing;
+        private GUIContent m_popContent;
 
-		protected override void CommonInit( int uniqueId )
-		{
-			base.CommonInit( uniqueId );
-			AddInputPort( m_mainDataType, false, InputPortName + "0" );
-			AddInputPort( m_mainDataType, false, InputPortName + "1" );
+        private Rect m_varRect;
+        private Rect m_imgRect;
+        private bool m_editing;
 
-			AddOutputPort( m_mainDataType, " " );
-			m_insideSize.Set( 80, 25 );
-			m_currentParameterType = PropertyType.Property;
-			m_customPrefix = "Toggle Switch";
+        protected override void CommonInit(int uniqueId)
+        {
+            base.CommonInit(uniqueId);
+            AddInputPort(m_mainDataType, false, InputPortName + "0");
+            AddInputPort(m_mainDataType, false, InputPortName + "1");
 
-			m_popContent = new GUIContent();
-			m_popContent.image = UIUtils.PopupIcon;
+            AddOutputPort(m_mainDataType, " ");
+            m_insideSize.Set(80, 25);
+            m_currentParameterType = PropertyType.Property;
+            m_customPrefix = "Toggle Switch";
 
-			m_availableAttribs.Clear();
-			//Need to maintain this because of retrocompatibility reasons
-			m_availableAttribs.Add( new PropertyAttributes( "Toggle", "[Toggle]" ) );
+            m_popContent = new GUIContent();
+            m_popContent.image = UIUtils.PopupIcon;
 
-			m_drawAttributes = false;
-			m_freeType = false;
-			m_useVarSubtitle = true;
-			m_useInternalPortData = true;
-			m_previewShaderGUID = "beeb138daeb592a4887454f81dba2b3f";
+            m_availableAttribs.Clear();
+            //Need to maintain this because of retrocompatibility reasons
+            m_availableAttribs.Add(new PropertyAttributes("Toggle", "[Toggle]"));
 
-			m_allowPropertyDuplicates = true;
-			m_showAutoRegisterUI = false;
+            m_drawAttributes = false;
+            m_freeType = false;
+            m_useVarSubtitle = true;
+            m_useInternalPortData = true;
+            m_previewShaderGUID = "beeb138daeb592a4887454f81dba2b3f";
 
-			m_srpBatcherCompatible = true;
-		}
+            m_allowPropertyDuplicates = true;
+            m_showAutoRegisterUI = false;
 
-		protected override void OnUniqueIDAssigned()
-		{
-			base.OnUniqueIDAssigned();
-			UIUtils.RegisterPropertyNode( this );
-		}
-		
-		public override void SetPreviewInputs()
-		{
-			base.SetPreviewInputs();
+            m_srpBatcherCompatible = true;
+        }
 
-			if ( m_cachedPropertyId == -1 )
-				m_cachedPropertyId = Shader.PropertyToID( "_Current" );
+        protected override void OnUniqueIDAssigned()
+        {
+            base.OnUniqueIDAssigned();
+            UIUtils.RegisterPropertyNode(this);
+        }
 
-			PreviewMaterial.SetInt( m_cachedPropertyId, m_currentSelectedInput );
-		}
+        public override void SetPreviewInputs()
+        {
+            base.SetPreviewInputs();
 
-		public override void OnConnectedOutputNodeChanges( int portId, int otherNodeId, int otherPortId, string name, WirePortDataType type )
-		{
-			base.OnConnectedOutputNodeChanges( portId, otherNodeId, otherPortId, name, type );
-			UpdateConnection();
-		}
+            if (m_cachedPropertyId == -1)
+                m_cachedPropertyId = Shader.PropertyToID("_Current");
 
-		public override void OnInputPortConnected( int portId, int otherNodeId, int otherPortId, bool activateNode = true )
-		{
-			base.OnInputPortConnected( portId, otherNodeId, otherPortId, activateNode );
-			UpdateConnection();
-		}
+            PreviewMaterial.SetInt(m_cachedPropertyId, m_currentSelectedInput);
+        }
 
-		public override void OnInputPortDisconnected( int portId )
-		{
-			base.OnInputPortDisconnected( portId );
-			UpdateConnection();
-		}
+        public override void OnConnectedOutputNodeChanges(
+            int portId,
+            int otherNodeId,
+            int otherPortId,
+            string name,
+            WirePortDataType type
+        )
+        {
+            base.OnConnectedOutputNodeChanges(portId, otherNodeId, otherPortId, name, type);
+            UpdateConnection();
+        }
 
-		void UpdateConnection()
-		{
-			WirePortDataType type1 = WirePortDataType.FLOAT;
-			if( m_inputPorts[ 0 ].IsConnected )
-				type1 = m_inputPorts[ 0 ].GetOutputConnection( 0 ).DataType;
+        public override void OnInputPortConnected(
+            int portId,
+            int otherNodeId,
+            int otherPortId,
+            bool activateNode = true
+        )
+        {
+            base.OnInputPortConnected(portId, otherNodeId, otherPortId, activateNode);
+            UpdateConnection();
+        }
 
-			WirePortDataType type2 = WirePortDataType.FLOAT;
-			if( m_inputPorts[ 1 ].IsConnected )
-				type2 = m_inputPorts[ 1 ].GetOutputConnection( 0 ).DataType;
+        public override void OnInputPortDisconnected(int portId)
+        {
+            base.OnInputPortDisconnected(portId);
+            UpdateConnection();
+        }
 
-			m_mainDataType = UIUtils.GetPriority( type1 ) > UIUtils.GetPriority( type2 ) ? type1 : type2;
+        void UpdateConnection()
+        {
+            WirePortDataType type1 = WirePortDataType.FLOAT;
+            if (m_inputPorts[0].IsConnected)
+                type1 = m_inputPorts[0].GetOutputConnection(0).DataType;
 
-			m_inputPorts[ 0 ].ChangeType( m_mainDataType, false );
-			m_inputPorts[ 1 ].ChangeType( m_mainDataType, false );
+            WirePortDataType type2 = WirePortDataType.FLOAT;
+            if (m_inputPorts[1].IsConnected)
+                type2 = m_inputPorts[1].GetOutputConnection(0).DataType;
 
+            m_mainDataType =
+                UIUtils.GetPriority(type1) > UIUtils.GetPriority(type2) ? type1 : type2;
 
-			//m_outputPorts[ 0 ].ChangeProperties( m_out, m_mainDataType, false );
-			m_outputPorts[ 0 ].ChangeType( m_mainDataType, false );
-		}
+            m_inputPorts[0].ChangeType(m_mainDataType, false);
+            m_inputPorts[1].ChangeType(m_mainDataType, false);
 
-		public override void OnNodeLayout( DrawInfo drawInfo )
-		{
-			base.OnNodeLayout( drawInfo );
+            //m_outputPorts[ 0 ].ChangeProperties( m_out, m_mainDataType, false );
+            m_outputPorts[0].ChangeType(m_mainDataType, false);
+        }
 
-			m_varRect = m_remainingBox;
-			m_varRect.width = 50 * drawInfo.InvertedZoom;
-			m_varRect.height = 16 * drawInfo.InvertedZoom;
-			m_varRect.x = m_remainingBox.xMax - m_varRect.width;
-			m_varRect.y += 1 * drawInfo.InvertedZoom;
+        public override void OnNodeLayout(DrawInfo drawInfo)
+        {
+            base.OnNodeLayout(drawInfo);
 
-			m_imgRect = m_varRect;
-			m_imgRect.x = m_varRect.xMax - 16 * drawInfo.InvertedZoom;
-			m_imgRect.width = 16 * drawInfo.InvertedZoom;
-			m_imgRect.height = m_imgRect.width;
-		}
+            m_varRect = m_remainingBox;
+            m_varRect.width = 50 * drawInfo.InvertedZoom;
+            m_varRect.height = 16 * drawInfo.InvertedZoom;
+            m_varRect.x = m_remainingBox.xMax - m_varRect.width;
+            m_varRect.y += 1 * drawInfo.InvertedZoom;
 
-		public override void DrawGUIControls( DrawInfo drawInfo )
-		{
-			base.DrawGUIControls( drawInfo );
+            m_imgRect = m_varRect;
+            m_imgRect.x = m_varRect.xMax - 16 * drawInfo.InvertedZoom;
+            m_imgRect.width = 16 * drawInfo.InvertedZoom;
+            m_imgRect.height = m_imgRect.width;
+        }
 
-			if ( drawInfo.CurrentEventType != EventType.MouseDown )
-				return;
+        public override void DrawGUIControls(DrawInfo drawInfo)
+        {
+            base.DrawGUIControls(drawInfo);
 
-			if ( m_varRect.Contains( drawInfo.MousePosition ) )
-			{
-				m_editing = true;
-			}
-			else if ( m_editing )
-			{
-				m_editing = false;
-			}
-		}
+            if (drawInfo.CurrentEventType != EventType.MouseDown)
+                return;
 
-		public override void Draw( DrawInfo drawInfo )
-		{
-			base.Draw( drawInfo );
+            if (m_varRect.Contains(drawInfo.MousePosition))
+            {
+                m_editing = true;
+            }
+            else if (m_editing)
+            {
+                m_editing = false;
+            }
+        }
 
-			if( m_editing )
-			{
-				EditorGUI.BeginChangeCheck();
-				m_currentSelectedInput = EditorGUIIntPopup( m_varRect, m_currentSelectedInput, AvailableInputsLabels, AvailableInputsValues, UIUtils.SwitchNodePopUp );
-				if ( EditorGUI.EndChangeCheck() )
-				{
-					PreviewIsDirty = true;
-					UpdateConnection();
-					m_requireMaterialUpdate = true;
-					m_editing = false;
-				}
-			}
-		}
+        public override void Draw(DrawInfo drawInfo)
+        {
+            base.Draw(drawInfo);
 
-		public override void OnNodeRepaint( DrawInfo drawInfo )
-		{
-			base.OnNodeRepaint( drawInfo );
+            if (m_editing)
+            {
+                EditorGUI.BeginChangeCheck();
+                m_currentSelectedInput = EditorGUIIntPopup(
+                    m_varRect,
+                    m_currentSelectedInput,
+                    AvailableInputsLabels,
+                    AvailableInputsValues,
+                    UIUtils.SwitchNodePopUp
+                );
+                if (EditorGUI.EndChangeCheck())
+                {
+                    PreviewIsDirty = true;
+                    UpdateConnection();
+                    m_requireMaterialUpdate = true;
+                    m_editing = false;
+                }
+            }
+        }
 
-			if ( !m_isVisible )
-				return;
+        public override void OnNodeRepaint(DrawInfo drawInfo)
+        {
+            base.OnNodeRepaint(drawInfo);
 
-			if ( !m_editing && ContainerGraph.LodLevel <= ParentGraph.NodeLOD.LOD4 )
-			{
-				GUI.Label( m_varRect, AvailableInputsLabels[ m_currentSelectedInput ], UIUtils.GraphDropDown );
-				GUI.Label( m_imgRect, m_popContent, UIUtils.GraphButtonIcon );
-			}
-		}
+            if (!m_isVisible)
+                return;
 
-		public override void DrawMainPropertyBlock()
-		{
-			EditorGUILayout.BeginVertical();
-			{
-				ShowPropertyInspectorNameGUI();
-				ShowPropertyNameGUI( true );
-				ShowVariableMode();
-				ShowHybridInstanced();
-				ShowAutoRegister();
-				ShowPrecision();
-				m_generateKeyword = EditorGUILayoutToggle( GenerateKeywordStr, m_generateKeyword );
-				ShowToolbar();
-			}
-			EditorGUILayout.EndVertical();
+            if (!m_editing && ContainerGraph.LodLevel <= ParentGraph.NodeLOD.LOD4)
+            {
+                GUI.Label(
+                    m_varRect,
+                    AvailableInputsLabels[m_currentSelectedInput],
+                    UIUtils.GraphDropDown
+                );
+                GUI.Label(m_imgRect, m_popContent, UIUtils.GraphButtonIcon);
+            }
+        }
 
-			EditorGUILayout.Separator();
-			EditorGUI.BeginChangeCheck();
-			m_currentSelectedInput = EditorGUILayoutIntPopup( CurrSelectedStr, m_currentSelectedInput, AvailableInputsLabels, AvailableInputsValues );
-			if ( EditorGUI.EndChangeCheck() )
-			{
-				UpdateConnection();
-				m_requireMaterialUpdate = true;
-			}
-		}
+        public override void DrawMainPropertyBlock()
+        {
+            EditorGUILayout.BeginVertical();
+            {
+                ShowPropertyInspectorNameGUI();
+                ShowPropertyNameGUI(true);
+                ShowVariableMode();
+                ShowHybridInstanced();
+                ShowAutoRegister();
+                ShowPrecision();
+                m_generateKeyword = EditorGUILayoutToggle(GenerateKeywordStr, m_generateKeyword);
+                ShowToolbar();
+            }
+            EditorGUILayout.EndVertical();
 
-		public override void DrawProperties()
-		{
-			base.DrawProperties();
-			NodeUtils.DrawPropertyGroup( ref m_visibleCustomAttrFoldout, CustomAttrStr, DrawCustomAttributes, DrawCustomAttrAddRemoveButtons );
-		}
+            EditorGUILayout.Separator();
+            EditorGUI.BeginChangeCheck();
+            m_currentSelectedInput = EditorGUILayoutIntPopup(
+                CurrSelectedStr,
+                m_currentSelectedInput,
+                AvailableInputsLabels,
+                AvailableInputsValues
+            );
+            if (EditorGUI.EndChangeCheck())
+            {
+                UpdateConnection();
+                m_requireMaterialUpdate = true;
+            }
+        }
 
-		public override string GenerateShaderForOutput( int outputId, ref MasterNodeDataCollector dataCollector, bool ignoreLocalvar )
-		{
-			base.GenerateShaderForOutput( outputId, ref dataCollector, ignoreLocalvar );
-			m_precisionString = UIUtils.PrecisionWirePortToCgType( CurrentPrecisionType, m_outputPorts[ 0 ].DataType );
+        public override void DrawProperties()
+        {
+            base.DrawProperties();
+            NodeUtils.DrawPropertyGroup(
+                ref m_visibleCustomAttrFoldout,
+                CustomAttrStr,
+                DrawCustomAttributes,
+                DrawCustomAttrAddRemoveButtons
+            );
+        }
 
-			string resultA = m_inputPorts[ 0 ].GenerateShaderForOutput( ref dataCollector, m_mainDataType, ignoreLocalvar, true );
-			string resultB = m_inputPorts[ 1 ].GenerateShaderForOutput( ref dataCollector, m_mainDataType, ignoreLocalvar, true );
-			return string.Format( LerpOp, resultA, resultB, m_propertyName );
-		}
+        public override string GenerateShaderForOutput(
+            int outputId,
+            ref MasterNodeDataCollector dataCollector,
+            bool ignoreLocalvar
+        )
+        {
+            base.GenerateShaderForOutput(outputId, ref dataCollector, ignoreLocalvar);
+            m_precisionString = UIUtils.PrecisionWirePortToCgType(
+                CurrentPrecisionType,
+                m_outputPorts[0].DataType
+            );
 
-		public override void ReadFromString( ref string[] nodeParams )
-		{
-			base.ReadFromString( ref nodeParams );
-			m_currentSelectedInput = Convert.ToInt32( GetCurrentParam( ref nodeParams ) );
-			if( UIUtils.CurrentShaderVersion() > 18806 )
-			{
-				m_generateKeyword = Convert.ToBoolean( GetCurrentParam( ref nodeParams ) );
-			}
-		}
+            string resultA = m_inputPorts[0]
+                .GenerateShaderForOutput(ref dataCollector, m_mainDataType, ignoreLocalvar, true);
+            string resultB = m_inputPorts[1]
+                .GenerateShaderForOutput(ref dataCollector, m_mainDataType, ignoreLocalvar, true);
+            return string.Format(LerpOp, resultA, resultB, m_propertyName);
+        }
 
-		public override void WriteToString( ref string nodeInfo, ref string connectionsInfo )
-		{
-			base.WriteToString( ref nodeInfo, ref connectionsInfo );
-			IOUtils.AddFieldValueToString( ref nodeInfo, m_currentSelectedInput );
-			IOUtils.AddFieldValueToString( ref nodeInfo, m_generateKeyword );
-		}
+        public override void ReadFromString(ref string[] nodeParams)
+        {
+            base.ReadFromString(ref nodeParams);
+            m_currentSelectedInput = Convert.ToInt32(GetCurrentParam(ref nodeParams));
+            if (UIUtils.CurrentShaderVersion() > 18806)
+            {
+                m_generateKeyword = Convert.ToBoolean(GetCurrentParam(ref nodeParams));
+            }
+        }
 
-		public override void RefreshExternalReferences()
-		{
-			base.RefreshExternalReferences();
-			m_selectedAttribs.Clear();
-			UpdateConnection();
-		}
-		public override string GetPropertyValue()
-		{
-			string toggleAttribute = ( m_generateKeyword ) ? "[Toggle]":"[ToggleUI]";
-			return PropertyAttributes + toggleAttribute + m_propertyName + "(\"" + m_propertyInspectorName + "\", Float) = " + m_currentSelectedInput;
-		}
+        public override void WriteToString(ref string nodeInfo, ref string connectionsInfo)
+        {
+            base.WriteToString(ref nodeInfo, ref connectionsInfo);
+            IOUtils.AddFieldValueToString(ref nodeInfo, m_currentSelectedInput);
+            IOUtils.AddFieldValueToString(ref nodeInfo, m_generateKeyword);
+        }
 
-		public override string GetUniformValue()
-		{
-			int index = m_containerGraph.IsSRP ? 1 : 0;
-			return string.Format( Constants.UniformDec[ index ], UIUtils.PrecisionWirePortToCgType( CurrentPrecisionType, WirePortDataType.FLOAT ), m_propertyName );
-		}
+        public override void RefreshExternalReferences()
+        {
+            base.RefreshExternalReferences();
+            m_selectedAttribs.Clear();
+            UpdateConnection();
+        }
 
-		public override bool GetUniformData( out string dataType, out string dataName, ref bool fullValue )
-		{
-			dataType = UIUtils.PrecisionWirePortToCgType( CurrentPrecisionType, WirePortDataType.FLOAT );
-			dataName = m_propertyName;
-			return true;
-		}
+        public override string GetPropertyValue()
+        {
+            string toggleAttribute = (m_generateKeyword) ? "[Toggle]" : "[ToggleUI]";
+            return PropertyAttributes
+                + toggleAttribute
+                + m_propertyName
+                + "(\""
+                + m_propertyInspectorName
+                + "\", Float) = "
+                + m_currentSelectedInput;
+        }
 
-		public override void UpdateMaterial( Material mat )
-		{
-			base.UpdateMaterial( mat );
-			if ( UIUtils.IsProperty( m_currentParameterType ) && !InsideShaderFunction )
-			{
-				mat.SetFloat( m_propertyName, ( float ) m_currentSelectedInput );
-			}
-		}
+        public override string GetUniformValue()
+        {
+            int index = m_containerGraph.IsSRP ? 1 : 0;
+            return string.Format(
+                Constants.UniformDec[index],
+                UIUtils.PrecisionWirePortToCgType(CurrentPrecisionType, WirePortDataType.FLOAT),
+                m_propertyName
+            );
+        }
 
-		public override void SetMaterialMode( Material mat , bool fetchMaterialValues )
-		{
-			base.SetMaterialMode( mat , fetchMaterialValues );
-			if ( fetchMaterialValues && m_materialMode && UIUtils.IsProperty( m_currentParameterType ) && mat.HasProperty( m_propertyName ) )
-			{
-				m_currentSelectedInput = ( int ) mat.GetFloat( m_propertyName );
-			}
-		}
+        public override bool GetUniformData(
+            out string dataType,
+            out string dataName,
+            ref bool fullValue
+        )
+        {
+            dataType = UIUtils.PrecisionWirePortToCgType(
+                CurrentPrecisionType,
+                WirePortDataType.FLOAT
+            );
+            dataName = m_propertyName;
+            return true;
+        }
 
-		public override void ForceUpdateFromMaterial( Material material )
-		{
-			if( UIUtils.IsProperty( m_currentParameterType ) && material.HasProperty( m_propertyName ) )
-			{
-				m_currentSelectedInput = (int)material.GetFloat( m_propertyName );
-				PreviewIsDirty = true;
-			}
-		}
+        public override void UpdateMaterial(Material mat)
+        {
+            base.UpdateMaterial(mat);
+            if (UIUtils.IsProperty(m_currentParameterType) && !InsideShaderFunction)
+            {
+                mat.SetFloat(m_propertyName, (float)m_currentSelectedInput);
+            }
+        }
 
-		public override string GetPropertyValStr()
-		{
-			return PropertyName;			//return m_currentSelectedInput.ToString();
-		}
-	}
+        public override void SetMaterialMode(Material mat, bool fetchMaterialValues)
+        {
+            base.SetMaterialMode(mat, fetchMaterialValues);
+            if (
+                fetchMaterialValues
+                && m_materialMode
+                && UIUtils.IsProperty(m_currentParameterType)
+                && mat.HasProperty(m_propertyName)
+            )
+            {
+                m_currentSelectedInput = (int)mat.GetFloat(m_propertyName);
+            }
+        }
+
+        public override void ForceUpdateFromMaterial(Material material)
+        {
+            if (UIUtils.IsProperty(m_currentParameterType) && material.HasProperty(m_propertyName))
+            {
+                m_currentSelectedInput = (int)material.GetFloat(m_propertyName);
+                PreviewIsDirty = true;
+            }
+        }
+
+        public override string GetPropertyValStr()
+        {
+            return PropertyName; //return m_currentSelectedInput.ToString();
+        }
+    }
 }

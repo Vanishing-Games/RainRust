@@ -48,8 +48,7 @@ namespace Zenject.Internal
 
             Application.LogCallback logCallback = (condition, stackTrace, type) =>
             {
-                if (type == LogType.Error || type == LogType.Assert
-                    || type == LogType.Exception)
+                if (type == LogType.Error || type == LogType.Assert || type == LogType.Exception)
                 {
                     encounteredError = true;
                 }
@@ -79,7 +78,9 @@ namespace Zenject.Internal
 
             if (encounteredError)
             {
-                throw new ZenjectException("Zenject Validation Failed!  See errors below for details.");
+                throw new ZenjectException(
+                    "Zenject Validation Failed!  See errors below for details."
+                );
             }
         }
 
@@ -87,8 +88,10 @@ namespace Zenject.Internal
         // Returns the number of scenes that successfully validated
         public static int ValidateAllActiveScenes()
         {
-            var activeScenePaths = EditorBuildSettings.scenes.Where(x => x.enabled)
-                .Select(x => x.path).ToList();
+            var activeScenePaths = EditorBuildSettings
+                .scenes.Where(x => x.enabled)
+                .Select(x => x.path)
+                .ToList();
 
             foreach (var scenePath in activeScenePaths)
             {
@@ -114,7 +117,9 @@ namespace Zenject.Internal
                 {
                     // Add a bit more context
                     throw new ZenjectException(
-                        "Scene '{0}' Failed To Start!".Fmt(sceneContext.gameObject.scene.name), e);
+                        "Scene '{0}' Failed To Start!".Fmt(sceneContext.gameObject.scene.name),
+                        e
+                    );
                 }
             }
         }
@@ -123,8 +128,11 @@ namespace Zenject.Internal
         {
             var sceneContext = TryGetSceneContextForScene(scene);
 
-            Assert.IsNotNull(sceneContext,
-                "Could not find scene context for scene '{0}'", scene.name);
+            Assert.IsNotNull(
+                sceneContext,
+                "Could not find scene context for scene '{0}'",
+                scene.name
+            );
 
             return sceneContext;
         }
@@ -136,16 +144,21 @@ namespace Zenject.Internal
                 return null;
             }
 
-            var sceneContexts = scene.GetRootGameObjects()
-                .SelectMany(x => x.GetComponentsInChildren<SceneContext>()).ToList();
+            var sceneContexts = scene
+                .GetRootGameObjects()
+                .SelectMany(x => x.GetComponentsInChildren<SceneContext>())
+                .ToList();
 
             if (sceneContexts.IsEmpty())
             {
                 return null;
             }
 
-            Assert.That(sceneContexts.Count == 1,
-                "Found multiple SceneContexts in scene '{0}'.  Expected a maximum of one.", scene.name);
+            Assert.That(
+                sceneContexts.Count == 1,
+                "Found multiple SceneContexts in scene '{0}'.  Expected a maximum of one.",
+                scene.name
+            );
 
             return sceneContexts[0];
         }
@@ -154,8 +167,11 @@ namespace Zenject.Internal
         {
             var decoratorContext = TryGetDecoratorContextForScene(scene);
 
-            Assert.IsNotNull(decoratorContext,
-                "Could not find decorator context for scene '{0}'", scene.name);
+            Assert.IsNotNull(
+                decoratorContext,
+                "Could not find decorator context for scene '{0}'",
+                scene.name
+            );
 
             return decoratorContext;
         }
@@ -167,16 +183,21 @@ namespace Zenject.Internal
                 return null;
             }
 
-            var decoratorContexts = scene.GetRootGameObjects()
-                .SelectMany(x => x.GetComponentsInChildren<SceneDecoratorContext>()).ToList();
+            var decoratorContexts = scene
+                .GetRootGameObjects()
+                .SelectMany(x => x.GetComponentsInChildren<SceneDecoratorContext>())
+                .ToList();
 
             if (decoratorContexts.IsEmpty())
             {
                 return null;
             }
 
-            Assert.That(decoratorContexts.Count == 1,
-                "Found multiple DecoratorContexts in scene '{0}'.  Expected a maximum of one.", scene.name);
+            Assert.That(
+                decoratorContexts.Count == 1,
+                "Found multiple DecoratorContexts in scene '{0}'.  Expected a maximum of one.",
+                scene.name
+            );
 
             return decoratorContexts[0];
         }
@@ -194,8 +215,11 @@ namespace Zenject.Internal
 
                 if (sceneContext != null)
                 {
-                    Assert.That(decoratorContext == null,
-                        "Found both SceneDecoratorContext and SceneContext in the same scene '{0}'.  This is not allowed", scene.name);
+                    Assert.That(
+                        decoratorContext == null,
+                        "Found both SceneDecoratorContext and SceneContext in the same scene '{0}'.  This is not allowed",
+                        scene.name
+                    );
 
                     decoratedSceneNames.RemoveAll(x => sceneContext.ContractNames.Contains(x));
 
@@ -203,21 +227,29 @@ namespace Zenject.Internal
                 }
                 else if (decoratorContext != null)
                 {
-                    Assert.That(!string.IsNullOrEmpty(decoratorContext.DecoratedContractName),
-                        "Missing Decorated Contract Name on SceneDecoratorContext in scene '{0}'", scene.name);
+                    Assert.That(
+                        !string.IsNullOrEmpty(decoratorContext.DecoratedContractName),
+                        "Missing Decorated Contract Name on SceneDecoratorContext in scene '{0}'",
+                        scene.name
+                    );
 
                     decoratedSceneNames.Add(decoratorContext.DecoratedContractName);
                 }
             }
 
-            Assert.That(decoratedSceneNames.IsEmpty(),
-                "Found decorator scenes without a corresponding scene to decorator.  Missing scene contracts: {0}", decoratedSceneNames.Join(", "));
+            Assert.That(
+                decoratedSceneNames.IsEmpty(),
+                "Found decorator scenes without a corresponding scene to decorator.  Missing scene contracts: {0}",
+                decoratedSceneNames.Join(", ")
+            );
         }
 
         public static string ConvertAssetPathToAbsolutePath(string assetPath)
         {
             return Path.Combine(
-                Path.Combine(Path.GetFullPath(Application.dataPath), ".."), assetPath);
+                Path.Combine(Path.GetFullPath(Application.dataPath), ".."),
+                assetPath
+            );
         }
 
         public static string ConvertFullAbsolutePathToAssetPath(string fullPath)
@@ -239,7 +271,8 @@ namespace Zenject.Internal
         public static string GetCurrentDirectoryAssetPathFromSelection()
         {
             return ConvertFullAbsolutePathToAssetPath(
-                GetCurrentDirectoryAbsolutePathFromSelection());
+                GetCurrentDirectoryAbsolutePathFromSelection()
+            );
         }
 
         public static string GetCurrentDirectoryAbsolutePathFromSelection()
@@ -268,8 +301,7 @@ namespace Zenject.Internal
 
         public static List<string> GetSelectedFilePathsInProjectsTab()
         {
-            return GetSelectedPathsInProjectsTab()
-                .Where(x => File.Exists(x)).ToList();
+            return GetSelectedPathsInProjectsTab().Where(x => File.Exists(x)).ToList();
         }
 
         public static List<string> GetSelectedAssetPathsInProjectsTab()
@@ -277,7 +309,9 @@ namespace Zenject.Internal
             var paths = new List<string>();
 
             UnityEngine.Object[] selectedAssets = Selection.GetFiltered(
-                typeof(UnityEngine.Object), SelectionMode.Assets);
+                typeof(UnityEngine.Object),
+                SelectionMode.Assets
+            );
 
             foreach (var item in selectedAssets)
             {
@@ -297,7 +331,9 @@ namespace Zenject.Internal
             var paths = new List<string>();
 
             UnityEngine.Object[] selectedAssets = Selection.GetFiltered(
-                typeof(UnityEngine.Object), SelectionMode.Assets);
+                typeof(UnityEngine.Object),
+                SelectionMode.Assets
+            );
 
             foreach (var item in selectedAssets)
             {
@@ -305,8 +341,9 @@ namespace Zenject.Internal
 
                 if (!string.IsNullOrEmpty(relativePath))
                 {
-                    var fullPath = Path.GetFullPath(Path.Combine(
-                        Application.dataPath, Path.Combine("..", relativePath)));
+                    var fullPath = Path.GetFullPath(
+                        Path.Combine(Application.dataPath, Path.Combine("..", relativePath))
+                    );
 
                     paths.Add(fullPath);
                 }
@@ -316,8 +353,7 @@ namespace Zenject.Internal
         }
 
         // Taken from http://wiki.unity3d.com/index.php?title=CreateScriptableObjectAsset
-        public static void SaveScriptableObjectAsset(
-            string path, ScriptableObject asset)
+        public static void SaveScriptableObjectAsset(string path, ScriptableObject asset)
         {
             Assert.That(path.EndsWith(".asset"));
 
@@ -334,8 +370,7 @@ namespace Zenject.Internal
         // Note that the path is relative to the Assets folder
         public static List<string> GetSelectedFolderPathsInProjectsTab()
         {
-            return GetSelectedPathsInProjectsTab()
-                .Where(x => Directory.Exists(x)).ToList();
+            return GetSelectedPathsInProjectsTab().Where(x => Directory.Exists(x)).ToList();
         }
 
         // Returns the best guess directory in projects pane

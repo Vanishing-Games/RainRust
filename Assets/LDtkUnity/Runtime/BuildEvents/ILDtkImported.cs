@@ -12,7 +12,10 @@
         /// The order value. Set as 0 if unsure.
         /// </returns>
 #if UNITY_2021_2_OR_NEWER //doing this to add this default interface implementation while also not breaking code for users above 2021.2
-        int GetPostprocessOrder() { return 0; }
+        int GetPostprocessOrder()
+        {
+            return 0;
+        }
 #else
         int GetPostprocessOrder();
 #endif

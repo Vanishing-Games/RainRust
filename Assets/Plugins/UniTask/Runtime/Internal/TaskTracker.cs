@@ -56,21 +56,40 @@ namespace Cysharp.Threading.Tasks
                 }
             }
         }
-
 #endif
 
+        static List<
+            KeyValuePair<
+                IUniTaskSource,
+                (string formattedType, int trackingId, DateTime addTime, string stackTrace)
+            >
+        > listPool =
+            new List<
+                KeyValuePair<
+                    IUniTaskSource,
+                    (string formattedType, int trackingId, DateTime addTime, string stackTrace)
+                >
+            >();
 
-        static List<KeyValuePair<IUniTaskSource, (string formattedType, int trackingId, DateTime addTime, string stackTrace)>> listPool = new List<KeyValuePair<IUniTaskSource, (string formattedType, int trackingId, DateTime addTime, string stackTrace)>>();
-
-        static readonly WeakDictionary<IUniTaskSource, (string formattedType, int trackingId, DateTime addTime, string stackTrace)> tracking = new WeakDictionary<IUniTaskSource, (string formattedType, int trackingId, DateTime addTime, string stackTrace)>();
+        static readonly WeakDictionary<
+            IUniTaskSource,
+            (string formattedType, int trackingId, DateTime addTime, string stackTrace)
+        > tracking =
+            new WeakDictionary<
+                IUniTaskSource,
+                (string formattedType, int trackingId, DateTime addTime, string stackTrace)
+            >();
 
         [Conditional("UNITY_EDITOR")]
         public static void TrackActiveTask(IUniTaskSource task, int skipFrame)
         {
 #if UNITY_EDITOR
             dirty = true;
-            if (!EditorEnableState.EnableTracking) return;
-            var stackTrace = EditorEnableState.EnableStackTrace ? new StackTrace(skipFrame, true).CleanupAsyncStackTrace() : "";
+            if (!EditorEnableState.EnableTracking)
+                return;
+            var stackTrace = EditorEnableState.EnableStackTrace
+                ? new StackTrace(skipFrame, true).CleanupAsyncStackTrace()
+                : "";
 
             string typeName;
             if (EditorEnableState.EnableStackTrace)
@@ -83,7 +102,10 @@ namespace Cysharp.Threading.Tasks
             {
                 typeName = task.GetType().Name;
             }
-            tracking.TryAdd(task, (typeName, Interlocked.Increment(ref trackingId), DateTime.UtcNow, stackTrace));
+            tracking.TryAdd(
+                task,
+                (typeName, Interlocked.Increment(ref trackingId), DateTime.UtcNow, stackTrace)
+            );
 #endif
         }
 
@@ -92,7 +114,8 @@ namespace Cysharp.Threading.Tasks
         {
 #if UNITY_EDITOR
             dirty = true;
-            if (!EditorEnableState.EnableTracking) return;
+            if (!EditorEnableState.EnableTracking)
+                return;
             var success = tracking.TryRemove(task);
 #endif
         }
@@ -107,7 +130,9 @@ namespace Cysharp.Threading.Tasks
         }
 
         /// <summary>(trackingId, awaiterType, awaiterStatus, createdTime, stackTrace)</summary>
-        public static void ForEachActiveTask(Action<int, string, UniTaskStatus, DateTime, string> action)
+        public static void ForEachActiveTask(
+            Action<int, string, UniTaskStatus, DateTime, string> action
+        )
         {
             lock (listPool)
             {
@@ -116,7 +141,13 @@ namespace Cysharp.Threading.Tasks
                 {
                     for (int i = 0; i < count; i++)
                     {
-                        action(listPool[i].Value.trackingId, listPool[i].Value.formattedType, listPool[i].Key.UnsafeGetStatus(), listPool[i].Value.addTime, listPool[i].Value.stackTrace);
+                        action(
+                            listPool[i].Value.trackingId,
+                            listPool[i].Value.formattedType,
+                            listPool[i].Key.UnsafeGetStatus(),
+                            listPool[i].Value.addTime,
+                            listPool[i].Value.stackTrace
+                        );
                         listPool[i] = default;
                     }
                 }
@@ -175,4 +206,3 @@ namespace Cysharp.Threading.Tasks
         //}
     }
 }
-

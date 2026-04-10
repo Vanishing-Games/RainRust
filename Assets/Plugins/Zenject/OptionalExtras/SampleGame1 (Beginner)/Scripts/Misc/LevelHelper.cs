@@ -6,9 +6,7 @@ namespace Zenject.Asteroids
     {
         readonly Camera _camera;
 
-        public LevelHelper(
-            [Inject(Id = "Main")]
-            Camera camera)
+        public LevelHelper([Inject(Id = "Main")] Camera camera)
         {
             _camera = camera;
         }
@@ -54,4 +52,3 @@ namespace Zenject.Asteroids
         }
     }
 }
-

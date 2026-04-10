@@ -8,6 +8,7 @@ namespace LDtkUnity
         /// <value>
         /// Grid-based coordinate
         /// </value>
-        [IgnoreDataMember] public Vector2Int UnityCoord => new Vector2Int(Cx, Cy);
+        [IgnoreDataMember]
+        public Vector2Int UnityCoord => new Vector2Int(Cx, Cy);
     }
 }

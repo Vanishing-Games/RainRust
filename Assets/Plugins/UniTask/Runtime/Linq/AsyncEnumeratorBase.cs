@@ -5,7 +5,9 @@ namespace Cysharp.Threading.Tasks.Linq
 {
     // note: refactor all inherit class and should remove this.
     // see Select and Where.
-    internal abstract class AsyncEnumeratorBase<TSource, TResult> : MoveNextSource, IUniTaskAsyncEnumerator<TResult>
+    internal abstract class AsyncEnumeratorBase<TSource, TResult>
+        : MoveNextSource,
+            IUniTaskAsyncEnumerator<TResult>
     {
         static readonly Action<object> moveNextCallbackDelegate = MoveNextCallBack;
 
@@ -15,7 +17,10 @@ namespace Cysharp.Threading.Tasks.Linq
         IUniTaskAsyncEnumerator<TSource> enumerator;
         UniTask<bool>.Awaiter sourceMoveNext;
 
-        public AsyncEnumeratorBase(IUniTaskAsyncEnumerable<TSource> source, CancellationToken cancellationToken)
+        public AsyncEnumeratorBase(
+            IUniTaskAsyncEnumerable<TSource> source,
+            CancellationToken cancellationToken
+        )
         {
             this.source = source;
             this.cancellationToken = cancellationToken;
@@ -131,11 +136,12 @@ namespace Cysharp.Threading.Tasks.Linq
         }
     }
 
-    internal abstract class AsyncEnumeratorAwaitSelectorBase<TSource, TResult, TAwait> : MoveNextSource, IUniTaskAsyncEnumerator<TResult>
+    internal abstract class AsyncEnumeratorAwaitSelectorBase<TSource, TResult, TAwait>
+        : MoveNextSource,
+            IUniTaskAsyncEnumerator<TResult>
     {
         static readonly Action<object> moveNextCallbackDelegate = MoveNextCallBack;
         static readonly Action<object> setCurrentCallbackDelegate = SetCurrentCallBack;
-
 
         readonly IUniTaskAsyncEnumerable<TSource> source;
         protected CancellationToken cancellationToken;
@@ -145,7 +151,10 @@ namespace Cysharp.Threading.Tasks.Linq
 
         UniTask<TAwait>.Awaiter resultAwaiter;
 
-        public AsyncEnumeratorAwaitSelectorBase(IUniTaskAsyncEnumerable<TSource> source, CancellationToken cancellationToken)
+        public AsyncEnumeratorAwaitSelectorBase(
+            IUniTaskAsyncEnumerable<TSource> source,
+            CancellationToken cancellationToken
+        )
         {
             this.source = source;
             this.cancellationToken = cancellationToken;
@@ -160,7 +169,10 @@ namespace Cysharp.Threading.Tasks.Linq
         // Util
         protected TSource SourceCurrent { get; private set; }
 
-        protected (bool waitCallback, bool requireNextIteration) ActionCompleted(bool trySetCurrentResult, out bool moveNextResult)
+        protected (bool waitCallback, bool requireNextIteration) ActionCompleted(
+            bool trySetCurrentResult,
+            out bool moveNextResult
+        )
         {
             if (trySetCurrentResult)
             {
@@ -173,8 +185,22 @@ namespace Cysharp.Threading.Tasks.Linq
                 return (false, true);
             }
         }
-        protected (bool waitCallback, bool requireNextIteration) WaitAwaitCallback(out bool moveNextResult) { moveNextResult = default; return (true, false); }
-        protected (bool waitCallback, bool requireNextIteration) IterateFinished(out bool moveNextResult) { moveNextResult = false; return (false, false); }
+
+        protected (bool waitCallback, bool requireNextIteration) WaitAwaitCallback(
+            out bool moveNextResult
+        )
+        {
+            moveNextResult = default;
+            return (true, false);
+        }
+
+        protected (bool waitCallback, bool requireNextIteration) IterateFinished(
+            out bool moveNextResult
+        )
+        {
+            moveNextResult = false;
+            return (false, false);
+        }
 
         // IUniTaskAsyncEnumerator<T>
 
@@ -201,7 +227,10 @@ namespace Cysharp.Threading.Tasks.Linq
                 bool result = false;
                 try
                 {
-                    (bool waitCallback, bool requireNextIteration) = TryMoveNextCore(sourceMoveNext.GetResult(), out result);
+                    (bool waitCallback, bool requireNextIteration) = TryMoveNextCore(
+                        sourceMoveNext.GetResult(),
+                        out result
+                    );
 
                     if (waitCallback)
                     {
@@ -229,7 +258,10 @@ namespace Cysharp.Threading.Tasks.Linq
             }
         }
 
-        (bool waitCallback, bool requireNextIteration) TryMoveNextCore(bool sourceHasCurrent, out bool result)
+        (bool waitCallback, bool requireNextIteration) TryMoveNextCore(
+            bool sourceHasCurrent,
+            out bool result
+        )
         {
             if (sourceHasCurrent)
             {
@@ -277,7 +309,10 @@ namespace Cysharp.Threading.Tasks.Linq
             bool result = false;
             try
             {
-                (bool waitCallback, bool requireNextIteration) = self.TryMoveNextCore(self.sourceMoveNext.GetResult(), out result);
+                (bool waitCallback, bool requireNextIteration) = self.TryMoveNextCore(
+                    self.sourceMoveNext.GetResult(),
+                    out result
+                );
 
                 if (waitCallback)
                 {

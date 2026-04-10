@@ -1,12 +1,15 @@
 namespace Zenject
 {
     [NoReflectionBaking]
-    public class WithKernelScopeConcreteIdArgConditionCopyNonLazyBinder : ScopeConcreteIdArgConditionCopyNonLazyBinder
+    public class WithKernelScopeConcreteIdArgConditionCopyNonLazyBinder
+        : ScopeConcreteIdArgConditionCopyNonLazyBinder
     {
         SubContainerCreatorBindInfo _subContainerBindInfo;
 
         public WithKernelScopeConcreteIdArgConditionCopyNonLazyBinder(
-            SubContainerCreatorBindInfo subContainerBindInfo, BindInfo bindInfo)
+            SubContainerCreatorBindInfo subContainerBindInfo,
+            BindInfo bindInfo
+        )
             : base(bindInfo)
         {
             _subContainerBindInfo = subContainerBindInfo;

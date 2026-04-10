@@ -4,7 +4,6 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
-
 #if UNITY_EDITOR_LINUX
 using UnityEditor;
 #endif
@@ -45,7 +44,8 @@ namespace LDtkUnity.Editor
             //if mac/Linux, we need to create a shell script to run the exe
 #if UNITY_EDITOR_OSX
             string shPath = Path.Combine(destDir, MAC_APP);
-            string shContent = $"#!/bin/sh\n /Library/Frameworks/Mono.framework/Versions/Current/Commands/mono {pathToExe} $1";
+            string shContent =
+                $"#!/bin/sh\n /Library/Frameworks/Mono.framework/Versions/Current/Commands/mono {pathToExe} $1";
 #elif UNITY_EDITOR_LINUX
             string shPath = Path.Combine(destDir, LINUX_APP);
             var unityPath = Path.GetDirectoryName(EditorApplication.applicationPath);
@@ -85,18 +85,22 @@ namespace LDtkUnity.Editor
         public static string PathToZip()
         {
             string packagePath = Path.Combine(LDtkInternalUtility.ASSETS, EXPORT_ZIP);
-            if (File.Exists(packagePath)) return packagePath;
+            if (File.Exists(packagePath))
+                return packagePath;
 
             string assetsPath = Path.Combine(LDtkInternalUtility.PACKAGES, EXPORT_ZIP);
-            if (File.Exists(assetsPath)) return assetsPath;
+            if (File.Exists(assetsPath))
+                return assetsPath;
 
             return null;
         }
+
         public static string PathToExe()
         {
             string exePath = Path.Combine(PathToLibraryDir(), EXPORT_APP);
             return exePath;
         }
+
         public static string PathToMacSh()
         {
             string exePath = Path.Combine(PathToLibraryDir(), MAC_APP);

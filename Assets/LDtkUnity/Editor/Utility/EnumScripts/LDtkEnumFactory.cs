@@ -6,17 +6,16 @@ using UnityEngine;
 
 namespace LDtkUnity.Editor
 {
-    //make this generate into the imported asset  
+    //make this generate into the imported asset
     internal sealed class LDtkEnumFactory
     {
         public const string TEMPLATES_PATH = "Editor/Utility/EnumScripts/";
-        
+
         private const string PATH_NAMESPACE = TEMPLATES_PATH + "EnumNamespaceTemplate.txt";
         private const string PATH_NO_NAMESPACE = TEMPLATES_PATH + "EnumNoNamespaceTemplate.txt";
-        
+
         private const string PATH_ENUM_INSTANCE = TEMPLATES_PATH + "EnumTemplate.txt";
-        
-        
+
         private const string TEMPLATE_HEADER = "#HEADER#";
         private const string TEMPLATE_NAMESPACE = "#NAMESPACE#";
         private const string TEMPLATE_DEF_ENUMS = "#ENUMS#";
@@ -25,28 +24,32 @@ namespace LDtkUnity.Editor
         private const string TEMPLATE_PROJECT = "#PROJECT#";
 
         private const string GAP = "    ";
-        
+
         private readonly LDtkEnumFactoryTemplate[] _templates;
         private readonly string _writePath;
         private readonly string _nameSpace;
         private string _header;
 
-
-        public LDtkEnumFactory(LDtkEnumFactoryTemplate[] enums, string writePath, string nameSpace, string header)
+        public LDtkEnumFactory(
+            LDtkEnumFactoryTemplate[] enums,
+            string writePath,
+            string nameSpace,
+            string header
+        )
         {
             _header = header;
             _templates = enums;
             _writePath = writePath;
             _nameSpace = nameSpace;
         }
-        
+
         /// <returns>
         /// Whether the file creation was successful.
         /// </returns>
         public bool CreateEnumFile()
         {
             string directory = Path.GetDirectoryName(_writePath);
-            
+
             string wholeText = GetWholeEnumText();
             LDtkPathUtility.TryCreateDirectory(directory);
             File.WriteAllText(_writePath, wholeText);
@@ -59,7 +62,6 @@ namespace LDtkUnity.Editor
             bool hasNamespace = !string.IsNullOrEmpty(_nameSpace);
             string rootTemplatePath = hasNamespace ? PATH_NAMESPACE : PATH_NO_NAMESPACE;
 
-            
             TextAsset template = LDtkInternalUtility.Load<TextAsset>(rootTemplatePath);
             if (template == null)
             {
@@ -72,20 +74,22 @@ namespace LDtkUnity.Editor
 
             //replace the header
             sb.Replace(TEMPLATE_HEADER, _header);
-            
+
             //put the enums into the base template
             string allEnumTextContent = GenerateEnumDefinitions(hasNamespace);
             sb.Replace(TEMPLATE_DEF_ENUMS, allEnumTextContent);
 
             //final pass for any inconsistent line endings
             sb.Replace("\r\n", "\n");
-            
+
             return sb.ToString();
         }
 
         private string GenerateEnumDefinitions(bool hasNamespace)
         {
-            IEnumerable<string> enumTemplates = _templates.Select(p => GenerateEnumDefinition(p, hasNamespace));
+            IEnumerable<string> enumTemplates = _templates.Select(p =>
+                GenerateEnumDefinition(p, hasNamespace)
+            );
             return string.Join("\n\n", enumTemplates);
         }
 
@@ -97,7 +101,7 @@ namespace LDtkUnity.Editor
 
             string templateTxt = LDtkInternalUtility.Load<TextAsset>(PATH_ENUM_INSTANCE).text;
             StringBuilder builder = new StringBuilder(templateTxt);
-            
+
             builder.Replace(TEMPLATE_PROJECT, projectName);
             builder.Replace(TEMPLATE_DEFINITION, template.Definition);
             builder.Replace(TEMPLATE_VALUES, joinedValues);

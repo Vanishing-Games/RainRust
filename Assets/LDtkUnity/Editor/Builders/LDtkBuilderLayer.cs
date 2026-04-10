@@ -14,7 +14,13 @@ namespace LDtkUnity.Editor
         protected LDtkComponentLayer LayerComponent;
         public float LayerScale;
 
-        protected LDtkBuilderLayer(LDtkProjectImporter project, Level level, LDtkComponentLayer layerComponent, LDtkSortingOrder sortingOrder, LDtkJsonImporter importer)
+        protected LDtkBuilderLayer(
+            LDtkProjectImporter project,
+            Level level,
+            LDtkComponentLayer layerComponent,
+            LDtkSortingOrder sortingOrder,
+            LDtkJsonImporter importer
+        )
         {
             Project = project;
             LayerComponent = layerComponent;
@@ -23,16 +29,16 @@ namespace LDtkUnity.Editor
             SortingOrder = sortingOrder;
             Importer = importer;
         }
-        
+
         public float SetLayerAndScale(LayerInstance layer)
         {
             Layer = layer;
             LayerScale = Layer.GridSize / (float)Project.PixelsPerUnit;
-            
+
             //todo need to evaluate scale here too potentially?
             return LayerScale;
         }
-        
+
         protected Vector3Int ConvertCellCoord(Vector3Int cellCoord)
         {
             return LDtkCoordConverter.ConvertCell(cellCoord, Layer.CHei);
@@ -53,21 +59,22 @@ namespace LDtkUnity.Editor
         {
             tilemap.transform.localPosition += (Vector3)Layer.UnityWorldTotalOffset;
         }
-        
+
         protected void AddTilemapCollider(GameObject tilemapGameObject)
         {
             //intentionally making the order of the composite collider first because of issues with physics particles:
             //https://forum.unity.com/threads/tilemap-collider-with-composite-doesnt-work-with-particle-system-collision-trigger.833737/#post-9173561
-            
+
             if (Project.UseCompositeCollider)
             {
                 Rigidbody2D rb = tilemapGameObject.AddComponent<Rigidbody2D>();
                 rb.bodyType = RigidbodyType2D.Static;
 
-                CompositeCollider2D composite = tilemapGameObject.AddComponent<CompositeCollider2D>();
+                CompositeCollider2D composite =
+                    tilemapGameObject.AddComponent<CompositeCollider2D>();
                 composite.geometryType = Project.GeometryType;
             }
-            
+
             TilemapCollider2D collider = tilemapGameObject.AddComponent<TilemapCollider2D>();
             ConfigureTilemapCollider(collider);
         }
@@ -80,9 +87,11 @@ namespace LDtkUnity.Editor
             }
 
             bool usedByComposite = collider.GetComponent<CompositeCollider2D>();
-            
+
 #if UNITY_2023_1_OR_NEWER
-            collider.compositeOperation = usedByComposite ? Collider2D.CompositeOperation.Merge : Collider2D.CompositeOperation.None;
+            collider.compositeOperation = usedByComposite
+                ? Collider2D.CompositeOperation.Merge
+                : Collider2D.CompositeOperation.None;
 #else
             collider.usedByComposite = usedByComposite;
 #endif

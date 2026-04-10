@@ -34,7 +34,11 @@ namespace FMODUnity
             Settings.AddPlatformTemplate<PlatformLinux>("b7716510a1f36934c87976f3a81dbf3d");
         }
 
-        internal override string DisplayName { get { return "Linux"; } }
+        internal override string DisplayName
+        {
+            get { return "Linux"; }
+        }
+
         internal override void DeclareRuntimePlatforms(Settings settings)
         {
             settings.DeclareRuntimePlatform(RuntimePlatform.LinuxPlayer, this);
@@ -46,19 +50,29 @@ namespace FMODUnity
             yield return BuildTarget.StandaloneLinux64;
         }
 
-        internal override Legacy.Platform LegacyIdentifier { get { return Legacy.Platform.Linux; } }
+        internal override Legacy.Platform LegacyIdentifier
+        {
+            get { return Legacy.Platform.Linux; }
+        }
 
         protected override BinaryAssetFolderInfo GetBinaryAssetFolder(BuildTarget buildTarget)
         {
             return new BinaryAssetFolderInfo("linux", "Plugins");
         }
 
-        protected override IEnumerable<FileRecord> GetBinaryFiles(BuildTarget buildTarget, bool allVariants, string suffix)
+        protected override IEnumerable<FileRecord> GetBinaryFiles(
+            BuildTarget buildTarget,
+            bool allVariants,
+            string suffix
+        )
         {
             yield return new FileRecord(string.Format("x86_64/libfmodstudio{0}.so", suffix));
         }
 
-        protected override IEnumerable<FileRecord> GetOptionalBinaryFiles(BuildTarget buildTarget, bool allVariants)
+        protected override IEnumerable<FileRecord> GetOptionalBinaryFiles(
+            BuildTarget buildTarget,
+            bool allVariants
+        )
         {
             if (allVariants)
             {
@@ -87,19 +101,28 @@ namespace FMODUnity
 #if UNITY_EDITOR
         internal override OutputType[] ValidOutputTypes
         {
-            get
-            {
-                return sValidOutputTypes;
-            }
+            get { return sValidOutputTypes; }
         }
 
-        private static OutputType[] sValidOutputTypes = {
-           new OutputType() { displayName = "Pulse Audio", outputType = FMOD.OUTPUTTYPE.PULSEAUDIO },
-           new OutputType() { displayName = "Advanced Linux Sound Architecture", outputType = FMOD.OUTPUTTYPE.ALSA },
+        private static OutputType[] sValidOutputTypes =
+        {
+            new OutputType()
+            {
+                displayName = "Pulse Audio",
+                outputType = FMOD.OUTPUTTYPE.PULSEAUDIO,
+            },
+            new OutputType()
+            {
+                displayName = "Advanced Linux Sound Architecture",
+                outputType = FMOD.OUTPUTTYPE.ALSA,
+            },
         };
 #endif
 
-        internal override List<CodecChannelCount> DefaultCodecChannels { get { return staticCodecChannels; } }
+        internal override List<CodecChannelCount> DefaultCodecChannels
+        {
+            get { return staticCodecChannels; }
+        }
 
         private static List<CodecChannelCount> staticCodecChannels = new List<CodecChannelCount>()
         {

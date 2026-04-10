@@ -15,7 +15,8 @@ namespace Zenject
     public abstract class Context : MonoBehaviour
     {
         [SerializeField]
-        List<ScriptableObjectInstaller> _scriptableObjectInstallers = new List<ScriptableObjectInstaller>();
+        List<ScriptableObjectInstaller> _scriptableObjectInstallers =
+            new List<ScriptableObjectInstaller>();
 
         [FormerlySerializedAs("Installers")]
         [FormerlySerializedAs("_installers")]
@@ -82,12 +83,8 @@ namespace Zenject
             }
         }
 
-        public abstract DiContainer Container
-        {
-            get;
-        }
+        public abstract DiContainer Container { get; }
         public abstract IEnumerable<GameObject> GetRootGameObjects();
-
 
         public void AddNormalInstallerType(Type installerType)
         {
@@ -102,7 +99,10 @@ namespace Zenject
             _normalInstallers.Add(installer);
         }
 
-        void CheckInstallerPrefabTypes(List<MonoInstaller> installers, List<MonoInstaller> installerPrefabs)
+        void CheckInstallerPrefabTypes(
+            List<MonoInstaller> installers,
+            List<MonoInstaller> installerPrefabs
+        )
         {
             foreach (var installer in installers)
             {
@@ -115,9 +115,13 @@ namespace Zenject
 #if UNITY_2018_3
                 Assert.That(PrefabUtility.GetPrefabAssetType(installer.gameObject) == PrefabAssetType.NotAPrefab,
 #else
-                Assert.That(PrefabUtility.GetPrefabType(installer.gameObject) != PrefabType.Prefab,
+                Assert.That(
+                    PrefabUtility.GetPrefabType(installer.gameObject) != PrefabType.Prefab,
 #endif
-                    "Found prefab with name '{0}' in the Installer property of Context '{1}'.  You should use the property 'InstallerPrefabs' for this instead.", installer.name, name);
+                    "Found prefab with name '{0}' in the Installer property of Context '{1}'.  You should use the property 'InstallerPrefabs' for this instead.",
+                    installer.name,
+                    name
+                );
 #endif
 #endif
             }
@@ -128,20 +132,28 @@ namespace Zenject
 
                 // We'd like to do this but this is actually a valid case sometimes
                 // (eg. loading an asset bundle with a scene containing a scene context when inside unity editor)
-//#if UNITY_EDITOR
+                //#if UNITY_EDITOR
                 //Assert.That(PrefabUtility.GetPrefabType(installerPrefab.gameObject) == PrefabType.Prefab,
-                    //"Found non-prefab with name '{0}' in the InstallerPrefabs property of Context '{1}'.  You should use the property 'Installer' for this instead",
-                    //installerPrefab.name, this.name);
-//#endif
-                Assert.That(installerPrefab.GetComponent<MonoInstaller>() != null,
-                    "Expected to find component with type 'MonoInstaller' on given installer prefab '{0}'", installerPrefab.name);
+                //"Found non-prefab with name '{0}' in the InstallerPrefabs property of Context '{1}'.  You should use the property 'Installer' for this instead",
+                //installerPrefab.name, this.name);
+                //#endif
+                Assert.That(
+                    installerPrefab.GetComponent<MonoInstaller>() != null,
+                    "Expected to find component with type 'MonoInstaller' on given installer prefab '{0}'",
+                    installerPrefab.name
+                );
             }
         }
 
         protected void InstallInstallers()
         {
             InstallInstallers(
-                _normalInstallers, _normalInstallerTypes, _scriptableObjectInstallers, _monoInstallers, _installerPrefabs);
+                _normalInstallers,
+                _normalInstallerTypes,
+                _scriptableObjectInstallers,
+                _monoInstallers,
+                _installerPrefabs
+            );
         }
 
         protected void InstallInstallers(
@@ -149,7 +161,8 @@ namespace Zenject
             List<Type> normalInstallerTypes,
             List<ScriptableObjectInstaller> scriptableObjectInstallers,
             List<MonoInstaller> installers,
-            List<MonoInstaller> installerPrefabs)
+            List<MonoInstaller> installerPrefabs
+        )
         {
             CheckInstallerPrefabTypes(installers, installerPrefabs);
 
@@ -171,13 +184,19 @@ namespace Zenject
             // ScriptableObjectInstallers are often used for settings (including settings
             // that are injected into other installers like MonoInstallers)
 
-            var allInstallers = normalInstallers.Cast<IInstaller>()
+            var allInstallers = normalInstallers
+                .Cast<IInstaller>()
                 .Concat(scriptableObjectInstallers.Cast<IInstaller>())
-                .Concat(installers.Cast<IInstaller>()).ToList();
+                .Concat(installers.Cast<IInstaller>())
+                .ToList();
 
             foreach (var installerPrefab in installerPrefabs)
             {
-                Assert.IsNotNull(installerPrefab, "Found null installer prefab in '{0}'", GetType());
+                Assert.IsNotNull(
+                    installerPrefab,
+                    "Found null installer prefab in '{0}'",
+                    GetType()
+                );
 
                 GameObject installerGameObject;
 
@@ -191,7 +210,11 @@ namespace Zenject
                 installerGameObject.transform.SetParent(transform, false);
                 var installer = installerGameObject.GetComponent<MonoInstaller>();
 
-                Assert.IsNotNull(installer, "Could not find installer component on prefab '{0}'", installerPrefab.name);
+                Assert.IsNotNull(
+                    installer,
+                    "Could not find installer component on prefab '{0}'",
+                    installerPrefab.name
+                );
 
                 allInstallers.Add(installer);
             }
@@ -210,8 +233,7 @@ namespace Zenject
 
             foreach (var installer in allInstallers)
             {
-                Assert.IsNotNull(installer,
-                    "Found null installer in '{0}'", GetType());
+                Assert.IsNotNull(installer, "Found null installer in '{0}'", GetType());
 
                 Container.Inject(installer);
 
@@ -255,8 +277,11 @@ namespace Zenject
                 // since it won't be caught in the other loop above
                 if (this is SceneContext)
                 {
-                    if (binding.Context == null && binding.UseSceneContext
-                        && binding.gameObject.scene == gameObject.scene)
+                    if (
+                        binding.Context == null
+                        && binding.UseSceneContext
+                        && binding.gameObject.scene == gameObject.scene
+                    )
                     {
                         binding.Context = this;
                     }
@@ -278,7 +303,10 @@ namespace Zenject
 
             if (binding.Components == null || binding.Components.IsEmpty())
             {
-                Log.Warn("Found empty list of components on ZenjectBinding on object '{0}'", binding.name);
+                Log.Warn(
+                    "Found empty list of components on ZenjectBinding on object '{0}'",
+                    binding.name
+                );
                 return;
             }
 
@@ -295,7 +323,10 @@ namespace Zenject
 
                 if (component == null)
                 {
-                    Log.Warn("Found null component in ZenjectBinding on object '{0}'", binding.name);
+                    Log.Warn(
+                        "Found null component in ZenjectBinding on object '{0}'",
+                        binding.name
+                    );
                     continue;
                 }
 
@@ -310,17 +341,28 @@ namespace Zenject
                     }
                     case ZenjectBinding.BindTypes.BaseType:
                     {
-                        Container.Bind(componentType.BaseType()).WithId(identifier).FromInstance(component);
+                        Container
+                            .Bind(componentType.BaseType())
+                            .WithId(identifier)
+                            .FromInstance(component);
                         break;
                     }
                     case ZenjectBinding.BindTypes.AllInterfaces:
                     {
-                        Container.Bind(componentType.Interfaces()).WithId(identifier).FromInstance(component);
+                        Container
+                            .Bind(componentType.Interfaces())
+                            .WithId(identifier)
+                            .FromInstance(component);
                         break;
                     }
                     case ZenjectBinding.BindTypes.AllInterfacesAndSelf:
                     {
-                        Container.Bind(componentType.Interfaces().Concat(new[] { componentType }).ToArray()).WithId(identifier).FromInstance(component);
+                        Container
+                            .Bind(
+                                componentType.Interfaces().Concat(new[] { componentType }).ToArray()
+                            )
+                            .WithId(identifier)
+                            .FromInstance(component);
                         break;
                     }
                     default:

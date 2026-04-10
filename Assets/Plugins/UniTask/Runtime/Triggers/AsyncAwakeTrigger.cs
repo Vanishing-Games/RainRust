@@ -23,10 +23,12 @@ namespace Cysharp.Threading.Tasks.Triggers
     {
         public UniTask AwakeAsync()
         {
-            if (calledAwake) return UniTask.CompletedTask;
+            if (calledAwake)
+                return UniTask.CompletedTask;
 
-            return ((IAsyncOneShotTrigger)new AsyncTriggerHandler<AsyncUnit>(this, true)).OneShotAsync();
+            return (
+                (IAsyncOneShotTrigger)new AsyncTriggerHandler<AsyncUnit>(this, true)
+            ).OneShotAsync();
         }
     }
 }
-

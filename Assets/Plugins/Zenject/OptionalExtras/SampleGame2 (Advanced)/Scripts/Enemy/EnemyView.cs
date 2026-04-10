@@ -14,10 +14,7 @@ namespace Zenject.SpaceFighter
         Rigidbody _rigidBody = null;
 
         [Inject]
-        public EnemyFacade Facade
-        {
-            get; set;
-        }
+        public EnemyFacade Facade { get; set; }
 
         public MeshRenderer Renderer
         {

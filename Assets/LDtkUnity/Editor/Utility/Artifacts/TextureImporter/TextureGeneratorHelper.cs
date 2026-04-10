@@ -2,7 +2,6 @@ using System;
 using Unity.Collections;
 using UnityEditor;
 using UnityEngine;
-
 #if UNITY_2020_2_OR_NEWER
 using UnityEditor.AssetImporters;
 #else
@@ -16,22 +15,27 @@ namespace LDtkUnity.Editor
         void FillTextureGenerationSettings(ref TextureGenerationSettings settings);
     }
 
-
     [Serializable]
     internal class TextureSettings : ITextureSettings
     {
         [SerializeField]
         bool m_ColorTexture;
+
         [SerializeField]
         bool m_Readable;
+
         [SerializeField]
         TextureImporterNPOTScale m_NPOTScale;
+
         [SerializeField]
         FilterMode m_FilterMode;
+
         [SerializeField]
         int m_Aniso;
+
         [SerializeField]
         bool m_EnablePostProcessor;
+
         [SerializeField]
         SecondarySpriteTexture[] m_SecondaryTextures;
 
@@ -44,7 +48,17 @@ namespace LDtkUnity.Editor
             aniso = 1;
         }
 
-        public TextureSettings(string assetPath, bool enablePostProcessor, bool colorTexture, bool readable, TextureImporterNPOTScale npotScale, FilterMode filterMode, int aniso, bool sourceContainsAlpha, bool sourceWasHDR)
+        public TextureSettings(
+            string assetPath,
+            bool enablePostProcessor,
+            bool colorTexture,
+            bool readable,
+            TextureImporterNPOTScale npotScale,
+            FilterMode filterMode,
+            int aniso,
+            bool sourceContainsAlpha,
+            bool sourceWasHDR
+        )
         {
             this.assetPath = assetPath;
             this.enablePostProcessor = enablePostProcessor;
@@ -57,10 +71,26 @@ namespace LDtkUnity.Editor
             this.hdr = sourceWasHDR;
         }
 
-        public bool colorTexture { get { return m_ColorTexture; } set { m_ColorTexture = value; } } //sRGBTexture
-        public bool readable { get { return m_Readable; } set { m_Readable = value; } }
-        public TextureImporterNPOTScale npotScale { get { return m_NPOTScale; } set { m_NPOTScale = value; } }
-        public FilterMode filterMode { get { return m_FilterMode; } set { m_FilterMode = value; } }
+        public bool colorTexture
+        {
+            get { return m_ColorTexture; }
+            set { m_ColorTexture = value; }
+        } //sRGBTexture
+        public bool readable
+        {
+            get { return m_Readable; }
+            set { m_Readable = value; }
+        }
+        public TextureImporterNPOTScale npotScale
+        {
+            get { return m_NPOTScale; }
+            set { m_NPOTScale = value; }
+        }
+        public FilterMode filterMode
+        {
+            get { return m_FilterMode; }
+            set { m_FilterMode = value; }
+        }
         public int aniso
         {
             get { return m_Aniso; }
@@ -76,7 +106,11 @@ namespace LDtkUnity.Editor
         public bool containsAlpha { get; set; }
         public bool hdr { get; set; }
 
-        public SecondarySpriteTexture[] secondaryTextures { get { return m_SecondaryTextures;} set { m_SecondaryTextures = value; } }
+        public SecondarySpriteTexture[] secondaryTextures
+        {
+            get { return m_SecondaryTextures; }
+            set { m_SecondaryTextures = value; }
+        }
 
         void ITextureSettings.FillTextureGenerationSettings(ref TextureGenerationSettings settings)
         {
@@ -139,7 +173,14 @@ namespace LDtkUnity.Editor
             extrudeEdges = 1;
         }
 
-        public TextureSpriteSettings(string packingTag, int pixelsPerUnit, SpriteMeshType meshType, uint extrudeEdges, bool qualifyForPacking, SpriteImportData[] spriteSheetData = null)
+        public TextureSpriteSettings(
+            string packingTag,
+            int pixelsPerUnit,
+            SpriteMeshType meshType,
+            uint extrudeEdges,
+            bool qualifyForPacking,
+            SpriteImportData[] spriteSheetData = null
+        )
         {
             this.packingTag = packingTag;
             this.pixelsPerUnit = pixelsPerUnit;
@@ -165,10 +206,13 @@ namespace LDtkUnity.Editor
     {
         [SerializeField]
         TextureWrapMode m_WrapMode;
+
         [SerializeField]
         TextureWrapMode m_WrapModeU;
+
         [SerializeField]
         TextureWrapMode m_WrapModeV;
+
         [SerializeField]
         TextureWrapMode m_WrapModeW;
 
@@ -177,7 +221,12 @@ namespace LDtkUnity.Editor
             wrapMode = wrapModeU = wrapModeV = wrapModeW = TextureWrapMode.Repeat;
         }
 
-        public TextureWrapSettings(TextureWrapMode wrapMpde, TextureWrapMode wrapModeU, TextureWrapMode wrapModeV, TextureWrapMode wrapModeW)
+        public TextureWrapSettings(
+            TextureWrapMode wrapMpde,
+            TextureWrapMode wrapModeU,
+            TextureWrapMode wrapModeV,
+            TextureWrapMode wrapModeW
+        )
         {
             this.wrapMode = wrapMode;
             this.wrapModeU = wrapModeU;
@@ -185,10 +234,26 @@ namespace LDtkUnity.Editor
             this.wrapModeW = wrapModeW;
         }
 
-        public TextureWrapMode wrapMode { get { return m_WrapMode; } set { m_WrapMode = value; } }
-        public TextureWrapMode wrapModeU { get { return m_WrapModeU; } set { m_WrapModeU = value; } }
-        public TextureWrapMode wrapModeV { get { return m_WrapModeV; } set { m_WrapModeV = value; } }
-        public TextureWrapMode wrapModeW { get { return m_WrapModeW; } set { m_WrapModeW = value; } }
+        public TextureWrapMode wrapMode
+        {
+            get { return m_WrapMode; }
+            set { m_WrapMode = value; }
+        }
+        public TextureWrapMode wrapModeU
+        {
+            get { return m_WrapModeU; }
+            set { m_WrapModeU = value; }
+        }
+        public TextureWrapMode wrapModeV
+        {
+            get { return m_WrapModeV; }
+            set { m_WrapModeV = value; }
+        }
+        public TextureWrapMode wrapModeW
+        {
+            get { return m_WrapModeW; }
+            set { m_WrapModeW = value; }
+        }
 
         void ITextureSettings.FillTextureGenerationSettings(ref TextureGenerationSettings settings)
         {
@@ -232,7 +297,8 @@ namespace LDtkUnity.Editor
 
         void ITextureSettings.FillTextureGenerationSettings(ref TextureGenerationSettings settings)
         {
-            settings.textureImporterSettings.alphaIsTransparency = alphaSource != TextureImporterAlphaSource.None;
+            settings.textureImporterSettings.alphaIsTransparency =
+                alphaSource != TextureImporterAlphaSource.None;
             settings.textureImporterSettings.alphaSource = alphaSource;
             settings.textureImporterSettings.alphaTestReferenceValue = alphaTolerance;
         }
@@ -248,14 +314,14 @@ namespace LDtkUnity.Editor
             get { return m_Filter; }
             set { m_Filter = value; }
         }
-        
+
         [SerializeField]
         float m_Bias;
         public float bias
         {
             get { return m_Bias; }
             set { m_Bias = value; }
-        }        
+        }
 
         [SerializeField]
         bool m_BorderMipmap;
@@ -296,7 +362,7 @@ namespace LDtkUnity.Editor
             get { return m_FadeDistanceEnd; }
             set { m_FadeDistanceEnd = value; }
         }
-        
+
         [SerializeField]
         bool m_StreamingMipmaps;
         public bool streamingMipmaps
@@ -304,14 +370,14 @@ namespace LDtkUnity.Editor
             get { return m_StreamingMipmaps; }
             set { m_StreamingMipmaps = value; }
         }
-        
+
         [SerializeField]
         int m_StreamingMipmapsPriority;
         public int streamingMipmapsPriority
         {
             get { return m_StreamingMipmapsPriority; }
             set { m_StreamingMipmapsPriority = value; }
-        }        
+        }
 
         public TextureMipmapSettings()
         {
@@ -323,7 +389,17 @@ namespace LDtkUnity.Editor
             fadeDistanceEnd = 3;
         }
 
-        public TextureMipmapSettings(TextureImporterMipFilter filter, float bias, bool borderMipmap, bool fadeout, bool preserveCoverage, int fadeDistanceStart, int fadeDistanceEnd, bool streamingMipmaps, int streamingMipmapsPriority)
+        public TextureMipmapSettings(
+            TextureImporterMipFilter filter,
+            float bias,
+            bool borderMipmap,
+            bool fadeout,
+            bool preserveCoverage,
+            int fadeDistanceStart,
+            int fadeDistanceEnd,
+            bool streamingMipmaps,
+            int streamingMipmapsPriority
+        )
         {
             this.filter = filter;
             this.bias = bias;
@@ -333,7 +409,7 @@ namespace LDtkUnity.Editor
             this.fadeDistanceStart = fadeDistanceStart;
             this.fadeDistanceEnd = fadeDistanceEnd;
             this.streamingMipmaps = streamingMipmaps;
-            this.streamingMipmapsPriority = streamingMipmapsPriority;            
+            this.streamingMipmapsPriority = streamingMipmapsPriority;
         }
 
         void ITextureSettings.FillTextureGenerationSettings(ref TextureGenerationSettings settings)
@@ -347,7 +423,7 @@ namespace LDtkUnity.Editor
             settings.textureImporterSettings.mipmapFadeDistanceEnd = fadeDistanceEnd;
             settings.textureImporterSettings.mipMapsPreserveCoverage = preserveCoverage;
             settings.textureImporterSettings.streamingMipmaps = streamingMipmaps;
-            settings.textureImporterSettings.streamingMipmapsPriority = streamingMipmapsPriority;            
+            settings.textureImporterSettings.streamingMipmapsPriority = streamingMipmapsPriority;
         }
     }
 
@@ -385,7 +461,11 @@ namespace LDtkUnity.Editor
             bumpiness = 0.25f;
         }
 
-        public TextureNormalSettings(TextureImporterNormalFilter filter, bool generateFromGrayScale, float bumpiness)
+        public TextureNormalSettings(
+            TextureImporterNormalFilter filter,
+            bool generateFromGrayScale,
+            float bumpiness
+        )
         {
             this.filter = filter;
             this.generateFromGrayScale = generateFromGrayScale;
@@ -427,6 +507,7 @@ namespace LDtkUnity.Editor
             get { return m_Seamless; }
             set { m_Seamless = value; }
         }
+
         public TextureCubemapSettings()
         {
             convolution = TextureImporterCubemapConvolution.None;
@@ -434,7 +515,11 @@ namespace LDtkUnity.Editor
             seamless = false;
         }
 
-        public TextureCubemapSettings(TextureImporterCubemapConvolution convolution, TextureImporterGenerateCubemap mode, bool seamless)
+        public TextureCubemapSettings(
+            TextureImporterCubemapConvolution convolution,
+            TextureImporterGenerateCubemap mode,
+            bool seamless
+        )
         {
             this.convolution = convolution;
             this.mode = mode;
@@ -452,18 +537,53 @@ namespace LDtkUnity.Editor
 
     internal static class TextureGeneratorHelper
     {
-        public static TextureGenerationOutput GenerateTextureSprite(NativeArray<Color32> buffer, int bufferWidth, int bufferHeight, TextureSettings settings, TextureImporterPlatformSettings platformSettings,
-            TextureSpriteSettings spriteSettings, TextureAlphaSettings alphaSettings = null, TextureMipmapSettings mipmapSettings = null, TextureWrapSettings wrapSettings = null)
+        public static TextureGenerationOutput GenerateTextureSprite(
+            NativeArray<Color32> buffer,
+            int bufferWidth,
+            int bufferHeight,
+            TextureSettings settings,
+            TextureImporterPlatformSettings platformSettings,
+            TextureSpriteSettings spriteSettings,
+            TextureAlphaSettings alphaSettings = null,
+            TextureMipmapSettings mipmapSettings = null,
+            TextureWrapSettings wrapSettings = null
+        )
         {
             if (alphaSettings == null)
-                alphaSettings = new TextureAlphaSettings(TextureImporterAlphaSource.FromInput, 0.5f);
+                alphaSettings = new TextureAlphaSettings(
+                    TextureImporterAlphaSource.FromInput,
+                    0.5f
+                );
             if (wrapSettings == null)
-                wrapSettings = new TextureWrapSettings(TextureWrapMode.Clamp, TextureWrapMode.Clamp, TextureWrapMode.Clamp, TextureWrapMode.Clamp);
+                wrapSettings = new TextureWrapSettings(
+                    TextureWrapMode.Clamp,
+                    TextureWrapMode.Clamp,
+                    TextureWrapMode.Clamp,
+                    TextureWrapMode.Clamp
+                );
 
-            return GenerateTexture(buffer, bufferWidth, bufferHeight, TextureImporterType.Sprite, platformSettings, settings, spriteSettings, alphaSettings, mipmapSettings, wrapSettings);
+            return GenerateTexture(
+                buffer,
+                bufferWidth,
+                bufferHeight,
+                TextureImporterType.Sprite,
+                platformSettings,
+                settings,
+                spriteSettings,
+                alphaSettings,
+                mipmapSettings,
+                wrapSettings
+            );
         }
 
-        static TextureGenerationOutput GenerateTexture(NativeArray<Color32> imageBuffer, int imageBufferWidth, int imageBufferHeight, TextureImporterType type, TextureImporterPlatformSettings platformSettings, params ITextureSettings[] otherSettings)
+        static TextureGenerationOutput GenerateTexture(
+            NativeArray<Color32> imageBuffer,
+            int imageBufferWidth,
+            int imageBufferHeight,
+            TextureImporterType type,
+            TextureImporterPlatformSettings platformSettings,
+            params ITextureSettings[] otherSettings
+        )
         {
             var textureGenerationSettings = new TextureGenerationSettings();
             textureGenerationSettings.platformSettings = platformSettings;
@@ -474,7 +594,8 @@ namespace LDtkUnity.Editor
 
             textureGenerationSettings.textureImporterSettings = new TextureImporterSettings();
             textureGenerationSettings.textureImporterSettings.textureType = type;
-            textureGenerationSettings.textureImporterSettings.textureShape = TextureImporterShape.Texture2D;
+            textureGenerationSettings.textureImporterSettings.textureShape =
+                TextureImporterShape.Texture2D;
 
             textureGenerationSettings.textureImporterSettings.alphaIsTransparency = false;
             textureGenerationSettings.textureImporterSettings.convertToNormalMap = false;
@@ -495,7 +616,7 @@ namespace LDtkUnity.Editor
             return TextureGenerator.GenerateTexture(textureGenerationSettings, imageBuffer);
         }
 
-        static public TextureSettings ExtractTextureSettings(this TextureImporterSettings tis)
+        public static TextureSettings ExtractTextureSettings(this TextureImporterSettings tis)
         {
             var ts = new TextureSettings();
             ts.colorTexture = tis.sRGBTexture;
@@ -506,7 +627,9 @@ namespace LDtkUnity.Editor
             return ts;
         }
 
-        static public TextureSpriteSettings ExtractTextureSpriteSettings(this TextureImporterSettings tis)
+        public static TextureSpriteSettings ExtractTextureSpriteSettings(
+            this TextureImporterSettings tis
+        )
         {
             var ts = new TextureSpriteSettings();
             ts.pixelsPerUnit = tis.spritePixelsPerUnit;
@@ -515,7 +638,9 @@ namespace LDtkUnity.Editor
             return ts;
         }
 
-        static public TextureWrapSettings ExtractTextureWrapSettings(this TextureImporterSettings tis)
+        public static TextureWrapSettings ExtractTextureWrapSettings(
+            this TextureImporterSettings tis
+        )
         {
             var ts = new TextureWrapSettings();
             ts.wrapMode = tis.wrapMode;
@@ -525,7 +650,9 @@ namespace LDtkUnity.Editor
             return ts;
         }
 
-        static public TextureAlphaSettings ExtractTextureAlphaSettings(this TextureImporterSettings settings)
+        public static TextureAlphaSettings ExtractTextureAlphaSettings(
+            this TextureImporterSettings settings
+        )
         {
             if (settings.alphaIsTransparency == false)
                 return null;
@@ -536,7 +663,9 @@ namespace LDtkUnity.Editor
             return ts;
         }
 
-        static public TextureMipmapSettings ExtractTextureMipmapSettings(this TextureImporterSettings settings)
+        public static TextureMipmapSettings ExtractTextureMipmapSettings(
+            this TextureImporterSettings settings
+        )
         {
             if (!settings.mipmapEnabled)
                 return null;
@@ -550,7 +679,7 @@ namespace LDtkUnity.Editor
             ts.fadeDistanceEnd = settings.mipmapFadeDistanceEnd;
             ts.preserveCoverage = settings.mipMapsPreserveCoverage;
             ts.streamingMipmaps = settings.streamingMipmaps;
-            ts.streamingMipmapsPriority = settings.streamingMipmapsPriority;            
+            ts.streamingMipmapsPriority = settings.streamingMipmapsPriority;
             return ts;
         }
     }

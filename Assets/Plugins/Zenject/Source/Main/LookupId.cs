@@ -8,9 +8,7 @@ namespace Zenject.Internal
         public IProvider Provider;
         public BindingId BindingId;
 
-        public LookupId()
-        {
-        }
+        public LookupId() { }
 
         public LookupId(IProvider provider, BindingId bindingId)
         {

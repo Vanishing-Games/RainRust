@@ -48,7 +48,7 @@ namespace LDtkUnity
         /// </summary>
         [DataMember(Name = "flipY")]
         public bool FlipY { get; set; }
-        
+
         /// <summary>
         /// If TRUE, then the rule should be re-evaluated by the editor at one point
         /// </summary>

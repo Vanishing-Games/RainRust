@@ -4,9 +4,7 @@ namespace Zenject
     public class NonLazyBinder : IfNotBoundBinder
     {
         public NonLazyBinder(BindInfo bindInfo)
-            : base(bindInfo)
-        {
-        }
+            : base(bindInfo) { }
 
         public IfNotBoundBinder NonLazy()
         {

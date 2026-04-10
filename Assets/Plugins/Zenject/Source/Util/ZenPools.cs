@@ -11,22 +11,16 @@ namespace Zenject.Internal
             return new InjectContext(container, memberType);
         }
 
-        public static void DespawnInjectContext(InjectContext context)
-        {
-        }
+        public static void DespawnInjectContext(InjectContext context) { }
 
         public static List<T> SpawnList<T>()
         {
             return new List<T>();
         }
 
-        public static void DespawnList<T>(List<T> list)
-        {
-        }
+        public static void DespawnList<T>(List<T> list) { }
 
-        public static void DespawnArray<T>(T[] arr)
-        {
-        }
+        public static void DespawnArray<T>(T[] arr) { }
 
         public static T[] SpawnArray<T>(int length)
         {
@@ -43,45 +37,37 @@ namespace Zenject.Internal
             return new Dictionary<TKey, TValue>();
         }
 
-        public static void DespawnDictionary<TKey, TValue>(Dictionary<TKey, TValue> dictionary)
-        {
-        }
+        public static void DespawnDictionary<TKey, TValue>(Dictionary<TKey, TValue> dictionary) { }
 
-        public static void DespawnHashSet<T>(HashSet<T> set)
-        {
-        }
+        public static void DespawnHashSet<T>(HashSet<T> set) { }
 
         public static LookupId SpawnLookupId(IProvider provider, BindingId bindingId)
         {
             return new LookupId(provider, bindingId);
         }
 
-        public static void DespawnLookupId(LookupId lookupId)
-        {
-        }
+        public static void DespawnLookupId(LookupId lookupId) { }
 
         public static BindInfo SpawnBindInfo()
         {
             return new BindInfo();
         }
 
-        public static void DespawnBindInfo(BindInfo bindInfo)
-        {
-        }
+        public static void DespawnBindInfo(BindInfo bindInfo) { }
 
         public static BindStatement SpawnStatement()
         {
             return new BindStatement();
         }
 
-        public static void DespawnStatement(BindStatement statement)
-        {
-        }
+        public static void DespawnStatement(BindStatement statement) { }
 #else
-        static readonly StaticMemoryPool<InjectContext> _contextPool = new StaticMemoryPool<InjectContext>();
+        static readonly StaticMemoryPool<InjectContext> _contextPool =
+            new StaticMemoryPool<InjectContext>();
         static readonly StaticMemoryPool<LookupId> _lookupIdPool = new StaticMemoryPool<LookupId>();
         static readonly StaticMemoryPool<BindInfo> _bindInfoPool = new StaticMemoryPool<BindInfo>();
-        static readonly StaticMemoryPool<BindStatement> _bindStatementPool = new StaticMemoryPool<BindStatement>();
+        static readonly StaticMemoryPool<BindStatement> _bindStatementPool =
+            new StaticMemoryPool<BindStatement>();
 
         public static HashSet<T> SpawnHashSet<T>()
         {
@@ -178,8 +164,13 @@ namespace Zenject.Internal
 #endif
 
         public static InjectContext SpawnInjectContext(
-            DiContainer container, InjectableInfo injectableInfo, InjectContext currentContext,
-            object targetInstance, Type targetType, object concreteIdentifier)
+            DiContainer container,
+            InjectableInfo injectableInfo,
+            InjectContext currentContext,
+            object targetInstance,
+            Type targetType,
+            object concreteIdentifier
+        )
         {
             var context = SpawnInjectContext(container, injectableInfo.MemberType);
 

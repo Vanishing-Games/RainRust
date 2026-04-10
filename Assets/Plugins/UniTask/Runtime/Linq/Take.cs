@@ -1,12 +1,15 @@
-﻿using Cysharp.Threading.Tasks.Internal;
-using System;
+﻿using System;
 using System.Threading;
+using Cysharp.Threading.Tasks.Internal;
 
 namespace Cysharp.Threading.Tasks.Linq
 {
     public static partial class UniTaskAsyncEnumerable
     {
-        public static IUniTaskAsyncEnumerable<TSource> Take<TSource>(this IUniTaskAsyncEnumerable<TSource> source, Int32 count)
+        public static IUniTaskAsyncEnumerable<TSource> Take<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            Int32 count
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
 
@@ -25,7 +28,9 @@ namespace Cysharp.Threading.Tasks.Linq
             this.count = count;
         }
 
-        public IUniTaskAsyncEnumerator<TSource> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+        public IUniTaskAsyncEnumerator<TSource> GetAsyncEnumerator(
+            CancellationToken cancellationToken = default
+        )
         {
             return new _Take(source, count, cancellationToken);
         }
@@ -42,7 +47,11 @@ namespace Cysharp.Threading.Tasks.Linq
             UniTask<bool>.Awaiter awaiter;
             int index;
 
-            public _Take(IUniTaskAsyncEnumerable<TSource> source, int count, CancellationToken cancellationToken)
+            public _Take(
+                IUniTaskAsyncEnumerable<TSource> source,
+                int count,
+                CancellationToken cancellationToken
+            )
             {
                 this.source = source;
                 this.count = count;

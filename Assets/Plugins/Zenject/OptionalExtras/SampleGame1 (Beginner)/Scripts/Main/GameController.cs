@@ -8,7 +8,7 @@ namespace Zenject.Asteroids
     {
         WaitingToStart,
         Playing,
-        GameOver
+        GameOver,
     }
 
     public class GameController : IInitializable, ITickable, IDisposable
@@ -20,9 +20,7 @@ namespace Zenject.Asteroids
         GameStates _state = GameStates.WaitingToStart;
         float _elapsedTime;
 
-        public GameController(
-            Ship ship, AsteroidManager asteroidSpawner,
-            SignalBus signalBus)
+        public GameController(Ship ship, AsteroidManager asteroidSpawner, SignalBus signalBus)
         {
             _signalBus = signalBus;
             _asteroidSpawner = asteroidSpawner;

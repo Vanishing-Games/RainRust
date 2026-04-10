@@ -15,18 +15,19 @@ namespace LDtkUnity
     public partial class LDtkFields : MonoBehaviour
     {
         internal const string PROPERTY_FIELDS = nameof(_fields);
-        
-        [SerializeField] private LDtkField[] _fields = Array.Empty<LDtkField>();
+
+        [SerializeField]
+        private LDtkField[] _fields = Array.Empty<LDtkField>();
 
         private Dictionary<string, int> _keys;
-        
+
         public LDtkField[] Fields => _fields;
 
         private void Awake()
         {
             CacheFields();
         }
-        
+
         internal void CacheFields()
         {
             _keys = new Dictionary<string, int>(_fields.Length);
@@ -51,7 +52,7 @@ namespace LDtkUnity
         {
             return TryGetField(identifier, out var value) ? value : null;
         }
-        
+
         [PublicAPI]
         public bool TryGetField(string identifier, out LDtkField field)
         {
@@ -60,7 +61,7 @@ namespace LDtkUnity
                 field = default;
                 return false;
             }
-            
+
             if (_keys != null && _keys.ContainsKey(identifier))
             {
                 int key = _keys[identifier];
@@ -71,7 +72,7 @@ namespace LDtkUnity
             field = _fields.FirstOrDefault(fld => fld.Identifier == identifier);
             return field != null;
         }
-        
+
         internal bool IsFieldOfType(string identifier, LDtkFieldType type)
         {
             if (!TryGetField(identifier, out LDtkField field))
@@ -81,7 +82,7 @@ namespace LDtkUnity
 
             return field.Type == type;
         }
-        
+
         internal bool IsFieldArray(string identifier)
         {
             if (!TryGetField(identifier, out LDtkField field))
@@ -91,28 +92,41 @@ namespace LDtkUnity
 
             return field.IsArray;
         }
-        
-        private T GetFieldSingle<T>(string identifier, LDtkFieldType type, LDtkElementSelector<T> selector)
+
+        private T GetFieldSingle<T>(
+            string identifier,
+            LDtkFieldType type,
+            LDtkElementSelector<T> selector
+        )
         {
             TryGetFieldSingle(identifier, type, selector, out T value, true);
             return value;
         }
-        
-        private bool TryGetFieldSingle<T>(string identifier, LDtkFieldType type, LDtkElementSelector<T> selector, out T value, bool log = false)
+
+        private bool TryGetFieldSingle<T>(
+            string identifier,
+            LDtkFieldType type,
+            LDtkElementSelector<T> selector,
+            out T value,
+            bool log = false
+        )
         {
             value = default;
-            
+
             if (!TryGetField(identifier, out LDtkField field))
             {
                 if (log)
                 {
                     GameObject obj = gameObject;
-                    LDtkDebug.LogError($"No field \"{identifier}\" exists in this field component for {obj.name}", obj);
+                    LDtkDebug.LogError(
+                        $"No field \"{identifier}\" exists in this field component for {obj.name}",
+                        obj
+                    );
                 }
-                
+
                 return false;
             }
-            
+
             if (!field.ValidateElementTypes(type, gameObject))
             {
                 return false;
@@ -123,30 +137,43 @@ namespace LDtkUnity
             {
                 return false;
             }
-            
+
             value = selector.Invoke(element, out success);
             if (log && !success)
             {
                 LDtkDebug.LogError($"Failed to get field \"{identifier}\"");
             }
-            
+
             return success;
         }
-        
-        private T[] GetFieldArray<T>(string identifier, LDtkFieldType type, LDtkElementSelector<T> selector)
+
+        private T[] GetFieldArray<T>(
+            string identifier,
+            LDtkFieldType type,
+            LDtkElementSelector<T> selector
+        )
         {
             TryGetFieldArray(identifier, type, selector, out T[] value, true);
             return value;
         }
-        
-        private bool TryGetFieldArray<T>(string identifier, LDtkFieldType type, LDtkElementSelector<T> selector, out T[] value, bool log = false)
+
+        private bool TryGetFieldArray<T>(
+            string identifier,
+            LDtkFieldType type,
+            LDtkElementSelector<T> selector,
+            out T[] value,
+            bool log = false
+        )
         {
             if (!TryGetField(identifier, out LDtkField field))
             {
                 if (log)
                 {
                     GameObject obj = gameObject;
-                    LDtkDebug.LogError($"No array field \"{identifier}\" exists in this field component for {obj.name}", obj);
+                    LDtkDebug.LogError(
+                        $"No array field \"{identifier}\" exists in this field component for {obj.name}",
+                        obj
+                    );
                 }
                 value = Array.Empty<T>();
                 return false;
@@ -157,7 +184,7 @@ namespace LDtkUnity
                 value = Array.Empty<T>();
                 return false;
             }
-            
+
             bool success = field.TryGetArray(out var elements);
             if (!success)
             {
@@ -174,7 +201,9 @@ namespace LDtkUnity
             {
                 if (log)
                 {
-                    LDtkDebug.LogError($"Array element types does not match, they were not C# type \"{typeof(T).Name}\"");
+                    LDtkDebug.LogError(
+                        $"Array element types does not match, they were not C# type \"{typeof(T).Name}\""
+                    );
                 }
 
                 value = Array.Empty<T>();

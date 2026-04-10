@@ -6,29 +6,32 @@ namespace LDtkUnity.Editor
     [CustomEditor(typeof(LDtkArtifactAssets))]
     internal sealed class LDtkArtifactAssetsEditor : LDtkEditor
     {
-        protected override Texture2D StaticPreview => (Texture2D)LDtkIconUtility.GetUnityIcon("Image");
-        
+        protected override Texture2D StaticPreview =>
+            (Texture2D)LDtkIconUtility.GetUnityIcon("Image");
+
         private SerializedProperty _backgroundsProp;
         private SerializedProperty _defs;
-        
+
         private string _searchString = "";
-        
+
         private void OnEnable()
         {
-            _backgroundsProp = serializedObject.FindProperty(LDtkArtifactAssets.PROPERTY_BACKGROUNDS);
+            _backgroundsProp = serializedObject.FindProperty(
+                LDtkArtifactAssets.PROPERTY_BACKGROUNDS
+            );
             _defs = serializedObject.FindProperty(LDtkArtifactAssets.PROPERTY_DEFS);
         }
 
         public override void OnInspectorGUI()
         {
             //DrawDefaultInspector();
-            
+
             if (_backgroundsProp == null)
             {
                 LDtkDebug.LogError("Drawing error");
                 return;
             }
-            
+
             using (new LDtkGUIEnabledScope(true))
             {
                 DrawSection(_backgroundsProp, "Image", "Background Sprite");
@@ -40,7 +43,10 @@ namespace LDtkUnity.Editor
         {
             GUILayout.BeginHorizontal(GUI.skin.FindStyle("Toolbar"));
             //GUILayout.FlexibleSpace();
-            _searchString = GUILayout.TextField(_searchString, GUI.skin.FindStyle("ToolbarSeachTextField"));
+            _searchString = GUILayout.TextField(
+                _searchString,
+                GUI.skin.FindStyle("ToolbarSeachTextField")
+            );
             if (GUILayout.Button("", GUI.skin.FindStyle("ToolbarSeachCancelButton")))
             {
                 // Remove focus if cleared
@@ -55,15 +61,12 @@ namespace LDtkUnity.Editor
             EditorGUIUtility.SetIconSize(Vector2.one * 16);
             Texture image = LDtkIconUtility.GetUnityIcon(icon);
 
-            string pluralizedText = $"{tilesProp.arraySize} {label}" + (tilesProp.arraySize != 1 ? "s" : "");
-            GUIContent tilesContent = new GUIContent()
-            {
-                text = pluralizedText,
-                image = image
-            };
-            
+            string pluralizedText =
+                $"{tilesProp.arraySize} {label}" + (tilesProp.arraySize != 1 ? "s" : "");
+            GUIContent tilesContent = new GUIContent() { text = pluralizedText, image = image };
+
             EditorGUILayout.LabelField(tilesContent);
-            
+
             using (new EditorGUI.IndentLevelScope())
             {
                 DrawElements(tilesProp, image);
@@ -79,7 +82,7 @@ namespace LDtkUnity.Editor
 
             bool nullOrEmpty = string.IsNullOrEmpty(_searchString);
             string term = _searchString.ToLower();
-            
+
             while (drawn < maxDrawn && i < arrayProp.arraySize)
             {
                 SerializedProperty element = arrayProp.GetArrayElementAtIndex(i);
@@ -88,14 +91,14 @@ namespace LDtkUnity.Editor
                     LDtkDebug.LogError("tileProp is null");
                     continue;
                 }
-                
+
                 string elementName = element.objectReferenceValue.name.ToLower();
                 if (nullOrEmpty || elementName.Contains(term))
                 {
                     DrawItem(element, image);
                     drawn++;
                 }
-                
+
                 i++;
             }
 
@@ -113,11 +116,7 @@ namespace LDtkUnity.Editor
                 return;
             }
 
-            GUIContent tileContent = new GUIContent()
-            {
-                text = element.displayName,
-                image = image
-            };
+            GUIContent tileContent = new GUIContent() { text = element.displayName, image = image };
             EditorGUILayout.PropertyField(element, tileContent);
         }
     }

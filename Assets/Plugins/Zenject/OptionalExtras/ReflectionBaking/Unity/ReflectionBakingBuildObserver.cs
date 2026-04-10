@@ -30,7 +30,9 @@ namespace Zenject.ReflectionBaking
 
             if (EditorUserBuildSettings.activeBuildTarget == BuildTarget.WSAPlayer)
             {
-                Log.Warn("Zenject reflection baking skipped because it is not currently supported on WSA platform!");
+                Log.Warn(
+                    "Zenject reflection baking skipped because it is not currently supported on WSA platform!"
+                );
             }
             else
             {
@@ -47,12 +49,18 @@ namespace Zenject.ReflectionBaking
                 return;
             }
 
-            if (settings.AllGeneratedAssemblies && settings.ExcludeAssemblies.Contains(assemblyAssetPath))
+            if (
+                settings.AllGeneratedAssemblies
+                && settings.ExcludeAssemblies.Contains(assemblyAssetPath)
+            )
             {
                 return;
             }
 
-            if (!settings.AllGeneratedAssemblies && !settings.IncludeAssemblies.Contains(assemblyAssetPath))
+            if (
+                !settings.AllGeneratedAssemblies
+                && !settings.IncludeAssemblies.Contains(assemblyAssetPath)
+            )
             {
                 return;
             }
@@ -60,7 +68,9 @@ namespace Zenject.ReflectionBaking
             var stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            var assemblyFullPath = ReflectionBakingInternalUtil.ConvertAssetPathToSystemPath(assemblyAssetPath);
+            var assemblyFullPath = ReflectionBakingInternalUtil.ConvertAssetPathToSystemPath(
+                assemblyAssetPath
+            );
 
             var readerParameters = new ReaderParameters
             {
@@ -81,13 +91,22 @@ namespace Zenject.ReflectionBaking
             }
 
             var assemblyName = Path.GetFileNameWithoutExtension(assemblyAssetPath);
-            var assembly = AppDomain.CurrentDomain.GetAssemblies()
-                .Where(x => x.GetName().Name == assemblyName).OnlyOrDefault();
+            var assembly = AppDomain
+                .CurrentDomain.GetAssemblies()
+                .Where(x => x.GetName().Name == assemblyName)
+                .OnlyOrDefault();
 
-            Assert.IsNotNull(assembly, "Could not find unique assembly '{0}' in currently loaded list of assemblies", assemblyName);
+            Assert.IsNotNull(
+                assembly,
+                "Could not find unique assembly '{0}' in currently loaded list of assemblies",
+                assemblyName
+            );
 
             int numTypesChanged = ReflectionBakingModuleEditor.WeaveAssembly(
-                module, assembly, settings.NamespacePatterns);
+                module,
+                assembly,
+                settings.NamespacePatterns
+            );
 
             if (numTypesChanged > 0)
             {
@@ -99,8 +118,13 @@ namespace Zenject.ReflectionBaking
 
                 module.Write(assemblyFullPath, writerParams);
 
-                Debug.Log("Added reflection baking to '{0}' types in assembly '{1}', took {2:0.00} seconds"
-                    .Fmt(numTypesChanged, Path.GetFileName(assemblyAssetPath), stopwatch.Elapsed.TotalSeconds));
+                Debug.Log(
+                    "Added reflection baking to '{0}' types in assembly '{1}', took {2:0.00} seconds".Fmt(
+                        numTypesChanged,
+                        Path.GetFileName(assemblyAssetPath),
+                        stopwatch.Elapsed.TotalSeconds
+                    )
+                );
             }
         }
     }

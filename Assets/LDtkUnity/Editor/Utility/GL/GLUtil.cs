@@ -1,5 +1,4 @@
-﻿
-using System.Linq;
+﻿using System.Linq;
 using UnityEngine;
 
 namespace LDtkUnity.Editor
@@ -15,7 +14,6 @@ namespace LDtkUnity.Editor
                     GL.Color(color);
                     GL.Vertex3(point.x, point.y, 0);
                 }
-                
             }
 
             if (wrap)
@@ -24,6 +22,7 @@ namespace LDtkUnity.Editor
                 DrawLine(points.First(), points.Last(), color);
             }
         }
+
         public static void DrawLine(Vector2 start, Vector2 end, Color color)
         {
             using (new GLDrawScope(GL.LINE_STRIP))
@@ -45,7 +44,7 @@ namespace LDtkUnity.Editor
                 }
             }
         }
-        
+
         public static void DrawHollowRect(Rect rect, Color color)
         {
             Vector2[] points =
@@ -55,10 +54,10 @@ namespace LDtkUnity.Editor
                 rect.max,
                 rect.min + Vector2.up * rect.height,
             };
-            
+
             DrawLineStrip(points, color, true);
         }
-        
+
         public static void DrawRect(Rect rect, Color color)
         {
             using (new GLDrawScope(GL.QUADS))
@@ -70,6 +69,5 @@ namespace LDtkUnity.Editor
                 GL.Vertex3(0, rect.height, 0);
             }
         }
-        
     }
 }

@@ -7,21 +7,38 @@ namespace LDtkUnity
     [Serializable]
     internal class LDtkEntityDrawerData : LDtkSceneDrawerBase
     {
-        [SerializeField] protected RenderMode _entityMode;
-        [SerializeField] protected bool _drawTile;
-        [SerializeField] private bool _hollow;
-        [SerializeField] private bool _showName;
-        
-        [SerializeField] protected Transform _transform;
-        
-        [SerializeField] private string _texPath; 
-        [SerializeField] private Rect _texRect;
-        
-        [SerializeField] private Vector2 _pivot;
-        [SerializeField] private float _fillOpacity;
-        [SerializeField] private float _lineOpacity;
-        
-        [SerializeField] private Vector2 _size;
+        [SerializeField]
+        protected RenderMode _entityMode;
+
+        [SerializeField]
+        protected bool _drawTile;
+
+        [SerializeField]
+        private bool _hollow;
+
+        [SerializeField]
+        private bool _showName;
+
+        [SerializeField]
+        protected Transform _transform;
+
+        [SerializeField]
+        private string _texPath;
+
+        [SerializeField]
+        private Rect _texRect;
+
+        [SerializeField]
+        private Vector2 _pivot;
+
+        [SerializeField]
+        private float _fillOpacity;
+
+        [SerializeField]
+        private float _lineOpacity;
+
+        [SerializeField]
+        private Vector2 _size;
 
         public RenderMode EntityMode => _entityMode;
         public bool DrawTile => _drawTile;
@@ -34,8 +51,16 @@ namespace LDtkUnity
         public float FillOpacity => _fillOpacity;
         public float LineOpacity => _lineOpacity;
         public Vector2 Size => _size;
-        
-        public LDtkEntityDrawerData(Transform transform, EntityDefinition def, string texPath, Rect texRect, Vector2 size, Color gizmoColor) : base(def.Identifier, gizmoColor)
+
+        public LDtkEntityDrawerData(
+            Transform transform,
+            EntityDefinition def,
+            string texPath,
+            Rect texRect,
+            Vector2 size,
+            Color gizmoColor
+        )
+            : base(def.Identifier, gizmoColor)
         {
             _entityMode = def.RenderMode;
             _hollow = def.Hollow;
@@ -49,7 +74,11 @@ namespace LDtkUnity
             _texRect = texRect;
             _size = size;
 
-            _drawTile = def.RenderMode == RenderMode.Tile || def.FieldDefs.Any(field => field.EditorDisplayMode == EditorDisplayMode.EntityTile);
+            _drawTile =
+                def.RenderMode == RenderMode.Tile
+                || def.FieldDefs.Any(field =>
+                    field.EditorDisplayMode == EditorDisplayMode.EntityTile
+                );
         }
     }
 }

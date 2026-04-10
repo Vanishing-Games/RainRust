@@ -42,12 +42,13 @@ namespace Cysharp.Threading.Tasks.Internal
             { typeof(ushort), "ushort" },
             { typeof(Task), "Task" },
             { typeof(UniTask), "UniTask" },
-            { typeof(UniTaskVoid), "UniTaskVoid" }
+            { typeof(UniTaskVoid), "UniTaskVoid" },
         };
 
         public static string CleanupAsyncStackTrace(this StackTrace stackTrace)
         {
-            if (stackTrace == null) return "";
+            if (stackTrace == null)
+                return "";
 
             var sb = new StringBuilder();
             for (int i = 0; i < stackTrace.FrameCount; i++)
@@ -56,7 +57,8 @@ namespace Cysharp.Threading.Tasks.Internal
 
                 var mb = sf.GetMethod();
 
-                if (IgnoreLine(mb)) continue;
+                if (IgnoreLine(mb))
+                    continue;
                 if (IsAsync(mb))
                 {
                     sb.Append("async ");
@@ -89,7 +91,13 @@ namespace Cysharp.Threading.Tasks.Internal
 
                 // parameter
                 sb.Append("(");
-                sb.Append(string.Join(", ", mb.GetParameters().Select(p => BeautifyType(p.ParameterType, true) + " " + p.Name)));
+                sb.Append(
+                    string.Join(
+                        ", ",
+                        mb.GetParameters()
+                            .Select(p => BeautifyType(p.ParameterType, true) + " " + p.Name)
+                    )
+                );
                 sb.Append(")");
 
                 // file name
@@ -113,7 +121,11 @@ namespace Cysharp.Threading.Tasks.Internal
                     if (fileName != null)
                     {
                         sb.Append(' ');
-                        sb.AppendFormat(CultureInfo.InvariantCulture, "(at {0})", AppendHyperLink(fileName, sf.GetFileLineNumber().ToString()));
+                        sb.AppendFormat(
+                            CultureInfo.InvariantCulture,
+                            "(at {0})",
+                            AppendHyperLink(fileName, sf.GetFileLineNumber().ToString())
+                        );
                     }
                 }
 
@@ -121,7 +133,6 @@ namespace Cysharp.Threading.Tasks.Internal
             }
             return sb.ToString();
         }
-
 
         static bool IsAsync(MethodBase methodInfo)
         {
@@ -140,7 +151,13 @@ namespace Cysharp.Threading.Tasks.Internal
                 return false;
             }
 
-            var methods = parentType.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+            var methods = parentType.GetMethods(
+                BindingFlags.Public
+                    | BindingFlags.NonPublic
+                    | BindingFlags.Static
+                    | BindingFlags.Instance
+                    | BindingFlags.DeclaredOnly
+            );
             if (methods == null)
             {
                 return false;
@@ -176,15 +193,28 @@ namespace Cysharp.Threading.Tasks.Internal
             {
                 return builtin;
             }
-            if (t.IsGenericParameter) return t.Name;
-            if (t.IsArray) return BeautifyType(t.GetElementType(), shortName) + "[]";
+            if (t.IsGenericParameter)
+                return t.Name;
+            if (t.IsArray)
+                return BeautifyType(t.GetElementType(), shortName) + "[]";
             if (t.FullName?.StartsWith("System.ValueTuple") ?? false)
             {
-                return "(" + string.Join(", ", t.GetGenericArguments().Select(x => BeautifyType(x, true))) + ")";
+                return "("
+                    + string.Join(", ", t.GetGenericArguments().Select(x => BeautifyType(x, true)))
+                    + ")";
             }
-            if (!t.IsGenericType) return shortName ? t.Name : t.FullName.Replace("Cysharp.Threading.Tasks.Triggers.", "").Replace("Cysharp.Threading.Tasks.Internal.", "").Replace("Cysharp.Threading.Tasks.", "") ?? t.Name;
+            if (!t.IsGenericType)
+                return shortName
+                    ? t.Name
+                    : t.FullName.Replace("Cysharp.Threading.Tasks.Triggers.", "")
+                        .Replace("Cysharp.Threading.Tasks.Internal.", "")
+                        .Replace("Cysharp.Threading.Tasks.", "")
+                    ?? t.Name;
 
-            var innerFormat = string.Join(", ", t.GetGenericArguments().Select(x => BeautifyType(x, true)));
+            var innerFormat = string.Join(
+                ", ",
+                t.GetGenericArguments().Select(x => BeautifyType(x, true))
+            );
 
             var genericType = t.GetGenericTypeDefinition().FullName;
             if (genericType == "System.Threading.Tasks.Task`1")
@@ -192,7 +222,14 @@ namespace Cysharp.Threading.Tasks.Internal
                 genericType = "Task";
             }
 
-            return typeBeautifyRegex.Replace(genericType, "").Replace("Cysharp.Threading.Tasks.Triggers.", "").Replace("Cysharp.Threading.Tasks.Internal.", "").Replace("Cysharp.Threading.Tasks.", "") + "<" + innerFormat + ">";
+            return typeBeautifyRegex
+                    .Replace(genericType, "")
+                    .Replace("Cysharp.Threading.Tasks.Triggers.", "")
+                    .Replace("Cysharp.Threading.Tasks.Internal.", "")
+                    .Replace("Cysharp.Threading.Tasks.", "")
+                + "<"
+                + innerFormat
+                + ">";
         }
 
         static bool IgnoreLine(MethodBase methodInfo)
@@ -239,11 +276,20 @@ namespace Cysharp.Threading.Tasks.Internal
             }
             else
             {
-                var fname = fi.FullName.Replace(Path.DirectorySeparatorChar, '/').Replace(PlayerLoopHelper.ApplicationDataPath, "");
+                var fname = fi
+                    .FullName.Replace(Path.DirectorySeparatorChar, '/')
+                    .Replace(PlayerLoopHelper.ApplicationDataPath, "");
                 var withAssetsPath = "Assets/" + fname;
-                return "<a href=\"" + withAssetsPath + "\" line=\"" + line + "\">" + withAssetsPath + ":" + line + "</a>";
+                return "<a href=\""
+                    + withAssetsPath
+                    + "\" line=\""
+                    + line
+                    + "\">"
+                    + withAssetsPath
+                    + ":"
+                    + line
+                    + "</a>";
             }
         }
     }
 }
-

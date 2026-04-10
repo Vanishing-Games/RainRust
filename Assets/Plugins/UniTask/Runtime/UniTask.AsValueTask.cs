@@ -65,7 +65,12 @@ namespace Cysharp.Threading.Tasks
                 return (ValueTaskSourceStatus)task.Status;
             }
 
-            public void OnCompleted(Action<object> continuation, object state, short token, ValueTaskSourceOnCompletedFlags flags)
+            public void OnCompleted(
+                Action<object> continuation,
+                object state,
+                short token,
+                ValueTaskSourceOnCompletedFlags flags
+            )
             {
                 awaiter.SourceOnCompleted(continuation, state);
             }
@@ -92,7 +97,12 @@ namespace Cysharp.Threading.Tasks
                 return (ValueTaskSourceStatus)task.Status;
             }
 
-            public void OnCompleted(Action<object> continuation, object state, short token, ValueTaskSourceOnCompletedFlags flags)
+            public void OnCompleted(
+                Action<object> continuation,
+                object state,
+                short token,
+                ValueTaskSourceOnCompletedFlags flags
+            )
             {
                 awaiter.SourceOnCompleted(continuation, state);
             }

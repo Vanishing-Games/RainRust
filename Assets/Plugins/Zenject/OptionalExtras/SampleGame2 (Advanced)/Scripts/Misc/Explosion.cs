@@ -24,9 +24,7 @@ namespace Zenject.SpaceFighter
             }
         }
 
-        public void OnDespawned()
-        {
-        }
+        public void OnDespawned() { }
 
         public void OnSpawned(IMemoryPool pool)
         {
@@ -37,9 +35,6 @@ namespace Zenject.SpaceFighter
             _pool = pool;
         }
 
-        public class Factory : PlaceholderFactory<Explosion>
-        {
-        }
+        public class Factory : PlaceholderFactory<Explosion> { }
     }
 }
-

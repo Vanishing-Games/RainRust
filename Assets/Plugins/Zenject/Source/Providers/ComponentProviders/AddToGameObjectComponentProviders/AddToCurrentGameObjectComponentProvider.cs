@@ -19,9 +19,12 @@ namespace Zenject
         readonly Action<InjectContext, object> _instantiateCallback;
 
         public AddToCurrentGameObjectComponentProvider(
-            DiContainer container, Type componentType,
-            IEnumerable<TypeValuePair> extraArguments, object concreteIdentifier,
-            Action<InjectContext, object> instantiateCallback)
+            DiContainer container,
+            Type componentType,
+            IEnumerable<TypeValuePair> extraArguments,
+            object concreteIdentifier,
+            Action<InjectContext, object> instantiateCallback
+        )
         {
             Assert.That(componentType.DerivesFrom<Component>());
 
@@ -58,17 +61,26 @@ namespace Zenject
         }
 
         public void GetAllInstancesWithInjectSplit(
-            InjectContext context, List<TypeValuePair> args, out Action injectAction, List<object> buffer)
+            InjectContext context,
+            List<TypeValuePair> args,
+            out Action injectAction,
+            List<object> buffer
+        )
         {
             Assert.IsNotNull(context);
 
-            Assert.That(context.ObjectType.DerivesFrom<Component>(),
+            Assert.That(
+                context.ObjectType.DerivesFrom<Component>(),
                 "Object '{0}' can only be injected into MonoBehaviour's since it was bound with 'FromNewComponentSibling'. Attempted to inject into non-MonoBehaviour '{1}'",
-                context.MemberType, context.ObjectType);
+                context.MemberType,
+                context.ObjectType
+            );
 
             object instance;
 
-            if (!_container.IsValidating || TypeAnalyzer.ShouldAllowDuringValidation(_componentType))
+            if (
+                !_container.IsValidating || TypeAnalyzer.ShouldAllowDuringValidation(_componentType)
+            )
             {
                 var gameObj = ((Component)context.ObjectInstance).gameObject;
 
@@ -102,7 +114,13 @@ namespace Zenject
                 extraArgs.AllocFreeAddRange(_extraArguments);
                 extraArgs.AllocFreeAddRange(args);
 
-                _container.InjectExplicit(instance, _componentType, extraArgs, context, _concreteIdentifier);
+                _container.InjectExplicit(
+                    instance,
+                    _componentType,
+                    extraArgs,
+                    context,
+                    _concreteIdentifier
+                );
 
                 Assert.That(extraArgs.IsEmpty());
                 ZenPools.DespawnList(extraArgs);

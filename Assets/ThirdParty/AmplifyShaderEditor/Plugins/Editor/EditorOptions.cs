@@ -2,66 +2,71 @@ using UnityEditor;
 
 namespace AmplifyShaderEditor
 {
-	[System.Serializable]
-	public class OptionsWindow
-	{
-		private AmplifyShaderEditorWindow m_parentWindow = null;
+    [System.Serializable]
+    public class OptionsWindow
+    {
+        private AmplifyShaderEditorWindow m_parentWindow = null;
 
-		private bool m_coloredPorts = true;
-		private bool m_multiLinePorts = true;
-		private const string MultiLineId = "MultiLinePortsDefault";
-		private const string ColorPortId = "ColoredPortsDefault";
-		public OptionsWindow( AmplifyShaderEditorWindow parentWindow )
-		{
-			m_parentWindow = parentWindow;
-			//Load ();
-		}
+        private bool m_coloredPorts = true;
+        private bool m_multiLinePorts = true;
+        private const string MultiLineId = "MultiLinePortsDefault";
+        private const string ColorPortId = "ColoredPortsDefault";
 
-		public void Init()
-		{
-			Load();
-		}
+        public OptionsWindow(AmplifyShaderEditorWindow parentWindow)
+        {
+            m_parentWindow = parentWindow;
+            //Load ();
+        }
 
-		public void Destroy()
-		{
-			Save();
-		}
+        public void Init()
+        {
+            Load();
+        }
 
-		public void Save()
-		{
-			EditorPrefs.SetBool( ColorPortId, ColoredPorts );
-			EditorPrefs.SetBool( MultiLineId, m_multiLinePorts );
-		}
+        public void Destroy()
+        {
+            Save();
+        }
 
-		public void Load()
-		{
-			ColoredPorts = EditorPrefs.GetBool( ColorPortId, true );
-			m_multiLinePorts = EditorPrefs.GetBool( MultiLineId, true );
-		}
+        public void Save()
+        {
+            EditorPrefs.SetBool(ColorPortId, ColoredPorts);
+            EditorPrefs.SetBool(MultiLineId, m_multiLinePorts);
+        }
 
-		public bool ColoredPorts
-		{
-			get { return m_coloredPorts; }
-			set
-			{
-				if ( m_coloredPorts != value )
-					EditorPrefs.SetBool( ColorPortId, value );
+        public void Load()
+        {
+            ColoredPorts = EditorPrefs.GetBool(ColorPortId, true);
+            m_multiLinePorts = EditorPrefs.GetBool(MultiLineId, true);
+        }
 
-				m_coloredPorts = value;
-			}
-		}
+        public bool ColoredPorts
+        {
+            get { return m_coloredPorts; }
+            set
+            {
+                if (m_coloredPorts != value)
+                    EditorPrefs.SetBool(ColorPortId, value);
 
-		public bool MultiLinePorts
-		{
-			get { return m_multiLinePorts; }
-			set
-			{
-				if ( m_multiLinePorts != value )
-					EditorPrefs.SetBool( MultiLineId, value );
+                m_coloredPorts = value;
+            }
+        }
 
-				m_multiLinePorts = value;
-			}
-		}
-		public AmplifyShaderEditorWindow ParentWindow { get { return m_parentWindow; } set { m_parentWindow = value; } }
-	}
+        public bool MultiLinePorts
+        {
+            get { return m_multiLinePorts; }
+            set
+            {
+                if (m_multiLinePorts != value)
+                    EditorPrefs.SetBool(MultiLineId, value);
+
+                m_multiLinePorts = value;
+            }
+        }
+        public AmplifyShaderEditorWindow ParentWindow
+        {
+            get { return m_parentWindow; }
+            set { m_parentWindow = value; }
+        }
+    }
 }

@@ -1,4 +1,11 @@
 ﻿namespace LDtkUnity
 {
-    public enum BgPos { Contain, Cover, CoverDirty, Repeat, Unscaled };
+    public enum BgPos
+    {
+        Contain,
+        Cover,
+        CoverDirty,
+        Repeat,
+        Unscaled,
+    };
 }

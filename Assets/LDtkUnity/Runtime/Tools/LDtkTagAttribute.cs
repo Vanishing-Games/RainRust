@@ -2,8 +2,5 @@ using UnityEngine;
 
 namespace LDtkUnity
 {
-    internal class LDtkTagAttribute : PropertyAttribute
-    {
-        
-    }
+    internal class LDtkTagAttribute : PropertyAttribute { }
 }

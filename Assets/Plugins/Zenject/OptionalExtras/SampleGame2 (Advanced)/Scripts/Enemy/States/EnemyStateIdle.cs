@@ -15,8 +15,10 @@ namespace Zenject.SpaceFighter
         Vector3 _startLookDir;
 
         public EnemyStateIdle(
-            EnemyView view, Settings settings,
-            EnemyRotationHandler rotationHandler)
+            EnemyView view,
+            Settings settings,
+            EnemyRotationHandler rotationHandler
+        )
         {
             _rotationHandler = rotationHandler;
             _settings = settings;
@@ -30,9 +32,7 @@ namespace Zenject.SpaceFighter
             _startLookDir = _view.LookDir;
         }
 
-        public void ExitState()
-        {
-        }
+        public void ExitState() { }
 
         // Just add a bit of subtle movement
         public void Update()
@@ -44,9 +44,7 @@ namespace Zenject.SpaceFighter
             _rotationHandler.DesiredLookDir = _startLookDir;
         }
 
-        public void FixedUpdate()
-        {
-        }
+        public void FixedUpdate() { }
 
         [Serializable]
         public class Settings

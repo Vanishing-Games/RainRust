@@ -8,14 +8,17 @@ namespace LDtkUnity
     public sealed class LDtkDefinitionObjectIntGridValueGroup
     {
         [field: Tooltip("User defined string identifier")]
-        [field: SerializeField] public string Identifier { get; private set; }
-        
+        [field: SerializeField]
+        public string Identifier { get; private set; }
+
         [field: Tooltip("User defined color")]
-        [field: SerializeField] public Color Color { get; private set; }
-        
+        [field: SerializeField]
+        public Color Color { get; private set; }
+
         [field: Tooltip("Group unique ID")]
-        [field: SerializeField] public int Uid { get; private set; }
-        
+        [field: SerializeField]
+        public int Uid { get; private set; }
+
         internal void Populate(LDtkDefinitionObjectsCache cache, IntGridValueGroupDefinition def)
         {
             Color = def.UnityColor;

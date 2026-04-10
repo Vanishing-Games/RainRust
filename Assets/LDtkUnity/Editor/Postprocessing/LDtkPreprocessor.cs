@@ -8,7 +8,7 @@ namespace LDtkUnity.Editor
     {
         internal const string METHOD_PROJECT = nameof(OnPreprocessProject);
         internal const string METHOD_LEVEL = nameof(OnPreprocessLevel);
-        
+
         /// <summary>
         /// Use to perform operations before the project hierarchy is created.<br/>
         /// This is only called for project files, not separate level files.
@@ -20,7 +20,7 @@ namespace LDtkUnity.Editor
         /// Name of the project file.
         /// </param>
         protected virtual void OnPreprocessProject(LdtkJson projectJson, string projectName) { }
-        
+
         /// <summary>
         /// Use to perform operations before the level hierarchy is created.<br/>
         /// This is only called for separate level files, not project files.
@@ -29,12 +29,16 @@ namespace LDtkUnity.Editor
         /// The level json.
         /// </param>
         /// <param name="projectJson">
-        /// The project data of this level. 
+        /// The project data of this level.
         /// </param>
         /// <param name="projectName">
         /// Name of the project file.
         /// </param>
-        protected virtual void OnPreprocessLevel(Level level, LdtkJson projectJson, string projectName) { }
+        protected virtual void OnPreprocessLevel(
+            Level level,
+            LdtkJson projectJson,
+            string projectName
+        ) { }
 
         /// <summary>
         /// Override the order in which preprocessors are processed.

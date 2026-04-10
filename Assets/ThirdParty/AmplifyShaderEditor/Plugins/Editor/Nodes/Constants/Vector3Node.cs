@@ -1,318 +1,422 @@
 // Amplify Shader Editor - Visual Shader Editing Tool
 // Copyright (c) Amplify Creations, Lda <info@amplify.pt>
 
-using UnityEngine;
-using UnityEditor;
 using System;
+using UnityEditor;
+using UnityEngine;
 
 namespace AmplifyShaderEditor
 {
-	[System.Serializable]
-	[NodeAttributes( "Vector3", "Constants And Properties", "Vector3 property", null, KeyCode.Alpha3 )]
-	public sealed class Vector3Node : PropertyNode
-	{
-		[SerializeField]
-		private Vector3 m_defaultValue = Vector3.zero;
+    [System.Serializable]
+    [NodeAttributes(
+        "Vector3",
+        "Constants And Properties",
+        "Vector3 property",
+        null,
+        KeyCode.Alpha3
+    )]
+    public sealed class Vector3Node : PropertyNode
+    {
+        [SerializeField]
+        private Vector3 m_defaultValue = Vector3.zero;
 
-		[SerializeField]
-		private Vector3 m_materialValue = Vector3.zero;
+        [SerializeField]
+        private Vector3 m_materialValue = Vector3.zero;
 
-		private const float LabelWidth = 8;
+        private const float LabelWidth = 8;
 
-		private int m_cachedPropertyId = -1;
+        private int m_cachedPropertyId = -1;
 
-		public Vector3Node() : base() { }
-		public Vector3Node( int uniqueId, float x, float y, float width, float height ) : base( uniqueId, x, y, width, height ) { }
-		protected override void CommonInit( int uniqueId )
-		{
-			base.CommonInit( uniqueId );
-			GlobalTypeWarningText = string.Format( GlobalTypeWarningText, "Vector" );
-			m_insideSize.Set( 50, 30 );
-			m_selectedLocation = PreviewLocation.BottomCenter;
-			AddOutputVectorPorts( WirePortDataType.FLOAT3, "XYZ" );
-			m_previewShaderGUID = "8a44d38f06246bf48944b3f314bc7920";
-			m_srpBatcherCompatible = true;
-			m_showHybridInstancedUI = true;
-		}
+        public Vector3Node()
+            : base() { }
 
-		public override void CopyDefaultsToMaterial()
-		{
-			m_materialValue = m_defaultValue;
-		}
+        public Vector3Node(int uniqueId, float x, float y, float width, float height)
+            : base(uniqueId, x, y, width, height) { }
 
-		public override void DrawSubProperties()
-		{
-			m_defaultValue = EditorGUILayoutVector3Field( Constants.DefaultValueLabel, m_defaultValue );
-		}
+        protected override void CommonInit(int uniqueId)
+        {
+            base.CommonInit(uniqueId);
+            GlobalTypeWarningText = string.Format(GlobalTypeWarningText, "Vector");
+            m_insideSize.Set(50, 30);
+            m_selectedLocation = PreviewLocation.BottomCenter;
+            AddOutputVectorPorts(WirePortDataType.FLOAT3, "XYZ");
+            m_previewShaderGUID = "8a44d38f06246bf48944b3f314bc7920";
+            m_srpBatcherCompatible = true;
+            m_showHybridInstancedUI = true;
+        }
 
-		public override void DrawMaterialProperties()
-		{
-			EditorGUI.BeginChangeCheck();
+        public override void CopyDefaultsToMaterial()
+        {
+            m_materialValue = m_defaultValue;
+        }
 
-			m_materialValue = EditorGUILayoutVector3Field( Constants.MaterialValueLabel, m_materialValue );
+        public override void DrawSubProperties()
+        {
+            m_defaultValue = EditorGUILayoutVector3Field(
+                Constants.DefaultValueLabel,
+                m_defaultValue
+            );
+        }
 
-			if( EditorGUI.EndChangeCheck() )
-			{
-				//MarkForPreviewUpdate();
-				if( m_materialMode )
-					m_requireMaterialUpdate = true;
-			}
-		}
+        public override void DrawMaterialProperties()
+        {
+            EditorGUI.BeginChangeCheck();
 
-		public override void SetPreviewInputs()
-		{
-			base.SetPreviewInputs();
+            m_materialValue = EditorGUILayoutVector3Field(
+                Constants.MaterialValueLabel,
+                m_materialValue
+            );
 
-			if( m_cachedPropertyId == -1 )
-				m_cachedPropertyId = Shader.PropertyToID( "_InputVector" );
+            if (EditorGUI.EndChangeCheck())
+            {
+                //MarkForPreviewUpdate();
+                if (m_materialMode)
+                    m_requireMaterialUpdate = true;
+            }
+        }
 
-			if( m_materialMode && m_currentParameterType != PropertyType.Constant )
-				PreviewMaterial.SetVector( m_cachedPropertyId, new Vector4( m_materialValue[ 0 ], m_materialValue[ 1 ], m_materialValue[ 2 ], 0 ) );
-			else
-				PreviewMaterial.SetVector( m_cachedPropertyId, new Vector4( m_defaultValue[ 0 ], m_defaultValue[ 1 ], m_defaultValue[ 2 ], 0 ) );
-		}
+        public override void SetPreviewInputs()
+        {
+            base.SetPreviewInputs();
 
-		private bool m_isEditingFields;
-		private Vector3 m_previousValue = Vector3.zero;
-		private string[] m_fieldText = new string[] { "0", "0", "0" };
+            if (m_cachedPropertyId == -1)
+                m_cachedPropertyId = Shader.PropertyToID("_InputVector");
 
-		public override void Draw( DrawInfo drawInfo )
-		{
-			base.Draw( drawInfo );
+            if (m_materialMode && m_currentParameterType != PropertyType.Constant)
+                PreviewMaterial.SetVector(
+                    m_cachedPropertyId,
+                    new Vector4(m_materialValue[0], m_materialValue[1], m_materialValue[2], 0)
+                );
+            else
+                PreviewMaterial.SetVector(
+                    m_cachedPropertyId,
+                    new Vector4(m_defaultValue[0], m_defaultValue[1], m_defaultValue[2], 0)
+                );
+        }
 
-			if( !m_isVisible )
-				return;
+        private bool m_isEditingFields;
+        private Vector3 m_previousValue = Vector3.zero;
+        private string[] m_fieldText = new string[] { "0", "0", "0" };
 
-			if( m_isEditingFields && m_currentParameterType != PropertyType.Global)
-			{
-				EditorGUI.BeginChangeCheck();
-				for( int i = 0; i < 3; i++ )
-				{
-					m_propertyDrawPos.y = m_outputPorts[ i + 1 ].Position.y - 2 * drawInfo.InvertedZoom;
-					if( m_materialMode && m_currentParameterType != PropertyType.Constant )
-					{
-						float val = m_materialValue[ i ];
-						UIUtils.DrawFloat( this, ref m_propertyDrawPos, ref val, LabelWidth * drawInfo.InvertedZoom );
-						m_materialValue[ i ] = val;
-					}
-					else
-					{
-						float val = m_defaultValue[ i ];
-						UIUtils.DrawFloat( this, ref m_propertyDrawPos, ref val, LabelWidth * drawInfo.InvertedZoom );
-						m_defaultValue[ i ] = val;
-					}
-				}
-				if( EditorGUI.EndChangeCheck() )
-				{
-					PreviewIsDirty = true;
-					m_requireMaterialUpdate = m_materialMode;
-					BeginDelayedDirtyProperty();
-				}
-			}
-			else if( drawInfo.CurrentEventType == EventType.Repaint && ContainerGraph.LodLevel <= ParentGraph.NodeLOD.LOD4 )
-			{
-				bool guiEnabled = GUI.enabled;
-				GUI.enabled = m_currentParameterType != PropertyType.Global;
+        public override void Draw(DrawInfo drawInfo)
+        {
+            base.Draw(drawInfo);
 
-				for( int i = 0; i < 3; i++ )
-				{
-					m_propertyDrawPos.y = m_outputPorts[ i + 1 ].Position.y - 2 * drawInfo.InvertedZoom;
+            if (!m_isVisible)
+                return;
 
-					Rect fakeField = m_propertyDrawPos;
-					fakeField.xMin += LabelWidth * drawInfo.InvertedZoom;
-					if( GUI.enabled )
-					{
-						Rect fakeLabel = m_propertyDrawPos;
-						fakeLabel.xMax = fakeField.xMin;
-						EditorGUIUtility.AddCursorRect( fakeLabel, MouseCursor.SlideArrow );
-						EditorGUIUtility.AddCursorRect( fakeField, MouseCursor.Text );
-					}
+            if (m_isEditingFields && m_currentParameterType != PropertyType.Global)
+            {
+                EditorGUI.BeginChangeCheck();
+                for (int i = 0; i < 3; i++)
+                {
+                    m_propertyDrawPos.y =
+                        m_outputPorts[i + 1].Position.y - 2 * drawInfo.InvertedZoom;
+                    if (m_materialMode && m_currentParameterType != PropertyType.Constant)
+                    {
+                        float val = m_materialValue[i];
+                        UIUtils.DrawFloat(
+                            this,
+                            ref m_propertyDrawPos,
+                            ref val,
+                            LabelWidth * drawInfo.InvertedZoom
+                        );
+                        m_materialValue[i] = val;
+                    }
+                    else
+                    {
+                        float val = m_defaultValue[i];
+                        UIUtils.DrawFloat(
+                            this,
+                            ref m_propertyDrawPos,
+                            ref val,
+                            LabelWidth * drawInfo.InvertedZoom
+                        );
+                        m_defaultValue[i] = val;
+                    }
+                }
+                if (EditorGUI.EndChangeCheck())
+                {
+                    PreviewIsDirty = true;
+                    m_requireMaterialUpdate = m_materialMode;
+                    BeginDelayedDirtyProperty();
+                }
+            }
+            else if (
+                drawInfo.CurrentEventType == EventType.Repaint
+                && ContainerGraph.LodLevel <= ParentGraph.NodeLOD.LOD4
+            )
+            {
+                bool guiEnabled = GUI.enabled;
+                GUI.enabled = m_currentParameterType != PropertyType.Global;
 
-					if( m_materialMode && m_currentParameterType != PropertyType.Constant )
-					{
-						if( m_previousValue[ i ] != m_materialValue[ i ] )
-						{
-							m_previousValue[ i ] = m_materialValue[ i ];
-							m_fieldText[ i ] = m_materialValue[ i ].ToString();
-						}
-					}
-					else
-					{
-						if( m_previousValue[ i ] != m_defaultValue[ i ] )
-						{
-							m_previousValue[ i ] = m_defaultValue[ i ];
-							m_fieldText[ i ] = m_defaultValue[ i ].ToString();
-						}
-					}
+                for (int i = 0; i < 3; i++)
+                {
+                    m_propertyDrawPos.y =
+                        m_outputPorts[i + 1].Position.y - 2 * drawInfo.InvertedZoom;
 
-					GUI.Label( fakeField, m_fieldText[ i ], UIUtils.MainSkin.textField );
-				}
-				GUI.enabled = guiEnabled;
-			}
-		}
+                    Rect fakeField = m_propertyDrawPos;
+                    fakeField.xMin += LabelWidth * drawInfo.InvertedZoom;
+                    if (GUI.enabled)
+                    {
+                        Rect fakeLabel = m_propertyDrawPos;
+                        fakeLabel.xMax = fakeField.xMin;
+                        EditorGUIUtility.AddCursorRect(fakeLabel, MouseCursor.SlideArrow);
+                        EditorGUIUtility.AddCursorRect(fakeField, MouseCursor.Text);
+                    }
 
-		public override void OnNodeLayout( DrawInfo drawInfo )
-		{
-			base.OnNodeLayout( drawInfo );
+                    if (m_materialMode && m_currentParameterType != PropertyType.Constant)
+                    {
+                        if (m_previousValue[i] != m_materialValue[i])
+                        {
+                            m_previousValue[i] = m_materialValue[i];
+                            m_fieldText[i] = m_materialValue[i].ToString();
+                        }
+                    }
+                    else
+                    {
+                        if (m_previousValue[i] != m_defaultValue[i])
+                        {
+                            m_previousValue[i] = m_defaultValue[i];
+                            m_fieldText[i] = m_defaultValue[i].ToString();
+                        }
+                    }
 
-			m_propertyDrawPos = m_remainingBox;
-			m_propertyDrawPos.x = m_remainingBox.x - LabelWidth * drawInfo.InvertedZoom;
-			m_propertyDrawPos.width = drawInfo.InvertedZoom * Constants.FLOAT_DRAW_WIDTH_FIELD_SIZE;
-			m_propertyDrawPos.height = drawInfo.InvertedZoom * Constants.FLOAT_DRAW_HEIGHT_FIELD_SIZE;
-		}
+                    GUI.Label(fakeField, m_fieldText[i], UIUtils.MainSkin.textField);
+                }
+                GUI.enabled = guiEnabled;
+            }
+        }
 
-		public override void DrawGUIControls( DrawInfo drawInfo )
-		{
-			base.DrawGUIControls( drawInfo );
+        public override void OnNodeLayout(DrawInfo drawInfo)
+        {
+            base.OnNodeLayout(drawInfo);
 
-			if( drawInfo.CurrentEventType != EventType.MouseDown )
-				return;
+            m_propertyDrawPos = m_remainingBox;
+            m_propertyDrawPos.x = m_remainingBox.x - LabelWidth * drawInfo.InvertedZoom;
+            m_propertyDrawPos.width = drawInfo.InvertedZoom * Constants.FLOAT_DRAW_WIDTH_FIELD_SIZE;
+            m_propertyDrawPos.height =
+                drawInfo.InvertedZoom * Constants.FLOAT_DRAW_HEIGHT_FIELD_SIZE;
+        }
 
-			Rect hitBox = m_remainingBox;
-			hitBox.xMin -= LabelWidth * drawInfo.InvertedZoom;
-			bool insideBox = hitBox.Contains( drawInfo.MousePosition );
+        public override void DrawGUIControls(DrawInfo drawInfo)
+        {
+            base.DrawGUIControls(drawInfo);
 
-			if( insideBox )
-			{
-				GUI.FocusControl( null );
-				m_isEditingFields = true;
-			}
-			else if( m_isEditingFields && !insideBox )
-			{
-				GUI.FocusControl( null );
-				m_isEditingFields = false;
-			}
-		}
+            if (drawInfo.CurrentEventType != EventType.MouseDown)
+                return;
 
-		public override void ConfigureLocalVariable( ref MasterNodeDataCollector dataCollector )
-		{
-			Vector3 value = m_defaultValue;
-			dataCollector.AddLocalVariable( UniqueId, CreateLocalVarDec( value.x + "," + value.y + "," + value.z ) );
-			m_outputPorts[ 0 ].SetLocalValue( m_propertyName , dataCollector.PortCategory );
-			m_outputPorts[ 1 ].SetLocalValue( m_propertyName + ".x" , dataCollector.PortCategory );
-			m_outputPorts[ 2 ].SetLocalValue( m_propertyName + ".y" , dataCollector.PortCategory );
-			m_outputPorts[ 3 ].SetLocalValue( m_propertyName + ".z", dataCollector.PortCategory );
-		}
+            Rect hitBox = m_remainingBox;
+            hitBox.xMin -= LabelWidth * drawInfo.InvertedZoom;
+            bool insideBox = hitBox.Contains(drawInfo.MousePosition);
 
-		public override string GenerateShaderForOutput( int outputId, ref MasterNodeDataCollector dataCollector, bool ignoreLocalvar )
-		{
-			base.GenerateShaderForOutput( outputId, ref dataCollector, ignoreLocalvar );
-			m_precisionString = UIUtils.PrecisionWirePortToCgType( CurrentPrecisionType, m_outputPorts[ 0 ].DataType );
+            if (insideBox)
+            {
+                GUI.FocusControl(null);
+                m_isEditingFields = true;
+            }
+            else if (m_isEditingFields && !insideBox)
+            {
+                GUI.FocusControl(null);
+                m_isEditingFields = false;
+            }
+        }
 
-			if( m_currentParameterType != PropertyType.Constant )
-				return GetOutputVectorItem( 0, outputId, PropertyData( dataCollector.PortCategory ) );
+        public override void ConfigureLocalVariable(ref MasterNodeDataCollector dataCollector)
+        {
+            Vector3 value = m_defaultValue;
+            dataCollector.AddLocalVariable(
+                UniqueId,
+                CreateLocalVarDec(value.x + "," + value.y + "," + value.z)
+            );
+            m_outputPorts[0].SetLocalValue(m_propertyName, dataCollector.PortCategory);
+            m_outputPorts[1].SetLocalValue(m_propertyName + ".x", dataCollector.PortCategory);
+            m_outputPorts[2].SetLocalValue(m_propertyName + ".y", dataCollector.PortCategory);
+            m_outputPorts[3].SetLocalValue(m_propertyName + ".z", dataCollector.PortCategory);
+        }
 
-			if( m_outputPorts[ outputId ].IsLocalValue( dataCollector.PortCategory ) )
-			{
-				return m_outputPorts[ outputId ].LocalValue( dataCollector.PortCategory );
-			}
+        public override string GenerateShaderForOutput(
+            int outputId,
+            ref MasterNodeDataCollector dataCollector,
+            bool ignoreLocalvar
+        )
+        {
+            base.GenerateShaderForOutput(outputId, ref dataCollector, ignoreLocalvar);
+            m_precisionString = UIUtils.PrecisionWirePortToCgType(
+                CurrentPrecisionType,
+                m_outputPorts[0].DataType
+            );
 
-			if( CheckLocalVariable( ref dataCollector ) )
-			{
-				return m_outputPorts[ outputId ].LocalValue( dataCollector.PortCategory );
-			}
+            if (m_currentParameterType != PropertyType.Constant)
+                return GetOutputVectorItem(0, outputId, PropertyData(dataCollector.PortCategory));
 
-			Vector3 value = m_defaultValue;
-			string result = string.Empty;
-			switch( outputId )
-			{
-				case 0:
-				{
-					result = m_precisionString + "(" + value.x + "," + value.y + "," + value.z + ")";
-				}
-				break;
+            if (m_outputPorts[outputId].IsLocalValue(dataCollector.PortCategory))
+            {
+                return m_outputPorts[outputId].LocalValue(dataCollector.PortCategory);
+            }
 
-				case 1:
-				{
-					result = value.x.ToString();
-				}
-				break;
-				case 2:
-				{
-					result = value.y.ToString();
-				}
-				break;
-				case 3:
-				{
-					result = value.z.ToString();
-				}
-				break;
-			}
+            if (CheckLocalVariable(ref dataCollector))
+            {
+                return m_outputPorts[outputId].LocalValue(dataCollector.PortCategory);
+            }
 
-			if( result.Equals( string.Empty ) )
-			{
-				UIUtils.ShowMessage( UniqueId, "Vector3Node generating empty code", MessageSeverity.Warning );
-			}
-			return result;
-		}
+            Vector3 value = m_defaultValue;
+            string result = string.Empty;
+            switch (outputId)
+            {
+                case 0:
+                    {
+                        result =
+                            m_precisionString + "(" + value.x + "," + value.y + "," + value.z + ")";
+                    }
+                    break;
 
-		public override string GetPropertyValue()
-		{
-			string x = UIUtils.PropertyFloatToString( m_defaultValue.x );
-			string y = UIUtils.PropertyFloatToString( m_defaultValue.y );
-			string z = UIUtils.PropertyFloatToString( m_defaultValue.z );
-			return PropertyAttributes + m_propertyName + "(\"" + m_propertyInspectorName + "\", Vector) = (" + x + "," + y + "," + z + ",0)";
-		}
+                case 1:
+                    {
+                        result = value.x.ToString();
+                    }
+                    break;
+                case 2:
+                    {
+                        result = value.y.ToString();
+                    }
+                    break;
+                case 3:
+                    {
+                        result = value.z.ToString();
+                    }
+                    break;
+            }
 
-		public override void UpdateMaterial( Material mat )
-		{
-			base.UpdateMaterial( mat );
-			if( UIUtils.IsProperty( m_currentParameterType ) && !InsideShaderFunction )
-			{
-				mat.SetVector( m_propertyName, m_materialValue );
-			}
-		}
+            if (result.Equals(string.Empty))
+            {
+                UIUtils.ShowMessage(
+                    UniqueId,
+                    "Vector3Node generating empty code",
+                    MessageSeverity.Warning
+                );
+            }
+            return result;
+        }
 
-		public override void SetMaterialMode( Material mat, bool fetchMaterialValues )
-		{
-			base.SetMaterialMode( mat, fetchMaterialValues );
-			if( fetchMaterialValues && m_materialMode && UIUtils.IsProperty( m_currentParameterType ) && mat.HasProperty( m_propertyName ) )
-			{
-				m_materialValue = mat.GetVector( m_propertyName );
-			}
-		}
+        public override string GetPropertyValue()
+        {
+            string x = UIUtils.PropertyFloatToString(m_defaultValue.x);
+            string y = UIUtils.PropertyFloatToString(m_defaultValue.y);
+            string z = UIUtils.PropertyFloatToString(m_defaultValue.z);
+            return PropertyAttributes
+                + m_propertyName
+                + "(\""
+                + m_propertyInspectorName
+                + "\", Vector) = ("
+                + x
+                + ","
+                + y
+                + ","
+                + z
+                + ",0)";
+        }
 
-		public override void ForceUpdateFromMaterial( Material material )
-		{
-			if( UIUtils.IsProperty( m_currentParameterType ) && material.HasProperty( m_propertyName ) )
-			{
-				m_materialValue = material.GetVector( m_propertyName );
-				PreviewIsDirty = true;
-			}
-		}
+        public override void UpdateMaterial(Material mat)
+        {
+            base.UpdateMaterial(mat);
+            if (UIUtils.IsProperty(m_currentParameterType) && !InsideShaderFunction)
+            {
+                mat.SetVector(m_propertyName, m_materialValue);
+            }
+        }
 
-		public override void ReadFromString( ref string[] nodeParams )
-		{
-			base.ReadFromString( ref nodeParams );
-			m_defaultValue = IOUtils.StringToVector3( GetCurrentParam( ref nodeParams ) );
-			if( UIUtils.CurrentShaderVersion() > 14101 )
-				m_materialValue = IOUtils.StringToVector3( GetCurrentParam( ref nodeParams ) );
-		}
+        public override void SetMaterialMode(Material mat, bool fetchMaterialValues)
+        {
+            base.SetMaterialMode(mat, fetchMaterialValues);
+            if (
+                fetchMaterialValues
+                && m_materialMode
+                && UIUtils.IsProperty(m_currentParameterType)
+                && mat.HasProperty(m_propertyName)
+            )
+            {
+                m_materialValue = mat.GetVector(m_propertyName);
+            }
+        }
 
-		public override void WriteToString( ref string nodeInfo, ref string connectionsInfo )
-		{
-			base.WriteToString( ref nodeInfo, ref connectionsInfo );			
-			IOUtils.AddFieldValueToString( ref nodeInfo, IOUtils.Vector3ToString( m_defaultValue ) );
-			IOUtils.AddFieldValueToString( ref nodeInfo, IOUtils.Vector3ToString( m_materialValue ) );
-		}
+        public override void ForceUpdateFromMaterial(Material material)
+        {
+            if (UIUtils.IsProperty(m_currentParameterType) && material.HasProperty(m_propertyName))
+            {
+                m_materialValue = material.GetVector(m_propertyName);
+                PreviewIsDirty = true;
+            }
+        }
 
-		public override void SetGlobalValue() { Shader.SetGlobalVector( m_propertyName, m_defaultValue ); }
-		public override void FetchGlobalValue() { m_materialValue = Shader.GetGlobalVector( m_propertyName ); }
+        public override void ReadFromString(ref string[] nodeParams)
+        {
+            base.ReadFromString(ref nodeParams);
+            m_defaultValue = IOUtils.StringToVector3(GetCurrentParam(ref nodeParams));
+            if (UIUtils.CurrentShaderVersion() > 14101)
+                m_materialValue = IOUtils.StringToVector3(GetCurrentParam(ref nodeParams));
+        }
 
-		public override string GetPropertyValStr()
-		{
-			return ( m_materialMode && m_currentParameterType != PropertyType.Constant ) ? m_materialValue.x.ToString( Mathf.Abs( m_materialValue.x ) > 1000 ? Constants.PropertyBigVectorFormatLabel : Constants.PropertyVectorFormatLabel ) + IOUtils.VECTOR_SEPARATOR +
-																							m_materialValue.y.ToString( Mathf.Abs( m_materialValue.y ) > 1000 ? Constants.PropertyBigVectorFormatLabel : Constants.PropertyVectorFormatLabel ) + IOUtils.VECTOR_SEPARATOR +
-																							m_materialValue.z.ToString( Mathf.Abs( m_materialValue.z ) > 1000 ? Constants.PropertyBigVectorFormatLabel : Constants.PropertyVectorFormatLabel ) :
-																							m_defaultValue.x.ToString( Mathf.Abs( m_defaultValue.x ) > 1000 ? Constants.PropertyBigVectorFormatLabel : Constants.PropertyVectorFormatLabel ) + IOUtils.VECTOR_SEPARATOR +
-																							m_defaultValue.y.ToString( Mathf.Abs( m_defaultValue.y ) > 1000 ? Constants.PropertyBigVectorFormatLabel : Constants.PropertyVectorFormatLabel ) + IOUtils.VECTOR_SEPARATOR +
-																							m_defaultValue.z.ToString( Mathf.Abs( m_defaultValue.z ) > 1000 ? Constants.PropertyBigVectorFormatLabel : Constants.PropertyVectorFormatLabel );
-		}
+        public override void WriteToString(ref string nodeInfo, ref string connectionsInfo)
+        {
+            base.WriteToString(ref nodeInfo, ref connectionsInfo);
+            IOUtils.AddFieldValueToString(ref nodeInfo, IOUtils.Vector3ToString(m_defaultValue));
+            IOUtils.AddFieldValueToString(ref nodeInfo, IOUtils.Vector3ToString(m_materialValue));
+        }
 
-		public Vector3 Value
-		{
-			get { return m_defaultValue; }
-			set { m_defaultValue = value; }
-		}
-	}
+        public override void SetGlobalValue()
+        {
+            Shader.SetGlobalVector(m_propertyName, m_defaultValue);
+        }
+
+        public override void FetchGlobalValue()
+        {
+            m_materialValue = Shader.GetGlobalVector(m_propertyName);
+        }
+
+        public override string GetPropertyValStr()
+        {
+            return (m_materialMode && m_currentParameterType != PropertyType.Constant)
+                ? m_materialValue.x.ToString(
+                    Mathf.Abs(m_materialValue.x) > 1000
+                        ? Constants.PropertyBigVectorFormatLabel
+                        : Constants.PropertyVectorFormatLabel
+                )
+                    + IOUtils.VECTOR_SEPARATOR
+                    + m_materialValue.y.ToString(
+                        Mathf.Abs(m_materialValue.y) > 1000
+                            ? Constants.PropertyBigVectorFormatLabel
+                            : Constants.PropertyVectorFormatLabel
+                    )
+                    + IOUtils.VECTOR_SEPARATOR
+                    + m_materialValue.z.ToString(
+                        Mathf.Abs(m_materialValue.z) > 1000
+                            ? Constants.PropertyBigVectorFormatLabel
+                            : Constants.PropertyVectorFormatLabel
+                    )
+                : m_defaultValue.x.ToString(
+                    Mathf.Abs(m_defaultValue.x) > 1000
+                        ? Constants.PropertyBigVectorFormatLabel
+                        : Constants.PropertyVectorFormatLabel
+                )
+                    + IOUtils.VECTOR_SEPARATOR
+                    + m_defaultValue.y.ToString(
+                        Mathf.Abs(m_defaultValue.y) > 1000
+                            ? Constants.PropertyBigVectorFormatLabel
+                            : Constants.PropertyVectorFormatLabel
+                    )
+                    + IOUtils.VECTOR_SEPARATOR
+                    + m_defaultValue.z.ToString(
+                        Mathf.Abs(m_defaultValue.z) > 1000
+                            ? Constants.PropertyBigVectorFormatLabel
+                            : Constants.PropertyVectorFormatLabel
+                    );
+        }
+
+        public Vector3 Value
+        {
+            get { return m_defaultValue; }
+            set { m_defaultValue = value; }
+        }
+    }
 }

@@ -17,7 +17,7 @@ namespace Zenject.SpaceFighter
         Idle,
         Attack,
         Follow,
-        None
+        None,
     }
 
     // This class controls the basic "AI" of our enemy
@@ -37,13 +37,18 @@ namespace Zenject.SpaceFighter
         [Inject]
         public void Construct(
             EnemyView view,
-            EnemyStateIdle idle, EnemyStateAttack attack, EnemyStateFollow follow)
+            EnemyStateIdle idle,
+            EnemyStateAttack attack,
+            EnemyStateFollow follow
+        )
         {
             _view = view;
             _states = new List<IEnemyState>
             {
                 // This needs to follow the enum order
-                idle, attack, follow
+                idle,
+                attack,
+                follow,
             };
         }
 

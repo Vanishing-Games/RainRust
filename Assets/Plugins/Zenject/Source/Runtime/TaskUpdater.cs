@@ -29,8 +29,10 @@ namespace Zenject
 
         void AddTaskInternal(TTask task, int priority)
         {
-            Assert.That(!AllTasks.Select(x => x.Task).ContainsItem(task),
-                "Duplicate task added to DependencyRoot with name '" + task.GetType().FullName + "'");
+            Assert.That(
+                !AllTasks.Select(x => x.Task).ContainsItem(task),
+                "Duplicate task added to DependencyRoot with name '" + task.GetType().FullName + "'"
+            );
 
             // Wait until next frame to add the task, otherwise whether it gets updated
             // on the current frame depends on where in the update order it was added
@@ -42,9 +44,15 @@ namespace Zenject
         {
             var info = AllTasks.Where(x => ReferenceEquals(x.Task, task)).SingleOrDefault();
 
-            Assert.IsNotNull(info, "Tried to remove a task not added to DependencyRoot, task = " + task.GetType().Name);
+            Assert.IsNotNull(
+                info,
+                "Tried to remove a task not added to DependencyRoot, task = " + task.GetType().Name
+            );
 
-            Assert.That(!info.IsRemoved, "Tried to remove task twice, task = " + task.GetType().Name);
+            Assert.That(
+                !info.IsRemoved,
+                "Tried to remove task twice, task = " + task.GetType().Name
+            );
             info.IsRemoved = true;
         }
 
@@ -69,8 +77,11 @@ namespace Zenject
                 var taskInfo = node.Value;
 
                 // Make sure that tasks with priority of int.MaxValue are updated when maxPriority is int.MaxValue
-                if (!taskInfo.IsRemoved && taskInfo.Priority >= minPriority
-                    && (maxPriority == int.MaxValue || taskInfo.Priority < maxPriority))
+                if (
+                    !taskInfo.IsRemoved
+                    && taskInfo.Priority >= minPriority
+                    && (maxPriority == int.MaxValue || taskInfo.Priority < maxPriority)
+                )
                 {
                     UpdateItem(taskInfo.Task);
                 }

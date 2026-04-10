@@ -16,7 +16,10 @@ namespace Zenject
 
         // if concreteType is null we use the contract type from inject context
         public GetFromGameObjectComponentProvider(
-            Type componentType, GameObject gameObject, bool matchSingle)
+            Type componentType,
+            GameObject gameObject,
+            bool matchSingle
+        )
         {
             _componentType = componentType;
             _matchSingle = matchSingle;
@@ -39,7 +42,11 @@ namespace Zenject
         }
 
         public void GetAllInstancesWithInjectSplit(
-            InjectContext context, List<TypeValuePair> args, out Action injectAction, List<object> buffer)
+            InjectContext context,
+            List<TypeValuePair> args,
+            out Action injectAction,
+            List<object> buffer
+        )
         {
             Assert.IsNotNull(context);
 
@@ -49,8 +56,12 @@ namespace Zenject
             {
                 var match = _gameObject.GetComponent(_componentType);
 
-                Assert.IsNotNull(match, "Could not find component with type '{0}' on prefab '{1}'",
-                _componentType, _gameObject.name);
+                Assert.IsNotNull(
+                    match,
+                    "Could not find component with type '{0}' on prefab '{1}'",
+                    _componentType,
+                    _gameObject.name
+                );
 
                 buffer.Add(match);
                 return;
@@ -58,9 +69,12 @@ namespace Zenject
 
             var allComponents = _gameObject.GetComponents(_componentType);
 
-            Assert.That(allComponents.Length >= 1,
-            "Expected to find at least one component with type '{0}' on prefab '{1}'",
-            _componentType, _gameObject.name);
+            Assert.That(
+                allComponents.Length >= 1,
+                "Expected to find at least one component with type '{0}' on prefab '{1}'",
+                _componentType,
+                _gameObject.name
+            );
 
             buffer.AllocFreeAddRange(allComponents);
         }
@@ -68,4 +82,3 @@ namespace Zenject
 }
 
 #endif
-

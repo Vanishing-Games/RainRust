@@ -7,20 +7,22 @@ namespace LDtkUnity.Editor
     internal static class LDtkScriptingDefines
     {
         private const string DEFINE = "LDTK_ENABLE_PROFILER";
-        
+
         private static readonly GUIContent WriteProfiledImports = new GUIContent
         {
             text = "LDtk Profiler Define",
-            tooltip = 
-                      "Add " + DEFINE + " to the scripting defines to enable import profiling.\n" +
-                      "\n" +
-                      "Upon importing any LDtk level or project, unity will write a .raw file to a \"Profiler\" folder in this root unity project.\n" +
-                      "These files can be opened from the profiler window to view the performance of an import.\n" +
-                      "\n" +
-                      "Only toggle on for analysis purposes. This has a performance overhead for every import and the files can also use a lot of storage, especially if deep profiling is enabled.",
+            tooltip =
+                "Add "
+                + DEFINE
+                + " to the scripting defines to enable import profiling.\n"
+                + "\n"
+                + "Upon importing any LDtk level or project, unity will write a .raw file to a \"Profiler\" folder in this root unity project.\n"
+                + "These files can be opened from the profiler window to view the performance of an import.\n"
+                + "\n"
+                + "Only toggle on for analysis purposes. This has a performance overhead for every import and the files can also use a lot of storage, especially if deep profiling is enabled.",
             image = LDtkIconUtility.GetUnityIcon("UnityEditor.ProfilerWindow", ""),
         };
-        
+
         public static void PreprocessorAddRemoveGui()
         {
             using (new EditorGUILayout.HorizontalScope())
@@ -48,7 +50,7 @@ namespace LDtkUnity.Editor
 #endif
             return currentDefines;
         }
-        
+
         private static void DrawButton()
         {
             BuildTargetGroup current = EditorUserBuildSettings.selectedBuildTargetGroup;
@@ -70,7 +72,10 @@ namespace LDtkUnity.Editor
             {
                 if (GUILayout.Button($"+ {DEFINE}", width))
                 {
-                    string reformat = string.IsNullOrEmpty(currentDefines) || currentDefines.EndsWith(";") ? "" : ";";
+                    string reformat =
+                        string.IsNullOrEmpty(currentDefines) || currentDefines.EndsWith(";")
+                            ? ""
+                            : ";";
                     string newDefines = currentDefines + reformat + DEFINE;
                     SetNewDefines(newDefines);
                 }
@@ -79,13 +84,14 @@ namespace LDtkUnity.Editor
             void SetNewDefines(string newDefines)
             {
 #if UNITY_2021_2_OR_NEWER
-                PlayerSettings.SetScriptingDefineSymbols(NamedBuildTarget.FromBuildTargetGroup(current), newDefines);
+                PlayerSettings.SetScriptingDefineSymbols(
+                    NamedBuildTarget.FromBuildTargetGroup(current),
+                    newDefines
+                );
 #else
                 PlayerSettings.SetScriptingDefineSymbolsForGroup(current, newDefines);
 #endif
             }
         }
-        
-        
     }
 }

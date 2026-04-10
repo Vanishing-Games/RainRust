@@ -10,7 +10,7 @@ namespace LDtkUnity.Editor
         {
             _data = data;
         }
-        
+
         public Vector2 Postprocess(Vector2 value)
         {
             return LDtkCoordConverter.ConvertParsedPointValue(Vector2Int.RoundToInt(value), _data);

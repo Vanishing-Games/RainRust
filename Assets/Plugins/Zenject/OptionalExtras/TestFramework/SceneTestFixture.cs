@@ -49,13 +49,19 @@ namespace Zenject
             {
                 var sceneName = sceneNames[i];
 
-                Assert.That(Application.CanStreamedLevelBeLoaded(sceneName),
+                Assert.That(
+                    Application.CanStreamedLevelBeLoaded(sceneName),
                     "Cannot load scene '{0}' for test '{1}'.  The scenes used by SceneTestFixture derived classes must be added to the build settings for the test to work",
-                    sceneName, GetType());
+                    sceneName,
+                    GetType()
+                );
 
                 Log.Info("Loading scene '{0}' for testing", sceneName);
 
-                var loader = SceneManager.LoadSceneAsync(sceneName, i == 0 ? LoadSceneMode.Single : LoadSceneMode.Additive);
+                var loader = SceneManager.LoadSceneAsync(
+                    sceneName,
+                    i == 0 ? LoadSceneMode.Single : LoadSceneMode.Additive
+                );
 
                 while (!loader.isDone)
                 {
@@ -69,7 +75,8 @@ namespace Zenject
                 {
                     var scene = SceneManager.GetSceneByName(sceneName);
 
-                    sceneContext = ProjectContext.Instance.Container.Resolve<SceneContextRegistry>()
+                    sceneContext = ProjectContext
+                        .Instance.Container.Resolve<SceneContextRegistry>()
                         .TryGetSceneContextForScene(scene);
                 }
 

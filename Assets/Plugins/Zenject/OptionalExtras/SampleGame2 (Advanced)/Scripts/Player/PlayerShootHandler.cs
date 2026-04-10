@@ -18,7 +18,8 @@ namespace Zenject.SpaceFighter
             Bullet.Factory bulletFactory,
             Settings settings,
             Player player,
-            AudioPlayer audioPlayer)
+            AudioPlayer audioPlayer
+        )
         {
             _audioPlayer = audioPlayer;
             _player = player;
@@ -34,7 +35,10 @@ namespace Zenject.SpaceFighter
                 return;
             }
 
-            if (_inputState.IsFiring && Time.realtimeSinceStartup - _lastFireTime > _settings.MaxShootInterval)
+            if (
+                _inputState.IsFiring
+                && Time.realtimeSinceStartup - _lastFireTime > _settings.MaxShootInterval
+            )
             {
                 _lastFireTime = Time.realtimeSinceStartup;
                 Fire();
@@ -46,9 +50,13 @@ namespace Zenject.SpaceFighter
             _audioPlayer.Play(_settings.Laser, _settings.LaserVolume);
 
             var bullet = _bulletFactory.Create(
-                _settings.BulletSpeed, _settings.BulletLifetime, BulletTypes.FromPlayer);
+                _settings.BulletSpeed,
+                _settings.BulletLifetime,
+                BulletTypes.FromPlayer
+            );
 
-            bullet.transform.position = _player.Position + _player.LookDir * _settings.BulletOffsetDistance;
+            bullet.transform.position =
+                _player.Position + _player.LookDir * _settings.BulletOffsetDistance;
             bullet.transform.rotation = _player.Rotation;
         }
 

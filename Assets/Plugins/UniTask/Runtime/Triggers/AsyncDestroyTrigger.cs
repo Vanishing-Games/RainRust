@@ -56,16 +56,20 @@ namespace Cysharp.Threading.Tasks.Triggers
 
         public UniTask OnDestroyAsync()
         {
-            if (called) return UniTask.CompletedTask;
+            if (called)
+                return UniTask.CompletedTask;
 
             var tcs = new UniTaskCompletionSource();
 
             // OnDestroy = Called Cancel.
-            CancellationToken.RegisterWithoutCaptureExecutionContext(state =>
-            {
-                var tcs2 = (UniTaskCompletionSource)state;
-                tcs2.TrySetResult();
-            }, tcs);
+            CancellationToken.RegisterWithoutCaptureExecutionContext(
+                state =>
+                {
+                    var tcs2 = (UniTaskCompletionSource)state;
+                    tcs2.TrySetResult();
+                },
+                tcs
+            );
 
             return tcs.Task;
         }
@@ -81,7 +85,8 @@ namespace Cysharp.Threading.Tasks.Triggers
 
             public bool MoveNext()
             {
-                if (trigger.called || trigger.awakeCalled) return false;
+                if (trigger.called || trigger.awakeCalled)
+                    return false;
                 if (trigger == null)
                 {
                     trigger.OnDestroy();
@@ -92,4 +97,3 @@ namespace Cysharp.Threading.Tasks.Triggers
         }
     }
 }
-

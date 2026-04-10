@@ -14,7 +14,7 @@ namespace LDtkUnity.Editor
             {
                 return null;
             }
-            
+
             switch (entity.EntityMode)
             {
                 case RenderMode.Cross:
@@ -28,9 +28,12 @@ namespace LDtkUnity.Editor
                         LineOpacity = entity.LineOpacity,
                         Hollow = entity.Hollow,
                         Pivot = entity.Pivot,
-                        Size = entity.Size
+                        Size = entity.Size,
                     };
-                    LDtkEntityDrawerShapes entityDrawer = new LDtkEntityDrawerShapes(entity.Transform, shapeData);
+                    LDtkEntityDrawerShapes entityDrawer = new LDtkEntityDrawerShapes(
+                        entity.Transform,
+                        shapeData
+                    );
                     entityDrawer.OnDrawHandles();
                     break;
                 default:
@@ -47,7 +50,12 @@ namespace LDtkUnity.Editor
         {
             if (entity.ShowName && LDtkPrefs.ShowEntityIdentifier)
             {
-                HandleUtil.DrawText(entity.Identifier, entity.Transform.position, entity.SmartColor, offset);
+                HandleUtil.DrawText(
+                    entity.Identifier,
+                    entity.Transform.position,
+                    entity.SmartColor,
+                    offset
+                );
             }
         }
 
@@ -57,14 +65,18 @@ namespace LDtkUnity.Editor
             {
                 return offset;
             }
-            
+
             Texture2D tex = AssetDatabase.LoadAssetAtPath<Texture2D>(entity.TexPath);
             if (tex == null)
             {
                 return offset;
             }
-            
-            LDtkEntityDrawerIcon iconDrawer = new LDtkEntityDrawerIcon(entity.Transform, tex, entity.TexRect);
+
+            LDtkEntityDrawerIcon iconDrawer = new LDtkEntityDrawerIcon(
+                entity.Transform,
+                tex,
+                entity.TexRect
+            );
 
             iconDrawer.PrecalculateValues();
             offset += iconDrawer.OffsetToNextUI;

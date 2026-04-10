@@ -15,7 +15,8 @@ namespace FMODUnity
         private SerializedProperty tag;
         private SerializedProperty value;
 
-        private SerializedProperty data1, data2;
+        private SerializedProperty data1,
+            data2;
 
         private static GUIContent NotFoundWarning;
 
@@ -41,7 +42,10 @@ namespace FMODUnity
             }
 
             EditorGUILayout.PropertyField(trigger, new GUIContent(L10n.Tr("Trigger")));
-            if (trigger.enumValueIndex >= (int)EmitterGameEvent.TriggerEnter && trigger.enumValueIndex <= (int)EmitterGameEvent.TriggerExit2D)
+            if (
+                trigger.enumValueIndex >= (int)EmitterGameEvent.TriggerEnter
+                && trigger.enumValueIndex <= (int)EmitterGameEvent.TriggerExit2D
+            )
             {
                 tag.stringValue = EditorGUILayout.TagField("Collision Tag", tag.stringValue);
             }
@@ -59,7 +63,11 @@ namespace FMODUnity
                 else
                 {
                     editorParamRef = EventManager.ParamFromPath(param.stringValue);
-                    value.floatValue = Mathf.Clamp(value.floatValue, editorParamRef.Min, editorParamRef.Max);
+                    value.floatValue = Mathf.Clamp(
+                        value.floatValue,
+                        editorParamRef.Min,
+                        editorParamRef.Max
+                    );
                 }
             }
 
@@ -68,7 +76,10 @@ namespace FMODUnity
                 using (new EditorGUILayout.HorizontalScope())
                 {
                     EditorGUILayout.PrefixLabel(L10n.Tr("Override Value"));
-                    value.floatValue = EditorUtils.DrawParameterValueLayout(value.floatValue, editorParamRef);
+                    value.floatValue = EditorUtils.DrawParameterValueLayout(
+                        value.floatValue,
+                        editorParamRef
+                    );
                 }
             }
             else

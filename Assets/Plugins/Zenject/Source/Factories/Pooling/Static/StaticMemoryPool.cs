@@ -5,7 +5,9 @@ using ModestTree;
 namespace Zenject
 {
     [NoReflectionBaking]
-    public abstract class StaticMemoryPoolBaseBase<TValue> : IDespawnableMemoryPool<TValue>, IDisposable
+    public abstract class StaticMemoryPoolBaseBase<TValue>
+        : IDespawnableMemoryPool<TValue>,
+            IDisposable
         where TValue : class
     {
         // I also tried using ConcurrentBag instead of Stack + lock here but that performed much much worse
@@ -187,9 +189,7 @@ namespace Zenject
         where TValue : class, new()
     {
         public StaticMemoryPoolBase(Action<TValue> onDespawnedMethod)
-            : base(onDespawnedMethod)
-        {
-        }
+            : base(onDespawnedMethod) { }
 
         protected override TValue Alloc()
         {
@@ -206,7 +206,9 @@ namespace Zenject
         Action<TValue> _onSpawnMethod;
 
         public StaticMemoryPool(
-            Action<TValue> onSpawnMethod = null, Action<TValue> onDespawnedMethod = null)
+            Action<TValue> onSpawnMethod = null,
+            Action<TValue> onDespawnedMethod = null
+        )
             : base(onDespawnedMethod)
         {
             _onSpawnMethod = onSpawnMethod;
@@ -238,13 +240,17 @@ namespace Zenject
     // One parameter
 
     [NoReflectionBaking]
-    public class StaticMemoryPool<TParam1, TValue> : StaticMemoryPoolBase<TValue>, IMemoryPool<TParam1, TValue>
+    public class StaticMemoryPool<TParam1, TValue>
+        : StaticMemoryPoolBase<TValue>,
+            IMemoryPool<TParam1, TValue>
         where TValue : class, new()
     {
         Action<TParam1, TValue> _onSpawnMethod;
 
         public StaticMemoryPool(
-            Action<TParam1, TValue> onSpawnMethod, Action<TValue> onDespawnedMethod = null)
+            Action<TParam1, TValue> onSpawnMethod,
+            Action<TValue> onDespawnedMethod = null
+        )
             : base(onDespawnedMethod)
         {
             // What's the point of having a param otherwise?
@@ -278,13 +284,17 @@ namespace Zenject
     // Two parameter
 
     [NoReflectionBaking]
-    public class StaticMemoryPool<TParam1, TParam2, TValue> : StaticMemoryPoolBase<TValue>, IMemoryPool<TParam1, TParam2, TValue>
+    public class StaticMemoryPool<TParam1, TParam2, TValue>
+        : StaticMemoryPoolBase<TValue>,
+            IMemoryPool<TParam1, TParam2, TValue>
         where TValue : class, new()
     {
         Action<TParam1, TParam2, TValue> _onSpawnMethod;
 
         public StaticMemoryPool(
-            Action<TParam1, TParam2, TValue> onSpawnMethod, Action<TValue> onDespawnedMethod = null)
+            Action<TParam1, TParam2, TValue> onSpawnMethod,
+            Action<TValue> onDespawnedMethod = null
+        )
             : base(onDespawnedMethod)
         {
             // What's the point of having a param otherwise?
@@ -318,13 +328,17 @@ namespace Zenject
     // Three parameters
 
     [NoReflectionBaking]
-    public class StaticMemoryPool<TParam1, TParam2, TParam3, TValue> : StaticMemoryPoolBase<TValue>, IMemoryPool<TParam1, TParam2, TParam3, TValue>
+    public class StaticMemoryPool<TParam1, TParam2, TParam3, TValue>
+        : StaticMemoryPoolBase<TValue>,
+            IMemoryPool<TParam1, TParam2, TParam3, TValue>
         where TValue : class, new()
     {
         Action<TParam1, TParam2, TParam3, TValue> _onSpawnMethod;
 
         public StaticMemoryPool(
-            Action<TParam1, TParam2, TParam3, TValue> onSpawnMethod, Action<TValue> onDespawnedMethod = null)
+            Action<TParam1, TParam2, TParam3, TValue> onSpawnMethod,
+            Action<TValue> onDespawnedMethod = null
+        )
             : base(onDespawnedMethod)
         {
             // What's the point of having a param otherwise?
@@ -358,19 +372,23 @@ namespace Zenject
     // Four parameters
 
     [NoReflectionBaking]
-    public class StaticMemoryPool<TParam1, TParam2, TParam3, TParam4, TValue> : StaticMemoryPoolBase<TValue>, IMemoryPool<TParam1, TParam2, TParam3, TParam4, TValue>
+    public class StaticMemoryPool<TParam1, TParam2, TParam3, TParam4, TValue>
+        : StaticMemoryPoolBase<TValue>,
+            IMemoryPool<TParam1, TParam2, TParam3, TParam4, TValue>
         where TValue : class, new()
     {
 #if !NET_4_6
         ModestTree.Util.
 #endif
-            Action<TParam1, TParam2, TParam3, TParam4, TValue> _onSpawnMethod;
+        Action<TParam1, TParam2, TParam3, TParam4, TValue> _onSpawnMethod;
 
         public StaticMemoryPool(
 #if !NET_4_6
             ModestTree.Util.
 #endif
-            Action<TParam1, TParam2, TParam3, TParam4, TValue> onSpawnMethod, Action<TValue> onDespawnedMethod = null)
+            Action<TParam1, TParam2, TParam3, TParam4, TValue> onSpawnMethod,
+            Action<TValue> onDespawnedMethod = null
+        )
             : base(onDespawnedMethod)
         {
             // What's the point of having a param otherwise?
@@ -380,9 +398,9 @@ namespace Zenject
 
         public
 #if !NET_4_6
-            ModestTree.Util.
+        ModestTree.Util.
 #endif
-            Action<TParam1, TParam2, TParam3, TParam4, TValue> OnSpawnMethod
+        Action<TParam1, TParam2, TParam3, TParam4, TValue> OnSpawnMethod
         {
             set { _onSpawnMethod = value; }
         }
@@ -408,19 +426,23 @@ namespace Zenject
     // Five parameters
 
     [NoReflectionBaking]
-    public class StaticMemoryPool<TParam1, TParam2, TParam3, TParam4, TParam5, TValue> : StaticMemoryPoolBase<TValue>, IMemoryPool<TParam1, TParam2, TParam3, TParam4, TParam5, TValue>
+    public class StaticMemoryPool<TParam1, TParam2, TParam3, TParam4, TParam5, TValue>
+        : StaticMemoryPoolBase<TValue>,
+            IMemoryPool<TParam1, TParam2, TParam3, TParam4, TParam5, TValue>
         where TValue : class, new()
     {
 #if !NET_4_6
         ModestTree.Util.
 #endif
-            Action<TParam1, TParam2, TParam3, TParam4, TParam5, TValue> _onSpawnMethod;
+        Action<TParam1, TParam2, TParam3, TParam4, TParam5, TValue> _onSpawnMethod;
 
         public StaticMemoryPool(
 #if !NET_4_6
             ModestTree.Util.
 #endif
-            Action<TParam1, TParam2, TParam3, TParam4, TParam5, TValue> onSpawnMethod, Action<TValue> onDespawnedMethod = null)
+            Action<TParam1, TParam2, TParam3, TParam4, TParam5, TValue> onSpawnMethod,
+            Action<TValue> onDespawnedMethod = null
+        )
             : base(onDespawnedMethod)
         {
             // What's the point of having a param otherwise?
@@ -430,9 +452,9 @@ namespace Zenject
 
         public
 #if !NET_4_6
-            ModestTree.Util.
+        ModestTree.Util.
 #endif
-            Action<TParam1, TParam2, TParam3, TParam4, TParam5, TValue> OnSpawnMethod
+        Action<TParam1, TParam2, TParam3, TParam4, TParam5, TValue> OnSpawnMethod
         {
             set { _onSpawnMethod = value; }
         }
@@ -458,19 +480,23 @@ namespace Zenject
     // Six parameters
 
     [NoReflectionBaking]
-    public class StaticMemoryPool<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TValue> : StaticMemoryPoolBase<TValue>, IMemoryPool<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TValue>
+    public class StaticMemoryPool<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TValue>
+        : StaticMemoryPoolBase<TValue>,
+            IMemoryPool<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TValue>
         where TValue : class, new()
     {
 #if !NET_4_6
         ModestTree.Util.
 #endif
-            Action<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TValue> _onSpawnMethod;
+        Action<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TValue> _onSpawnMethod;
 
         public StaticMemoryPool(
 #if !NET_4_6
             ModestTree.Util.
 #endif
-            Action<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TValue> onSpawnMethod, Action<TValue> onDespawnedMethod = null)
+            Action<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TValue> onSpawnMethod,
+            Action<TValue> onDespawnedMethod = null
+        )
             : base(onDespawnedMethod)
         {
             // What's the point of having a param otherwise?
@@ -480,9 +506,9 @@ namespace Zenject
 
         public
 #if !NET_4_6
-            ModestTree.Util.
+        ModestTree.Util.
 #endif
-            Action<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TValue> OnSpawnMethod
+        Action<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TValue> OnSpawnMethod
         {
             set { _onSpawnMethod = value; }
         }
@@ -508,19 +534,50 @@ namespace Zenject
     // Seven parameters
 
     [NoReflectionBaking]
-    public class StaticMemoryPool<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TValue> : StaticMemoryPoolBase<TValue>, IMemoryPool<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TValue>
+    public class StaticMemoryPool<
+        TParam1,
+        TParam2,
+        TParam3,
+        TParam4,
+        TParam5,
+        TParam6,
+        TParam7,
+        TValue
+    >
+        : StaticMemoryPoolBase<TValue>,
+            IMemoryPool<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TValue>
         where TValue : class, new()
     {
 #if !NET_4_6
         ModestTree.Util.
 #endif
-            Action<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TValue> _onSpawnMethod;
+        Action<
+            TParam1,
+            TParam2,
+            TParam3,
+            TParam4,
+            TParam5,
+            TParam6,
+            TParam7,
+            TValue
+        > _onSpawnMethod;
 
         public StaticMemoryPool(
 #if !NET_4_6
             ModestTree.Util.
 #endif
-            Action<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TValue> onSpawnMethod, Action<TValue> onDespawnedMethod = null)
+            Action<
+                TParam1,
+                TParam2,
+                TParam3,
+                TParam4,
+                TParam5,
+                TParam6,
+                TParam7,
+                TValue
+            > onSpawnMethod,
+            Action<TValue> onDespawnedMethod = null
+        )
             : base(onDespawnedMethod)
         {
             // What's the point of having a param otherwise?
@@ -530,14 +587,22 @@ namespace Zenject
 
         public
 #if !NET_4_6
-            ModestTree.Util.
+        ModestTree.Util.
 #endif
-            Action<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TValue> OnSpawnMethod
+        Action<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TValue> OnSpawnMethod
         {
             set { _onSpawnMethod = value; }
         }
 
-        public TValue Spawn(TParam1 p1, TParam2 p2, TParam3 p3, TParam4 p4, TParam5 p5, TParam6 p6, TParam7 p7)
+        public TValue Spawn(
+            TParam1 p1,
+            TParam2 p2,
+            TParam3 p3,
+            TParam4 p4,
+            TParam5 p5,
+            TParam6 p6,
+            TParam7 p7
+        )
         {
 #if ZEN_MULTITHREADING
             lock (_locker)

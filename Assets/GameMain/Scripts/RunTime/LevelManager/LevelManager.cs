@@ -225,7 +225,10 @@ namespace GameMain.RunTime
             foreach (var world in m_LdtkProject.Worlds)
                 m_WorldLevelsMap[world] = world.GetComponentsInChildren<LDtkComponentLevel>(true);
 
-            var allTransitions = FindObjectsByType<LevelTransition>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            var allTransitions = FindObjectsByType<LevelTransition>(
+                FindObjectsInactive.Include,
+                FindObjectsSortMode.None
+            );
             foreach (var transition in allTransitions)
             {
                 if (transition.Target == null)
@@ -513,7 +516,9 @@ namespace GameMain.RunTime
 
             foreach (var level in allLevels)
             {
-                bool shouldBeActive = level == m_CurrentLevel || (neighborLevels != null && neighborLevels.Contains(level));
+                bool shouldBeActive =
+                    level == m_CurrentLevel
+                    || (neighborLevels != null && neighborLevels.Contains(level));
                 if (level.gameObject.activeSelf != shouldBeActive)
                     level.gameObject.SetActive(shouldBeActive);
             }
@@ -539,6 +544,7 @@ namespace GameMain.RunTime
         private LDtkComponentWorld m_CurrentWorld = null;
         private LDtkComponentProject m_LdtkProject = null;
         private Dictionary<LDtkComponentWorld, LDtkComponentLevel[]> m_WorldLevelsMap = new();
-        private Dictionary<LDtkComponentLevel, HashSet<LDtkComponentLevel>> m_LevelNeighborMap = new();
+        private Dictionary<LDtkComponentLevel, HashSet<LDtkComponentLevel>> m_LevelNeighborMap =
+            new();
     }
 }

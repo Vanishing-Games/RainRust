@@ -4,9 +4,7 @@ namespace Zenject
     public class ConcreteIdArgConditionCopyNonLazyBinder : ArgConditionCopyNonLazyBinder
     {
         public ConcreteIdArgConditionCopyNonLazyBinder(BindInfo bindInfo)
-            : base(bindInfo)
-        {
-        }
+            : base(bindInfo) { }
 
         public ArgConditionCopyNonLazyBinder WithConcreteId(object id)
         {

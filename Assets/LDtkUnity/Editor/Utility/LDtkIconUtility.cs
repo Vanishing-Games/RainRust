@@ -5,16 +5,16 @@ using UnityEngine;
 
 namespace LDtkUnity.Editor
 {
-    #if !UNITY_2021_2_OR_NEWER
+#if !UNITY_2021_2_OR_NEWER
     [InitializeOnLoad]
-    #endif
+#endif
     internal static class LDtkIconUtility
     {
         private const string PATH_ROOT = "Icons/";
         private const string PATH_LIGHT = PATH_ROOT + "Light/";
         private const string PATH_DARK = PATH_ROOT + "Dark/";
         private const string PATH_MISC = PATH_ROOT + "Misc/";
-        
+
         private const string AUTO_LAYER = "AutoLayer";
         private const string ENTITY = "Entity";
         private const string ENUM = "Enum";
@@ -24,7 +24,7 @@ namespace LDtkUnity.Editor
         private const string LIST = "List";
         private const string TILESET = "Tileset";
         private const string WORLD = "World";
-        
+
         private const string FAV = "Fav";
         private const string LEVEL_FILE = "LevelFile";
         private const string LEVEL_FILE_ERROR = "LevelFile_Error";
@@ -33,17 +33,24 @@ namespace LDtkUnity.Editor
         private const string TILESET_FILE = "TilesetFile";
         private const string TILESET_FILE_ERROR = "TilesetFile_Error";
         private const string SIMPLE = "Simple";
-        
+
         private const string SQUARE = "Square";
         private const string CIRCLE = "Circle";
         private const string CROSS = "Cross";
-        
-        private static readonly Dictionary<string, Texture2D> CachedIcons = new Dictionary<string, Texture2D>();
-        
+
+        private static readonly Dictionary<string, Texture2D> CachedIcons =
+            new Dictionary<string, Texture2D>();
+
 #if UNITY_2021_2_OR_NEWER
         private class Cacher : AssetPostprocessor
         {
-            private static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths, bool didDomainReload)
+            private static void OnPostprocessAllAssets(
+                string[] importedAssets,
+                string[] deletedAssets,
+                string[] movedAssets,
+                string[] movedFromAssetPaths,
+                bool didDomainReload
+            )
             {
                 if (didDomainReload)
                 {
@@ -57,7 +64,6 @@ namespace LDtkUnity.Editor
             EditorApplication.delayCall += CacheAllIcons;
         }
 #endif
-        
         private static void CacheAllIcons()
         {
             CacheIcon(AUTO_LAYER, true);
@@ -109,24 +115,42 @@ namespace LDtkUnity.Editor
         }
 
         public static Texture2D LoadAutoLayerIcon() => LoadIcon(AUTO_LAYER, true);
+
         public static Texture2D LoadEntityIcon() => LoadIcon(ENTITY, true);
+
         public static Texture2D LoadEnumIcon() => LoadIcon(ENUM, true);
+
         public static Texture2D LoadIntGridIcon() => LoadIcon(INT_GRID, true);
+
         public static Texture2D LoadLayerIcon() => LoadIcon(LAYER, true);
+
         public static Texture2D LoadLevelIcon() => LoadIcon(LEVEL, true);
+
         public static Texture2D LoadListIcon() => LoadIcon(LIST, true);
+
         public static Texture2D LoadTilesetIcon() => LoadIcon(TILESET, true);
+
         public static Texture2D LoadWorldIcon() => LoadIcon(WORLD, true);
-        
+
         public static Texture2D LoadFavIcon() => LoadIcon(FAV);
-        public static Texture2D LoadLevelFileIcon(bool error = false) => LoadIcon(error ? LEVEL_FILE_ERROR : LEVEL_FILE);
-        public static Texture2D LoadProjectFileIcon(bool error = false) => LoadIcon(error ? PROJECT_FILE_ERROR : PROJECT_FILE);
-        public static Texture2D LoadTilesetFileIcon(bool error = false) => LoadIcon(error ? TILESET_FILE_ERROR : TILESET_FILE);
+
+        public static Texture2D LoadLevelFileIcon(bool error = false) =>
+            LoadIcon(error ? LEVEL_FILE_ERROR : LEVEL_FILE);
+
+        public static Texture2D LoadProjectFileIcon(bool error = false) =>
+            LoadIcon(error ? PROJECT_FILE_ERROR : PROJECT_FILE);
+
+        public static Texture2D LoadTilesetFileIcon(bool error = false) =>
+            LoadIcon(error ? TILESET_FILE_ERROR : TILESET_FILE);
+
         public static Texture2D LoadSimpleIcon() => LoadIcon(SIMPLE);
+
         public static Texture2D LoadSquareIcon() => LoadIcon(SQUARE);
+
         public static Texture2D LoadCircleIcon() => LoadIcon(CIRCLE);
+
         public static Texture2D LoadCrossIcon() => LoadIcon(CROSS);
-        
+
         private static Texture2D LoadIcon(string fileName, bool hasThemedSkin = false)
         {
             StringBuilder sb = new StringBuilder(fileName);
@@ -137,12 +161,12 @@ namespace LDtkUnity.Editor
             }
 
             string key = sb.ToString();
-            
+
             if (!CachedIcons.ContainsKey(key))
             {
                 CacheIcon(fileName, hasThemedSkin);
             }
-            
+
             if (CachedIcons.ContainsKey(key))
             {
                 return CachedIcons[key];
@@ -154,10 +178,12 @@ namespace LDtkUnity.Editor
 
         public static Texture GetUnityIcon(string name, string ending = " Icon")
         {
-            string tilemapIcon = EditorGUIUtility.isProSkin ? $"d_{name}{ending}" : $"{name}{ending}";
+            string tilemapIcon = EditorGUIUtility.isProSkin
+                ? $"d_{name}{ending}"
+                : $"{name}{ending}";
             return EditorGUIUtility.IconContent(tilemapIcon).image;
         }
-        
+
         public static Texture2D GetIconForLayerInstance(LayerInstance instance)
         {
             if (instance.IsIntGridLayer)
@@ -179,6 +205,5 @@ namespace LDtkUnity.Editor
 
             return null;
         }
-        
     }
 }

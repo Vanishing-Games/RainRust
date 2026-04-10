@@ -66,7 +66,8 @@ namespace FMODUnity
             {
                 currentWatchPath = pathToWatch;
 
-                try {
+                try
+                {
                     sourceFileWatcher.EnableRaisingEvents = false;
                     sourceFilesChanged = false;
 
@@ -78,7 +79,11 @@ namespace FMODUnity
                 }
                 catch (ArgumentException e)
                 {
-                    RuntimeUtils.LogWarningFormat("Error watching {0}: {1}", pathToWatch, e.Message);
+                    RuntimeUtils.LogWarningFormat(
+                        "Error watching {0}: {1}",
+                        pathToWatch,
+                        e.Message
+                    );
                 }
             }
         }
@@ -151,15 +156,18 @@ namespace FMODUnity
 
         public static float TimeUntilBankRefresh()
         {
-            if (!autoRefresh
+            if (
+                !autoRefresh
                 || lastSourceFileChange == float.MaxValue
-                || Settings.Instance.BankRefreshCooldown < 0)
+                || Settings.Instance.BankRefreshCooldown < 0
+            )
             {
                 return float.MaxValue;
             }
             else
             {
-                float nextRefreshTime = lastSourceFileChange + Settings.Instance.BankRefreshCooldown;
+                float nextRefreshTime =
+                    lastSourceFileChange + Settings.Instance.BankRefreshCooldown;
                 return Mathf.Max(0, nextRefreshTime - Time.realtimeSinceStartup);
             }
         }

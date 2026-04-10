@@ -1,482 +1,577 @@
 using System;
-using UnityEngine;
-using UnityEditor;
 using System.Collections.Generic;
+using UnityEditor;
+using UnityEngine;
 
 namespace AmplifyShaderEditor
 {
-	[Serializable]
-	public class CustomTagData
-	{
-		private const string TagFormat = "\"{0}\"=\"{1}\"";
-		public string TagName;
-		public string TagValue;
-		public int TagId = -1;
-		public bool TagFoldout = true;
+    [Serializable]
+    public class CustomTagData
+    {
+        private const string TagFormat = "\"{0}\"=\"{1}\"";
+        public string TagName;
+        public string TagValue;
+        public int TagId = -1;
+        public bool TagFoldout = true;
 
-		[SerializeField]
-		private TemplateSpecialTags m_specialTag = TemplateSpecialTags.None;
-		[SerializeField]
-		private DisableBatching m_disableBatching = DisableBatching.False;
-		[SerializeField]
-		private RenderType m_renderType = RenderType.Opaque;
-		[SerializeField]
-		private RenderQueue m_renderQueue = RenderQueue.Geometry;
-		[SerializeField]
-		private int m_renderQueueOffset = 0;
+        [SerializeField]
+        private TemplateSpecialTags m_specialTag = TemplateSpecialTags.None;
 
-		public CustomTagData()
-		{
-			TagName = string.Empty;
-			TagValue = string.Empty;
-			m_specialTag = TemplateSpecialTags.None;
-			m_disableBatching = DisableBatching.False;
-			m_renderType = RenderType.Opaque;
-			m_renderQueue = RenderQueue.Geometry;
-			m_renderQueueOffset = 0;
-		}
+        [SerializeField]
+        private DisableBatching m_disableBatching = DisableBatching.False;
 
-		public CustomTagData( CustomTagData other )
-		{
-			TagName = other.TagName;
-			TagValue = other.TagValue;
-			TagId = other.TagId;
-			TagFoldout = other.TagFoldout;
+        [SerializeField]
+        private RenderType m_renderType = RenderType.Opaque;
 
-			m_specialTag = other.m_specialTag;
-			m_disableBatching = other.m_disableBatching;
-			m_renderType = other.m_renderType;
-			m_renderQueue = other.m_renderQueue;
-			m_renderQueueOffset = other.m_renderQueueOffset;
-		}
+        [SerializeField]
+        private RenderQueue m_renderQueue = RenderQueue.Geometry;
 
-		public void SetTagValue( params string[] value )
-		{
-			TagValue = value[ 0 ];
-			switch( m_specialTag )
-			{
-				case TemplateSpecialTags.RenderType:
-				{
-					if( !TemplateHelperFunctions.StringToRenderType.TryGetValue( value[ 0 ], out m_renderType ) )
-					{
-						m_renderType = RenderType.Custom;
-						TagValue = value[ 0 ];
-					}
-				}
-				break;
-				case TemplateSpecialTags.Queue:
-				{
-					if( value.Length == 2 )
-					{
-						m_renderQueue = TemplateHelperFunctions.StringToRenderQueue[ value[ 0 ] ];
-						int.TryParse( value[ 1 ], out m_renderQueueOffset );
-					}
-					else
-					{
-						int indexPlus = value[ 0 ].IndexOf( '+' );
-						if( indexPlus > 0 )
-						{
-							string[] args = value[ 0 ].Split( '+' );
-							m_renderQueue = TemplateHelperFunctions.StringToRenderQueue[ args[ 0 ] ];
-							int.TryParse( args[ 1 ], out m_renderQueueOffset );
-						}
-						else
-						{
-							int indexMinus = value[ 0 ].IndexOf( '-' );
-							if( indexMinus > 0 )
-							{
-								string[] args = value[ 0 ].Split( '-' );
-								m_renderQueue = TemplateHelperFunctions.StringToRenderQueue[ args[ 0 ] ];
-								int.TryParse( args[ 1 ], out m_renderQueueOffset );
-								m_renderQueueOffset *= -1;
-							}
-							else
-							{
-								m_renderQueue = TemplateHelperFunctions.StringToRenderQueue[ value[ 0 ] ];
-								m_renderQueueOffset = 0;
-							}
-						}
-					}
-					BuildQueueTagValue();
-				}
-				break;
-				case TemplateSpecialTags.DisableBatching:
-				{
-					if( !TemplateHelperFunctions.StringToDisableBatching.TryGetValue( value[ 0 ], out m_disableBatching ) )
-					{
-						m_disableBatching = DisableBatching.False;
-						TagValue = value[ 0 ];
-					}
-				}
-				break;
-			}
-		}
+        [SerializeField]
+        private int m_renderQueueOffset = 0;
 
-		void CheckSpecialTag()
-		{
-			if( TagName.Equals( Constants.RenderTypeHelperStr ) )
-			{
-				m_specialTag = TemplateSpecialTags.RenderType;
-				if( !TemplateHelperFunctions.StringToRenderType.TryGetValue( TagValue, out m_renderType ))
-				{
-					m_renderType = RenderType.Custom;
-				}
-			}
-			else if( TagName.Equals( Constants.RenderQueueHelperStr ) )
-			{
-				m_specialTag = TemplateSpecialTags.Queue;
-				SetTagValue( TagValue );
-			}
-			else if( TagName.Equals( Constants.DisableBatchingHelperStr ) )
-			{
-				m_specialTag = TemplateSpecialTags.DisableBatching;
-				if( !TemplateHelperFunctions.StringToDisableBatching.TryGetValue( TagValue, out m_disableBatching ) )
-				{
-					m_disableBatching = DisableBatching.False;
-				}
-			}
-			else
-			{
-				m_specialTag = TemplateSpecialTags.None;
-			}
-		}
+        public CustomTagData()
+        {
+            TagName = string.Empty;
+            TagValue = string.Empty;
+            m_specialTag = TemplateSpecialTags.None;
+            m_disableBatching = DisableBatching.False;
+            m_renderType = RenderType.Opaque;
+            m_renderQueue = RenderQueue.Geometry;
+            m_renderQueueOffset = 0;
+        }
 
-		public CustomTagData( string name, string value, int id )
-		{
-			TagName = name;
-			TagValue = value;
-			TagId = id;
-			CheckSpecialTag();
-		}
+        public CustomTagData(CustomTagData other)
+        {
+            TagName = other.TagName;
+            TagValue = other.TagValue;
+            TagId = other.TagId;
+            TagFoldout = other.TagFoldout;
 
-		//Used on Template based shaders loading
-		public CustomTagData( string data, int id )
-		{
-			TagId = id;
-			string[] arr = data.Split( IOUtils.VALUE_SEPARATOR );
-			if( arr.Length > 1 )
-			{
-				TagName = arr[ 0 ];
-				TagValue = arr[ 1 ];
-			}
+            m_specialTag = other.m_specialTag;
+            m_disableBatching = other.m_disableBatching;
+            m_renderType = other.m_renderType;
+            m_renderQueue = other.m_renderQueue;
+            m_renderQueueOffset = other.m_renderQueueOffset;
+        }
 
-			if( arr.Length > 2 )
-			{
-				m_specialTag = (TemplateSpecialTags)Enum.Parse( typeof( TemplateSpecialTags ), arr[ 2 ] );
-				switch( m_specialTag )
-				{
-					case TemplateSpecialTags.RenderType:
-					{
-						if( !TemplateHelperFunctions.StringToRenderType.TryGetValue( TagValue, out m_renderType ) )
-						{
-							m_renderType = RenderType.Custom;
-						}
-					}
-					break;
-					case TemplateSpecialTags.Queue:
-					{
-						if( arr.Length == 4 )
-						{
-							m_renderQueue = (RenderQueue)Enum.Parse( typeof( RenderQueue ), TagValue );
-							int.TryParse( arr[ 3 ], out m_renderQueueOffset );
-						}
-						BuildQueueTagValue();
-					}
-					break;
-					case TemplateSpecialTags.DisableBatching:
-					{
-						if( !TemplateHelperFunctions.StringToDisableBatching.TryGetValue( TagValue, out m_disableBatching ) )
-						{
-							m_disableBatching = DisableBatching.False;
-						}
-					}
-					break;
-				}
-			}
-			else /*if( UIUtils.CurrentShaderVersion() < 15600 )*/
-			{
-				CheckSpecialTag();
-			}
-		}
+        public void SetTagValue(params string[] value)
+        {
+            TagValue = value[0];
+            switch (m_specialTag)
+            {
+                case TemplateSpecialTags.RenderType:
+                    {
+                        if (
+                            !TemplateHelperFunctions.StringToRenderType.TryGetValue(
+                                value[0],
+                                out m_renderType
+                            )
+                        )
+                        {
+                            m_renderType = RenderType.Custom;
+                            TagValue = value[0];
+                        }
+                    }
+                    break;
+                case TemplateSpecialTags.Queue:
+                    {
+                        if (value.Length == 2)
+                        {
+                            m_renderQueue = TemplateHelperFunctions.StringToRenderQueue[value[0]];
+                            int.TryParse(value[1], out m_renderQueueOffset);
+                        }
+                        else
+                        {
+                            int indexPlus = value[0].IndexOf('+');
+                            if (indexPlus > 0)
+                            {
+                                string[] args = value[0].Split('+');
+                                m_renderQueue = TemplateHelperFunctions.StringToRenderQueue[
+                                    args[0]
+                                ];
+                                int.TryParse(args[1], out m_renderQueueOffset);
+                            }
+                            else
+                            {
+                                int indexMinus = value[0].IndexOf('-');
+                                if (indexMinus > 0)
+                                {
+                                    string[] args = value[0].Split('-');
+                                    m_renderQueue = TemplateHelperFunctions.StringToRenderQueue[
+                                        args[0]
+                                    ];
+                                    int.TryParse(args[1], out m_renderQueueOffset);
+                                    m_renderQueueOffset *= -1;
+                                }
+                                else
+                                {
+                                    m_renderQueue = TemplateHelperFunctions.StringToRenderQueue[
+                                        value[0]
+                                    ];
+                                    m_renderQueueOffset = 0;
+                                }
+                            }
+                        }
+                        BuildQueueTagValue();
+                    }
+                    break;
+                case TemplateSpecialTags.DisableBatching:
+                    {
+                        if (
+                            !TemplateHelperFunctions.StringToDisableBatching.TryGetValue(
+                                value[0],
+                                out m_disableBatching
+                            )
+                        )
+                        {
+                            m_disableBatching = DisableBatching.False;
+                            TagValue = value[0];
+                        }
+                    }
+                    break;
+            }
+        }
 
-		//Used on Standard Surface shaders loading
-		public CustomTagData( string data )
-		{
-			string[] arr = data.Split( IOUtils.VALUE_SEPARATOR );
-			if( arr.Length > 1 )
-			{
-				TagName = arr[ 0 ];
-				TagValue = arr[ 1 ];
-			}
-		}
+        void CheckSpecialTag()
+        {
+            if (TagName.Equals(Constants.RenderTypeHelperStr))
+            {
+                m_specialTag = TemplateSpecialTags.RenderType;
+                if (
+                    !TemplateHelperFunctions.StringToRenderType.TryGetValue(
+                        TagValue,
+                        out m_renderType
+                    )
+                )
+                {
+                    m_renderType = RenderType.Custom;
+                }
+            }
+            else if (TagName.Equals(Constants.RenderQueueHelperStr))
+            {
+                m_specialTag = TemplateSpecialTags.Queue;
+                SetTagValue(TagValue);
+            }
+            else if (TagName.Equals(Constants.DisableBatchingHelperStr))
+            {
+                m_specialTag = TemplateSpecialTags.DisableBatching;
+                if (
+                    !TemplateHelperFunctions.StringToDisableBatching.TryGetValue(
+                        TagValue,
+                        out m_disableBatching
+                    )
+                )
+                {
+                    m_disableBatching = DisableBatching.False;
+                }
+            }
+            else
+            {
+                m_specialTag = TemplateSpecialTags.None;
+            }
+        }
 
-		public override string ToString()
-		{
-			switch( m_specialTag )
-			{
-				case TemplateSpecialTags.RenderType:
-				return TagName + IOUtils.VALUE_SEPARATOR +
-						( RenderType != RenderType.Custom? RenderType.ToString(): TagValue ) + IOUtils.VALUE_SEPARATOR +
-						m_specialTag;
-				case TemplateSpecialTags.Queue:
-				return TagName + IOUtils.VALUE_SEPARATOR +
-						m_renderQueue.ToString() + IOUtils.VALUE_SEPARATOR +
-						m_specialTag + IOUtils.VALUE_SEPARATOR +
-						m_renderQueueOffset;
-				case TemplateSpecialTags.DisableBatching:
-				return TagName + IOUtils.VALUE_SEPARATOR +
-						Batching.ToString() + IOUtils.VALUE_SEPARATOR +
-						m_specialTag;
-			}
+        public CustomTagData(string name, string value, int id)
+        {
+            TagName = name;
+            TagValue = value;
+            TagId = id;
+            CheckSpecialTag();
+        }
 
-			return TagName + IOUtils.VALUE_SEPARATOR + TagValue;
-		}
+        //Used on Template based shaders loading
+        public CustomTagData(string data, int id)
+        {
+            TagId = id;
+            string[] arr = data.Split(IOUtils.VALUE_SEPARATOR);
+            if (arr.Length > 1)
+            {
+                TagName = arr[0];
+                TagValue = arr[1];
+            }
 
-		public string GenerateTag()
-		{
-			switch( m_specialTag )
-			{
-				case TemplateSpecialTags.RenderType:
-				return string.Format( TagFormat, TagName, ( RenderType != RenderType.Custom ? RenderType.ToString() : TagValue ) );
-				case TemplateSpecialTags.DisableBatching:
-				case TemplateSpecialTags.Queue:
-				case TemplateSpecialTags.None:
-				default:
-				return string.Format( TagFormat, TagName, TagValue );
-			}
-		}
+            if (arr.Length > 2)
+            {
+                m_specialTag = (TemplateSpecialTags)Enum.Parse(typeof(TemplateSpecialTags), arr[2]);
+                switch (m_specialTag)
+                {
+                    case TemplateSpecialTags.RenderType:
+                        {
+                            if (
+                                !TemplateHelperFunctions.StringToRenderType.TryGetValue(
+                                    TagValue,
+                                    out m_renderType
+                                )
+                            )
+                            {
+                                m_renderType = RenderType.Custom;
+                            }
+                        }
+                        break;
+                    case TemplateSpecialTags.Queue:
+                        {
+                            if (arr.Length == 4)
+                            {
+                                m_renderQueue = (RenderQueue)
+                                    Enum.Parse(typeof(RenderQueue), TagValue);
+                                int.TryParse(arr[3], out m_renderQueueOffset);
+                            }
+                            BuildQueueTagValue();
+                        }
+                        break;
+                    case TemplateSpecialTags.DisableBatching:
+                        {
+                            if (
+                                !TemplateHelperFunctions.StringToDisableBatching.TryGetValue(
+                                    TagValue,
+                                    out m_disableBatching
+                                )
+                            )
+                            {
+                                m_disableBatching = DisableBatching.False;
+                            }
+                        }
+                        break;
+                }
+            }
+            else /*if( UIUtils.CurrentShaderVersion() < 15600 )*/
+            {
+                CheckSpecialTag();
+            }
+        }
 
-		public void BuildQueueTagValue()
-		{
-			TagValue = m_renderQueue.ToString();
-			if( m_renderQueueOffset > 0 )
-			{
-				TagValue += "+" + m_renderQueueOffset;
-			}
-			else if( m_renderQueueOffset < 0 )
-			{
-				TagValue += m_renderQueueOffset;
-			}
-		}
+        //Used on Standard Surface shaders loading
+        public CustomTagData(string data)
+        {
+            string[] arr = data.Split(IOUtils.VALUE_SEPARATOR);
+            if (arr.Length > 1)
+            {
+                TagName = arr[0];
+                TagValue = arr[1];
+            }
+        }
 
-		public TemplateSpecialTags SpecialTag
-		{
-			get { return m_specialTag; }
-			set
-			{
-				m_specialTag = value;
-				switch( value )
-				{
-					case TemplateSpecialTags.DisableBatching:
-					{
-						TagValue = m_disableBatching.ToString();
-					}
-					break;
-					case TemplateSpecialTags.RenderType:
-					{
-						//if( m_renderType != RenderType.Custom )
-						//	TagValue = m_renderType.ToString();
-					}
-					break;
-					case TemplateSpecialTags.Queue:
-					{
-						BuildQueueTagValue();
-					}
-					break;
-				}
-			}
-		}
+        public override string ToString()
+        {
+            switch (m_specialTag)
+            {
+                case TemplateSpecialTags.RenderType:
+                    return TagName
+                        + IOUtils.VALUE_SEPARATOR
+                        + (RenderType != RenderType.Custom ? RenderType.ToString() : TagValue)
+                        + IOUtils.VALUE_SEPARATOR
+                        + m_specialTag;
+                case TemplateSpecialTags.Queue:
+                    return TagName
+                        + IOUtils.VALUE_SEPARATOR
+                        + m_renderQueue.ToString()
+                        + IOUtils.VALUE_SEPARATOR
+                        + m_specialTag
+                        + IOUtils.VALUE_SEPARATOR
+                        + m_renderQueueOffset;
+                case TemplateSpecialTags.DisableBatching:
+                    return TagName
+                        + IOUtils.VALUE_SEPARATOR
+                        + Batching.ToString()
+                        + IOUtils.VALUE_SEPARATOR
+                        + m_specialTag;
+            }
 
-		public DisableBatching Batching
-		{
-			get { return m_disableBatching; }
-			set { m_disableBatching = value;
-				TagValue = value.ToString();
-			}
-		}
+            return TagName + IOUtils.VALUE_SEPARATOR + TagValue;
+        }
 
-		public RenderType RenderType
-		{
-			get { return m_renderType; }
-			set
-			{
-				m_renderType = value;
-				//if( m_renderType != RenderType.Custom )
-				//	TagValue = value.ToString();
-			}
-		}
+        public string GenerateTag()
+        {
+            switch (m_specialTag)
+            {
+                case TemplateSpecialTags.RenderType:
+                    return string.Format(
+                        TagFormat,
+                        TagName,
+                        (RenderType != RenderType.Custom ? RenderType.ToString() : TagValue)
+                    );
+                case TemplateSpecialTags.DisableBatching:
+                case TemplateSpecialTags.Queue:
+                case TemplateSpecialTags.None:
+                default:
+                    return string.Format(TagFormat, TagName, TagValue);
+            }
+        }
 
-		public RenderQueue RenderQueue
-		{
-			get { return m_renderQueue; }
-			set { m_renderQueue = value; }
-		}
-		public int RenderQueueOffset
-		{
-			get { return m_renderQueueOffset; }
-			set { m_renderQueueOffset = value; }
-		}
+        public void BuildQueueTagValue()
+        {
+            TagValue = m_renderQueue.ToString();
+            if (m_renderQueueOffset > 0)
+            {
+                TagValue += "+" + m_renderQueueOffset;
+            }
+            else if (m_renderQueueOffset < 0)
+            {
+                TagValue += m_renderQueueOffset;
+            }
+        }
 
-		public bool IsValid { get { return ( !string.IsNullOrEmpty( TagValue ) && !string.IsNullOrEmpty( TagName ) ); } }
-	}
+        public TemplateSpecialTags SpecialTag
+        {
+            get { return m_specialTag; }
+            set
+            {
+                m_specialTag = value;
+                switch (value)
+                {
+                    case TemplateSpecialTags.DisableBatching:
+                        {
+                            TagValue = m_disableBatching.ToString();
+                        }
+                        break;
+                    case TemplateSpecialTags.RenderType:
+                        {
+                            //if( m_renderType != RenderType.Custom )
+                            //	TagValue = m_renderType.ToString();
+                        }
+                        break;
+                    case TemplateSpecialTags.Queue:
+                        {
+                            BuildQueueTagValue();
+                        }
+                        break;
+                }
+            }
+        }
 
-	[Serializable]
-	public class CustomTagsHelper
-	{
-		private const string CustomTagsStr = " Custom SubShader Tags";
-		private const string TagNameStr = "Name";
-		private const string TagValueStr = "Value";
+        public DisableBatching Batching
+        {
+            get { return m_disableBatching; }
+            set
+            {
+                m_disableBatching = value;
+                TagValue = value.ToString();
+            }
+        }
 
-		private const float ShaderKeywordButtonLayoutWidth = 15;
-		private ParentNode m_currentOwner;
+        public RenderType RenderType
+        {
+            get { return m_renderType; }
+            set
+            {
+                m_renderType = value;
+                //if( m_renderType != RenderType.Custom )
+                //	TagValue = value.ToString();
+            }
+        }
 
-		[SerializeField]
-		private List<CustomTagData> m_availableTags = new List<CustomTagData>();
+        public RenderQueue RenderQueue
+        {
+            get { return m_renderQueue; }
+            set { m_renderQueue = value; }
+        }
+        public int RenderQueueOffset
+        {
+            get { return m_renderQueueOffset; }
+            set { m_renderQueueOffset = value; }
+        }
 
-		public void Draw( ParentNode owner )
-		{
-			m_currentOwner = owner;
-			bool value = owner.ContainerGraph.ParentWindow.InnerWindowVariables.ExpandedCustomTags;
-			NodeUtils.DrawPropertyGroup( ref value, CustomTagsStr, DrawMainBody, DrawButtons );
-			owner.ContainerGraph.ParentWindow.InnerWindowVariables.ExpandedCustomTags = value;
-		}
+        public bool IsValid
+        {
+            get { return (!string.IsNullOrEmpty(TagValue) && !string.IsNullOrEmpty(TagName)); }
+        }
+    }
 
-		void DrawButtons()
-		{
-			EditorGUILayout.Separator();
+    [Serializable]
+    public class CustomTagsHelper
+    {
+        private const string CustomTagsStr = " Custom SubShader Tags";
+        private const string TagNameStr = "Name";
+        private const string TagValueStr = "Value";
 
-			// Add tag
-			if( GUILayout.Button( string.Empty, UIUtils.PlusStyle, GUILayout.Width( ShaderKeywordButtonLayoutWidth ) ) )
-			{
-				m_availableTags.Add( new CustomTagData() );
-				EditorGUI.FocusTextInControl( null );
-			}
+        private const float ShaderKeywordButtonLayoutWidth = 15;
+        private ParentNode m_currentOwner;
 
-			//Remove tag
-			if( GUILayout.Button( string.Empty, UIUtils.MinusStyle, GUILayout.Width( ShaderKeywordButtonLayoutWidth ) ) )
-			{
-				if( m_availableTags.Count > 0 )
-				{
-					m_availableTags.RemoveAt( m_availableTags.Count - 1 );
-					EditorGUI.FocusTextInControl( null );
-				}
-			}
-		}
+        [SerializeField]
+        private List<CustomTagData> m_availableTags = new List<CustomTagData>();
 
-		void DrawMainBody()
-		{
-			EditorGUILayout.Separator();
-			int itemCount = m_availableTags.Count;
+        public void Draw(ParentNode owner)
+        {
+            m_currentOwner = owner;
+            bool value = owner.ContainerGraph.ParentWindow.InnerWindowVariables.ExpandedCustomTags;
+            NodeUtils.DrawPropertyGroup(ref value, CustomTagsStr, DrawMainBody, DrawButtons);
+            owner.ContainerGraph.ParentWindow.InnerWindowVariables.ExpandedCustomTags = value;
+        }
 
-			if( itemCount == 0 )
-			{
-				EditorGUILayout.HelpBox( "Your list is Empty!\nUse the plus button to add one.", MessageType.Info );
-			}
+        void DrawButtons()
+        {
+            EditorGUILayout.Separator();
 
-			int markedToDelete = -1;
-			float originalLabelWidth = EditorGUIUtility.labelWidth;
-			for( int i = 0; i < itemCount; i++ )
-			{
-				m_availableTags[ i ].TagFoldout = m_currentOwner.EditorGUILayoutFoldout( m_availableTags[ i ].TagFoldout, string.Format( "[{0}] - {1}", i, m_availableTags[ i ].TagName ) );
-				if( m_availableTags[ i ].TagFoldout )
-				{
-					EditorGUI.indentLevel += 1;
-					EditorGUIUtility.labelWidth = 70;
-					//Tag Name
-					EditorGUI.BeginChangeCheck();
-					m_availableTags[ i ].TagName = EditorGUILayout.TextField( TagNameStr, m_availableTags[ i ].TagName );
-					if( EditorGUI.EndChangeCheck() )
-					{
-						m_availableTags[ i ].TagName = UIUtils.RemoveShaderInvalidCharacters( m_availableTags[ i ].TagName );
-					}
+            // Add tag
+            if (
+                GUILayout.Button(
+                    string.Empty,
+                    UIUtils.PlusStyle,
+                    GUILayout.Width(ShaderKeywordButtonLayoutWidth)
+                )
+            )
+            {
+                m_availableTags.Add(new CustomTagData());
+                EditorGUI.FocusTextInControl(null);
+            }
 
-					//Tag Value
-					EditorGUI.BeginChangeCheck();
-					m_availableTags[ i ].TagValue = EditorGUILayout.TextField( TagValueStr, m_availableTags[ i ].TagValue );
-					if( EditorGUI.EndChangeCheck() )
-					{
-						m_availableTags[ i ].TagValue = UIUtils.RemoveShaderInvalidCharacters( m_availableTags[ i ].TagValue );
-					}
+            //Remove tag
+            if (
+                GUILayout.Button(
+                    string.Empty,
+                    UIUtils.MinusStyle,
+                    GUILayout.Width(ShaderKeywordButtonLayoutWidth)
+                )
+            )
+            {
+                if (m_availableTags.Count > 0)
+                {
+                    m_availableTags.RemoveAt(m_availableTags.Count - 1);
+                    EditorGUI.FocusTextInControl(null);
+                }
+            }
+        }
 
-					EditorGUIUtility.labelWidth = originalLabelWidth;
+        void DrawMainBody()
+        {
+            EditorGUILayout.Separator();
+            int itemCount = m_availableTags.Count;
 
-					EditorGUILayout.BeginHorizontal();
-					{
-						GUILayout.Label( " " );
-						// Add new port
-						if( m_currentOwner.GUILayoutButton( string.Empty, UIUtils.PlusStyle, GUILayout.Width( ShaderKeywordButtonLayoutWidth ) ) )
-						{
-							m_availableTags.Insert( i + 1, new CustomTagData() );
-							EditorGUI.FocusTextInControl( null );
-						}
+            if (itemCount == 0)
+            {
+                EditorGUILayout.HelpBox(
+                    "Your list is Empty!\nUse the plus button to add one.",
+                    MessageType.Info
+                );
+            }
 
-						//Remove port
-						if( m_currentOwner.GUILayoutButton( string.Empty, UIUtils.MinusStyle, GUILayout.Width( ShaderKeywordButtonLayoutWidth ) ) )
-						{
-							markedToDelete = i;
-						}
-					}
-					EditorGUILayout.EndHorizontal();
+            int markedToDelete = -1;
+            float originalLabelWidth = EditorGUIUtility.labelWidth;
+            for (int i = 0; i < itemCount; i++)
+            {
+                m_availableTags[i].TagFoldout = m_currentOwner.EditorGUILayoutFoldout(
+                    m_availableTags[i].TagFoldout,
+                    string.Format("[{0}] - {1}", i, m_availableTags[i].TagName)
+                );
+                if (m_availableTags[i].TagFoldout)
+                {
+                    EditorGUI.indentLevel += 1;
+                    EditorGUIUtility.labelWidth = 70;
+                    //Tag Name
+                    EditorGUI.BeginChangeCheck();
+                    m_availableTags[i].TagName = EditorGUILayout.TextField(
+                        TagNameStr,
+                        m_availableTags[i].TagName
+                    );
+                    if (EditorGUI.EndChangeCheck())
+                    {
+                        m_availableTags[i].TagName = UIUtils.RemoveShaderInvalidCharacters(
+                            m_availableTags[i].TagName
+                        );
+                    }
 
-					EditorGUI.indentLevel -= 1;
-				}
+                    //Tag Value
+                    EditorGUI.BeginChangeCheck();
+                    m_availableTags[i].TagValue = EditorGUILayout.TextField(
+                        TagValueStr,
+                        m_availableTags[i].TagValue
+                    );
+                    if (EditorGUI.EndChangeCheck())
+                    {
+                        m_availableTags[i].TagValue = UIUtils.RemoveShaderInvalidCharacters(
+                            m_availableTags[i].TagValue
+                        );
+                    }
 
-			}
-			if( markedToDelete > -1 )
-			{
-				if( m_availableTags.Count > markedToDelete )
-				{
-					m_availableTags.RemoveAt( markedToDelete );
-					EditorGUI.FocusTextInControl( null );
-				}
-			}
-			EditorGUILayout.Separator();
-		}
+                    EditorGUIUtility.labelWidth = originalLabelWidth;
 
+                    EditorGUILayout.BeginHorizontal();
+                    {
+                        GUILayout.Label(" ");
+                        // Add new port
+                        if (
+                            m_currentOwner.GUILayoutButton(
+                                string.Empty,
+                                UIUtils.PlusStyle,
+                                GUILayout.Width(ShaderKeywordButtonLayoutWidth)
+                            )
+                        )
+                        {
+                            m_availableTags.Insert(i + 1, new CustomTagData());
+                            EditorGUI.FocusTextInControl(null);
+                        }
 
-		public void ReadFromString( ref uint index, ref string[] nodeParams )
-		{
-			int count = Convert.ToInt32( nodeParams[ index++ ] );
-			for( int i = 0; i < count; i++ )
-			{
-				m_availableTags.Add( new CustomTagData( nodeParams[ index++ ] ) );
-			}
-		}
+                        //Remove port
+                        if (
+                            m_currentOwner.GUILayoutButton(
+                                string.Empty,
+                                UIUtils.MinusStyle,
+                                GUILayout.Width(ShaderKeywordButtonLayoutWidth)
+                            )
+                        )
+                        {
+                            markedToDelete = i;
+                        }
+                    }
+                    EditorGUILayout.EndHorizontal();
 
-		public void WriteToString( ref string nodeInfo )
-		{
-			int tagsCount = m_availableTags.Count;
-			IOUtils.AddFieldValueToString( ref nodeInfo, tagsCount );
-			for( int i = 0; i < tagsCount; i++ )
-			{
-				IOUtils.AddFieldValueToString( ref nodeInfo, m_availableTags[ i ].ToString() );
-			}
-		}
+                    EditorGUI.indentLevel -= 1;
+                }
+            }
+            if (markedToDelete > -1)
+            {
+                if (m_availableTags.Count > markedToDelete)
+                {
+                    m_availableTags.RemoveAt(markedToDelete);
+                    EditorGUI.FocusTextInControl(null);
+                }
+            }
+            EditorGUILayout.Separator();
+        }
 
-		public string GenerateCustomTags()
-		{
-			int tagsCount = m_availableTags.Count;
-			string result = tagsCount == 0 ? string.Empty : " ";
+        public void ReadFromString(ref uint index, ref string[] nodeParams)
+        {
+            int count = Convert.ToInt32(nodeParams[index++]);
+            for (int i = 0; i < count; i++)
+            {
+                m_availableTags.Add(new CustomTagData(nodeParams[index++]));
+            }
+        }
 
-			for( int i = 0; i < tagsCount; i++ )
-			{
-				if( m_availableTags[ i ].IsValid )
-				{
-					result += m_availableTags[ i ].GenerateTag();
-					if( i < tagsCount - 1 )
-					{
-						result += " ";
-					}
-				}
-			}
-			return result;
-		}
+        public void WriteToString(ref string nodeInfo)
+        {
+            int tagsCount = m_availableTags.Count;
+            IOUtils.AddFieldValueToString(ref nodeInfo, tagsCount);
+            for (int i = 0; i < tagsCount; i++)
+            {
+                IOUtils.AddFieldValueToString(ref nodeInfo, m_availableTags[i].ToString());
+            }
+        }
 
-		public void Destroy()
-		{
-			m_availableTags.Clear();
-			m_availableTags = null;
-			m_currentOwner = null;
-		}
-	}
+        public string GenerateCustomTags()
+        {
+            int tagsCount = m_availableTags.Count;
+            string result = tagsCount == 0 ? string.Empty : " ";
+
+            for (int i = 0; i < tagsCount; i++)
+            {
+                if (m_availableTags[i].IsValid)
+                {
+                    result += m_availableTags[i].GenerateTag();
+                    if (i < tagsCount - 1)
+                    {
+                        result += " ";
+                    }
+                }
+            }
+            return result;
+        }
+
+        public void Destroy()
+        {
+            m_availableTags.Clear();
+            m_availableTags = null;
+            m_currentOwner = null;
+        }
+    }
 }

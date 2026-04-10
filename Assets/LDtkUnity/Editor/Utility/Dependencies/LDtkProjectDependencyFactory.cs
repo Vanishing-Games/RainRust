@@ -10,12 +10,12 @@ namespace LDtkUnity.Editor
         {
             string version = "";
             LDtkJsonDigger.GetJsonVersion(projectPath, ref version);
-            
+
             if (LDtkPathUtility.IsFileBackupFile(projectPath, projectPath))
             {
                 return Array.Empty<string>();
             }
-            
+
             if (!LDtkJsonImporter.CheckOutdatedJsonVersion(version, projectPath))
             {
                 return Array.Empty<string>();
@@ -26,30 +26,34 @@ namespace LDtkUnity.Editor
             {
                 return Array.Empty<string>();
             }
-            
+
             bool isExternalLevels = false;
             if (!LDtkJsonDigger.GetIsExternalLevels(projectPath, ref isExternalLevels))
             {
                 LDtkDebug.LogError("Issue getting external levels");
                 return Array.Empty<string>();
             }
-            
+
             HashSet<string> paths = new HashSet<string>();
-            
+
             DependOnTilesetFiles(projectPath, paths);
-            
+
             //Separate levels depend on the further assets instead
             if (isExternalLevels)
             {
                 return paths.ToArray();
             }
-            
+
             DependOnUsedBackgrounds(projectPath, paths);
             DependOnProjectAssets(projectLines, paths);
 
             foreach (string path in paths)
             {
-                LDtkDependencyUtil.TestLogDependencySet("GatherProjectDependencies", projectPath, path);
+                LDtkDependencyUtil.TestLogDependencySet(
+                    "GatherProjectDependencies",
+                    projectPath,
+                    path
+                );
             }
 
             return paths.ToArray();
@@ -57,7 +61,9 @@ namespace LDtkUnity.Editor
 
         private static void DependOnProjectAssets(string[] projectLines, HashSet<string> paths)
         {
-            List<ParsedMetaData> datas = LDtkDependencyUtil.GetMetaDatasForDependencies(projectLines);
+            List<ParsedMetaData> datas = LDtkDependencyUtil.GetMetaDatasForDependencies(
+                projectLines
+            );
             foreach (ParsedMetaData data in datas)
             {
                 string assetPath = data.GetAssetPath();
@@ -87,8 +93,12 @@ namespace LDtkUnity.Editor
             {
                 foreach (string lvlBackgroundPath in relLvlBackgroundPaths)
                 {
-                    LDtkRelativeGetterLevelBackground levelGetter = new LDtkRelativeGetterLevelBackground();
-                    string levelBgPath = levelGetter.GetPathRelativeToPath(projectPath, lvlBackgroundPath);
+                    LDtkRelativeGetterLevelBackground levelGetter =
+                        new LDtkRelativeGetterLevelBackground();
+                    string levelBgPath = levelGetter.GetPathRelativeToPath(
+                        projectPath,
+                        lvlBackgroundPath
+                    );
                     if (!string.IsNullOrEmpty(levelBgPath))
                     {
                         paths.Add(levelBgPath);

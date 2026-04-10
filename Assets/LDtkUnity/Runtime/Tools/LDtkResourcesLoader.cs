@@ -9,7 +9,7 @@ namespace LDtkUnity
 
         private static Sprite _defaultSprite;
         private static LDtkIntGridTile _defaultTile;
-        
+
         public static Sprite LoadDefaultTileSprite()
         {
             if (_defaultSprite)
@@ -41,7 +41,7 @@ namespace LDtkUnity
             {
                 return _defaultSprite != null && _defaultSprite == o;
             }
-            
+
             if (o is LDtkIntGridTile)
             {
                 return _defaultTile != null && _defaultTile == o;

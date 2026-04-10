@@ -6,8 +6,5 @@ using UnityEditor.Experimental.AssetImporters;
 
 namespace LDtkUnity.Editor
 {
-    internal abstract class LDtkArtifactFactory
-    {
-        
-    }
+    internal abstract class LDtkArtifactFactory { }
 }

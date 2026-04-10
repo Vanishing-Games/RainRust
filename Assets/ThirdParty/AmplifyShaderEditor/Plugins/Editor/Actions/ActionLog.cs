@@ -29,10 +29,9 @@ namespace AmplifyShaderEditor
             m_index = m_sequence.Count - 1;
         }
 
-
         public void UndoLastAction()
         {
-            if ( m_index > -1 && m_index < m_sequence.Count )
+            if (m_index > -1 && m_index < m_sequence.Count)
                 m_sequence[m_index--].ExecuteReverse();
         }
 
@@ -40,7 +39,6 @@ namespace AmplifyShaderEditor
         {
             if (m_index < (m_sequence.Count - 1))
                 m_sequence[++m_index].ExecuteForward();
-            
         }
 
         public void ClearLog()

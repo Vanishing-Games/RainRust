@@ -14,7 +14,7 @@ namespace LDtkUnity.Editor
             ProjectPath = projectPath;
             ImporterPath = importerPath;
         }
-        
+
         public bool OnResetImporter()
         {
             //Debug.Assert(PixelsPerUnit == -1, "Initial ppu not -1?");
@@ -22,9 +22,12 @@ namespace LDtkUnity.Editor
             {
                 return false;
             }
-            
+
             int defaultGridSize = -1;
-            if (ImporterPath != ProjectPath && AssetImporter.GetAtPath(ProjectPath) is LDtkProjectImporter projectImporter)
+            if (
+                ImporterPath != ProjectPath
+                && AssetImporter.GetAtPath(ProjectPath) is LDtkProjectImporter projectImporter
+            )
             {
                 defaultGridSize = projectImporter.PixelsPerUnit;
             }
@@ -33,10 +36,10 @@ namespace LDtkUnity.Editor
                 //if problem, then default to what LDtk also defaults to upon a new project
                 defaultGridSize = LDtkImporterConsts.DEFAULT_PPU;
             }
-            
+
             return TryInitializePixelsPerUnit(defaultGridSize);
         }
-        
+
         //call this during the regular import process. We need to know what our initial one should be if we're a fresh new asset with a ppu of -1.
         //return true if we did make a change to our ppu
         public bool TryInitializePixelsPerUnit(int initialValue)

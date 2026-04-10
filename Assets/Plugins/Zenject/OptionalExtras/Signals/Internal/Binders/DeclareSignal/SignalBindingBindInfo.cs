@@ -10,15 +10,8 @@ namespace Zenject
             SignalType = signalType;
         }
 
-        public object Identifier
-        {
-            get; set;
-        }
+        public object Identifier { get; set; }
 
-        public Type SignalType
-        {
-            get; private set;
-        }
+        public Type SignalType { get; private set; }
     }
 }
-

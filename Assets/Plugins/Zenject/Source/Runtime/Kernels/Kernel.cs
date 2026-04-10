@@ -4,7 +4,13 @@ using System.Diagnostics;
 namespace Zenject
 {
     [DebuggerStepThrough]
-    public class Kernel : IInitializable, IDisposable, ITickable, ILateTickable, IFixedTickable, ILateDisposable
+    public class Kernel
+        : IInitializable,
+            IDisposable,
+            ITickable,
+            ILateTickable,
+            IFixedTickable,
+            ILateDisposable
     {
         [InjectLocal]
         TickableManager _tickableManager = null;

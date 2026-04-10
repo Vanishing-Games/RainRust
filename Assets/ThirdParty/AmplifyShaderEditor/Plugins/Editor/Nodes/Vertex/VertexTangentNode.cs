@@ -4,47 +4,78 @@
 // Custom Node Vertex Tangent World
 // Donated by Community Member Kebrus
 
-using UnityEngine;
 using System;
+using UnityEngine;
 
 namespace AmplifyShaderEditor
 {
-	[Serializable]
-	[NodeAttributes( "World Tangent", "Surface Data", "Per pixel world tangent vector", null, KeyCode.None, true, false, null, null, "kebrus" )]
-	public sealed class VertexTangentNode : ParentNode
-	{
-		protected override void CommonInit( int uniqueId )
-		{
-			base.CommonInit( uniqueId );
-			AddOutputVectorPorts( WirePortDataType.FLOAT3, "XYZ" );
-			m_drawPreviewAsSphere = true;
-			m_previewShaderGUID = "61f0b80493c9b404d8c7bf56d59c3f81";
-		}
+    [Serializable]
+    [NodeAttributes(
+        "World Tangent",
+        "Surface Data",
+        "Per pixel world tangent vector",
+        null,
+        KeyCode.None,
+        true,
+        false,
+        null,
+        null,
+        "kebrus"
+    )]
+    public sealed class VertexTangentNode : ParentNode
+    {
+        protected override void CommonInit(int uniqueId)
+        {
+            base.CommonInit(uniqueId);
+            AddOutputVectorPorts(WirePortDataType.FLOAT3, "XYZ");
+            m_drawPreviewAsSphere = true;
+            m_previewShaderGUID = "61f0b80493c9b404d8c7bf56d59c3f81";
+        }
 
-		public override void PropagateNodeData( NodeData nodeData, ref MasterNodeDataCollector dataCollector )
-		{
-			base.PropagateNodeData( nodeData , ref dataCollector );
-			dataCollector.DirtyNormal = true;
-		}
+        public override void PropagateNodeData(
+            NodeData nodeData,
+            ref MasterNodeDataCollector dataCollector
+        )
+        {
+            base.PropagateNodeData(nodeData, ref dataCollector);
+            dataCollector.DirtyNormal = true;
+        }
 
-		public override string GenerateShaderForOutput( int outputId, ref MasterNodeDataCollector dataCollector, bool ignoreLocalvar )
-		{
-			if ( dataCollector.IsTemplate )
-			{
-				return GetOutputVectorItem( 0, outputId, dataCollector.TemplateDataCollectorInstance.GetWorldTangent( CurrentPrecisionType ) );
-			}
+        public override string GenerateShaderForOutput(
+            int outputId,
+            ref MasterNodeDataCollector dataCollector,
+            bool ignoreLocalvar
+        )
+        {
+            if (dataCollector.IsTemplate)
+            {
+                return GetOutputVectorItem(
+                    0,
+                    outputId,
+                    dataCollector.TemplateDataCollectorInstance.GetWorldTangent(
+                        CurrentPrecisionType
+                    )
+                );
+            }
 
-			if( dataCollector.PortCategory == MasterNodePortCategory.Fragment || dataCollector.PortCategory == MasterNodePortCategory.Debug )
-			{
-				dataCollector.ForceNormal = true;
+            if (
+                dataCollector.PortCategory == MasterNodePortCategory.Fragment
+                || dataCollector.PortCategory == MasterNodePortCategory.Debug
+            )
+            {
+                dataCollector.ForceNormal = true;
 
-				dataCollector.AddToInput( UniqueId, SurfaceInputs.WORLD_NORMAL, UIUtils.CurrentWindow.CurrentGraph.CurrentPrecision );
-				dataCollector.AddToInput( UniqueId, SurfaceInputs.INTERNALDATA, addSemiColon: false );
-			}
+                dataCollector.AddToInput(
+                    UniqueId,
+                    SurfaceInputs.WORLD_NORMAL,
+                    UIUtils.CurrentWindow.CurrentGraph.CurrentPrecision
+                );
+                dataCollector.AddToInput(UniqueId, SurfaceInputs.INTERNALDATA, addSemiColon: false);
+            }
 
-			string worldTangent = GeneratorUtils.GenerateWorldTangent( ref dataCollector, UniqueId );
+            string worldTangent = GeneratorUtils.GenerateWorldTangent(ref dataCollector, UniqueId);
 
-			return GetOutputVectorItem( 0, outputId, worldTangent );
-		}
-	}
+            return GetOutputVectorItem(0, outputId, worldTangent);
+        }
+    }
 }

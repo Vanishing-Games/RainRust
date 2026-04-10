@@ -17,7 +17,11 @@ namespace Cysharp.Threading.Tasks.Internal
         readonly float loadFactor;
         readonly IEqualityComparer<TKey> keyEqualityComparer;
 
-        public WeakDictionary(int capacity = 4, float loadFactor = 0.75f, IEqualityComparer<TKey> keyComparer = null)
+        public WeakDictionary(
+            int capacity = 4,
+            float loadFactor = 0.75f,
+            IEqualityComparer<TKey> keyComparer = null
+        )
         {
             var tableSize = CalculateCapacity(capacity, loadFactor);
             this.buckets = new Entry[tableSize];
@@ -36,7 +40,8 @@ namespace Cysharp.Threading.Tasks.Internal
             }
             finally
             {
-                if (lockTaken) gate.Exit(false);
+                if (lockTaken)
+                    gate.Exit(false);
             }
         }
 
@@ -57,7 +62,8 @@ namespace Cysharp.Threading.Tasks.Internal
             }
             finally
             {
-                if (lockTaken) gate.Exit(false);
+                if (lockTaken)
+                    gate.Exit(false);
             }
         }
 
@@ -77,7 +83,8 @@ namespace Cysharp.Threading.Tasks.Internal
             }
             finally
             {
-                if (lockTaken) gate.Exit(false);
+                if (lockTaken)
+                    gate.Exit(false);
             }
         }
 
@@ -106,8 +113,14 @@ namespace Cysharp.Threading.Tasks.Internal
             else
             {
                 // add entry
-                var successAdd = AddToBuckets(buckets, key, value, keyEqualityComparer.GetHashCode(key));
-                if (successAdd) size++;
+                var successAdd = AddToBuckets(
+                    buckets,
+                    key,
+                    value,
+                    keyEqualityComparer.GetHashCode(key)
+                );
+                if (successAdd)
+                    size++;
                 return successAdd;
             }
         }
@@ -124,7 +137,7 @@ namespace Cysharp.Threading.Tasks.Internal
                 {
                     Key = new WeakReference<TKey>(newKey, false),
                     Value = value,
-                    Hash = h
+                    Hash = h,
                 };
 
                 return true;
@@ -145,7 +158,8 @@ namespace Cysharp.Threading.Tasks.Internal
                     else
                     {
                         Remove(hashIndex, entry);
-                        if (targetBuckets[hashIndex] == null) goto TRY_ADD_AGAIN; // add new entry
+                        if (targetBuckets[hashIndex] == null)
+                            goto TRY_ADD_AGAIN; // add new entry
                     }
 
                     if (entry.Next != null)
@@ -159,7 +173,7 @@ namespace Cysharp.Threading.Tasks.Internal
                         {
                             Key = new WeakReference<TKey>(newKey, false),
                             Value = value,
-                            Hash = h
+                            Hash = h,
                         };
                         entry.Next.Prev = entry;
                     }
@@ -271,7 +285,8 @@ namespace Cysharp.Threading.Tasks.Internal
             }
             finally
             {
-                if (lockTaken) gate.Exit(false);
+                if (lockTaken)
+                    gate.Exit(false);
             }
 
             return listIndex;
@@ -331,4 +346,3 @@ namespace Cysharp.Threading.Tasks.Internal
         }
     }
 }
-

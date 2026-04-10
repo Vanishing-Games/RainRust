@@ -21,10 +21,14 @@ namespace Zenject
         readonly Action<InjectContext, object> _instantiateCallback;
 
         public ScriptableObjectResourceProvider(
-            string resourcePath, Type resourceType,
-            DiContainer container, IEnumerable<TypeValuePair> extraArguments,
-            bool createNew, object concreteIdentifier,
-            Action<InjectContext, object> instantiateCallback)
+            string resourcePath,
+            Type resourceType,
+            DiContainer container,
+            IEnumerable<TypeValuePair> extraArguments,
+            bool createNew,
+            object concreteIdentifier,
+            Action<InjectContext, object> instantiateCallback
+        )
         {
             _container = container;
             Assert.DerivesFromOrEqual<ScriptableObject>(resourceType);
@@ -53,7 +57,11 @@ namespace Zenject
         }
 
         public void GetAllInstancesWithInjectSplit(
-            InjectContext context, List<TypeValuePair> args, out Action injectAction, List<object> buffer)
+            InjectContext context,
+            List<TypeValuePair> args,
+            out Action injectAction,
+            List<object> buffer
+        )
         {
             Assert.IsNotNull(context);
 
@@ -68,12 +76,15 @@ namespace Zenject
             }
             else
             {
-                buffer.AllocFreeAddRange(
-                    Resources.LoadAll(_resourcePath, _resourceType));
+                buffer.AllocFreeAddRange(Resources.LoadAll(_resourcePath, _resourceType));
             }
 
-            Assert.That(buffer.Count > 0,
-            "Could not find resource at path '{0}' with type '{1}'", _resourcePath, _resourceType);
+            Assert.That(
+                buffer.Count > 0,
+                "Could not find resource at path '{0}' with type '{1}'",
+                _resourcePath,
+                _resourceType
+            );
 
             injectAction = () =>
             {
@@ -87,7 +98,12 @@ namespace Zenject
                     extraArgs.AllocFreeAddRange(args);
 
                     _container.InjectExplicit(
-                        obj, _resourceType, extraArgs, context, _concreteIdentifier);
+                        obj,
+                        _resourceType,
+                        extraArgs,
+                        context,
+                        _concreteIdentifier
+                    );
 
                     ZenPools.DespawnList(extraArgs);
 

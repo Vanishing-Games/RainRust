@@ -67,7 +67,11 @@ namespace Zenject
         }
 
         public void GetAllInstancesWithInjectSplit(
-            InjectContext context, List<TypeValuePair> args, out Action injectAction, List<object> buffer)
+            InjectContext context,
+            List<TypeValuePair> args,
+            out Action injectAction,
+            List<object> buffer
+        )
         {
             Assert.IsNotNull(context);
 
@@ -90,7 +94,10 @@ namespace Zenject
                     var instanceType = _creator.GetInstanceType(context);
                     throw Assert.CreateException(
                         "Found circular dependency when creating type '{0}'. Object graph:\n {1}{2}\n",
-                        instanceType, context.GetObjectGraphString(), instanceType);
+                        instanceType,
+                        context.GetObjectGraphString(),
+                        instanceType
+                    );
                 }
 
                 _isCreatingInstance = true;

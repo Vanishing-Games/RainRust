@@ -59,8 +59,7 @@ namespace Zenject
                 return container;
             }
 
-            throw Assert.CreateException(
-                "Unable to find DiContainer for scene '{0}'", scene.name);
+            throw Assert.CreateException("Unable to find DiContainer for scene '{0}'", scene.name);
         }
 
         public DiContainer TryGetContainerForScene(Scene scene)
@@ -90,5 +89,4 @@ namespace Zenject
             }
         }
     }
-
 }

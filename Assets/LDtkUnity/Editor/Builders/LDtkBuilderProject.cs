@@ -13,8 +13,7 @@ namespace LDtkUnity.Editor
         private LDtkIid _iidComponent;
 
         public GameObject RootObject { get; private set; } = null;
-        
-        
+
         public LDtkProjectBuilder(LDtkProjectImporter importer, LdtkJson json)
         {
             _project = importer;
@@ -28,15 +27,15 @@ namespace LDtkUnity.Editor
             {
                 return;
             }
-            
+
             LDtkIidComponentBank.Release();
-            
+
             _actions = new LDtkAssetProcessorActionCache();
             CreateRootObject();
             BuildWorlds();
             LDtkAssetProcessorInvoker.AddPostProcessProject(_actions, _project, RootObject);
             _actions.Process();
-            
+
             LDtkIidComponentBank.Release();
         }
 
@@ -68,7 +67,7 @@ namespace LDtkUnity.Editor
 
             return true;
         }
-        
+
         private void BuildWorlds()
         {
             var worlds = new LDtkComponentWorld[_worlds.Length];
@@ -81,22 +80,35 @@ namespace LDtkUnity.Editor
                 LDtkProfiler.EndSample();
 
                 LDtkProfiler.BeginSample($"BuildWorld {world.Identifier}");
-                LDtkBuilderWorld worldBuilder = new LDtkBuilderWorld(worldObj, _project, _json, world, _actions, _projectComponent);
+                LDtkBuilderWorld worldBuilder = new LDtkBuilderWorld(
+                    worldObj,
+                    _project,
+                    _json,
+                    world,
+                    _actions,
+                    _projectComponent
+                );
                 LDtkComponentWorld worldComponent = worldBuilder.BuildWorld();
                 LDtkProfiler.EndSample();
 
                 worlds[i] = worldComponent;
             }
-            
-            _projectComponent.OnImport(_json, _project.JsonFile, _project.Toc, worlds, _iidComponent);
+
+            _projectComponent.OnImport(
+                _json,
+                _project.JsonFile,
+                _project.Toc,
+                worlds,
+                _iidComponent
+            );
         }
-        
+
         private void CreateRootObject()
         {
             RootObject = new GameObject(_project.AssetName);
 
             _projectComponent = RootObject.AddComponent<LDtkComponentProject>();
-            
+
             _iidComponent = RootObject.AddComponent<LDtkIid>();
             _iidComponent.SetIid(_json);
         }

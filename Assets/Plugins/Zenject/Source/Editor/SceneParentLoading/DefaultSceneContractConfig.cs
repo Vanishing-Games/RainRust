@@ -18,5 +18,4 @@ namespace Zenject.Internal
             public SceneAsset Scene;
         }
     }
-
 }

@@ -1,19 +1,24 @@
-﻿using Cysharp.Threading.Tasks.Internal;
-using System;
+﻿using System;
 using System.Threading;
+using Cysharp.Threading.Tasks.Internal;
 
 namespace Cysharp.Threading.Tasks.Linq
 {
     public static partial class UniTaskAsyncEnumerable
     {
-        public static IUniTaskAsyncEnumerable<TSource> DefaultIfEmpty<TSource>(this IUniTaskAsyncEnumerable<TSource> source)
+        public static IUniTaskAsyncEnumerable<TSource> DefaultIfEmpty<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
 
             return new DefaultIfEmpty<TSource>(source, default);
         }
 
-        public static IUniTaskAsyncEnumerable<TSource> DefaultIfEmpty<TSource>(this IUniTaskAsyncEnumerable<TSource> source, TSource defaultValue)
+        public static IUniTaskAsyncEnumerable<TSource> DefaultIfEmpty<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            TSource defaultValue
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
 
@@ -32,7 +37,9 @@ namespace Cysharp.Threading.Tasks.Linq
             this.defaultValue = defaultValue;
         }
 
-        public IUniTaskAsyncEnumerator<TSource> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+        public IUniTaskAsyncEnumerator<TSource> GetAsyncEnumerator(
+            CancellationToken cancellationToken = default
+        )
         {
             return new _DefaultIfEmpty(source, defaultValue, cancellationToken);
         }
@@ -43,7 +50,7 @@ namespace Cysharp.Threading.Tasks.Linq
             {
                 Empty,
                 Iterating,
-                Completed
+                Completed,
             }
 
             static readonly Action<object> MoveNextCoreDelegate = MoveNextCore;
@@ -56,7 +63,11 @@ namespace Cysharp.Threading.Tasks.Linq
             IUniTaskAsyncEnumerator<TSource> enumerator;
             UniTask<bool>.Awaiter awaiter;
 
-            public _DefaultIfEmpty(IUniTaskAsyncEnumerable<TSource> source, TSource defaultValue, CancellationToken cancellationToken)
+            public _DefaultIfEmpty(
+                IUniTaskAsyncEnumerable<TSource> source,
+                TSource defaultValue,
+                CancellationToken cancellationToken
+            )
             {
                 this.source = source;
                 this.defaultValue = defaultValue;
@@ -67,7 +78,6 @@ namespace Cysharp.Threading.Tasks.Linq
             }
 
             public TSource Current { get; private set; }
-
 
             public UniTask<bool> MoveNextAsync()
             {
@@ -138,5 +148,4 @@ namespace Cysharp.Threading.Tasks.Linq
             }
         }
     }
-
 }

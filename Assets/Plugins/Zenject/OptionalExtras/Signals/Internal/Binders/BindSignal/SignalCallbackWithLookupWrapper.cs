@@ -21,7 +21,8 @@ namespace Zenject
             Guid lookupId,
             Func<object, Action<object>> methodGetter,
             SignalBus signalBus,
-            DiContainer container)
+            DiContainer container
+        )
         {
             _objectType = objectType;
             _signalType = signalBindInfo.SignalType;
@@ -50,4 +51,3 @@ namespace Zenject
         }
     }
 }
-

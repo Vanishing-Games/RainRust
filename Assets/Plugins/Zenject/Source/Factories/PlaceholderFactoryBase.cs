@@ -5,9 +5,7 @@ using ModestTree;
 
 namespace Zenject
 {
-    public interface IPlaceholderFactory : IValidatable
-    {
-    }
+    public interface IPlaceholderFactory : IValidatable { }
 
     // Placeholder factories can be used to choose a creation method in an installer, using FactoryBinder
     public abstract class PlaceholderFactoryBase<TValue> : IPlaceholderFactory
@@ -38,24 +36,28 @@ namespace Zenject
 
                 Assert.That(result == null || result.GetType().DerivesFromOrEqual<TValue>());
 
-                return (TValue) result;
+                return (TValue)result;
             }
             catch (Exception e)
             {
                 throw new ZenjectException(
-                    "Error during construction of type '{0}' via {1}.Create method!".Fmt(typeof(TValue), GetType()), e);
+                    "Error during construction of type '{0}' via {1}.Create method!".Fmt(
+                        typeof(TValue),
+                        GetType()
+                    ),
+                    e
+                );
             }
         }
 
         public virtual void Validate()
         {
             _provider.GetInstance(
-                _injectContext, ValidationUtil.CreateDefaultArgs(ParamTypes.ToArray()));
+                _injectContext,
+                ValidationUtil.CreateDefaultArgs(ParamTypes.ToArray())
+            );
         }
 
-        protected abstract IEnumerable<Type> ParamTypes
-        {
-            get;
-        }
+        protected abstract IEnumerable<Type> ParamTypes { get; }
     }
 }

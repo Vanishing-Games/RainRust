@@ -13,7 +13,12 @@ namespace Zenject.ReflectionBaking
         {
             string path = Application.dataPath;
             int pathLength = path.Length;
-            path = path.Substring(0, pathLength - /* Assets */ 6);
+            path = path.Substring(
+                0,
+                pathLength
+                    - /* Assets */
+                    6
+            );
             path = Path.Combine(path, assetPath);
             return path;
         }
@@ -32,11 +37,18 @@ namespace Zenject.ReflectionBaking
             foreach (var guid in guids)
             {
                 var candidate = AssetDatabase.LoadAssetAtPath<ZenjectReflectionBakingSettings>(
-                    AssetDatabase.GUIDToAssetPath(guid));
+                    AssetDatabase.GUIDToAssetPath(guid)
+                );
 
-                if ((Application.isEditor && candidate.IsEnabledInEditor) || (BuildPipeline.isBuildingPlayer && candidate.IsEnabledInBuilds))
+                if (
+                    (Application.isEditor && candidate.IsEnabledInEditor)
+                    || (BuildPipeline.isBuildingPlayer && candidate.IsEnabledInBuilds)
+                )
                 {
-                    Assert.IsNull(enabledSettings, "Found multiple enabled ZenjectReflectionBakingSettings objects!  Please disable/delete one to continue.");
+                    Assert.IsNull(
+                        enabledSettings,
+                        "Found multiple enabled ZenjectReflectionBakingSettings objects!  Please disable/delete one to continue."
+                    );
                     enabledSettings = candidate;
                 }
             }
@@ -49,7 +61,12 @@ namespace Zenject.ReflectionBaking
             var projectPath = Application.dataPath;
 
             // Remove 'Assets'
-            projectPath = projectPath.Substring(0, projectPath.Length - /* Assets */ 6);
+            projectPath = projectPath.Substring(
+                0,
+                projectPath.Length
+                    - /* Assets */
+                    6
+            );
 
             int systemPathLength = systemPath.Length;
             int assetPathLength = systemPathLength - projectPath.Length;
@@ -62,12 +79,15 @@ namespace Zenject.ReflectionBaking
         public static void TryForceUnityFullCompile()
         {
             Type compInterface = typeof(UnityEditor.Editor).Assembly.GetType(
-                "UnityEditor.Scripting.ScriptCompilation.EditorCompilationInterface");
+                "UnityEditor.Scripting.ScriptCompilation.EditorCompilationInterface"
+            );
 
             if (compInterface != null)
             {
                 var dirtyAllScriptsMethod = compInterface.GetMethod(
-                    "DirtyAllScripts", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+                    "DirtyAllScripts",
+                    BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic
+                );
 
                 dirtyAllScriptsMethod.Invoke(null, null);
             }

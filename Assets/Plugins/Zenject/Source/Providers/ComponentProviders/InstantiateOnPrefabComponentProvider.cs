@@ -15,7 +15,8 @@ namespace Zenject
         // if concreteType is null we use the contract type from inject context
         public InstantiateOnPrefabComponentProvider(
             Type componentType,
-            IPrefabInstantiator prefabInstantiator)
+            IPrefabInstantiator prefabInstantiator
+        )
         {
             _prefabInstantiator = prefabInstantiator;
             _componentType = componentType;
@@ -37,7 +38,11 @@ namespace Zenject
         }
 
         public void GetAllInstancesWithInjectSplit(
-            InjectContext context, List<TypeValuePair> args, out Action injectAction, List<object> buffer)
+            InjectContext context,
+            List<TypeValuePair> args,
+            out Action injectAction,
+            List<object> buffer
+        )
         {
             Assert.IsNotNull(context);
 
@@ -51,4 +56,3 @@ namespace Zenject
 }
 
 #endif
-

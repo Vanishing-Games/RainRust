@@ -1,4 +1,7 @@
 ﻿namespace LDtkUnity
 {
-    public enum EmbedAtlas { LdtkIcons };
+    public enum EmbedAtlas
+    {
+        LdtkIcons,
+    };
 }

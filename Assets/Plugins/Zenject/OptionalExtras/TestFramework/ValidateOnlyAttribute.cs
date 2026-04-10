@@ -3,9 +3,5 @@ using System;
 namespace Zenject
 {
     [AttributeUsage(AttributeTargets.Method)]
-    public class ValidateOnlyAttribute : Attribute
-    {
-    }
+    public class ValidateOnlyAttribute : Attribute { }
 }
-
-

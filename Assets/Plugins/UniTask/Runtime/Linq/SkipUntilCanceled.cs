@@ -1,12 +1,15 @@
-﻿using Cysharp.Threading.Tasks.Internal;
-using System;
+﻿using System;
 using System.Threading;
+using Cysharp.Threading.Tasks.Internal;
 
 namespace Cysharp.Threading.Tasks.Linq
 {
     public static partial class UniTaskAsyncEnumerable
     {
-        public static IUniTaskAsyncEnumerable<TSource> SkipUntilCanceled<TSource>(this IUniTaskAsyncEnumerable<TSource> source, CancellationToken cancellationToken)
+        public static IUniTaskAsyncEnumerable<TSource> SkipUntilCanceled<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            CancellationToken cancellationToken
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
 
@@ -19,13 +22,18 @@ namespace Cysharp.Threading.Tasks.Linq
         readonly IUniTaskAsyncEnumerable<TSource> source;
         readonly CancellationToken cancellationToken;
 
-        public SkipUntilCanceled(IUniTaskAsyncEnumerable<TSource> source, CancellationToken cancellationToken)
+        public SkipUntilCanceled(
+            IUniTaskAsyncEnumerable<TSource> source,
+            CancellationToken cancellationToken
+        )
         {
             this.source = source;
             this.cancellationToken = cancellationToken;
         }
 
-        public IUniTaskAsyncEnumerator<TSource> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+        public IUniTaskAsyncEnumerator<TSource> GetAsyncEnumerator(
+            CancellationToken cancellationToken = default
+        )
         {
             return new _SkipUntilCanceled(source, this.cancellationToken, cancellationToken);
         }
@@ -47,18 +55,30 @@ namespace Cysharp.Threading.Tasks.Linq
             UniTask<bool>.Awaiter awaiter;
             bool continueNext;
 
-            public _SkipUntilCanceled(IUniTaskAsyncEnumerable<TSource> source, CancellationToken cancellationToken1, CancellationToken cancellationToken2)
+            public _SkipUntilCanceled(
+                IUniTaskAsyncEnumerable<TSource> source,
+                CancellationToken cancellationToken1,
+                CancellationToken cancellationToken2
+            )
             {
                 this.source = source;
                 this.cancellationToken1 = cancellationToken1;
                 this.cancellationToken2 = cancellationToken2;
                 if (cancellationToken1.CanBeCanceled)
                 {
-                    this.cancellationTokenRegistration1 = cancellationToken1.RegisterWithoutCaptureExecutionContext(CancelDelegate1, this);
+                    this.cancellationTokenRegistration1 =
+                        cancellationToken1.RegisterWithoutCaptureExecutionContext(
+                            CancelDelegate1,
+                            this
+                        );
                 }
                 if (cancellationToken1 != cancellationToken2 && cancellationToken2.CanBeCanceled)
                 {
-                    this.cancellationTokenRegistration2 = cancellationToken2.RegisterWithoutCaptureExecutionContext(CancelDelegate2, this);
+                    this.cancellationTokenRegistration2 =
+                        cancellationToken2.RegisterWithoutCaptureExecutionContext(
+                            CancelDelegate2,
+                            this
+                        );
                 }
                 TaskTracker.TrackActiveTask(this, 3);
             }
@@ -69,8 +89,10 @@ namespace Cysharp.Threading.Tasks.Linq
             {
                 if (enumerator == null)
                 {
-                    if (cancellationToken1.IsCancellationRequested) isCanceled = 1;
-                    if (cancellationToken2.IsCancellationRequested) isCanceled = 1;
+                    if (cancellationToken1.IsCancellationRequested)
+                        isCanceled = 1;
+                    if (cancellationToken2.IsCancellationRequested)
+                        isCanceled = 1;
                     enumerator = source.GetAsyncEnumerator(cancellationToken2); // use only AsyncEnumerator provided token.
                 }
                 completionSource.Reset();

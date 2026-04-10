@@ -20,17 +20,16 @@ namespace FMODUnity
 
         public bool IsNull
         {
-            get
-            {
-                return string.IsNullOrEmpty(Path) && Guid.IsNull;
-            }
+            get { return string.IsNullOrEmpty(Path) && Guid.IsNull; }
         }
 
         public static EventReference Find(string path)
         {
             if (GuidLookupDelegate == null)
             {
-                throw new InvalidOperationException("EventReference.Find called before EventManager was initialized");
+                throw new InvalidOperationException(
+                    "EventReference.Find called before EventManager was initialized"
+                );
             }
 
             return new EventReference { Path = path, Guid = GuidLookupDelegate(path) };
@@ -43,10 +42,7 @@ namespace FMODUnity
 
         public bool IsNull
         {
-            get
-            {
-                return Guid.IsNull;
-            }
+            get { return Guid.IsNull; }
         }
 #endif
     }

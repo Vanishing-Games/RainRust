@@ -23,7 +23,7 @@ namespace Cysharp.Threading.Tasks
         KillAndCancelAwait,
         KillWithCompleteCallbackAndCancelAwait,
         CompleteAndCancelAwait,
-        CompleteWithSequenceCallbackAndCancelAwait
+        CompleteWithSequenceCallbackAndCancelAwait,
     }
 
     public static class DOTweenAsyncExtensions
@@ -35,7 +35,7 @@ namespace Cysharp.Threading.Tasks
             Pause,
             Play,
             Rewind,
-            StepComplete
+            StepComplete,
         }
 
         public static TweenAwaiter GetAwaiter(this Tween tween)
@@ -43,60 +43,157 @@ namespace Cysharp.Threading.Tasks
             return new TweenAwaiter(tween);
         }
 
-        public static UniTask WithCancellation(this Tween tween, CancellationToken cancellationToken)
+        public static UniTask WithCancellation(
+            this Tween tween,
+            CancellationToken cancellationToken
+        )
         {
             Error.ThrowArgumentNullException(tween, nameof(tween));
 
-            if (!tween.IsActive()) return UniTask.CompletedTask;
-            return new UniTask(TweenConfiguredSource.Create(tween, TweenCancelBehaviour.Kill, cancellationToken, CallbackType.Kill, out var token), token);
+            if (!tween.IsActive())
+                return UniTask.CompletedTask;
+            return new UniTask(
+                TweenConfiguredSource.Create(
+                    tween,
+                    TweenCancelBehaviour.Kill,
+                    cancellationToken,
+                    CallbackType.Kill,
+                    out var token
+                ),
+                token
+            );
         }
 
-        public static UniTask ToUniTask(this Tween tween, TweenCancelBehaviour tweenCancelBehaviour = TweenCancelBehaviour.Kill, CancellationToken cancellationToken = default)
+        public static UniTask ToUniTask(
+            this Tween tween,
+            TweenCancelBehaviour tweenCancelBehaviour = TweenCancelBehaviour.Kill,
+            CancellationToken cancellationToken = default
+        )
         {
             Error.ThrowArgumentNullException(tween, nameof(tween));
 
-            if (!tween.IsActive()) return UniTask.CompletedTask;
-            return new UniTask(TweenConfiguredSource.Create(tween, tweenCancelBehaviour, cancellationToken, CallbackType.Kill, out var token), token);
+            if (!tween.IsActive())
+                return UniTask.CompletedTask;
+            return new UniTask(
+                TweenConfiguredSource.Create(
+                    tween,
+                    tweenCancelBehaviour,
+                    cancellationToken,
+                    CallbackType.Kill,
+                    out var token
+                ),
+                token
+            );
         }
 
-        public static UniTask AwaitForComplete(this Tween tween, TweenCancelBehaviour tweenCancelBehaviour = TweenCancelBehaviour.Kill, CancellationToken cancellationToken = default)
+        public static UniTask AwaitForComplete(
+            this Tween tween,
+            TweenCancelBehaviour tweenCancelBehaviour = TweenCancelBehaviour.Kill,
+            CancellationToken cancellationToken = default
+        )
         {
             Error.ThrowArgumentNullException(tween, nameof(tween));
 
-            if (!tween.IsActive()) return UniTask.CompletedTask;
-            return new UniTask(TweenConfiguredSource.Create(tween, tweenCancelBehaviour, cancellationToken, CallbackType.Complete, out var token), token);
+            if (!tween.IsActive())
+                return UniTask.CompletedTask;
+            return new UniTask(
+                TweenConfiguredSource.Create(
+                    tween,
+                    tweenCancelBehaviour,
+                    cancellationToken,
+                    CallbackType.Complete,
+                    out var token
+                ),
+                token
+            );
         }
 
-        public static UniTask AwaitForPause(this Tween tween, TweenCancelBehaviour tweenCancelBehaviour = TweenCancelBehaviour.Kill, CancellationToken cancellationToken = default)
+        public static UniTask AwaitForPause(
+            this Tween tween,
+            TweenCancelBehaviour tweenCancelBehaviour = TweenCancelBehaviour.Kill,
+            CancellationToken cancellationToken = default
+        )
         {
             Error.ThrowArgumentNullException(tween, nameof(tween));
 
-            if (!tween.IsActive()) return UniTask.CompletedTask;
-            return new UniTask(TweenConfiguredSource.Create(tween, tweenCancelBehaviour, cancellationToken, CallbackType.Pause, out var token), token);
+            if (!tween.IsActive())
+                return UniTask.CompletedTask;
+            return new UniTask(
+                TweenConfiguredSource.Create(
+                    tween,
+                    tweenCancelBehaviour,
+                    cancellationToken,
+                    CallbackType.Pause,
+                    out var token
+                ),
+                token
+            );
         }
 
-        public static UniTask AwaitForPlay(this Tween tween, TweenCancelBehaviour tweenCancelBehaviour = TweenCancelBehaviour.Kill, CancellationToken cancellationToken = default)
+        public static UniTask AwaitForPlay(
+            this Tween tween,
+            TweenCancelBehaviour tweenCancelBehaviour = TweenCancelBehaviour.Kill,
+            CancellationToken cancellationToken = default
+        )
         {
             Error.ThrowArgumentNullException(tween, nameof(tween));
 
-            if (!tween.IsActive()) return UniTask.CompletedTask;
-            return new UniTask(TweenConfiguredSource.Create(tween, tweenCancelBehaviour, cancellationToken, CallbackType.Play, out var token), token);
+            if (!tween.IsActive())
+                return UniTask.CompletedTask;
+            return new UniTask(
+                TweenConfiguredSource.Create(
+                    tween,
+                    tweenCancelBehaviour,
+                    cancellationToken,
+                    CallbackType.Play,
+                    out var token
+                ),
+                token
+            );
         }
 
-        public static UniTask AwaitForRewind(this Tween tween, TweenCancelBehaviour tweenCancelBehaviour = TweenCancelBehaviour.Kill, CancellationToken cancellationToken = default)
+        public static UniTask AwaitForRewind(
+            this Tween tween,
+            TweenCancelBehaviour tweenCancelBehaviour = TweenCancelBehaviour.Kill,
+            CancellationToken cancellationToken = default
+        )
         {
             Error.ThrowArgumentNullException(tween, nameof(tween));
 
-            if (!tween.IsActive()) return UniTask.CompletedTask;
-            return new UniTask(TweenConfiguredSource.Create(tween, tweenCancelBehaviour, cancellationToken, CallbackType.Rewind, out var token), token);
+            if (!tween.IsActive())
+                return UniTask.CompletedTask;
+            return new UniTask(
+                TweenConfiguredSource.Create(
+                    tween,
+                    tweenCancelBehaviour,
+                    cancellationToken,
+                    CallbackType.Rewind,
+                    out var token
+                ),
+                token
+            );
         }
 
-        public static UniTask AwaitForStepComplete(this Tween tween, TweenCancelBehaviour tweenCancelBehaviour = TweenCancelBehaviour.Kill, CancellationToken cancellationToken = default)
+        public static UniTask AwaitForStepComplete(
+            this Tween tween,
+            TweenCancelBehaviour tweenCancelBehaviour = TweenCancelBehaviour.Kill,
+            CancellationToken cancellationToken = default
+        )
         {
             Error.ThrowArgumentNullException(tween, nameof(tween));
 
-            if (!tween.IsActive()) return UniTask.CompletedTask;
-            return new UniTask(TweenConfiguredSource.Create(tween, tweenCancelBehaviour, cancellationToken, CallbackType.StepComplete, out var token), token);
+            if (!tween.IsActive())
+                return UniTask.CompletedTask;
+            return new UniTask(
+                TweenConfiguredSource.Create(
+                    tween,
+                    tweenCancelBehaviour,
+                    cancellationToken,
+                    CallbackType.StepComplete,
+                    out var token
+                ),
+                token
+            );
         }
 
         public struct TweenAwaiter : ICriticalNotifyCompletion
@@ -116,9 +213,7 @@ namespace Cysharp.Threading.Tasks
                 return this;
             }
 
-            public void GetResult()
-            {
-            }
+            public void GetResult() { }
 
             public void OnCompleted(System.Action continuation)
             {
@@ -160,12 +255,21 @@ namespace Cysharp.Threading.Tasks
                 onCompleteCallbackDelegate = OnCompleteCallbackDelegate;
             }
 
-            public static IUniTaskSource Create(Tween tween, TweenCancelBehaviour cancelBehaviour, CancellationToken cancellationToken, CallbackType callbackType, out short token)
+            public static IUniTaskSource Create(
+                Tween tween,
+                TweenCancelBehaviour cancelBehaviour,
+                CancellationToken cancellationToken,
+                CallbackType callbackType,
+                out short token
+            )
             {
                 if (cancellationToken.IsCancellationRequested)
                 {
                     DoCancelBeforeCreate(tween, cancelBehaviour);
-                    return AutoResetUniTaskCompletionSource.CreateFromCanceled(cancellationToken, out token);
+                    return AutoResetUniTaskCompletionSource.CreateFromCanceled(
+                        cancellationToken,
+                        out token
+                    );
                 }
 
                 if (!pool.TryPop(out var result))
@@ -216,46 +320,50 @@ namespace Cysharp.Threading.Tasks
 
                 if (cancellationToken.CanBeCanceled)
                 {
-                    result.cancellationRegistration = cancellationToken.RegisterWithoutCaptureExecutionContext(x =>
-                    {
-                        var source = (TweenConfiguredSource)x;
-                        switch (source.cancelBehaviour)
-                        {
-                            case TweenCancelBehaviour.Kill:
-                            default:
-                                source.tween.Kill(false);
-                                break;
-                            case TweenCancelBehaviour.KillAndCancelAwait:
-                                source.canceled = true;
-                                source.tween.Kill(false);
-                                break;
-                            case TweenCancelBehaviour.KillWithCompleteCallback:
-                                source.tween.Kill(true);
-                                break;
-                            case TweenCancelBehaviour.KillWithCompleteCallbackAndCancelAwait:
-                                source.canceled = true;
-                                source.tween.Kill(true);
-                                break;
-                            case TweenCancelBehaviour.Complete:
-                                source.tween.Complete(false);
-                                break;
-                            case TweenCancelBehaviour.CompleteAndCancelAwait:
-                                source.canceled = true;
-                                source.tween.Complete(false);
-                                break;
-                            case TweenCancelBehaviour.CompleteWithSequenceCallback:
-                                source.tween.Complete(true);
-                                break;
-                            case TweenCancelBehaviour.CompleteWithSequenceCallbackAndCancelAwait:
-                                source.canceled = true;
-                                source.tween.Complete(true);
-                                break;
-                            case TweenCancelBehaviour.CancelAwait:
-                                source.RestoreOriginalCallback();
-                                source.core.TrySetCanceled(source.cancellationToken);
-                                break;
-                        }
-                    }, result);
+                    result.cancellationRegistration =
+                        cancellationToken.RegisterWithoutCaptureExecutionContext(
+                            x =>
+                            {
+                                var source = (TweenConfiguredSource)x;
+                                switch (source.cancelBehaviour)
+                                {
+                                    case TweenCancelBehaviour.Kill:
+                                    default:
+                                        source.tween.Kill(false);
+                                        break;
+                                    case TweenCancelBehaviour.KillAndCancelAwait:
+                                        source.canceled = true;
+                                        source.tween.Kill(false);
+                                        break;
+                                    case TweenCancelBehaviour.KillWithCompleteCallback:
+                                        source.tween.Kill(true);
+                                        break;
+                                    case TweenCancelBehaviour.KillWithCompleteCallbackAndCancelAwait:
+                                        source.canceled = true;
+                                        source.tween.Kill(true);
+                                        break;
+                                    case TweenCancelBehaviour.Complete:
+                                        source.tween.Complete(false);
+                                        break;
+                                    case TweenCancelBehaviour.CompleteAndCancelAwait:
+                                        source.canceled = true;
+                                        source.tween.Complete(false);
+                                        break;
+                                    case TweenCancelBehaviour.CompleteWithSequenceCallback:
+                                        source.tween.Complete(true);
+                                        break;
+                                    case TweenCancelBehaviour.CompleteWithSequenceCallbackAndCancelAwait:
+                                        source.canceled = true;
+                                        source.tween.Complete(true);
+                                        break;
+                                    case TweenCancelBehaviour.CancelAwait:
+                                        source.RestoreOriginalCallback();
+                                        source.core.TrySetCanceled(source.cancellationToken);
+                                        break;
+                                }
+                            },
+                            result
+                        );
                 }
 
                 TaskTracker.TrackActiveTask(result, 3);
@@ -268,11 +376,15 @@ namespace Cysharp.Threading.Tasks
             {
                 if (cancellationToken.IsCancellationRequested)
                 {
-                    if (this.cancelBehaviour == TweenCancelBehaviour.KillAndCancelAwait
-                        || this.cancelBehaviour == TweenCancelBehaviour.KillWithCompleteCallbackAndCancelAwait
+                    if (
+                        this.cancelBehaviour == TweenCancelBehaviour.KillAndCancelAwait
+                        || this.cancelBehaviour
+                            == TweenCancelBehaviour.KillWithCompleteCallbackAndCancelAwait
                         || this.cancelBehaviour == TweenCancelBehaviour.CompleteAndCancelAwait
-                        || this.cancelBehaviour == TweenCancelBehaviour.CompleteWithSequenceCallbackAndCancelAwait
-                        || this.cancelBehaviour == TweenCancelBehaviour.CancelAwait)
+                        || this.cancelBehaviour
+                            == TweenCancelBehaviour.CompleteWithSequenceCallbackAndCancelAwait
+                        || this.cancelBehaviour == TweenCancelBehaviour.CancelAwait
+                    )
                     {
                         canceled = true;
                     }
@@ -290,7 +402,6 @@ namespace Cysharp.Threading.Tasks
 
             static void DoCancelBeforeCreate(Tween tween, TweenCancelBehaviour tweenCancelBehaviour)
             {
-
                 switch (tweenCancelBehaviour)
                 {
                     case TweenCancelBehaviour.Kill:
@@ -395,12 +506,12 @@ namespace Cysharp.Threading.Tasks
 
     sealed class PooledTweenCallback
     {
-        static readonly ConcurrentQueue<PooledTweenCallback> pool = new ConcurrentQueue<PooledTweenCallback>();
+        static readonly ConcurrentQueue<PooledTweenCallback> pool =
+            new ConcurrentQueue<PooledTweenCallback>();
 
         readonly TweenCallback runDelegate;
 
         Action continuation;
-
 
         PooledTweenCallback()
         {

@@ -17,9 +17,10 @@ namespace Zenject
         [Inject]
         public InitializableManager(
             [Inject(Optional = true, Source = InjectSources.Local)]
-            List<IInitializable> initializables,
+                List<IInitializable> initializables,
             [Inject(Optional = true, Source = InjectSources.Local)]
-            List<ValuePair<Type, int>> priorities)
+                List<ValuePair<Type, int>> priorities
+        )
         {
             _initializables = new List<InitializableInfo>();
 
@@ -29,7 +30,10 @@ namespace Zenject
 
                 // Note that we use zero for unspecified priority
                 // This is nice because you can use negative or positive for before/after unspecified
-                var matches = priorities.Where(x => initializable.GetType().DerivesFromOrEqual(x.First)).Select(x => x.Second).ToList();
+                var matches = priorities
+                    .Where(x => initializable.GetType().DerivesFromOrEqual(x.First))
+                    .Select(x => x.Second)
+                    .ToList();
                 int priority = matches.IsEmpty() ? 0 : matches.Distinct().Single();
 
                 _initializables.Add(new InitializableInfo(initializable, priority));
@@ -44,8 +48,7 @@ namespace Zenject
         public void Add(IInitializable initializable, int priority)
         {
             Assert.That(!_hasInitialized);
-            _initializables.Add(
-                new InitializableInfo(initializable, priority));
+            _initializables.Add(new InitializableInfo(initializable, priority));
         }
 
         public void Initialize()
@@ -56,9 +59,14 @@ namespace Zenject
             _initializables = _initializables.OrderBy(x => x.Priority).ToList();
 
 #if UNITY_EDITOR
-            foreach (var initializable in _initializables.Select(x => x.Initializable).GetDuplicates())
+            foreach (
+                var initializable in _initializables.Select(x => x.Initializable).GetDuplicates()
+            )
             {
-                Assert.That(false, "Found duplicate IInitializable with type '{0}'".Fmt(initializable.GetType()));
+                Assert.That(
+                    false,
+                    "Found duplicate IInitializable with type '{0}'".Fmt(initializable.GetType())
+                );
             }
 #endif
 
@@ -70,7 +78,12 @@ namespace Zenject
                     using (ProfileTimers.CreateTimedBlock("User Code"))
 #endif
 #if UNITY_EDITOR
-                    using (ProfileBlock.Start("{0}.Initialize()", initializable.Initializable.GetType()))
+                    using (
+                        ProfileBlock.Start(
+                            "{0}.Initialize()",
+                            initializable.Initializable.GetType()
+                        )
+                    )
 #endif
                     {
                         initializable.Initializable.Initialize();
@@ -79,7 +92,10 @@ namespace Zenject
                 catch (Exception e)
                 {
                     throw Assert.CreateException(
-                        e, "Error occurred while initializing IInitializable with type '{0}'", initializable.Initializable.GetType());
+                        e,
+                        "Error occurred while initializing IInitializable with type '{0}'",
+                        initializable.Initializable.GetType()
+                    );
                 }
             }
         }

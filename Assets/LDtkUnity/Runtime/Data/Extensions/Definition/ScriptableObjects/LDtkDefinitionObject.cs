@@ -8,7 +8,7 @@ namespace LDtkUnity
     {
         internal abstract void SetAssetName();
     }
-    
+
     [ExcludeFromDocs]
     public abstract class LDtkDefinitionObject<T> : LDtkDefinitionObject
     {

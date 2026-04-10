@@ -1,13 +1,13 @@
 namespace Zenject
 {
     [NoReflectionBaking]
-    public class DeclareSignalRequireHandlerAsyncTickPriorityCopyBinder : DeclareSignalAsyncTickPriorityCopyBinder
+    public class DeclareSignalRequireHandlerAsyncTickPriorityCopyBinder
+        : DeclareSignalAsyncTickPriorityCopyBinder
     {
         public DeclareSignalRequireHandlerAsyncTickPriorityCopyBinder(
-            SignalDeclarationBindInfo signalBindInfo)
-            : base(signalBindInfo)
-        {
-        }
+            SignalDeclarationBindInfo signalBindInfo
+        )
+            : base(signalBindInfo) { }
 
         public DeclareSignalAsyncTickPriorityCopyBinder RequireSubscriber()
         {
@@ -28,4 +28,3 @@ namespace Zenject
         }
     }
 }
-

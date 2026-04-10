@@ -17,7 +17,9 @@ namespace Zenject.ReflectionBaking
             var config = ScriptableObject.CreateInstance<ZenjectReflectionBakingSettings>();
 
             ZenUnityEditorUtil.SaveScriptableObjectAsset(
-                Path.Combine(folderPath, "ZenjectReflectionBakingSettings.asset"), config);
+                Path.Combine(folderPath, "ZenjectReflectionBakingSettings.asset"),
+                config
+            );
         }
     }
 }

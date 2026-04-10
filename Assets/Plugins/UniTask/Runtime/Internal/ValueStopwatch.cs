@@ -5,7 +5,8 @@ namespace Cysharp.Threading.Tasks.Internal
 {
     internal readonly struct ValueStopwatch
     {
-        static readonly double TimestampToTicks = TimeSpan.TicksPerSecond / (double)Stopwatch.Frequency;
+        static readonly double TimestampToTicks =
+            TimeSpan.TicksPerSecond / (double)Stopwatch.Frequency;
 
         readonly long startTimestamp;
 
@@ -26,7 +27,9 @@ namespace Cysharp.Threading.Tasks.Internal
             {
                 if (startTimestamp == 0)
                 {
-                    throw new InvalidOperationException("Detected invalid initialization(use 'default'), only to create from StartNew().");
+                    throw new InvalidOperationException(
+                        "Detected invalid initialization(use 'default'), only to create from StartNew()."
+                    );
                 }
 
                 var delta = Stopwatch.GetTimestamp() - startTimestamp;
