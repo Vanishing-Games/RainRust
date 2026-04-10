@@ -6,5 +6,22 @@
     /// `ArrayCountWithLabel`, `ArrayCountNoLabel`, `RefLinkBetweenPivots`,
     /// `RefLinkBetweenCenters`
     /// </summary>
-    public enum EditorDisplayMode { ArrayCountNoLabel, ArrayCountWithLabel, EntityTile, Hidden, LevelTile, NameAndValue, PointPath, PointPathLoop, PointStar, Points, RadiusGrid, RadiusPx, RefLinkBetweenCenters, RefLinkBetweenPivots, ValueOnly };
+    public enum EditorDisplayMode
+    {
+        ArrayCountNoLabel,
+        ArrayCountWithLabel,
+        EntityTile,
+        Hidden,
+        LevelTile,
+        NameAndValue,
+        PointPath,
+        PointPathLoop,
+        PointStar,
+        Points,
+        RadiusGrid,
+        RadiusPx,
+        RefLinkBetweenCenters,
+        RefLinkBetweenPivots,
+        ValueOnly,
+    };
 }

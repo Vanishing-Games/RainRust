@@ -13,7 +13,8 @@ namespace Cysharp.Threading.Tasks.Internal
         public static readonly IEqualityComparer<Color32> Color32 = new Color32EqualityComparer();
         public static readonly IEqualityComparer<Rect> Rect = new RectEqualityComparer();
         public static readonly IEqualityComparer<Bounds> Bounds = new BoundsEqualityComparer();
-        public static readonly IEqualityComparer<Quaternion> Quaternion = new QuaternionEqualityComparer();
+        public static readonly IEqualityComparer<Quaternion> Quaternion =
+            new QuaternionEqualityComparer();
 
         static readonly RuntimeTypeHandle vector2Type = typeof(Vector2).TypeHandle;
         static readonly RuntimeTypeHandle vector3Type = typeof(Vector3).TypeHandle;
@@ -26,18 +27,21 @@ namespace Cysharp.Threading.Tasks.Internal
 
 #if UNITY_2017_2_OR_NEWER
 
-        public static readonly IEqualityComparer<Vector2Int> Vector2Int = new Vector2IntEqualityComparer();
-        public static readonly IEqualityComparer<Vector3Int> Vector3Int = new Vector3IntEqualityComparer();
-        public static readonly IEqualityComparer<RangeInt> RangeInt = new RangeIntEqualityComparer();
+        public static readonly IEqualityComparer<Vector2Int> Vector2Int =
+            new Vector2IntEqualityComparer();
+        public static readonly IEqualityComparer<Vector3Int> Vector3Int =
+            new Vector3IntEqualityComparer();
+        public static readonly IEqualityComparer<RangeInt> RangeInt =
+            new RangeIntEqualityComparer();
         public static readonly IEqualityComparer<RectInt> RectInt = new RectIntEqualityComparer();
-        public static readonly IEqualityComparer<BoundsInt> BoundsInt = new BoundsIntEqualityComparer();
+        public static readonly IEqualityComparer<BoundsInt> BoundsInt =
+            new BoundsIntEqualityComparer();
 
         static readonly RuntimeTypeHandle vector2IntType = typeof(Vector2Int).TypeHandle;
         static readonly RuntimeTypeHandle vector3IntType = typeof(Vector3Int).TypeHandle;
         static readonly RuntimeTypeHandle rangeIntType = typeof(RangeInt).TypeHandle;
         static readonly RuntimeTypeHandle rectIntType = typeof(RectInt).TypeHandle;
         static readonly RuntimeTypeHandle boundsIntType = typeof(BoundsInt).TypeHandle;
-
 #endif
 
         static class Cache<T>
@@ -67,22 +71,35 @@ namespace Cysharp.Threading.Tasks.Internal
         {
             var t = type.TypeHandle;
 
-            if (t.Equals(vector2Type)) return (object)UnityEqualityComparer.Vector2;
-            if (t.Equals(vector3Type)) return (object)UnityEqualityComparer.Vector3;
-            if (t.Equals(vector4Type)) return (object)UnityEqualityComparer.Vector4;
-            if (t.Equals(colorType)) return (object)UnityEqualityComparer.Color;
-            if (t.Equals(color32Type)) return (object)UnityEqualityComparer.Color32;
-            if (t.Equals(rectType)) return (object)UnityEqualityComparer.Rect;
-            if (t.Equals(boundsType)) return (object)UnityEqualityComparer.Bounds;
-            if (t.Equals(quaternionType)) return (object)UnityEqualityComparer.Quaternion;
+            if (t.Equals(vector2Type))
+                return (object)UnityEqualityComparer.Vector2;
+            if (t.Equals(vector3Type))
+                return (object)UnityEqualityComparer.Vector3;
+            if (t.Equals(vector4Type))
+                return (object)UnityEqualityComparer.Vector4;
+            if (t.Equals(colorType))
+                return (object)UnityEqualityComparer.Color;
+            if (t.Equals(color32Type))
+                return (object)UnityEqualityComparer.Color32;
+            if (t.Equals(rectType))
+                return (object)UnityEqualityComparer.Rect;
+            if (t.Equals(boundsType))
+                return (object)UnityEqualityComparer.Bounds;
+            if (t.Equals(quaternionType))
+                return (object)UnityEqualityComparer.Quaternion;
 
 #if UNITY_2017_2_OR_NEWER
 
-            if (t.Equals(vector2IntType)) return (object)UnityEqualityComparer.Vector2Int;
-            if (t.Equals(vector3IntType)) return (object)UnityEqualityComparer.Vector3Int;
-            if (t.Equals(rangeIntType)) return (object)UnityEqualityComparer.RangeInt;
-            if (t.Equals(rectIntType)) return (object)UnityEqualityComparer.RectInt;
-            if (t.Equals(boundsIntType)) return (object)UnityEqualityComparer.BoundsInt;
+            if (t.Equals(vector2IntType))
+                return (object)UnityEqualityComparer.Vector2Int;
+            if (t.Equals(vector3IntType))
+                return (object)UnityEqualityComparer.Vector3Int;
+            if (t.Equals(rangeIntType))
+                return (object)UnityEqualityComparer.RangeInt;
+            if (t.Equals(rectIntType))
+                return (object)UnityEqualityComparer.RectInt;
+            if (t.Equals(boundsIntType))
+                return (object)UnityEqualityComparer.BoundsInt;
 #endif
 
             return null;
@@ -105,7 +122,9 @@ namespace Cysharp.Threading.Tasks.Internal
         {
             public bool Equals(Vector3 self, Vector3 vector)
             {
-                return self.x.Equals(vector.x) && self.y.Equals(vector.y) && self.z.Equals(vector.z);
+                return self.x.Equals(vector.x)
+                    && self.y.Equals(vector.y)
+                    && self.z.Equals(vector.z);
             }
 
             public int GetHashCode(Vector3 obj)
@@ -118,12 +137,18 @@ namespace Cysharp.Threading.Tasks.Internal
         {
             public bool Equals(Vector4 self, Vector4 vector)
             {
-                return self.x.Equals(vector.x) && self.y.Equals(vector.y) && self.z.Equals(vector.z) && self.w.Equals(vector.w);
+                return self.x.Equals(vector.x)
+                    && self.y.Equals(vector.y)
+                    && self.z.Equals(vector.z)
+                    && self.w.Equals(vector.w);
             }
 
             public int GetHashCode(Vector4 obj)
             {
-                return obj.x.GetHashCode() ^ obj.y.GetHashCode() << 2 ^ obj.z.GetHashCode() >> 2 ^ obj.w.GetHashCode() >> 1;
+                return obj.x.GetHashCode()
+                    ^ obj.y.GetHashCode() << 2
+                    ^ obj.z.GetHashCode() >> 2
+                    ^ obj.w.GetHashCode() >> 1;
             }
         }
 
@@ -131,12 +156,18 @@ namespace Cysharp.Threading.Tasks.Internal
         {
             public bool Equals(Color self, Color other)
             {
-                return self.r.Equals(other.r) && self.g.Equals(other.g) && self.b.Equals(other.b) && self.a.Equals(other.a);
+                return self.r.Equals(other.r)
+                    && self.g.Equals(other.g)
+                    && self.b.Equals(other.b)
+                    && self.a.Equals(other.a);
             }
 
             public int GetHashCode(Color obj)
             {
-                return obj.r.GetHashCode() ^ obj.g.GetHashCode() << 2 ^ obj.b.GetHashCode() >> 2 ^ obj.a.GetHashCode() >> 1;
+                return obj.r.GetHashCode()
+                    ^ obj.g.GetHashCode() << 2
+                    ^ obj.b.GetHashCode() >> 2
+                    ^ obj.a.GetHashCode() >> 1;
             }
         }
 
@@ -144,12 +175,18 @@ namespace Cysharp.Threading.Tasks.Internal
         {
             public bool Equals(Rect self, Rect other)
             {
-                return self.x.Equals(other.x) && self.width.Equals(other.width) && self.y.Equals(other.y) && self.height.Equals(other.height);
+                return self.x.Equals(other.x)
+                    && self.width.Equals(other.width)
+                    && self.y.Equals(other.y)
+                    && self.height.Equals(other.height);
             }
 
             public int GetHashCode(Rect obj)
             {
-                return obj.x.GetHashCode() ^ obj.width.GetHashCode() << 2 ^ obj.y.GetHashCode() >> 2 ^ obj.height.GetHashCode() >> 1;
+                return obj.x.GetHashCode()
+                    ^ obj.width.GetHashCode() << 2
+                    ^ obj.y.GetHashCode() >> 2
+                    ^ obj.height.GetHashCode() >> 1;
             }
         }
 
@@ -170,12 +207,18 @@ namespace Cysharp.Threading.Tasks.Internal
         {
             public bool Equals(Quaternion self, Quaternion vector)
             {
-                return self.x.Equals(vector.x) && self.y.Equals(vector.y) && self.z.Equals(vector.z) && self.w.Equals(vector.w);
+                return self.x.Equals(vector.x)
+                    && self.y.Equals(vector.y)
+                    && self.z.Equals(vector.z)
+                    && self.w.Equals(vector.w);
             }
 
             public int GetHashCode(Quaternion obj)
             {
-                return obj.x.GetHashCode() ^ obj.y.GetHashCode() << 2 ^ obj.z.GetHashCode() >> 2 ^ obj.w.GetHashCode() >> 1;
+                return obj.x.GetHashCode()
+                    ^ obj.y.GetHashCode() << 2
+                    ^ obj.z.GetHashCode() >> 2
+                    ^ obj.w.GetHashCode() >> 1;
             }
         }
 
@@ -183,12 +226,18 @@ namespace Cysharp.Threading.Tasks.Internal
         {
             public bool Equals(Color32 self, Color32 vector)
             {
-                return self.a.Equals(vector.a) && self.r.Equals(vector.r) && self.g.Equals(vector.g) && self.b.Equals(vector.b);
+                return self.a.Equals(vector.a)
+                    && self.r.Equals(vector.r)
+                    && self.g.Equals(vector.g)
+                    && self.b.Equals(vector.b);
             }
 
             public int GetHashCode(Color32 obj)
             {
-                return obj.a.GetHashCode() ^ obj.r.GetHashCode() << 2 ^ obj.g.GetHashCode() >> 2 ^ obj.b.GetHashCode() >> 1;
+                return obj.a.GetHashCode()
+                    ^ obj.r.GetHashCode() << 2
+                    ^ obj.g.GetHashCode() >> 2
+                    ^ obj.b.GetHashCode() >> 1;
             }
         }
 
@@ -209,11 +258,14 @@ namespace Cysharp.Threading.Tasks.Internal
 
         sealed class Vector3IntEqualityComparer : IEqualityComparer<Vector3Int>
         {
-            public static readonly Vector3IntEqualityComparer Default = new Vector3IntEqualityComparer();
+            public static readonly Vector3IntEqualityComparer Default =
+                new Vector3IntEqualityComparer();
 
             public bool Equals(Vector3Int self, Vector3Int vector)
             {
-                return self.x.Equals(vector.x) && self.y.Equals(vector.y) && self.z.Equals(vector.z);
+                return self.x.Equals(vector.x)
+                    && self.y.Equals(vector.y)
+                    && self.z.Equals(vector.z);
             }
 
             public int GetHashCode(Vector3Int obj)
@@ -239,12 +291,18 @@ namespace Cysharp.Threading.Tasks.Internal
         {
             public bool Equals(RectInt self, RectInt other)
             {
-                return self.x.Equals(other.x) && self.width.Equals(other.width) && self.y.Equals(other.y) && self.height.Equals(other.height);
+                return self.x.Equals(other.x)
+                    && self.width.Equals(other.width)
+                    && self.y.Equals(other.y)
+                    && self.height.Equals(other.height);
             }
 
             public int GetHashCode(RectInt obj)
             {
-                return obj.x.GetHashCode() ^ obj.width.GetHashCode() << 2 ^ obj.y.GetHashCode() >> 2 ^ obj.height.GetHashCode() >> 1;
+                return obj.x.GetHashCode()
+                    ^ obj.width.GetHashCode() << 2
+                    ^ obj.y.GetHashCode() >> 2
+                    ^ obj.height.GetHashCode() >> 1;
             }
         }
 
@@ -258,7 +316,8 @@ namespace Cysharp.Threading.Tasks.Internal
 
             public int GetHashCode(BoundsInt obj)
             {
-                return Vector3IntEqualityComparer.Default.GetHashCode(obj.position) ^ Vector3IntEqualityComparer.Default.GetHashCode(obj.size) << 2;
+                return Vector3IntEqualityComparer.Default.GetHashCode(obj.position)
+                    ^ Vector3IntEqualityComparer.Default.GetHashCode(obj.size) << 2;
             }
         }
 

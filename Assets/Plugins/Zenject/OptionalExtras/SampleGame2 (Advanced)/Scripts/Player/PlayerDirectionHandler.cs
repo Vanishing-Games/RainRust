@@ -7,9 +7,7 @@ namespace Zenject.SpaceFighter
         readonly Player _player;
         readonly Camera _mainCamera;
 
-        public PlayerDirectionHandler(
-            Camera mainCamera,
-            Player player)
+        public PlayerDirectionHandler(Camera mainCamera, Player player)
         {
             _player = player;
             _mainCamera = mainCamera;
@@ -26,7 +24,8 @@ namespace Zenject.SpaceFighter
             goalDir.z = 0;
             goalDir.Normalize();
 
-            _player.Rotation = Quaternion.LookRotation(goalDir) * Quaternion.AngleAxis(90, Vector3.up);
+            _player.Rotation =
+                Quaternion.LookRotation(goalDir) * Quaternion.AngleAxis(90, Vector3.up);
         }
     }
 }

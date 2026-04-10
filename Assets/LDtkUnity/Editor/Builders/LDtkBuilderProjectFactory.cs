@@ -20,8 +20,12 @@ namespace LDtkUnity.Editor
                 _importer.Logger.LogError("LDtk: Project GameObject null, not building correctly");
                 return;
             }
-            
-            _importer.ImportContext.AddObjectToAsset("rootGameObject", projectGameObject, LDtkIconUtility.LoadProjectFileIcon());
+
+            _importer.ImportContext.AddObjectToAsset(
+                "rootGameObject",
+                projectGameObject,
+                LDtkIconUtility.LoadProjectFileIcon()
+            );
             _importer.ImportContext.SetMainObject(projectGameObject);
         }
 
@@ -31,6 +35,5 @@ namespace LDtkUnity.Editor
             builder.BuildProject();
             return builder.RootObject;
         }
-        
     }
 }

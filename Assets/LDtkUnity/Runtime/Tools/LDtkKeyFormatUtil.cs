@@ -18,10 +18,14 @@
         /// A formatted string for getting an IntGrid Value serialized in the importer's IntGridValues.
         /// </returns>
         // The reason for naming them as such is because it can't be done from simple indexing.
-        public static string IntGridValueFormat(LayerDefinition intGridLayerDef, IntGridValueDefinition def)
+        public static string IntGridValueFormat(
+            LayerDefinition intGridLayerDef,
+            IntGridValueDefinition def
+        )
         {
             return $"{intGridLayerDef.Identifier}_{def.Value}";
         }
+
         internal static string IntGridValueFormat(string layerIdentifier, string intGridValue)
         {
             return $"{layerIdentifier}_{intGridValue}";

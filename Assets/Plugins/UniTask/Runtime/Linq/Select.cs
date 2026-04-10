@@ -1,12 +1,15 @@
-﻿using Cysharp.Threading.Tasks.Internal;
-using System;
+﻿using System;
 using System.Threading;
+using Cysharp.Threading.Tasks.Internal;
 
 namespace Cysharp.Threading.Tasks.Linq
 {
     public static partial class UniTaskAsyncEnumerable
     {
-        public static IUniTaskAsyncEnumerable<TResult> Select<TSource, TResult>(this IUniTaskAsyncEnumerable<TSource> source, Func<TSource, TResult> selector)
+        public static IUniTaskAsyncEnumerable<TResult> Select<TSource, TResult>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, TResult> selector
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
             Error.ThrowArgumentNullException(selector, nameof(selector));
@@ -14,7 +17,10 @@ namespace Cysharp.Threading.Tasks.Linq
             return new Cysharp.Threading.Tasks.Linq.Select<TSource, TResult>(source, selector);
         }
 
-        public static IUniTaskAsyncEnumerable<TResult> Select<TSource, TResult>(this IUniTaskAsyncEnumerable<TSource> source, Func<TSource, Int32, TResult> selector)
+        public static IUniTaskAsyncEnumerable<TResult> Select<TSource, TResult>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, Int32, TResult> selector
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
             Error.ThrowArgumentNullException(selector, nameof(selector));
@@ -22,7 +28,10 @@ namespace Cysharp.Threading.Tasks.Linq
             return new Cysharp.Threading.Tasks.Linq.SelectInt<TSource, TResult>(source, selector);
         }
 
-        public static IUniTaskAsyncEnumerable<TResult> SelectAwait<TSource, TResult>(this IUniTaskAsyncEnumerable<TSource> source, Func<TSource, UniTask<TResult>> selector)
+        public static IUniTaskAsyncEnumerable<TResult> SelectAwait<TSource, TResult>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, UniTask<TResult>> selector
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
             Error.ThrowArgumentNullException(selector, nameof(selector));
@@ -30,28 +39,52 @@ namespace Cysharp.Threading.Tasks.Linq
             return new Cysharp.Threading.Tasks.Linq.SelectAwait<TSource, TResult>(source, selector);
         }
 
-        public static IUniTaskAsyncEnumerable<TResult> SelectAwait<TSource, TResult>(this IUniTaskAsyncEnumerable<TSource> source, Func<TSource, Int32, UniTask<TResult>> selector)
+        public static IUniTaskAsyncEnumerable<TResult> SelectAwait<TSource, TResult>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, Int32, UniTask<TResult>> selector
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
             Error.ThrowArgumentNullException(selector, nameof(selector));
 
-            return new Cysharp.Threading.Tasks.Linq.SelectIntAwait<TSource, TResult>(source, selector);
+            return new Cysharp.Threading.Tasks.Linq.SelectIntAwait<TSource, TResult>(
+                source,
+                selector
+            );
         }
 
-        public static IUniTaskAsyncEnumerable<TResult> SelectAwaitWithCancellation<TSource, TResult>(this IUniTaskAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, UniTask<TResult>> selector)
+        public static IUniTaskAsyncEnumerable<TResult> SelectAwaitWithCancellation<
+            TSource,
+            TResult
+        >(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, CancellationToken, UniTask<TResult>> selector
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
             Error.ThrowArgumentNullException(selector, nameof(selector));
 
-            return new Cysharp.Threading.Tasks.Linq.SelectAwaitWithCancellation<TSource, TResult>(source, selector);
+            return new Cysharp.Threading.Tasks.Linq.SelectAwaitWithCancellation<TSource, TResult>(
+                source,
+                selector
+            );
         }
 
-        public static IUniTaskAsyncEnumerable<TResult> SelectAwaitWithCancellation<TSource, TResult>(this IUniTaskAsyncEnumerable<TSource> source, Func<TSource, Int32, CancellationToken, UniTask<TResult>> selector)
+        public static IUniTaskAsyncEnumerable<TResult> SelectAwaitWithCancellation<
+            TSource,
+            TResult
+        >(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, Int32, CancellationToken, UniTask<TResult>> selector
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
             Error.ThrowArgumentNullException(selector, nameof(selector));
 
-            return new Cysharp.Threading.Tasks.Linq.SelectIntAwaitWithCancellation<TSource, TResult>(source, selector);
+            return new Cysharp.Threading.Tasks.Linq.SelectIntAwaitWithCancellation<
+                TSource,
+                TResult
+            >(source, selector);
         }
     }
 
@@ -66,7 +99,9 @@ namespace Cysharp.Threading.Tasks.Linq
             this.selector = selector;
         }
 
-        public IUniTaskAsyncEnumerator<TResult> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+        public IUniTaskAsyncEnumerator<TResult> GetAsyncEnumerator(
+            CancellationToken cancellationToken = default
+        )
         {
             return new _Select(source, selector, cancellationToken);
         }
@@ -82,7 +117,11 @@ namespace Cysharp.Threading.Tasks.Linq
             UniTask<bool>.Awaiter awaiter;
             Action moveNextAction;
 
-            public _Select(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, TResult> selector, CancellationToken cancellationToken)
+            public _Select(
+                IUniTaskAsyncEnumerable<TSource> source,
+                Func<TSource, TResult> selector,
+                CancellationToken cancellationToken
+            )
             {
                 this.source = source;
                 this.selector = selector;
@@ -95,7 +134,8 @@ namespace Cysharp.Threading.Tasks.Linq
 
             public UniTask<bool> MoveNextAsync()
             {
-                if (state == -2) return default;
+                if (state == -2)
+                    return default;
 
                 completionSource.Reset();
                 MoveNext();
@@ -168,13 +208,18 @@ namespace Cysharp.Threading.Tasks.Linq
         readonly IUniTaskAsyncEnumerable<TSource> source;
         readonly Func<TSource, int, TResult> selector;
 
-        public SelectInt(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, int, TResult> selector)
+        public SelectInt(
+            IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, int, TResult> selector
+        )
         {
             this.source = source;
             this.selector = selector;
         }
 
-        public IUniTaskAsyncEnumerator<TResult> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+        public IUniTaskAsyncEnumerator<TResult> GetAsyncEnumerator(
+            CancellationToken cancellationToken = default
+        )
         {
             return new _Select(source, selector, cancellationToken);
         }
@@ -191,7 +236,11 @@ namespace Cysharp.Threading.Tasks.Linq
             Action moveNextAction;
             int index;
 
-            public _Select(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, int, TResult> selector, CancellationToken cancellationToken)
+            public _Select(
+                IUniTaskAsyncEnumerable<TSource> source,
+                Func<TSource, int, TResult> selector,
+                CancellationToken cancellationToken
+            )
             {
                 this.source = source;
                 this.selector = selector;
@@ -204,7 +253,8 @@ namespace Cysharp.Threading.Tasks.Linq
 
             public UniTask<bool> MoveNextAsync()
             {
-                if (state == -2) return default;
+                if (state == -2)
+                    return default;
 
                 completionSource.Reset();
                 MoveNext();
@@ -277,13 +327,18 @@ namespace Cysharp.Threading.Tasks.Linq
         readonly IUniTaskAsyncEnumerable<TSource> source;
         readonly Func<TSource, UniTask<TResult>> selector;
 
-        public SelectAwait(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, UniTask<TResult>> selector)
+        public SelectAwait(
+            IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, UniTask<TResult>> selector
+        )
         {
             this.source = source;
             this.selector = selector;
         }
 
-        public IUniTaskAsyncEnumerator<TResult> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+        public IUniTaskAsyncEnumerator<TResult> GetAsyncEnumerator(
+            CancellationToken cancellationToken = default
+        )
         {
             return new _SelectAwait(source, selector, cancellationToken);
         }
@@ -300,7 +355,11 @@ namespace Cysharp.Threading.Tasks.Linq
             UniTask<TResult>.Awaiter awaiter2;
             Action moveNextAction;
 
-            public _SelectAwait(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, UniTask<TResult>> selector, CancellationToken cancellationToken)
+            public _SelectAwait(
+                IUniTaskAsyncEnumerable<TSource> source,
+                Func<TSource, UniTask<TResult>> selector,
+                CancellationToken cancellationToken
+            )
             {
                 this.source = source;
                 this.selector = selector;
@@ -313,7 +372,8 @@ namespace Cysharp.Threading.Tasks.Linq
 
             public UniTask<bool> MoveNextAsync()
             {
-                if (state == -2) return default;
+                if (state == -2)
+                    return default;
 
                 completionSource.Reset();
                 MoveNext();
@@ -398,13 +458,18 @@ namespace Cysharp.Threading.Tasks.Linq
         readonly IUniTaskAsyncEnumerable<TSource> source;
         readonly Func<TSource, int, UniTask<TResult>> selector;
 
-        public SelectIntAwait(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, int, UniTask<TResult>> selector)
+        public SelectIntAwait(
+            IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, int, UniTask<TResult>> selector
+        )
         {
             this.source = source;
             this.selector = selector;
         }
 
-        public IUniTaskAsyncEnumerator<TResult> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+        public IUniTaskAsyncEnumerator<TResult> GetAsyncEnumerator(
+            CancellationToken cancellationToken = default
+        )
         {
             return new _SelectAwait(source, selector, cancellationToken);
         }
@@ -422,7 +487,11 @@ namespace Cysharp.Threading.Tasks.Linq
             Action moveNextAction;
             int index;
 
-            public _SelectAwait(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, int, UniTask<TResult>> selector, CancellationToken cancellationToken)
+            public _SelectAwait(
+                IUniTaskAsyncEnumerable<TSource> source,
+                Func<TSource, int, UniTask<TResult>> selector,
+                CancellationToken cancellationToken
+            )
             {
                 this.source = source;
                 this.selector = selector;
@@ -435,7 +504,8 @@ namespace Cysharp.Threading.Tasks.Linq
 
             public UniTask<bool> MoveNextAsync()
             {
-                if (state == -2) return default;
+                if (state == -2)
+                    return default;
 
                 completionSource.Reset();
                 MoveNext();
@@ -466,7 +536,8 @@ namespace Cysharp.Threading.Tasks.Linq
                         case 1:
                             if (awaiter.GetResult())
                             {
-                                awaiter2 = selector(enumerator.Current, checked(index++)).GetAwaiter();
+                                awaiter2 = selector(enumerator.Current, checked(index++))
+                                    .GetAwaiter();
                                 if (awaiter2.IsCompleted)
                                 {
                                     goto case 2;
@@ -515,18 +586,24 @@ namespace Cysharp.Threading.Tasks.Linq
         }
     }
 
-    internal sealed class SelectAwaitWithCancellation<TSource, TResult> : IUniTaskAsyncEnumerable<TResult>
+    internal sealed class SelectAwaitWithCancellation<TSource, TResult>
+        : IUniTaskAsyncEnumerable<TResult>
     {
         readonly IUniTaskAsyncEnumerable<TSource> source;
         readonly Func<TSource, CancellationToken, UniTask<TResult>> selector;
 
-        public SelectAwaitWithCancellation(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, UniTask<TResult>> selector)
+        public SelectAwaitWithCancellation(
+            IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, CancellationToken, UniTask<TResult>> selector
+        )
         {
             this.source = source;
             this.selector = selector;
         }
 
-        public IUniTaskAsyncEnumerator<TResult> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+        public IUniTaskAsyncEnumerator<TResult> GetAsyncEnumerator(
+            CancellationToken cancellationToken = default
+        )
         {
             return new _SelectAwaitWithCancellation(source, selector, cancellationToken);
         }
@@ -543,7 +620,11 @@ namespace Cysharp.Threading.Tasks.Linq
             UniTask<TResult>.Awaiter awaiter2;
             Action moveNextAction;
 
-            public _SelectAwaitWithCancellation(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, UniTask<TResult>> selector, CancellationToken cancellationToken)
+            public _SelectAwaitWithCancellation(
+                IUniTaskAsyncEnumerable<TSource> source,
+                Func<TSource, CancellationToken, UniTask<TResult>> selector,
+                CancellationToken cancellationToken
+            )
             {
                 this.source = source;
                 this.selector = selector;
@@ -556,7 +637,8 @@ namespace Cysharp.Threading.Tasks.Linq
 
             public UniTask<bool> MoveNextAsync()
             {
-                if (state == -2) return default;
+                if (state == -2)
+                    return default;
 
                 completionSource.Reset();
                 MoveNext();
@@ -587,7 +669,8 @@ namespace Cysharp.Threading.Tasks.Linq
                         case 1:
                             if (awaiter.GetResult())
                             {
-                                awaiter2 = selector(enumerator.Current, cancellationToken).GetAwaiter();
+                                awaiter2 = selector(enumerator.Current, cancellationToken)
+                                    .GetAwaiter();
                                 if (awaiter2.IsCompleted)
                                 {
                                     goto case 2;
@@ -636,18 +719,24 @@ namespace Cysharp.Threading.Tasks.Linq
         }
     }
 
-    internal sealed class SelectIntAwaitWithCancellation<TSource, TResult> : IUniTaskAsyncEnumerable<TResult>
+    internal sealed class SelectIntAwaitWithCancellation<TSource, TResult>
+        : IUniTaskAsyncEnumerable<TResult>
     {
         readonly IUniTaskAsyncEnumerable<TSource> source;
         readonly Func<TSource, int, CancellationToken, UniTask<TResult>> selector;
 
-        public SelectIntAwaitWithCancellation(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, int, CancellationToken, UniTask<TResult>> selector)
+        public SelectIntAwaitWithCancellation(
+            IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, int, CancellationToken, UniTask<TResult>> selector
+        )
         {
             this.source = source;
             this.selector = selector;
         }
 
-        public IUniTaskAsyncEnumerator<TResult> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+        public IUniTaskAsyncEnumerator<TResult> GetAsyncEnumerator(
+            CancellationToken cancellationToken = default
+        )
         {
             return new _SelectAwaitWithCancellation(source, selector, cancellationToken);
         }
@@ -665,7 +754,11 @@ namespace Cysharp.Threading.Tasks.Linq
             Action moveNextAction;
             int index;
 
-            public _SelectAwaitWithCancellation(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, int, CancellationToken, UniTask<TResult>> selector, CancellationToken cancellationToken)
+            public _SelectAwaitWithCancellation(
+                IUniTaskAsyncEnumerable<TSource> source,
+                Func<TSource, int, CancellationToken, UniTask<TResult>> selector,
+                CancellationToken cancellationToken
+            )
             {
                 this.source = source;
                 this.selector = selector;
@@ -678,7 +771,8 @@ namespace Cysharp.Threading.Tasks.Linq
 
             public UniTask<bool> MoveNextAsync()
             {
-                if (state == -2) return default;
+                if (state == -2)
+                    return default;
 
                 completionSource.Reset();
                 MoveNext();
@@ -709,7 +803,12 @@ namespace Cysharp.Threading.Tasks.Linq
                         case 1:
                             if (awaiter.GetResult())
                             {
-                                awaiter2 = selector(enumerator.Current, checked(index++), cancellationToken).GetAwaiter();
+                                awaiter2 = selector(
+                                        enumerator.Current,
+                                        checked(index++),
+                                        cancellationToken
+                                    )
+                                    .GetAwaiter();
                                 if (awaiter2.IsCompleted)
                                 {
                                     goto case 2;

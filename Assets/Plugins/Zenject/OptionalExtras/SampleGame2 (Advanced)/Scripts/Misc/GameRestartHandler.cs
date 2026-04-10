@@ -12,9 +12,7 @@ namespace Zenject.SpaceFighter
         bool _isDelaying;
         float _delayStartTime;
 
-        public GameRestartHandler(
-            Settings settings,
-            SignalBus signalBus)
+        public GameRestartHandler(Settings settings, SignalBus signalBus)
         {
             _signalBus = signalBus;
             _settings = settings;

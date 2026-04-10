@@ -1,12 +1,11 @@
 namespace Zenject
 {
     [NoReflectionBaking]
-    public class ScopeConcreteIdArgConditionCopyNonLazyBinder : ConcreteIdArgConditionCopyNonLazyBinder
+    public class ScopeConcreteIdArgConditionCopyNonLazyBinder
+        : ConcreteIdArgConditionCopyNonLazyBinder
     {
         public ScopeConcreteIdArgConditionCopyNonLazyBinder(BindInfo bindInfo)
-            : base(bindInfo)
-        {
-        }
+            : base(bindInfo) { }
 
         public ConcreteIdArgConditionCopyNonLazyBinder AsCached()
         {

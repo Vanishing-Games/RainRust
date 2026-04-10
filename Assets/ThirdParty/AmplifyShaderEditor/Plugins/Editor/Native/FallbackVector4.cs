@@ -6,43 +6,47 @@ using UnityEngine;
 
 namespace AmplifyShaderEditor
 {
-	[Serializable]
-	public class FallbackVector4 : IFallbackVars
-	{
-		[SerializeField]
-		private Vector4 m_current;
-		[SerializeField]
-		private Vector4 m_previous;
+    [Serializable]
+    public class FallbackVector4 : IFallbackVars
+    {
+        [SerializeField]
+        private Vector4 m_current;
 
-		public FallbackVector4()
-		{
-			m_current = new Vector4( 0, 0, 0, 0 );
-			m_previous = new Vector4( 0, 0, 0, 0 );
-		}
+        [SerializeField]
+        private Vector4 m_previous;
 
-		public FallbackVector4( Vector4 data )
-		{
-			m_current = data;
-			m_previous = data;
-		}
+        public FallbackVector4()
+        {
+            m_current = new Vector4(0, 0, 0, 0);
+            m_previous = new Vector4(0, 0, 0, 0);
+        }
 
-		public void Revert()
-		{
-			Vector4 aux = m_current;
-			m_current = m_previous;
-			m_previous = aux;
-		}
+        public FallbackVector4(Vector4 data)
+        {
+            m_current = data;
+            m_previous = data;
+        }
 
-		public Vector4 Current
-		{
-			get { return m_current; }
-			set
-			{
-				m_previous = m_current;
-				m_current = value;
-			}
-		}
+        public void Revert()
+        {
+            Vector4 aux = m_current;
+            m_current = m_previous;
+            m_previous = aux;
+        }
 
-		public override string ToString() { return m_current.ToString(); }
-	}
+        public Vector4 Current
+        {
+            get { return m_current; }
+            set
+            {
+                m_previous = m_current;
+                m_current = value;
+            }
+        }
+
+        public override string ToString()
+        {
+            return m_current.ToString();
+        }
+    }
 }

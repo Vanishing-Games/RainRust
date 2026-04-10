@@ -30,7 +30,11 @@ namespace Zenject
         }
 
         public void GetAllInstancesWithInjectSplit(
-            InjectContext context, List<TypeValuePair> args, out Action injectAction, List<object> buffer)
+            InjectContext context,
+            List<TypeValuePair> args,
+            out Action injectAction,
+            List<object> buffer
+        )
         {
             Assert.IsEmpty(args);
             Assert.IsNotNull(context);

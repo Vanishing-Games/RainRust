@@ -15,8 +15,13 @@ namespace Zenject
         readonly bool _matchAll;
 
         public ResolveProvider(
-            Type contractType, DiContainer container, object identifier,
-            bool isOptional, InjectSources source, bool matchAll)
+            Type contractType,
+            DiContainer container,
+            object identifier,
+            bool isOptional,
+            InjectSources source,
+            bool matchAll
+        )
         {
             _contractType = contractType;
             _identifier = identifier;
@@ -42,7 +47,11 @@ namespace Zenject
         }
 
         public void GetAllInstancesWithInjectSplit(
-            InjectContext context, List<TypeValuePair> args, out Action injectAction, List<object> buffer)
+            InjectContext context,
+            List<TypeValuePair> args,
+            out Action injectAction,
+            List<object> buffer
+        )
         {
             Assert.IsEmpty(args);
             Assert.IsNotNull(context);

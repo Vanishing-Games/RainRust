@@ -12,7 +12,7 @@ namespace LDtkUnity.Editor
             _pos = pos;
             _text = text;
         }
-        
+
         public void OnDrawHandles()
         {
             /*if (LDtkPrefs.ShowFieldIdentifier)

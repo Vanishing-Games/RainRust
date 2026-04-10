@@ -14,7 +14,8 @@ namespace Zenject.SpaceFighter
             PlayerInputState inputState,
             Player player,
             Settings settings,
-            LevelBoundary levelBoundary)
+            LevelBoundary levelBoundary
+        )
         {
             _levelBoundary = levelBoundary;
             _settings = settings;
@@ -31,26 +32,22 @@ namespace Zenject.SpaceFighter
 
             if (_inputState.IsMovingLeft)
             {
-                _player.AddForce(
-                    Vector3.left * _settings.MoveSpeed);
+                _player.AddForce(Vector3.left * _settings.MoveSpeed);
             }
 
             if (_inputState.IsMovingRight)
             {
-                _player.AddForce(
-                    Vector3.right * _settings.MoveSpeed);
+                _player.AddForce(Vector3.right * _settings.MoveSpeed);
             }
 
             if (_inputState.IsMovingUp)
             {
-                _player.AddForce(
-                    Vector3.up * _settings.MoveSpeed);
+                _player.AddForce(Vector3.up * _settings.MoveSpeed);
             }
 
             if (_inputState.IsMovingDown)
             {
-                _player.AddForce(
-                    Vector3.down * _settings.MoveSpeed);
+                _player.AddForce(Vector3.down * _settings.MoveSpeed);
             }
 
             // Always ensure we are on the main plane
@@ -62,31 +59,29 @@ namespace Zenject.SpaceFighter
         void KeepPlayerOnScreen()
         {
             var extentLeft = (_levelBoundary.Left + _settings.BoundaryBuffer) - _player.Position.x;
-            var extentRight = _player.Position.x - (_levelBoundary.Right - _settings.BoundaryBuffer);
+            var extentRight =
+                _player.Position.x - (_levelBoundary.Right - _settings.BoundaryBuffer);
 
             if (extentLeft > 0)
             {
-                _player.AddForce(
-                    Vector3.right * _settings.BoundaryAdjustForce * extentLeft);
+                _player.AddForce(Vector3.right * _settings.BoundaryAdjustForce * extentLeft);
             }
             else if (extentRight > 0)
             {
-                _player.AddForce(
-                    Vector3.left * _settings.BoundaryAdjustForce * extentRight);
+                _player.AddForce(Vector3.left * _settings.BoundaryAdjustForce * extentRight);
             }
 
             var extentTop = _player.Position.y - (_levelBoundary.Top - _settings.BoundaryBuffer);
-            var extentBottom = (_levelBoundary.Bottom + _settings.BoundaryBuffer) - _player.Position.y;
+            var extentBottom =
+                (_levelBoundary.Bottom + _settings.BoundaryBuffer) - _player.Position.y;
 
             if (extentTop > 0)
             {
-                _player.AddForce(
-                    Vector3.down * _settings.BoundaryAdjustForce * extentTop);
+                _player.AddForce(Vector3.down * _settings.BoundaryAdjustForce * extentTop);
             }
             else if (extentBottom > 0)
             {
-                _player.AddForce(
-                    Vector3.up * _settings.BoundaryAdjustForce * extentBottom);
+                _player.AddForce(Vector3.up * _settings.BoundaryAdjustForce * extentBottom);
             }
         }
 

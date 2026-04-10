@@ -2,8 +2,5 @@
 
 namespace LDtkUnity
 {
-    internal class LDtkLayerMaskAttribute : PropertyAttribute
-    {
-        
-    }
+    internal class LDtkLayerMaskAttribute : PropertyAttribute { }
 }

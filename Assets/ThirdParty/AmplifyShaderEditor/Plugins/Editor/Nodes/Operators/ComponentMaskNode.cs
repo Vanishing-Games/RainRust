@@ -1,382 +1,425 @@
 // Amplify Shader Editor - Visual Shader Editing Tool
 // Copyright (c) Amplify Creations, Lda <info@amplify.pt>
 
-using UnityEngine;
-using UnityEditor;
 using System;
+using UnityEditor;
+using UnityEngine;
 
 namespace AmplifyShaderEditor
 {
-	[Serializable]
-	[NodeAttributes( "Component Mask", "Vector Operators", "Mask certain channels from vectors/color components", null, KeyCode.K )]
-	public sealed class ComponentMaskNode : ParentNode
-	{
-		private const string OutputLocalVarName = "componentMask";
-		[SerializeField]
-		private bool[] m_selection = { true, true, true, true };
+    [Serializable]
+    [NodeAttributes(
+        "Component Mask",
+        "Vector Operators",
+        "Mask certain channels from vectors/color components",
+        null,
+        KeyCode.K
+    )]
+    public sealed class ComponentMaskNode : ParentNode
+    {
+        private const string OutputLocalVarName = "componentMask";
 
-		[SerializeField]
-		private int m_outputPortCount = 4;
+        [SerializeField]
+        private bool[] m_selection = { true, true, true, true };
 
-		[SerializeField]
-		private string[] m_labels;
+        [SerializeField]
+        private int m_outputPortCount = 4;
 
-		private int m_cachedOrderId = -1;
-		private int m_cachedSingularId = -1;
+        [SerializeField]
+        private string[] m_labels;
 
-		protected override void CommonInit( int uniqueId )
-		{
-			base.CommonInit( uniqueId );
-			AddInputPort( WirePortDataType.FLOAT4, false, Constants.EmptyPortValue );
-			AddOutputPort( WirePortDataType.FLOAT4, Constants.EmptyPortValue );
-			m_useInternalPortData = true;
-			m_autoWrapProperties = true;
-			m_selectedLocation = PreviewLocation.TopCenter;
-			m_labels = new string[] { "X", "Y", "Z", "W" };
-			m_previewShaderGUID = "b78e2b295c265cd439c80d218fb3e88e";
-			SetAdditonalTitleText( "Value( XYZW )" );
-		}
+        private int m_cachedOrderId = -1;
+        private int m_cachedSingularId = -1;
 
-		public override void SetPreviewInputs()
-		{
-			base.SetPreviewInputs();
-			
-			Vector4 order = new Vector4(-1,-1,-1,-1);
-			int lastIndex = 0;
-			int singularId = -1;
-			var datatype = m_inputPorts[ 0 ].DataType;
+        protected override void CommonInit(int uniqueId)
+        {
+            base.CommonInit(uniqueId);
+            AddInputPort(WirePortDataType.FLOAT4, false, Constants.EmptyPortValue);
+            AddOutputPort(WirePortDataType.FLOAT4, Constants.EmptyPortValue);
+            m_useInternalPortData = true;
+            m_autoWrapProperties = true;
+            m_selectedLocation = PreviewLocation.TopCenter;
+            m_labels = new string[] { "X", "Y", "Z", "W" };
+            m_previewShaderGUID = "b78e2b295c265cd439c80d218fb3e88e";
+            SetAdditonalTitleText("Value( XYZW )");
+        }
 
-			if( m_selection[ 0 ] )
-			{
-				order.Set( lastIndex, order.y, order.z, order.w );
-				lastIndex++;
-				singularId = 0;
-			}
-			if( m_selection[ 1 ] && datatype >= WirePortDataType.FLOAT2 )
-			{
-				order.Set( order.x, lastIndex, order.z, order.w );
-				lastIndex++;
-				singularId = 1;
-			}
-			if( m_selection[ 2 ] && datatype >= WirePortDataType.FLOAT3 )
-			{
-				order.Set( order.x, order.y, lastIndex, order.w );
-				lastIndex++;
-				singularId = 2;
-			}
-			if( m_selection[ 3 ] && ( datatype == WirePortDataType.FLOAT4 || datatype == WirePortDataType.COLOR ) )
-			{
-				order.Set( order.x, order.y, order.z, lastIndex );
-				lastIndex++;
-				singularId = 3;
-			}
+        public override void SetPreviewInputs()
+        {
+            base.SetPreviewInputs();
 
-			if ( lastIndex != 1 )
-				singularId = -1;
+            Vector4 order = new Vector4(-1, -1, -1, -1);
+            int lastIndex = 0;
+            int singularId = -1;
+            var datatype = m_inputPorts[0].DataType;
 
-			if ( m_cachedOrderId == -1 )
-				m_cachedOrderId = Shader.PropertyToID( "_Order" );
+            if (m_selection[0])
+            {
+                order.Set(lastIndex, order.y, order.z, order.w);
+                lastIndex++;
+                singularId = 0;
+            }
+            if (m_selection[1] && datatype >= WirePortDataType.FLOAT2)
+            {
+                order.Set(order.x, lastIndex, order.z, order.w);
+                lastIndex++;
+                singularId = 1;
+            }
+            if (m_selection[2] && datatype >= WirePortDataType.FLOAT3)
+            {
+                order.Set(order.x, order.y, lastIndex, order.w);
+                lastIndex++;
+                singularId = 2;
+            }
+            if (
+                m_selection[3]
+                && (datatype == WirePortDataType.FLOAT4 || datatype == WirePortDataType.COLOR)
+            )
+            {
+                order.Set(order.x, order.y, order.z, lastIndex);
+                lastIndex++;
+                singularId = 3;
+            }
 
-			if ( m_cachedSingularId == -1 )
-				m_cachedSingularId = Shader.PropertyToID( "_Singular" );
+            if (lastIndex != 1)
+                singularId = -1;
 
-			PreviewMaterial.SetVector( m_cachedOrderId, order );
-			PreviewMaterial.SetFloat( m_cachedSingularId, singularId );
-		}
+            if (m_cachedOrderId == -1)
+                m_cachedOrderId = Shader.PropertyToID("_Order");
 
-		public override void OnInputPortConnected( int portId, int otherNodeId, int otherPortId, bool activateNode = true )
-		{
-			base.OnInputPortConnected( portId, otherNodeId, otherPortId, activateNode );
-			UpdatePorts();
-			UpdateTitle();
-		}
+            if (m_cachedSingularId == -1)
+                m_cachedSingularId = Shader.PropertyToID("_Singular");
 
-		public override void OnConnectedOutputNodeChanges( int outputPortId, int otherNodeId, int otherPortId, string name, WirePortDataType type )
-		{
-			base.OnConnectedOutputNodeChanges( outputPortId, otherNodeId, otherPortId, name, type );
-			UpdatePorts();
-			UpdateTitle();
-		}
+            PreviewMaterial.SetVector(m_cachedOrderId, order);
+            PreviewMaterial.SetFloat(m_cachedSingularId, singularId);
+        }
 
-		public override void OnInputPortDisconnected( int portId )
-		{
-			base.OnInputPortDisconnected( portId );
-			UpdateTitle();
-		}
+        public override void OnInputPortConnected(
+            int portId,
+            int otherNodeId,
+            int otherPortId,
+            bool activateNode = true
+        )
+        {
+            base.OnInputPortConnected(portId, otherNodeId, otherPortId, activateNode);
+            UpdatePorts();
+            UpdateTitle();
+        }
 
-		void UpdatePorts()
-		{
-			m_inputPorts[ 0 ].MatchPortToConnection();
-			int count = 0;
-			switch ( m_inputPorts[ 0 ].DataType )
-			{
-				case WirePortDataType.FLOAT4:
-				case WirePortDataType.OBJECT:
-				case WirePortDataType.COLOR:
-				{
-					count = 4;
-				}
-				break;
-				case WirePortDataType.FLOAT3:
-				{
-					count = 3;
-				}
-				break;
-				case WirePortDataType.FLOAT2:
-				{
-					count = 2;
-				}
-				break;
-				case WirePortDataType.FLOAT:
-				case WirePortDataType.INT:
-				case WirePortDataType.FLOAT3x3:
-				case WirePortDataType.FLOAT4x4:
-				{ }
-				break;
-			}
+        public override void OnConnectedOutputNodeChanges(
+            int outputPortId,
+            int otherNodeId,
+            int otherPortId,
+            string name,
+            WirePortDataType type
+        )
+        {
+            base.OnConnectedOutputNodeChanges(outputPortId, otherNodeId, otherPortId, name, type);
+            UpdatePorts();
+            UpdateTitle();
+        }
 
-			int activeCount = 0;
-			if ( count > 0 )
-			{
-				for ( int i = 0; i < count; i++ )
-				{
-					if ( m_selection[ i ] )
-						activeCount += 1;
-				}
-			}
+        public override void OnInputPortDisconnected(int portId)
+        {
+            base.OnInputPortDisconnected(portId);
+            UpdateTitle();
+        }
 
-			m_outputPortCount = activeCount;
-			switch ( activeCount )
-			{
-				case 0: ChangeOutputType( m_inputPorts[ 0 ].DataType, false ); break;
-				case 1: ChangeOutputType( WirePortDataType.FLOAT, false ); break;
-				case 2: ChangeOutputType( WirePortDataType.FLOAT2, false ); break;
-				case 3: ChangeOutputType( WirePortDataType.FLOAT3, false ); break;
-				case 4: ChangeOutputType( m_inputPorts[ 0 ].DataType, false ); break;
-			}
-			
-		}
-		
-		private void UpdateTitle()
-		{
-			int count = 0;
-			string additionalText = string.Empty;
-			switch ( m_inputPorts[ 0 ].DataType )
-			{
-				case WirePortDataType.FLOAT4:
-				case WirePortDataType.OBJECT:
-				case WirePortDataType.COLOR:
-				{
-					count = 4;
-				}
-				break;
-				case WirePortDataType.FLOAT3:
-				{
-					count = 3;
-				}
-				break;
-				case WirePortDataType.FLOAT2:
-				{
-					count = 2;
-				}
-				break;
-				case WirePortDataType.FLOAT:
-				case WirePortDataType.INT:
-				{
-					count = 0;
-				}
-				break;
-				case WirePortDataType.FLOAT3x3:
-				case WirePortDataType.FLOAT4x4:
-				{ }
-				break;
-			}
+        void UpdatePorts()
+        {
+            m_inputPorts[0].MatchPortToConnection();
+            int count = 0;
+            switch (m_inputPorts[0].DataType)
+            {
+                case WirePortDataType.FLOAT4:
+                case WirePortDataType.OBJECT:
+                case WirePortDataType.COLOR:
+                    {
+                        count = 4;
+                    }
+                    break;
+                case WirePortDataType.FLOAT3:
+                    {
+                        count = 3;
+                    }
+                    break;
+                case WirePortDataType.FLOAT2:
+                    {
+                        count = 2;
+                    }
+                    break;
+                case WirePortDataType.FLOAT:
+                case WirePortDataType.INT:
+                case WirePortDataType.FLOAT3x3:
+                case WirePortDataType.FLOAT4x4: { }
+                    break;
+            }
 
-			if ( count > 0 )
-			{
-				for ( int i = 0; i < count; i++ )
-				{
-					if ( m_selection[ i ] )
-					{
-						additionalText += UIUtils.GetComponentForPosition( i, m_inputPorts[ 0 ].DataType ).ToUpper();
-					}
-				}
-			}
+            int activeCount = 0;
+            if (count > 0)
+            {
+                for (int i = 0; i < count; i++)
+                {
+                    if (m_selection[i])
+                        activeCount += 1;
+                }
+            }
 
-			if ( additionalText.Length > 0 )
-				SetAdditonalTitleText( "Value( " + additionalText + " )" );
-			else
-				SetAdditonalTitleText( string.Empty );
-		}
+            m_outputPortCount = activeCount;
+            switch (activeCount)
+            {
+                case 0:
+                    ChangeOutputType(m_inputPorts[0].DataType, false);
+                    break;
+                case 1:
+                    ChangeOutputType(WirePortDataType.FLOAT, false);
+                    break;
+                case 2:
+                    ChangeOutputType(WirePortDataType.FLOAT2, false);
+                    break;
+                case 3:
+                    ChangeOutputType(WirePortDataType.FLOAT3, false);
+                    break;
+                case 4:
+                    ChangeOutputType(m_inputPorts[0].DataType, false);
+                    break;
+            }
+        }
 
-		public override void DrawProperties()
-		{
-			base.DrawProperties();
+        private void UpdateTitle()
+        {
+            int count = 0;
+            string additionalText = string.Empty;
+            switch (m_inputPorts[0].DataType)
+            {
+                case WirePortDataType.FLOAT4:
+                case WirePortDataType.OBJECT:
+                case WirePortDataType.COLOR:
+                    {
+                        count = 4;
+                    }
+                    break;
+                case WirePortDataType.FLOAT3:
+                    {
+                        count = 3;
+                    }
+                    break;
+                case WirePortDataType.FLOAT2:
+                    {
+                        count = 2;
+                    }
+                    break;
+                case WirePortDataType.FLOAT:
+                case WirePortDataType.INT:
+                    {
+                        count = 0;
+                    }
+                    break;
+                case WirePortDataType.FLOAT3x3:
+                case WirePortDataType.FLOAT4x4: { }
+                    break;
+            }
 
-			EditorGUILayout.BeginVertical();
+            if (count > 0)
+            {
+                for (int i = 0; i < count; i++)
+                {
+                    if (m_selection[i])
+                    {
+                        additionalText += UIUtils
+                            .GetComponentForPosition(i, m_inputPorts[0].DataType)
+                            .ToUpper();
+                    }
+                }
+            }
 
-			int count = 0;
-			switch ( m_inputPorts[ 0 ].DataType )
-			{
-				case WirePortDataType.FLOAT4:
-				case WirePortDataType.OBJECT:
-				case WirePortDataType.COLOR:
-				{
-					count = 4;
-				}
-				break;
-				case WirePortDataType.FLOAT3:
-				{
-					count = 3;
-				}
-				break;
-				case WirePortDataType.FLOAT2:
-				{
-					count = 2;
-				}
-				break;
-				case WirePortDataType.FLOAT:
-				case WirePortDataType.INT:
-				case WirePortDataType.FLOAT3x3:
-				case WirePortDataType.FLOAT4x4:
-				{ }
-				break;
-			}
+            if (additionalText.Length > 0)
+                SetAdditonalTitleText("Value( " + additionalText + " )");
+            else
+                SetAdditonalTitleText(string.Empty);
+        }
 
-			int activeCount = 0;
-			if ( count > 0 )
-			{
-				for ( int i = 0; i < count; i++ )
-				{
-					m_selection[ i ] = EditorGUILayoutToggleLeft( m_labels[i], m_selection[ i ] );
-					m_labels[ i ] = UIUtils.GetComponentForPosition( i, m_inputPorts[ 0 ].DataType ).ToUpper();
-					if ( m_selection[ i ] )
-					{
-						activeCount += 1;
-					}
-				}
-			}
+        public override void DrawProperties()
+        {
+            base.DrawProperties();
 
-			if ( activeCount != m_outputPortCount )
-			{
-				m_outputPortCount = activeCount;
-				switch ( activeCount )
-				{
-					case 0: ChangeOutputType( m_inputPorts[ 0 ].DataType, false ); break;
-					case 1: ChangeOutputType( WirePortDataType.FLOAT, false ); break;
-					case 2: ChangeOutputType( WirePortDataType.FLOAT2, false ); break;
-					case 3: ChangeOutputType( WirePortDataType.FLOAT3, false ); break;
-					case 4: ChangeOutputType( m_inputPorts[ 0 ].DataType, false ); break;
-				}
-				UpdateTitle();
-				SetSaveIsDirty();
-			}
+            EditorGUILayout.BeginVertical();
 
-			EditorGUILayout.EndVertical();
-		}
+            int count = 0;
+            switch (m_inputPorts[0].DataType)
+            {
+                case WirePortDataType.FLOAT4:
+                case WirePortDataType.OBJECT:
+                case WirePortDataType.COLOR:
+                    {
+                        count = 4;
+                    }
+                    break;
+                case WirePortDataType.FLOAT3:
+                    {
+                        count = 3;
+                    }
+                    break;
+                case WirePortDataType.FLOAT2:
+                    {
+                        count = 2;
+                    }
+                    break;
+                case WirePortDataType.FLOAT:
+                case WirePortDataType.INT:
+                case WirePortDataType.FLOAT3x3:
+                case WirePortDataType.FLOAT4x4: { }
+                    break;
+            }
 
-		public override string GenerateShaderForOutput( int outputId, ref MasterNodeDataCollector dataCollector, bool ignoreLocalVar )
-		{
+            int activeCount = 0;
+            if (count > 0)
+            {
+                for (int i = 0; i < count; i++)
+                {
+                    m_selection[i] = EditorGUILayoutToggleLeft(m_labels[i], m_selection[i]);
+                    m_labels[i] = UIUtils
+                        .GetComponentForPosition(i, m_inputPorts[0].DataType)
+                        .ToUpper();
+                    if (m_selection[i])
+                    {
+                        activeCount += 1;
+                    }
+                }
+            }
 
-			if( m_outputPorts[ 0 ].IsLocalValue( dataCollector.PortCategory ) )
-				return m_outputPorts[ 0 ].LocalValue( dataCollector.PortCategory );
+            if (activeCount != m_outputPortCount)
+            {
+                m_outputPortCount = activeCount;
+                switch (activeCount)
+                {
+                    case 0:
+                        ChangeOutputType(m_inputPorts[0].DataType, false);
+                        break;
+                    case 1:
+                        ChangeOutputType(WirePortDataType.FLOAT, false);
+                        break;
+                    case 2:
+                        ChangeOutputType(WirePortDataType.FLOAT2, false);
+                        break;
+                    case 3:
+                        ChangeOutputType(WirePortDataType.FLOAT3, false);
+                        break;
+                    case 4:
+                        ChangeOutputType(m_inputPorts[0].DataType, false);
+                        break;
+                }
+                UpdateTitle();
+                SetSaveIsDirty();
+            }
 
-			string value = m_inputPorts[ 0 ].GeneratePortInstructions( ref dataCollector );
+            EditorGUILayout.EndVertical();
+        }
 
-			int count = 0;
-			switch ( m_inputPorts[ 0 ].DataType )
-			{
-				case WirePortDataType.FLOAT4:
-				case WirePortDataType.OBJECT:
-				case WirePortDataType.COLOR:
-				{
-					count = 4;
-				}
-				break;
-				case WirePortDataType.FLOAT3:
-				{
-					count = 3;
-				}
-				break;
-				case WirePortDataType.FLOAT2:
-				{
-					count = 2;
-				}
-				break;
-				case WirePortDataType.FLOAT:
-				case WirePortDataType.INT:
-				{
-					count = 0;
-				}
-				break;
-				case WirePortDataType.FLOAT3x3:
-				case WirePortDataType.FLOAT4x4:
-				{ }
-				break;
-			}
+        public override string GenerateShaderForOutput(
+            int outputId,
+            ref MasterNodeDataCollector dataCollector,
+            bool ignoreLocalVar
+        )
+        {
+            if (m_outputPorts[0].IsLocalValue(dataCollector.PortCategory))
+                return m_outputPorts[0].LocalValue(dataCollector.PortCategory);
 
-			if ( count > 0 )
-			{
-				bool firstElement = true;
-				value = string.Format("({0})",value);
-				for ( int i = 0; i < count; i++ )
-				{
-					if ( m_selection[ i ] )
-					{
-						if( firstElement )
-						{
-							firstElement = false;
-							value += ".";
-						}
-						value += UIUtils.GetComponentForPosition( i, m_inputPorts[ 0 ].DataType );
-					}
-				}
-			}
+            string value = m_inputPorts[0].GeneratePortInstructions(ref dataCollector);
 
-			return CreateOutputLocalVariable( 0, value, ref dataCollector );
-		}
+            int count = 0;
+            switch (m_inputPorts[0].DataType)
+            {
+                case WirePortDataType.FLOAT4:
+                case WirePortDataType.OBJECT:
+                case WirePortDataType.COLOR:
+                    {
+                        count = 4;
+                    }
+                    break;
+                case WirePortDataType.FLOAT3:
+                    {
+                        count = 3;
+                    }
+                    break;
+                case WirePortDataType.FLOAT2:
+                    {
+                        count = 2;
+                    }
+                    break;
+                case WirePortDataType.FLOAT:
+                case WirePortDataType.INT:
+                    {
+                        count = 0;
+                    }
+                    break;
+                case WirePortDataType.FLOAT3x3:
+                case WirePortDataType.FLOAT4x4: { }
+                    break;
+            }
 
-		public string GetComponentForPosition( int i )
-		{
-			switch ( i )
-			{
-				case 0:
-				{
-					return ( ( m_outputPorts[ 0 ].DataType == WirePortDataType.COLOR ) ? "r" : "x" );
-				}
-				case 1:
-				{
-					return ( ( m_outputPorts[ 0 ].DataType == WirePortDataType.COLOR ) ? "g" : "y" );
-				}
-				case 2:
-				{
-					return ( ( m_outputPorts[ 0 ].DataType == WirePortDataType.COLOR ) ? "b" : "z" );
-				}
-				case 3:
-				{
-					return ( ( m_outputPorts[ 0 ].DataType == WirePortDataType.COLOR ) ? "a" : "w" );
-				}
-			}
-			return string.Empty;
-		}
+            if (count > 0)
+            {
+                bool firstElement = true;
+                value = string.Format("({0})", value);
+                for (int i = 0; i < count; i++)
+                {
+                    if (m_selection[i])
+                    {
+                        if (firstElement)
+                        {
+                            firstElement = false;
+                            value += ".";
+                        }
+                        value += UIUtils.GetComponentForPosition(i, m_inputPorts[0].DataType);
+                    }
+                }
+            }
 
-		public override void ReadFromString( ref string[] nodeParams )
-		{
-			base.ReadFromString( ref nodeParams );
-			for ( int i = 0; i < 4; i++ )
-			{
-				m_selection[ i ] = Convert.ToBoolean( GetCurrentParam( ref nodeParams ) );
-			}
-			UpdateTitle();
-		}
+            return CreateOutputLocalVariable(0, value, ref dataCollector);
+        }
 
-		public override void WriteToString( ref string nodeInfo, ref string connectionsInfo )
-		{
-			base.WriteToString( ref nodeInfo, ref connectionsInfo );
-			for ( int i = 0; i < 4; i++ )
-			{
-				IOUtils.AddFieldValueToString( ref nodeInfo, m_selection[ i ] );
-			}
-		}
-	}
+        public string GetComponentForPosition(int i)
+        {
+            switch (i)
+            {
+                case 0:
+                {
+                    return ((m_outputPorts[0].DataType == WirePortDataType.COLOR) ? "r" : "x");
+                }
+                case 1:
+                {
+                    return ((m_outputPorts[0].DataType == WirePortDataType.COLOR) ? "g" : "y");
+                }
+                case 2:
+                {
+                    return ((m_outputPorts[0].DataType == WirePortDataType.COLOR) ? "b" : "z");
+                }
+                case 3:
+                {
+                    return ((m_outputPorts[0].DataType == WirePortDataType.COLOR) ? "a" : "w");
+                }
+            }
+            return string.Empty;
+        }
+
+        public override void ReadFromString(ref string[] nodeParams)
+        {
+            base.ReadFromString(ref nodeParams);
+            for (int i = 0; i < 4; i++)
+            {
+                m_selection[i] = Convert.ToBoolean(GetCurrentParam(ref nodeParams));
+            }
+            UpdateTitle();
+        }
+
+        public override void WriteToString(ref string nodeInfo, ref string connectionsInfo)
+        {
+            base.WriteToString(ref nodeInfo, ref connectionsInfo);
+            for (int i = 0; i < 4; i++)
+            {
+                IOUtils.AddFieldValueToString(ref nodeInfo, m_selection[i]);
+            }
+        }
+    }
 }

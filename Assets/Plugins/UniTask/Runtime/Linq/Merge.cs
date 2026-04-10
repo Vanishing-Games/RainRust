@@ -8,15 +8,22 @@ namespace Cysharp.Threading.Tasks.Linq
 {
     public static partial class UniTaskAsyncEnumerable
     {
-        public static IUniTaskAsyncEnumerable<T> Merge<T>(this IUniTaskAsyncEnumerable<T> first, IUniTaskAsyncEnumerable<T> second)
+        public static IUniTaskAsyncEnumerable<T> Merge<T>(
+            this IUniTaskAsyncEnumerable<T> first,
+            IUniTaskAsyncEnumerable<T> second
+        )
         {
             Error.ThrowArgumentNullException(first, nameof(first));
             Error.ThrowArgumentNullException(second, nameof(second));
 
-            return new Merge<T>(new [] { first, second });
+            return new Merge<T>(new[] { first, second });
         }
 
-        public static IUniTaskAsyncEnumerable<T> Merge<T>(this IUniTaskAsyncEnumerable<T> first, IUniTaskAsyncEnumerable<T> second, IUniTaskAsyncEnumerable<T> third)
+        public static IUniTaskAsyncEnumerable<T> Merge<T>(
+            this IUniTaskAsyncEnumerable<T> first,
+            IUniTaskAsyncEnumerable<T> second,
+            IUniTaskAsyncEnumerable<T> third
+        )
         {
             Error.ThrowArgumentNullException(first, nameof(first));
             Error.ThrowArgumentNullException(second, nameof(second));
@@ -25,14 +32,18 @@ namespace Cysharp.Threading.Tasks.Linq
             return new Merge<T>(new[] { first, second, third });
         }
 
-        public static IUniTaskAsyncEnumerable<T> Merge<T>(this IEnumerable<IUniTaskAsyncEnumerable<T>> sources)
+        public static IUniTaskAsyncEnumerable<T> Merge<T>(
+            this IEnumerable<IUniTaskAsyncEnumerable<T>> sources
+        )
         {
             return sources is IUniTaskAsyncEnumerable<T>[] array
                 ? new Merge<T>(array)
                 : new Merge<T>(sources.ToArray());
         }
 
-        public static IUniTaskAsyncEnumerable<T> Merge<T>(params IUniTaskAsyncEnumerable<T>[] sources)
+        public static IUniTaskAsyncEnumerable<T> Merge<T>(
+            params IUniTaskAsyncEnumerable<T>[] sources
+        )
         {
             return new Merge<T>(sources);
         }
@@ -51,8 +62,9 @@ namespace Cysharp.Threading.Tasks.Linq
             this.sources = sources;
         }
 
-        public IUniTaskAsyncEnumerator<T> GetAsyncEnumerator(CancellationToken cancellationToken = default)
-            => new _Merge(sources, cancellationToken);
+        public IUniTaskAsyncEnumerator<T> GetAsyncEnumerator(
+            CancellationToken cancellationToken = default
+        ) => new _Merge(sources, cancellationToken);
 
         enum MergeSourceState
         {
@@ -84,7 +96,8 @@ namespace Cysharp.Threading.Tasks.Linq
                 for (var i = 0; i < length; i++)
                 {
                     enumerators[i] = sources[i].GetAsyncEnumerator(cancellationToken);
-                    states[i] = (int)MergeSourceState.Pending;;
+                    states[i] = (int)MergeSourceState.Pending;
+                    ;
                 }
             }
 
@@ -94,7 +107,10 @@ namespace Cysharp.Threading.Tasks.Linq
                 completionSource.Reset();
                 Interlocked.Exchange(ref moveNextCompleted, 0);
 
-                if (HasQueuedResult() && Interlocked.CompareExchange(ref moveNextCompleted, 1, 0) == 0)
+                if (
+                    HasQueuedResult()
+                    && Interlocked.CompareExchange(ref moveNextCompleted, 1, 0) == 0
+                )
                 {
                     (T, Exception, bool) value;
                     lock (states)
@@ -136,7 +152,10 @@ namespace Cysharp.Threading.Tasks.Linq
                     }
                     else
                     {
-                        awaiter.SourceOnCompleted(GetResultAtAction, StateTuple.Create(this, i, awaiter));
+                        awaiter.SourceOnCompleted(
+                            GetResultAtAction,
+                            StateTuple.Create(this, i, awaiter)
+                        );
                     }
                 }
                 return new UniTask<bool>(this, completionSource.Version);

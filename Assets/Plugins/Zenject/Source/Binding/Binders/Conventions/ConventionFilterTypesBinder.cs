@@ -12,9 +12,7 @@ namespace Zenject
     public class ConventionFilterTypesBinder : ConventionAssemblySelectionBinder
     {
         public ConventionFilterTypesBinder(ConventionBindInfo bindInfo)
-            : base(bindInfo)
-        {
-        }
+            : base(bindInfo) { }
 
         public ConventionFilterTypesBinder DerivingFromOrEqual<T>()
         {

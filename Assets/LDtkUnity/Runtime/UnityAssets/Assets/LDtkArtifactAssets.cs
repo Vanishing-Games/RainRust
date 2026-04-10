@@ -12,22 +12,26 @@ namespace LDtkUnity
     {
         //I've debated if separate level background sprites should generate their own level background sprites.
         //but ive opted against it in favour of quick level reimports. This is okay because the project still has reference to the root information of levels.
-        
+
         //I could consider making it where the level depends on and adds a dependency to the lvl background texture if separate level files are enabled.
-        // The reason for this is that the sprite reference could be lost. however, the level depends on 
+        // The reason for this is that the sprite reference could be lost. however, the level depends on
         //or otherwise, setup dependency from the project and store in there.
         //Overall, might be the safest option to just always build lvl background in the project. but separate level sounds great
-        
+
         internal const string PROPERTY_BACKGROUNDS = nameof(_backgrounds);
         internal const string PROPERTY_DEFS = nameof(_definitions);
 
-        [SerializeField] internal List<Sprite> _backgrounds = new List<Sprite>();
-        [SerializeField] internal List<LDtkDefinitionObject> _definitions = new List<LDtkDefinitionObject>();
-        
-        private readonly Dictionary<string, Sprite> _indexedBackgrounds = new Dictionary<string, Sprite>();
+        [SerializeField]
+        internal List<Sprite> _backgrounds = new List<Sprite>();
+
+        [SerializeField]
+        internal List<LDtkDefinitionObject> _definitions = new List<LDtkDefinitionObject>();
+
+        private readonly Dictionary<string, Sprite> _indexedBackgrounds =
+            new Dictionary<string, Sprite>();
 
         private bool _isIndexed;
-        
+
 #if UNITY_EDITOR
         private bool _willResetIndexed;
 #endif
@@ -42,7 +46,7 @@ namespace LDtkUnity
         {
             return _backgrounds.FirstOrDefault(p => p.name == assetName);
         }
-        
+
         /// <summary>
         /// Get a background by name from this import result.
         /// </summary>
@@ -65,13 +69,15 @@ namespace LDtkUnity
                     {
                         continue;
                     }
-                
+
                     if (_indexedBackgrounds.ContainsKey(asset.name))
                     {
-                        LDtkDebug.LogError("Tried instancing an asset an extra time. this should never happen, and the cached list should all be unique");
+                        LDtkDebug.LogError(
+                            "Tried instancing an asset an extra time. this should never happen, and the cached list should all be unique"
+                        );
                         continue;
                     }
-                
+
                     _indexedBackgrounds.Add(asset.name, asset);
                 }
             }
@@ -83,17 +89,21 @@ namespace LDtkUnity
                 LDtkProfiler.EndSample();
                 return null;
             }
-            
+
             if (_indexedBackgrounds == null)
             {
-                LDtkDebug.LogError($"GetItem The instanced dictionary was null when getting artifacts for {nameof(Sprite)} from \"{levelName}\"");
+                LDtkDebug.LogError(
+                    $"GetItem The instanced dictionary was null when getting artifacts for {nameof(Sprite)} from \"{levelName}\""
+                );
                 LDtkProfiler.EndSample();
                 return null;
             }
-            
+
             if (_indexedBackgrounds.Count == 0)
             {
-                LDtkDebug.LogError($"GetItem The instanced dictionary was empty! No values of {nameof(Sprite)} from \"{levelName}\"");
+                LDtkDebug.LogError(
+                    $"GetItem The instanced dictionary was empty! No values of {nameof(Sprite)} from \"{levelName}\""
+                );
                 LDtkProfiler.EndSample();
                 return null;
             }

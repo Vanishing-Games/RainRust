@@ -2,10 +2,8 @@
 {
     internal class LDtkDictionaryIid : LDtkDictionary<string, ILDtkIid>
     {
-        public LDtkDictionaryIid(int capacity) : base(capacity)
-        {
-            
-        }
+        public LDtkDictionaryIid(int capacity)
+            : base(capacity) { }
 
         protected override string GetKeyFromValue(ILDtkIid value)
         {
@@ -18,11 +16,11 @@
             {
                 CacheLevelContents(separateLevel);
             }
-            
+
             World[] worlds = json.UnityWorlds;
             TryAdd(worlds);
             foreach (World world in worlds)
-            { 
+            {
                 TryAdd(world.Levels);
                 CacheWorldContents(world);
             }
@@ -36,19 +34,19 @@
                 CacheLevelContents(level);
             }
         }
-        
+
         private void CacheLevelContents(Level level)
         {
             if (level == null)
             {
                 return;
             }
-            
+
             if (level.LayerInstances == null)
             {
                 return;
             }
-            
+
             foreach (LayerInstance layer in level.LayerInstances)
             {
                 TryAdd(layer.EntityInstances);

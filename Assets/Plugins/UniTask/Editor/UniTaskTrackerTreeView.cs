@@ -1,15 +1,15 @@
 ﻿#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
-using UnityEngine;
-using UnityEditor;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System;
-using UnityEditor.IMGUI.Controls;
-using Cysharp.Threading.Tasks.Internal;
 using System.Text;
 using System.Text.RegularExpressions;
+using Cysharp.Threading.Tasks.Internal;
+using UnityEditor;
+using UnityEditor.IMGUI.Controls;
+using UnityEngine;
 
 namespace Cysharp.Threading.Tasks.Editor
 {
@@ -49,10 +49,8 @@ namespace Cysharp.Threading.Tasks.Editor
             return removeHref.Replace(sb.ToString(), "$1");
         }
 
-        public UniTaskTrackerViewItem(int id) : base(id)
-        {
-
-        }
+        public UniTaskTrackerViewItem(int id)
+            : base(id) { }
     }
 
     public class UniTaskTrackerTreeView : TreeView
@@ -62,15 +60,35 @@ namespace Cysharp.Threading.Tasks.Editor
         public IReadOnlyList<TreeViewItem> CurrentBindingItems;
 
         public UniTaskTrackerTreeView()
-            : this(new TreeViewState(), new MultiColumnHeader(new MultiColumnHeaderState(new[]
-            {
-                new MultiColumnHeaderState.Column() { headerContent = new GUIContent("TaskType"), width = 20},
-                new MultiColumnHeaderState.Column() { headerContent = new GUIContent("Elapsed"), width = 10},
-                new MultiColumnHeaderState.Column() { headerContent = new GUIContent("Status"), width = 10},
-                new MultiColumnHeaderState.Column() { headerContent = new GUIContent("Position")},
-            })))
-        {
-        }
+            : this(
+                new TreeViewState(),
+                new MultiColumnHeader(
+                    new MultiColumnHeaderState(
+                        new[]
+                        {
+                            new MultiColumnHeaderState.Column()
+                            {
+                                headerContent = new GUIContent("TaskType"),
+                                width = 20,
+                            },
+                            new MultiColumnHeaderState.Column()
+                            {
+                                headerContent = new GUIContent("Elapsed"),
+                                width = 10,
+                            },
+                            new MultiColumnHeaderState.Column()
+                            {
+                                headerContent = new GUIContent("Status"),
+                                width = 10,
+                            },
+                            new MultiColumnHeaderState.Column()
+                            {
+                                headerContent = new GUIContent("Position"),
+                            },
+                        }
+                    )
+                )
+            ) { }
 
         UniTaskTrackerTreeView(TreeViewState state, MultiColumnHeader header)
             : base(state, header)
@@ -98,7 +116,9 @@ namespace Cysharp.Threading.Tasks.Editor
         {
             SessionState.SetInt(sortedColumnIndexStateKey, multiColumnHeader.sortedColumnIndex);
             var index = multiColumnHeader.sortedColumnIndex;
-            var ascending = multiColumnHeader.IsSortedAscending(multiColumnHeader.sortedColumnIndex);
+            var ascending = multiColumnHeader.IsSortedAscending(
+                multiColumnHeader.sortedColumnIndex
+            );
 
             var items = rootItem.children.Cast<UniTaskTrackerViewItem>();
 
@@ -106,22 +126,32 @@ namespace Cysharp.Threading.Tasks.Editor
             switch (index)
             {
                 case 0:
-                    orderedEnumerable = ascending ? items.OrderBy(item => item.TaskType) : items.OrderByDescending(item => item.TaskType);
+                    orderedEnumerable = ascending
+                        ? items.OrderBy(item => item.TaskType)
+                        : items.OrderByDescending(item => item.TaskType);
                     break;
                 case 1:
-                    orderedEnumerable = ascending ? items.OrderBy(item => double.Parse(item.Elapsed)) : items.OrderByDescending(item => double.Parse(item.Elapsed));
+                    orderedEnumerable = ascending
+                        ? items.OrderBy(item => double.Parse(item.Elapsed))
+                        : items.OrderByDescending(item => double.Parse(item.Elapsed));
                     break;
                 case 2:
-                    orderedEnumerable = ascending ? items.OrderBy(item => item.Status) : items.OrderByDescending(item => item.Elapsed);
+                    orderedEnumerable = ascending
+                        ? items.OrderBy(item => item.Status)
+                        : items.OrderByDescending(item => item.Elapsed);
                     break;
                 case 3:
-                    orderedEnumerable = ascending ? items.OrderBy(item => item.Position) : items.OrderByDescending(item => item.PositionFirstLine);
+                    orderedEnumerable = ascending
+                        ? items.OrderBy(item => item.Position)
+                        : items.OrderByDescending(item => item.PositionFirstLine);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(index), index, null);
             }
 
-            CurrentBindingItems = rootItem.children = orderedEnumerable.Cast<TreeViewItem>().ToList();
+            CurrentBindingItems = rootItem.children = orderedEnumerable
+                .Cast<TreeViewItem>()
+                .ToList();
             BuildRows(rootItem);
         }
 
@@ -131,10 +161,20 @@ namespace Cysharp.Threading.Tasks.Editor
 
             var children = new List<TreeViewItem>();
 
-            TaskTracker.ForEachActiveTask((trackingId, awaiterType, status, created, stackTrace) =>
-            {
-                children.Add(new UniTaskTrackerViewItem(trackingId) { TaskType = awaiterType, Status = status.ToString(), Elapsed = (DateTime.UtcNow - created).TotalSeconds.ToString("00.00"), Position = stackTrace });
-            });
+            TaskTracker.ForEachActiveTask(
+                (trackingId, awaiterType, status, created, stackTrace) =>
+                {
+                    children.Add(
+                        new UniTaskTrackerViewItem(trackingId)
+                        {
+                            TaskType = awaiterType,
+                            Status = status.ToString(),
+                            Elapsed = (DateTime.UtcNow - created).TotalSeconds.ToString("00.00"),
+                            Position = stackTrace,
+                        }
+                    );
+                }
+            );
 
             CurrentBindingItems = children;
             root.children = CurrentBindingItems as List<TreeViewItem>;
@@ -150,7 +190,11 @@ namespace Cysharp.Threading.Tasks.Editor
         {
             var item = args.item as UniTaskTrackerViewItem;
 
-            for (var visibleColumnIndex = 0; visibleColumnIndex < args.GetNumVisibleColumns(); visibleColumnIndex++)
+            for (
+                var visibleColumnIndex = 0;
+                visibleColumnIndex < args.GetNumVisibleColumns();
+                visibleColumnIndex++
+            )
             {
                 var rect = args.GetCellRect(visibleColumnIndex);
                 var columnIndex = args.GetColumn(visibleColumnIndex);
@@ -172,11 +216,13 @@ namespace Cysharp.Threading.Tasks.Editor
                         EditorGUI.LabelField(rect, item.PositionFirstLine, labelStyle);
                         break;
                     default:
-                        throw new ArgumentOutOfRangeException(nameof(columnIndex), columnIndex, null);
+                        throw new ArgumentOutOfRangeException(
+                            nameof(columnIndex),
+                            columnIndex,
+                            null
+                        );
                 }
             }
         }
     }
-
 }
-

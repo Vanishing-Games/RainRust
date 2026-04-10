@@ -13,10 +13,12 @@ namespace LDtkUnity.Editor
         {
             if (texture == null)
             {
-                LDtkDebug.LogError("Issue constructing LDtkTextureSpriteSlicer, the source texture was null.");
+                LDtkDebug.LogError(
+                    "Issue constructing LDtkTextureSpriteSlicer, the source texture was null."
+                );
                 return;
             }
-            
+
             _texture = texture;
             _pixelsPerUnit = ppu;
             _pivot = pivot;
@@ -33,10 +35,13 @@ namespace LDtkUnity.Editor
 
             if (!LDtkCoordConverter.IsLegalSpriteSlice(_texture, _srcRect))
             {
-                LDtkDebug.LogError($"Illegal sprite slice: Attempted a slice of {_srcRect} in the texture {_texture.name}:({_texture.width}, {_texture.height}). Is the pixels per unit value set too big, or is the texture resolution incorrect? Double check that your texture's max size in the import settings is large enough", _texture);
+                LDtkDebug.LogError(
+                    $"Illegal sprite slice: Attempted a slice of {_srcRect} in the texture {_texture.name}:({_texture.width}, {_texture.height}). Is the pixels per unit value set too big, or is the texture resolution incorrect? Double check that your texture's max size in the import settings is large enough",
+                    _texture
+                );
                 return null;
             }
-            
+
             return LDtkTextureUtility.CreateSprite(_texture, _srcRect, _pivot, _pixelsPerUnit);
         }
     }

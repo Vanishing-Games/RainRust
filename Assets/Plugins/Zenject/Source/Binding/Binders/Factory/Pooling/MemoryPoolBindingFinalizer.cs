@@ -10,7 +10,10 @@ namespace Zenject
         readonly FactoryBindInfo _factoryBindInfo;
 
         public MemoryPoolBindingFinalizer(
-            BindInfo bindInfo, FactoryBindInfo factoryBindInfo, MemoryPoolBindInfo poolBindInfo)
+            BindInfo bindInfo,
+            FactoryBindInfo factoryBindInfo,
+            MemoryPoolBindInfo poolBindInfo
+        )
             : base(bindInfo)
         {
             // Note that it doesn't derive from MemoryPool<TContract>
@@ -24,17 +27,26 @@ namespace Zenject
         protected override void OnFinalizeBinding(DiContainer container)
         {
             var factory = new FactoryProviderWrapper<TContract>(
-                _factoryBindInfo.ProviderFunc(container), new InjectContext(container, typeof(TContract)));
+                _factoryBindInfo.ProviderFunc(container),
+                new InjectContext(container, typeof(TContract))
+            );
 
             var settings = new MemoryPoolSettings(
-                _poolBindInfo.InitialSize, _poolBindInfo.MaxSize, _poolBindInfo.ExpandMethod);
+                _poolBindInfo.InitialSize,
+                _poolBindInfo.MaxSize,
+                _poolBindInfo.ExpandMethod
+            );
 
             var transientProvider = new TransientProvider(
                 _factoryBindInfo.FactoryType,
                 container,
-                _factoryBindInfo.Arguments.Concat(
-                    InjectUtil.CreateArgListExplicit(factory, settings)).ToList(),
-                BindInfo.ContextInfo, BindInfo.ConcreteIdentifier, null);
+                _factoryBindInfo
+                    .Arguments.Concat(InjectUtil.CreateArgListExplicit(factory, settings))
+                    .ToList(),
+                BindInfo.ContextInfo,
+                BindInfo.ConcreteIdentifier,
+                null
+            );
 
             IProvider mainProvider;
 
@@ -52,4 +64,3 @@ namespace Zenject
         }
     }
 }
-

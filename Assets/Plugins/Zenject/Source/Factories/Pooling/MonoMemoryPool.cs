@@ -11,9 +11,7 @@ namespace Zenject
         Transform _originalParent;
 
         [Inject]
-        public MonoMemoryPool()
-        {
-        }
+        public MonoMemoryPool() { }
 
         protected override void OnCreated(TValue item)
         {
@@ -52,9 +50,7 @@ namespace Zenject
         Transform _originalParent;
 
         [Inject]
-        public MonoMemoryPool()
-        {
-        }
+        public MonoMemoryPool() { }
 
         protected override void OnCreated(TValue item)
         {
@@ -87,16 +83,13 @@ namespace Zenject
     // Two parameters
     // NOTE: For this to work, the given component must be at the root game object of the thing
     // you want to use in a pool
-    public class MonoMemoryPool<TParam1, TParam2, TValue>
-        : MemoryPool<TParam1, TParam2, TValue>
+    public class MonoMemoryPool<TParam1, TParam2, TValue> : MemoryPool<TParam1, TParam2, TValue>
         where TValue : Component
     {
         Transform _originalParent;
 
         [Inject]
-        public MonoMemoryPool()
-        {
-        }
+        public MonoMemoryPool() { }
 
         protected override void OnCreated(TValue item)
         {
@@ -136,9 +129,7 @@ namespace Zenject
         Transform _originalParent;
 
         [Inject]
-        public MonoMemoryPool()
-        {
-        }
+        public MonoMemoryPool() { }
 
         protected override void OnCreated(TValue item)
         {
@@ -178,9 +169,7 @@ namespace Zenject
         Transform _originalParent;
 
         [Inject]
-        public MonoMemoryPool()
-        {
-        }
+        public MonoMemoryPool() { }
 
         protected override void OnCreated(TValue item)
         {
@@ -220,9 +209,7 @@ namespace Zenject
         Transform _originalParent;
 
         [Inject]
-        public MonoMemoryPool()
-        {
-        }
+        public MonoMemoryPool() { }
 
         protected override void OnCreated(TValue item)
         {

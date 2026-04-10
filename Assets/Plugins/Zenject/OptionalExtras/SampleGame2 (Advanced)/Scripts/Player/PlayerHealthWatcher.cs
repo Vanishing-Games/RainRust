@@ -16,7 +16,8 @@ namespace Zenject.SpaceFighter
             Explosion.Factory explosionFactory,
             Settings settings,
             AudioPlayer audioPlayer,
-            SignalBus signalBus)
+            SignalBus signalBus
+        )
         {
             _signalBus = signalBus;
             _audioPlayer = audioPlayer;

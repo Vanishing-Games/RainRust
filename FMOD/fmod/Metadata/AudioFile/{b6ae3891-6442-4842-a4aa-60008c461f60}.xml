@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.03.00">
+	<object class="AudioFile" id="{b6ae3891-6442-4842-a4aa-60008c461f60}">
+		<property name="assetPath">
+			<value>Test/BGM/Vol 2 - 05 - John Fio - Midferno.mp3</value>
+		</property>
+		<property name="isStreaming">
+			<value>true</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>44.0999985</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>253.17877551020408</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{135c980b-e629-4c54-a575-e11274f7016e}</destination>
+		</relationship>
+	</object>
+</objects>

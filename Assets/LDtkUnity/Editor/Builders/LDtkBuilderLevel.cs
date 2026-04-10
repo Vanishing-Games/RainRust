@@ -12,7 +12,7 @@ namespace LDtkUnity.Editor
         private readonly LDtkLinearLevelVector _linearVector;
         private readonly LDtkAssetProcessorActionCache _assetProcess;
         private readonly LDtkLevelFile _lvlFile;
-        
+
         private LDtkComponentWorld _worldComponent;
         private GameObject _levelGameObject;
         private LDtkComponentLevel _levelComponent;
@@ -20,7 +20,7 @@ namespace LDtkUnity.Editor
         private LDtkIid _iidComponent;
         private LDtkComponentLayer[] _layerComponents;
         private MonoBehaviour[] _components;
-        
+
         private GameObject _layerGameObject;
         private LDtkComponentLayer _layerComponent;
         private LDtkComponentLayerParallax _parallax;
@@ -34,7 +34,17 @@ namespace LDtkUnity.Editor
         private LDtkBuilderEntity _entityBuilder;
         private LDtkBuilderLevelBackground _backgroundBuilder;
 
-        public LDtkBuilderLevel(LDtkProjectImporter project, LdtkJson json, WorldLayout world, Level level, LDtkLevelFile levelFile, LDtkAssetProcessorActionCache assetProcess, LDtkJsonImporter importer, LDtkComponentWorld worldComponent, LDtkLinearLevelVector linearVector)
+        public LDtkBuilderLevel(
+            LDtkProjectImporter project,
+            LdtkJson json,
+            WorldLayout world,
+            Level level,
+            LDtkLevelFile levelFile,
+            LDtkAssetProcessorActionCache assetProcess,
+            LDtkJsonImporter importer,
+            LDtkComponentWorld worldComponent,
+            LDtkLinearLevelVector linearVector
+        )
         {
             _project = project;
             _json = json;
@@ -53,19 +63,24 @@ namespace LDtkUnity.Editor
             {
                 return null;
             }
-            
+
             return CreateLevelGameObject();
         }
-        
+
         public LDtkComponentLevel BuildLevel()
         {
             if (!CanTryBuildLevel())
             {
                 return null;
             }
-            
+
             BuildLevelProcess();
-            LDtkAssetProcessorInvoker.AddPostProcessLevel(_assetProcess, _importer, _levelGameObject, _json);
+            LDtkAssetProcessorInvoker.AddPostProcessLevel(
+                _assetProcess,
+                _importer,
+                _levelGameObject,
+                _json
+            );
             return _levelComponent;
         }
 
@@ -88,7 +103,7 @@ namespace LDtkUnity.Editor
                 LDtkDebug.LogError("Level null; not building level.");
                 return false;
             }
-            
+
             return true;
         }
 
@@ -105,27 +120,27 @@ namespace LDtkUnity.Editor
             LDtkProfiler.BeginSample("new LDtkSortingOrder");
             _sortingOrder = new LDtkSortingOrder();
             LDtkProfiler.EndSample();
-            
+
             LDtkProfiler.BeginSample("BuildLayerInstances");
             BuildLayerInstances();
             LDtkProfiler.EndSample();
-            
+
             LDtkProfiler.BeginSample("BuildLevelTrigger");
             BuildLevelTrigger();
             LDtkProfiler.EndSample();
-            
+
             LDtkProfiler.BeginSample("BuildBackground");
             BuildBackground();
             LDtkProfiler.EndSample();
-            
+
             LDtkProfiler.BeginSample("BuildFields");
             BuildFields();
             LDtkProfiler.EndSample();
-            
+
             LDtkProfiler.BeginSample("NextLinearVector");
             NextLinearVector();
             LDtkProfiler.EndSample();
-            
+
             LDtkProfiler.BeginSample("PopulateLevelComponent");
             PopulateLevelComponent();
             LDtkProfiler.EndSample();
@@ -136,16 +151,22 @@ namespace LDtkUnity.Editor
             bool addedFields = TryAddFields();
 
             MonoBehaviour[] monoBehaviours = _components;
-            
+
             //caching here to make the import context work properly.
             Level level = _level;
             LDtkFields lDtkFields = _fieldsComponent;
-            
+
             if (addedFields)
             {
-                _assetProcess.TryAddInterfaceEvent<ILDtkImportedFields>(monoBehaviours, levelComponent => levelComponent.OnLDtkImportFields(lDtkFields));
+                _assetProcess.TryAddInterfaceEvent<ILDtkImportedFields>(
+                    monoBehaviours,
+                    levelComponent => levelComponent.OnLDtkImportFields(lDtkFields)
+                );
             }
-            _assetProcess.TryAddInterfaceEvent<ILDtkImportedLevel>(monoBehaviours, levelComponent => levelComponent.OnLDtkImportLevel(level));
+            _assetProcess.TryAddInterfaceEvent<ILDtkImportedLevel>(
+                monoBehaviours,
+                levelComponent => levelComponent.OnLDtkImportLevel(level)
+            );
         }
 
         private void AddIidComponent()
@@ -158,9 +179,13 @@ namespace LDtkUnity.Editor
         {
             GetInitialLevelGameObject();
             _levelGameObject.name = _level.Identifier;
-            
+
             int scaler = _linearVector != null ? _linearVector.Scaler : 0;
-            _levelGameObject.transform.position = _level.UnityWorldSpaceCoord(_worldLayout, _project.PixelsPerUnit, scaler);
+            _levelGameObject.transform.position = _level.UnityWorldSpaceCoord(
+                _worldLayout,
+                _project.PixelsPerUnit,
+                scaler
+            );
 
             _components = _levelGameObject.GetComponents<MonoBehaviour>();
             return _levelGameObject;
@@ -183,7 +208,7 @@ namespace LDtkUnity.Editor
             {
                 return;
             }
-            
+
             switch (_worldLayout)
             {
                 case WorldLayout.LinearHorizontal:
@@ -198,8 +223,8 @@ namespace LDtkUnity.Editor
         private void BuildLayerInstances()
         {
             _layerComponents = new LDtkComponentLayer[_level.LayerInstances.Length];
-            
-            //build layers and background from front to back in terms of ordering 
+
+            //build layers and background from front to back in terms of ordering
             for (int i = 0; i < _level.LayerInstances.Length; i++)
             {
                 LayerInstance layer = _level.LayerInstances[i];
@@ -214,7 +239,13 @@ namespace LDtkUnity.Editor
         private void BuildBackground()
         {
             Vector2 size = ((Vector2)_level.UnityPxSize / _project.PixelsPerUnit);
-            _backgroundBuilder = new LDtkBuilderLevelBackground(_project, _levelGameObject, _sortingOrder, _level, size);
+            _backgroundBuilder = new LDtkBuilderLevelBackground(
+                _project,
+                _levelGameObject,
+                _sortingOrder,
+                _level,
+                size
+            );
             _backgroundBuilder.BuildBackground();
         }
 
@@ -226,19 +257,32 @@ namespace LDtkUnity.Editor
         private void PopulateLevelComponent()
         {
             Vector2 size = ((Vector2)_level.UnityPxSize / _project.PixelsPerUnit);
-            
-            _levelComponent.OnImport(_level, _lvlFile, _layerComponents, _fieldsComponent, _worldComponent, size, _iidComponent);
+
+            _levelComponent.OnImport(
+                _level,
+                _lvlFile,
+                _layerComponents,
+                _fieldsComponent,
+                _worldComponent,
+                size,
+                _iidComponent
+            );
         }
-        
+
         private bool TryAddFields()
         {
             if (_json.Defs.LevelFields.IsNullOrEmpty())
             {
                 return false;
             }
-            
+
             LDtkFieldParser.CacheRecentBuilder(null);
-            LDtkFieldsFactory fieldsFactory = new LDtkFieldsFactory(_levelGameObject, _level.FieldInstances, _project, _importer);
+            LDtkFieldsFactory fieldsFactory = new LDtkFieldsFactory(
+                _levelGameObject,
+                _level.FieldInstances,
+                _project,
+                _importer
+            );
             fieldsFactory.SetEntityFieldsComponent();
             _fieldsComponent = fieldsFactory.FieldsComponent;
             return true;
@@ -258,7 +302,7 @@ namespace LDtkUnity.Editor
             _layerComponent = null;
             _layerIntGrid = null;
             _layerTiles = null;
-            
+
             void TryBuildLayerGameObject()
             {
                 if (builtLayer)
@@ -266,7 +310,7 @@ namespace LDtkUnity.Editor
                     return;
                 }
                 _layerGameObject = _levelGameObject.CreateChildGameObject(layer.Identifier);
-                
+
                 _layerComponent = _layerGameObject.AddComponent<LDtkComponentLayer>();
 
                 if (_project.UseParallax)
@@ -298,14 +342,22 @@ namespace LDtkUnity.Editor
             {
                 if (!builtLayer)
                 {
-                    LDtkDebug.LogError("Tried constructing the tileset builder before the layer GameObject");
+                    LDtkDebug.LogError(
+                        "Tried constructing the tileset builder before the layer GameObject"
+                    );
                     return;
                 }
                 if (builtTileBuilder)
                 {
                     return;
                 }
-                _builderTileset = new LDtkBuilderTileset(_project, _level, _layerComponent, _sortingOrder, _importer);
+                _builderTileset = new LDtkBuilderTileset(
+                    _project,
+                    _level,
+                    _layerComponent,
+                    _sortingOrder,
+                    _importer
+                );
                 builtTileBuilder = true;
             }
             void AddTilesetTilesComponent()
@@ -323,25 +375,48 @@ namespace LDtkUnity.Editor
                 {
                     return;
                 }
-                
+
                 //now that everything is gathered, do the special OnImport and populate that component
-                _layerComponent.OnImport(_importer.DefinitionObjects, layer, _levelComponent, _iidComponent, entities, _layerIntGrid, _layerTiles, layerScale);
+                _layerComponent.OnImport(
+                    _importer.DefinitionObjects,
+                    layer,
+                    _levelComponent,
+                    _iidComponent,
+                    entities,
+                    _layerIntGrid,
+                    _layerTiles,
+                    layerScale
+                );
                 if (_project.UseParallax)
                 {
-                    Vector2 halfLvlSize = (Vector2)_level.UnityPxSize / _project.PixelsPerUnit * 0.5f;
-                    _parallax.OnImport(layer.Definition.ParallaxFactor, halfLvlSize, layer.Definition.ParallaxScaling);
+                    Vector2 halfLvlSize =
+                        (Vector2)_level.UnityPxSize / _project.PixelsPerUnit * 0.5f;
+                    _parallax.OnImport(
+                        layer.Definition.ParallaxFactor,
+                        halfLvlSize,
+                        layer.Definition.ParallaxScaling
+                    );
                 }
                 populated = true;
             }
-            
+
             //ENTITIES
             if (layer.IsEntitiesLayer)
             {
                 TryBuildLayerGameObject();
-                
-                _entityBuilder = new LDtkBuilderEntity(_project, _level, _layerComponent, _sortingOrder, _linearVector, _worldLayout, _assetProcess, _importer);
+
+                _entityBuilder = new LDtkBuilderEntity(
+                    _project,
+                    _level,
+                    _layerComponent,
+                    _sortingOrder,
+                    _linearVector,
+                    _worldLayout,
+                    _assetProcess,
+                    _importer
+                );
                 layerScale = _entityBuilder.SetLayerAndScale(layer);
-                
+
                 LDtkProfiler.BeginSample("BuildEntityLayerInstances");
                 entities = _entityBuilder.BuildEntityLayerInstances();
                 LDtkProfiler.EndSample();
@@ -349,52 +424,58 @@ namespace LDtkUnity.Editor
                 TryPopulateLayerComponent(ref populatedComponent);
                 return _layerComponent;
             }
-            
+
             //TILE
             if (layer.IsTilesLayer)
             {
                 TryBuildLayerGameObject();
                 TryAddGrid();
                 TrySetupTileBuilder();
-                
+
                 layerScale = _builderTileset.SetLayerAndScale(layer);
-                
+
                 LDtkProfiler.BeginSample("BuildTileset GridTiles");
                 _builderTileset.BuildTileset(layer.GridTiles);
                 LDtkProfiler.EndSample();
-                
+
                 AddTilesetTilesComponent();
             }
-            
+
             //AUTO TILE (an int grid layer could additionally be an auto layer)
             if (layer.IsAutoLayer)
             {
                 TryBuildLayerGameObject();
                 TryAddGrid();
                 TrySetupTileBuilder();
-                
+
                 layerScale = _builderTileset.SetLayerAndScale(layer);
-                
+
                 LDtkProfiler.BeginSample("BuildTileset AutoLayerTiles");
                 _builderTileset.BuildTileset(layer.AutoLayerTiles);
                 LDtkProfiler.EndSample();
-                
+
                 AddTilesetTilesComponent();
             }
-            
+
             //INT GRID
             if (layer.IsIntGridLayer)
             {
                 TryBuildLayerGameObject();
                 TryAddGrid();
 
-                _builderIntGrid = new LDtkBuilderIntGridValue(_project, _level, _layerComponent, _sortingOrder, _importer);
+                _builderIntGrid = new LDtkBuilderIntGridValue(
+                    _project,
+                    _level,
+                    _layerComponent,
+                    _sortingOrder,
+                    _importer
+                );
                 layerScale = _builderIntGrid.SetLayerAndScale(layer);
-                
+
                 LDtkProfiler.BeginSample("BuildIntGridValues");
                 _builderIntGrid.BuildIntGridValues();
                 LDtkProfiler.EndSample();
-                
+
                 _layerIntGrid = _layerGameObject.AddComponent<LDtkComponentLayerIntGridValues>();
                 _layerIntGrid.OnImport(_importer.DefinitionObjects, layer);
             }
@@ -414,7 +495,7 @@ namespace LDtkUnity.Editor
 
             return _layerComponent;
         }
-        
+
         private void BuildLevelTrigger()
         {
             if (!_project.CreateLevelBoundsTrigger)
@@ -422,20 +503,17 @@ namespace LDtkUnity.Editor
                 return;
             }
 
-            Rect levelRect = new Rect(Vector2.zero, (Vector2)_level.UnityPxSize / _project.PixelsPerUnit);
-            
+            Rect levelRect = new Rect(
+                Vector2.zero,
+                (Vector2)_level.UnityPxSize / _project.PixelsPerUnit
+            );
+
             PolygonCollider2D levelCollider = _levelGameObject.AddComponent<PolygonCollider2D>();
-            Vector2 topLeft		= new Vector2(levelRect.xMin, levelRect.yMax);
-            Vector2 bottomLeft	= new Vector2(levelRect.xMin, levelRect.yMin);
+            Vector2 topLeft = new Vector2(levelRect.xMin, levelRect.yMax);
+            Vector2 bottomLeft = new Vector2(levelRect.xMin, levelRect.yMin);
             Vector2 bottomRight = new Vector2(levelRect.xMax, levelRect.yMin);
-            Vector2 topRight	= new Vector2(levelRect.xMax, levelRect.yMax);
-            levelCollider.points = new[]
-            {
-                topLeft,
-                bottomLeft,
-                bottomRight,
-                topRight
-            };
+            Vector2 topRight = new Vector2(levelRect.xMax, levelRect.yMax);
+            levelCollider.points = new[] { topLeft, bottomLeft, bottomRight, topRight };
             levelCollider.isTrigger = true;
         }
     }

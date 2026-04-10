@@ -55,35 +55,68 @@ namespace LDtkUnity.Editor
         {
             if (JsonData.ExternalLevels)
             {
-                EditorGUILayout.HelpBox($"This json asset does not contain any level layer instances due to using external levels. Deserialize the specific levels instead.", MessageType.Info);
+                EditorGUILayout.HelpBox(
+                    $"This json asset does not contain any level layer instances due to using external levels. Deserialize the specific levels instead.",
+                    MessageType.Info
+                );
                 LDtkEditorGUIUtility.DrawDivider();
             }
-            
+
             DrawText($"Json Version: {_jsonVersion}", LDtkIconUtility.LoadListIcon());
-            
+
             DrawCountOfItems(_worldCount, "World", "Worlds", LDtkIconUtility.LoadWorldIcon());
-            
+
             DrawCountOfItems(_levelCount, "Level", "Levels", LDtkIconUtility.LoadLevelIcon());
             if (_levelCount > 0)
             {
-                DrawCountOfItems(_levelFieldsCount, "Level Fields", "Level Fields", LDtkIconUtility.LoadLevelIcon());
+                DrawCountOfItems(
+                    _levelFieldsCount,
+                    "Level Fields",
+                    "Level Fields",
+                    LDtkIconUtility.LoadLevelIcon()
+                );
             }
-            
-            DrawCountOfItems(_layerCount, "Layer Definition", "Layer Definitions", LDtkIconUtility.LoadLayerIcon());
-            
-            DrawCountOfItems(_entityCount, "Entity Definition", "Entity Definitions", LDtkIconUtility.LoadEntityIcon());
+
+            DrawCountOfItems(
+                _layerCount,
+                "Layer Definition",
+                "Layer Definitions",
+                LDtkIconUtility.LoadLayerIcon()
+            );
+
+            DrawCountOfItems(
+                _entityCount,
+                "Entity Definition",
+                "Entity Definitions",
+                LDtkIconUtility.LoadEntityIcon()
+            );
             if (_entityFieldsCount > 0)
             {
-                DrawCountOfItems(_entityFieldsCount, "Entity Field", "Entity Fields", LDtkIconUtility.LoadEntityIcon());
+                DrawCountOfItems(
+                    _entityFieldsCount,
+                    "Entity Field",
+                    "Entity Fields",
+                    LDtkIconUtility.LoadEntityIcon()
+                );
             }
-            
+
             DrawCountOfItems(_enumCount, "Enum", "Enums", LDtkIconUtility.LoadEnumIcon());
             if (_enumValueCount > 0)
             {
-                DrawCountOfItems(_enumValueCount, "Enum Value", "Enum Values", LDtkIconUtility.LoadEnumIcon());
+                DrawCountOfItems(
+                    _enumValueCount,
+                    "Enum Value",
+                    "Enum Values",
+                    LDtkIconUtility.LoadEnumIcon()
+                );
             }
-            
-            DrawCountOfItems(_tilesetCount, "Tileset", "Tilesets", LDtkIconUtility.LoadTilesetIcon());
+
+            DrawCountOfItems(
+                _tilesetCount,
+                "Tileset",
+                "Tilesets",
+                LDtkIconUtility.LoadTilesetIcon()
+            );
         }
     }
 }

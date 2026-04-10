@@ -30,18 +30,12 @@ namespace FMODUnity
 
         public static int ListenerCount
         {
-            get
-            {
-                return listeners.Count;
-            }
+            get { return listeners.Count; }
         }
 
         public int ListenerNumber
         {
-            get
-            {
-                return listeners.IndexOf(this);
-            }
+            get { return listeners.IndexOf(this); }
         }
 
         public static float DistanceToNearestListener(Vector3 position)
@@ -51,11 +45,20 @@ namespace FMODUnity
             {
                 if (listeners[i].attenuationObject == null)
                 {
-                    result = Mathf.Min(result, Vector3.Distance(position, listeners[i].transform.position));
+                    result = Mathf.Min(
+                        result,
+                        Vector3.Distance(position, listeners[i].transform.position)
+                    );
                 }
                 else
                 {
-                    result = Mathf.Min(result, Vector3.Distance(position, listeners[i].attenuationObject.transform.position));
+                    result = Mathf.Min(
+                        result,
+                        Vector3.Distance(
+                            position,
+                            listeners[i].attenuationObject.transform.position
+                        )
+                    );
                 }
             }
             return result;
@@ -68,11 +71,17 @@ namespace FMODUnity
             {
                 if (listeners[i].attenuationObject == null)
                 {
-                    result = Mathf.Min(result, (position - listeners[i].transform.position).sqrMagnitude);
+                    result = Mathf.Min(
+                        result,
+                        (position - listeners[i].transform.position).sqrMagnitude
+                    );
                 }
                 else
                 {
-                    result = Mathf.Min(result, (position - listeners[i].attenuationObject.transform.position).sqrMagnitude);
+                    result = Mathf.Min(
+                        result,
+                        (position - listeners[i].attenuationObject.transform.position).sqrMagnitude
+                    );
                 }
             }
             return result;
@@ -83,24 +92,38 @@ namespace FMODUnity
             // Is the listener already in the list?
             if (listeners.Contains(listener))
             {
-                Debug.LogWarning(string.Format(("[FMOD] Listener has already been added at index {0}."), listener.ListenerNumber));
+                Debug.LogWarning(
+                    string.Format(
+                        ("[FMOD] Listener has already been added at index {0}."),
+                        listener.ListenerNumber
+                    )
+                );
                 return;
             }
 
             // If already at the max numListeners
             if (listeners.Count >= FMOD.CONSTANTS.MAX_LISTENERS)
             {
-                Debug.LogWarning(string.Format(("[FMOD] Max number of listeners reached : {0}."), FMOD.CONSTANTS.MAX_LISTENERS));
+                Debug.LogWarning(
+                    string.Format(
+                        ("[FMOD] Max number of listeners reached : {0}."),
+                        FMOD.CONSTANTS.MAX_LISTENERS
+                    )
+                );
             }
 
             listeners.Add(listener);
-            RuntimeManager.StudioSystem.setNumListeners(Mathf.Clamp(listeners.Count, 1, FMOD.CONSTANTS.MAX_LISTENERS));
+            RuntimeManager.StudioSystem.setNumListeners(
+                Mathf.Clamp(listeners.Count, 1, FMOD.CONSTANTS.MAX_LISTENERS)
+            );
         }
 
         private static void RemoveListener(StudioListener listener)
         {
             listeners.Remove(listener);
-            RuntimeManager.StudioSystem.setNumListeners(Mathf.Clamp(listeners.Count, 1, FMOD.CONSTANTS.MAX_LISTENERS));
+            RuntimeManager.StudioSystem.setNumListeners(
+                Mathf.Clamp(listeners.Count, 1, FMOD.CONSTANTS.MAX_LISTENERS)
+            );
         }
 
         private void OnEnable()
@@ -111,7 +134,12 @@ namespace FMODUnity
 
             if (nonRigidbodyVelocity && rigidBody)
             {
-                Debug.LogWarning(string.Format("[FMOD] Non-Rigidbody Velocity is enabled on Listener attached to GameObject \"{0}\", which also has a Rigidbody component attached - this will be disabled in favor of velocity from Rigidbody component.", this.name));
+                Debug.LogWarning(
+                    string.Format(
+                        "[FMOD] Non-Rigidbody Velocity is enabled on Listener attached to GameObject \"{0}\", which also has a Rigidbody component attached - this will be disabled in favor of velocity from Rigidbody component.",
+                        this.name
+                    )
+                );
                 nonRigidbodyVelocity = false;
             }
 #endif
@@ -120,7 +148,12 @@ namespace FMODUnity
 
             if (nonRigidbodyVelocity && rigidBody2D)
             {
-                Debug.LogWarning(string.Format("[FMOD] Non-Rigidbody Velocity is enabled on Listener attached to GameObject \"{0}\", which also has a Rigidbody2D component attached - this will be disabled in favor of velocity from Rigidbody2D component.", this.name));
+                Debug.LogWarning(
+                    string.Format(
+                        "[FMOD] Non-Rigidbody Velocity is enabled on Listener attached to GameObject \"{0}\", which also has a Rigidbody2D component attached - this will be disabled in favor of velocity from Rigidbody2D component.",
+                        this.name
+                    )
+                );
                 nonRigidbodyVelocity = false;
             }
 #endif
@@ -154,26 +187,45 @@ namespace FMODUnity
 
                 lastFramePosition = position;
 
-                RuntimeManager.SetListenerLocation(ListenerNumber, gameObject, attenuationObject, velocity);
+                RuntimeManager.SetListenerLocation(
+                    ListenerNumber,
+                    gameObject,
+                    attenuationObject,
+                    velocity
+                );
             }
             else
             {
 #if UNITY_PHYSICS_EXIST
                 if (rigidBody)
                 {
-                    RuntimeManager.SetListenerLocation(ListenerNumber, gameObject, rigidBody, attenuationObject);
+                    RuntimeManager.SetListenerLocation(
+                        ListenerNumber,
+                        gameObject,
+                        rigidBody,
+                        attenuationObject
+                    );
                 }
                 else
 #endif
 #if UNITY_PHYSICS2D_EXIST
                 if (rigidBody2D)
                 {
-                    RuntimeManager.SetListenerLocation(ListenerNumber, gameObject, rigidBody2D, attenuationObject);
+                    RuntimeManager.SetListenerLocation(
+                        ListenerNumber,
+                        gameObject,
+                        rigidBody2D,
+                        attenuationObject
+                    );
                 }
                 else
 #endif
                 {
-                    RuntimeManager.SetListenerLocation(ListenerNumber, gameObject, attenuationObject);
+                    RuntimeManager.SetListenerLocation(
+                        ListenerNumber,
+                        gameObject,
+                        attenuationObject
+                    );
                 }
             }
         }

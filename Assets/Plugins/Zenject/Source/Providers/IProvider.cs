@@ -6,15 +6,9 @@ namespace Zenject
     // The given InjectContext values here should always be non-null
     public interface IProvider
     {
-        bool TypeVariesBasedOnMemberType
-        {
-            get;
-        }
+        bool TypeVariesBasedOnMemberType { get; }
 
-        bool IsCached
-        {
-            get;
-        }
+        bool IsCached { get; }
 
         Type GetInstanceType(InjectContext context);
 
@@ -24,6 +18,10 @@ namespace Zenject
         // and then return that if something gets created during injection that refers back
         // to the newly created instance
         void GetAllInstancesWithInjectSplit(
-            InjectContext context, List<TypeValuePair> args, out Action injectAction, List<object> instances);
+            InjectContext context,
+            List<TypeValuePair> args,
+            out Action injectAction,
+            List<object> instances
+        );
     }
 }

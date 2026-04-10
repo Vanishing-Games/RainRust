@@ -69,7 +69,8 @@ namespace Zenject
             return GetAllAssemblies()
                 .Where(ShouldIncludeAssembly)
                 .SelectMany(assembly => GetTypes(assembly))
-                .Where(ShouldIncludeType).ToList();
+                .Where(ShouldIncludeType)
+                .ToList();
         }
     }
 }

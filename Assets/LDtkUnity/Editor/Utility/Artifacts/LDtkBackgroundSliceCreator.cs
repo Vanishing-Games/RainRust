@@ -14,7 +14,7 @@ namespace LDtkUnity.Editor
         {
             _importer = importer;
         }
-        
+
         public List<Sprite> CreateAllBackgrounds(LdtkJson json)
         {
             LDtkProfiler.BeginSample("TextureDict.LoadAllProjectTextures");
@@ -28,8 +28,12 @@ namespace LDtkUnity.Editor
 
             return list;
         }
-        
-        private LDtkBackgroundArtifactFactory CreateBackgroundFactory(Texture2D srcTex, Level level, int pixelsPerUnit)
+
+        private LDtkBackgroundArtifactFactory CreateBackgroundFactory(
+            Texture2D srcTex,
+            Level level,
+            int pixelsPerUnit
+        )
         {
             string assetName = level.Identifier;
             if (!_uniqueSprites.Add(assetName))
@@ -38,7 +42,7 @@ namespace LDtkUnity.Editor
             }
             return new LDtkBackgroundArtifactFactory(assetName, srcTex, pixelsPerUnit, level);
         }
-        
+
         private List<Sprite> MakeAllBackgroundSlices(LdtkJson json)
         {
             List<Sprite> backgrounds = new List<Sprite>();
@@ -51,25 +55,29 @@ namespace LDtkUnity.Editor
                     {
                         continue;
                     }
-                    
+
                     Texture2D bgTex = _dict.GetTexture(level.BgRelPath);
                     if (bgTex == null)
                     {
                         continue;
                     }
-                    
+
                     if (!ValidateTextureWithTilesetDef(level, bgTex))
                     {
                         continue;
                     }
-                    
+
                     if (bgTex == null)
                     {
                         LDtkDebug.LogError("CreateAsset srcTex was null, not making tile");
                         continue;
                     }
-                    
-                    LDtkBackgroundArtifactFactory bgFactory = CreateBackgroundFactory(bgTex, level, _importer.PixelsPerUnit);
+
+                    LDtkBackgroundArtifactFactory bgFactory = CreateBackgroundFactory(
+                        bgTex,
+                        level,
+                        _importer.PixelsPerUnit
+                    );
                     Sprite bg = bgFactory?.CreateBackground();
                     backgrounds.Add(bg);
                 }

@@ -13,17 +13,16 @@ namespace Zenject
     public static class ObjectGraphVisualizer
     {
         public static void OutputObjectGraphToFile(
-            DiContainer container, string outputPath,
-            IEnumerable<Type> externalIgnoreTypes, IEnumerable<Type> contractTypes)
+            DiContainer container,
+            string outputPath,
+            IEnumerable<Type> externalIgnoreTypes,
+            IEnumerable<Type> contractTypes
+        )
         {
             // Output the entire object graph to file
             var graph = CalculateObjectGraph(container, contractTypes);
 
-            var ignoreTypes = new List<Type>
-            {
-                typeof(DiContainer),
-                typeof(InitializableManager)
-            };
+            var ignoreTypes = new List<Type> { typeof(DiContainer), typeof(InitializableManager) };
 
             ignoreTypes.AddRange(externalIgnoreTypes);
 
@@ -45,7 +44,11 @@ namespace Zenject
                         continue;
                     }
 
-                    resultStr += GetFormattedTypeName(entry.Key) + " -> " + GetFormattedTypeName(dependencyType) + "; \n";
+                    resultStr +=
+                        GetFormattedTypeName(entry.Key)
+                        + " -> "
+                        + GetFormattedTypeName(dependencyType)
+                        + "; \n";
                 }
             }
 
@@ -60,7 +63,9 @@ namespace Zenject
         }
 
         static Dictionary<Type, List<Type>> CalculateObjectGraph(
-            DiContainer container, IEnumerable<Type> contracts)
+            DiContainer container,
+            IEnumerable<Type> contracts
+        )
         {
             var map = new Dictionary<Type, List<Type>>();
 
@@ -77,8 +82,7 @@ namespace Zenject
             return map;
         }
 
-        static List<Type> GetDependencies(
-            DiContainer container, Type type)
+        static List<Type> GetDependencies(DiContainer container, Type type)
         {
             var dependencies = new List<Type>();
 
@@ -122,4 +126,3 @@ namespace Zenject
         }
     }
 }
-

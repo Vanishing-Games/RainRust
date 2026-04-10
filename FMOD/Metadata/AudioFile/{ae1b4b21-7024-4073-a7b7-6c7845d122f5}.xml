@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.03.00">
+	<object class="AudioFile" id="{ae1b4b21-7024-4073-a7b7-6c7845d122f5}">
+		<property name="assetPath">
+			<value>Test/BGM/Vol 1 - 11 - Blood Cultures - Hole In The Sun.mp3</value>
+		</property>
+		<property name="isStreaming">
+			<value>true</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>44.0999985</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>235.10204081632654</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{135c980b-e629-4c54-a575-e11274f7016e}</destination>
+		</relationship>
+	</object>
+</objects>

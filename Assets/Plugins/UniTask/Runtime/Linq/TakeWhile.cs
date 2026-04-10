@@ -1,12 +1,15 @@
-﻿using Cysharp.Threading.Tasks.Internal;
-using System;
+﻿using System;
 using System.Threading;
+using Cysharp.Threading.Tasks.Internal;
 
 namespace Cysharp.Threading.Tasks.Linq
 {
     public static partial class UniTaskAsyncEnumerable
     {
-        public static IUniTaskAsyncEnumerable<TSource> TakeWhile<TSource>(this IUniTaskAsyncEnumerable<TSource> source, Func<TSource, Boolean> predicate)
+        public static IUniTaskAsyncEnumerable<TSource> TakeWhile<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, Boolean> predicate
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
             Error.ThrowArgumentNullException(predicate, nameof(predicate));
@@ -14,7 +17,10 @@ namespace Cysharp.Threading.Tasks.Linq
             return new TakeWhile<TSource>(source, predicate);
         }
 
-        public static IUniTaskAsyncEnumerable<TSource> TakeWhile<TSource>(this IUniTaskAsyncEnumerable<TSource> source, Func<TSource, Int32, Boolean> predicate)
+        public static IUniTaskAsyncEnumerable<TSource> TakeWhile<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, Int32, Boolean> predicate
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
             Error.ThrowArgumentNullException(predicate, nameof(predicate));
@@ -22,7 +28,10 @@ namespace Cysharp.Threading.Tasks.Linq
             return new TakeWhileInt<TSource>(source, predicate);
         }
 
-        public static IUniTaskAsyncEnumerable<TSource> TakeWhileAwait<TSource>(this IUniTaskAsyncEnumerable<TSource> source, Func<TSource, UniTask<Boolean>> predicate)
+        public static IUniTaskAsyncEnumerable<TSource> TakeWhileAwait<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, UniTask<Boolean>> predicate
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
             Error.ThrowArgumentNullException(predicate, nameof(predicate));
@@ -30,7 +39,10 @@ namespace Cysharp.Threading.Tasks.Linq
             return new TakeWhileAwait<TSource>(source, predicate);
         }
 
-        public static IUniTaskAsyncEnumerable<TSource> TakeWhileAwait<TSource>(this IUniTaskAsyncEnumerable<TSource> source, Func<TSource, Int32, UniTask<Boolean>> predicate)
+        public static IUniTaskAsyncEnumerable<TSource> TakeWhileAwait<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, Int32, UniTask<Boolean>> predicate
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
             Error.ThrowArgumentNullException(predicate, nameof(predicate));
@@ -38,7 +50,10 @@ namespace Cysharp.Threading.Tasks.Linq
             return new TakeWhileIntAwait<TSource>(source, predicate);
         }
 
-        public static IUniTaskAsyncEnumerable<TSource> TakeWhileAwaitWithCancellation<TSource>(this IUniTaskAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, UniTask<Boolean>> predicate)
+        public static IUniTaskAsyncEnumerable<TSource> TakeWhileAwaitWithCancellation<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, CancellationToken, UniTask<Boolean>> predicate
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
             Error.ThrowArgumentNullException(predicate, nameof(predicate));
@@ -46,7 +61,10 @@ namespace Cysharp.Threading.Tasks.Linq
             return new TakeWhileAwaitWithCancellation<TSource>(source, predicate);
         }
 
-        public static IUniTaskAsyncEnumerable<TSource> TakeWhileAwaitWithCancellation<TSource>(this IUniTaskAsyncEnumerable<TSource> source, Func<TSource, Int32, CancellationToken, UniTask<Boolean>> predicate)
+        public static IUniTaskAsyncEnumerable<TSource> TakeWhileAwaitWithCancellation<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, Int32, CancellationToken, UniTask<Boolean>> predicate
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
             Error.ThrowArgumentNullException(predicate, nameof(predicate));
@@ -66,7 +84,9 @@ namespace Cysharp.Threading.Tasks.Linq
             this.predicate = predicate;
         }
 
-        public IUniTaskAsyncEnumerator<TSource> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+        public IUniTaskAsyncEnumerator<TSource> GetAsyncEnumerator(
+            CancellationToken cancellationToken = default
+        )
         {
             return new _TakeWhile(source, predicate, cancellationToken);
         }
@@ -75,8 +95,11 @@ namespace Cysharp.Threading.Tasks.Linq
         {
             Func<TSource, bool> predicate;
 
-            public _TakeWhile(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, bool> predicate, CancellationToken cancellationToken)
-
+            public _TakeWhile(
+                IUniTaskAsyncEnumerable<TSource> source,
+                Func<TSource, bool> predicate,
+                CancellationToken cancellationToken
+            )
                 : base(source, cancellationToken)
             {
                 this.predicate = predicate;
@@ -105,13 +128,18 @@ namespace Cysharp.Threading.Tasks.Linq
         readonly IUniTaskAsyncEnumerable<TSource> source;
         readonly Func<TSource, int, bool> predicate;
 
-        public TakeWhileInt(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, int, bool> predicate)
+        public TakeWhileInt(
+            IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, int, bool> predicate
+        )
         {
             this.source = source;
             this.predicate = predicate;
         }
 
-        public IUniTaskAsyncEnumerator<TSource> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+        public IUniTaskAsyncEnumerator<TSource> GetAsyncEnumerator(
+            CancellationToken cancellationToken = default
+        )
         {
             return new _TakeWhileInt(source, predicate, cancellationToken);
         }
@@ -121,8 +149,11 @@ namespace Cysharp.Threading.Tasks.Linq
             readonly Func<TSource, int, bool> predicate;
             int index;
 
-            public _TakeWhileInt(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, int, bool> predicate, CancellationToken cancellationToken)
-
+            public _TakeWhileInt(
+                IUniTaskAsyncEnumerable<TSource> source,
+                Func<TSource, int, bool> predicate,
+                CancellationToken cancellationToken
+            )
                 : base(source, cancellationToken)
             {
                 this.predicate = predicate;
@@ -151,13 +182,18 @@ namespace Cysharp.Threading.Tasks.Linq
         readonly IUniTaskAsyncEnumerable<TSource> source;
         readonly Func<TSource, UniTask<bool>> predicate;
 
-        public TakeWhileAwait(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, UniTask<bool>> predicate)
+        public TakeWhileAwait(
+            IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, UniTask<bool>> predicate
+        )
         {
             this.source = source;
             this.predicate = predicate;
         }
 
-        public IUniTaskAsyncEnumerator<TSource> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+        public IUniTaskAsyncEnumerator<TSource> GetAsyncEnumerator(
+            CancellationToken cancellationToken = default
+        )
         {
             return new _TakeWhileAwait(source, predicate, cancellationToken);
         }
@@ -166,7 +202,11 @@ namespace Cysharp.Threading.Tasks.Linq
         {
             Func<TSource, UniTask<bool>> predicate;
 
-            public _TakeWhileAwait(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, UniTask<bool>> predicate, CancellationToken cancellationToken)
+            public _TakeWhileAwait(
+                IUniTaskAsyncEnumerable<TSource> source,
+                Func<TSource, UniTask<bool>> predicate,
+                CancellationToken cancellationToken
+            )
                 : base(source, cancellationToken)
             {
                 this.predicate = predicate;
@@ -199,13 +239,18 @@ namespace Cysharp.Threading.Tasks.Linq
         readonly IUniTaskAsyncEnumerable<TSource> source;
         readonly Func<TSource, int, UniTask<bool>> predicate;
 
-        public TakeWhileIntAwait(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, int, UniTask<bool>> predicate)
+        public TakeWhileIntAwait(
+            IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, int, UniTask<bool>> predicate
+        )
         {
             this.source = source;
             this.predicate = predicate;
         }
 
-        public IUniTaskAsyncEnumerator<TSource> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+        public IUniTaskAsyncEnumerator<TSource> GetAsyncEnumerator(
+            CancellationToken cancellationToken = default
+        )
         {
             return new _TakeWhileIntAwait(source, predicate, cancellationToken);
         }
@@ -215,7 +260,11 @@ namespace Cysharp.Threading.Tasks.Linq
             readonly Func<TSource, int, UniTask<bool>> predicate;
             int index;
 
-            public _TakeWhileIntAwait(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, int, UniTask<bool>> predicate, CancellationToken cancellationToken)
+            public _TakeWhileIntAwait(
+                IUniTaskAsyncEnumerable<TSource> source,
+                Func<TSource, int, UniTask<bool>> predicate,
+                CancellationToken cancellationToken
+            )
                 : base(source, cancellationToken)
             {
                 this.predicate = predicate;
@@ -248,22 +297,32 @@ namespace Cysharp.Threading.Tasks.Linq
         readonly IUniTaskAsyncEnumerable<TSource> source;
         readonly Func<TSource, CancellationToken, UniTask<bool>> predicate;
 
-        public TakeWhileAwaitWithCancellation(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, UniTask<bool>> predicate)
+        public TakeWhileAwaitWithCancellation(
+            IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, CancellationToken, UniTask<bool>> predicate
+        )
         {
             this.source = source;
             this.predicate = predicate;
         }
 
-        public IUniTaskAsyncEnumerator<TSource> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+        public IUniTaskAsyncEnumerator<TSource> GetAsyncEnumerator(
+            CancellationToken cancellationToken = default
+        )
         {
             return new _TakeWhileAwaitWithCancellation(source, predicate, cancellationToken);
         }
 
-        class _TakeWhileAwaitWithCancellation : AsyncEnumeratorAwaitSelectorBase<TSource, TSource, bool>
+        class _TakeWhileAwaitWithCancellation
+            : AsyncEnumeratorAwaitSelectorBase<TSource, TSource, bool>
         {
             Func<TSource, CancellationToken, UniTask<bool>> predicate;
 
-            public _TakeWhileAwaitWithCancellation(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, UniTask<bool>> predicate, CancellationToken cancellationToken)
+            public _TakeWhileAwaitWithCancellation(
+                IUniTaskAsyncEnumerable<TSource> source,
+                Func<TSource, CancellationToken, UniTask<bool>> predicate,
+                CancellationToken cancellationToken
+            )
                 : base(source, cancellationToken)
             {
                 this.predicate = predicate;
@@ -291,28 +350,39 @@ namespace Cysharp.Threading.Tasks.Linq
         }
     }
 
-    internal sealed class TakeWhileIntAwaitWithCancellation<TSource> : IUniTaskAsyncEnumerable<TSource>
+    internal sealed class TakeWhileIntAwaitWithCancellation<TSource>
+        : IUniTaskAsyncEnumerable<TSource>
     {
         readonly IUniTaskAsyncEnumerable<TSource> source;
         readonly Func<TSource, int, CancellationToken, UniTask<bool>> predicate;
 
-        public TakeWhileIntAwaitWithCancellation(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, int, CancellationToken, UniTask<bool>> predicate)
+        public TakeWhileIntAwaitWithCancellation(
+            IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, int, CancellationToken, UniTask<bool>> predicate
+        )
         {
             this.source = source;
             this.predicate = predicate;
         }
 
-        public IUniTaskAsyncEnumerator<TSource> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+        public IUniTaskAsyncEnumerator<TSource> GetAsyncEnumerator(
+            CancellationToken cancellationToken = default
+        )
         {
             return new _TakeWhileIntAwaitWithCancellation(source, predicate, cancellationToken);
         }
 
-        class _TakeWhileIntAwaitWithCancellation : AsyncEnumeratorAwaitSelectorBase<TSource, TSource, bool>
+        class _TakeWhileIntAwaitWithCancellation
+            : AsyncEnumeratorAwaitSelectorBase<TSource, TSource, bool>
         {
             readonly Func<TSource, int, CancellationToken, UniTask<bool>> predicate;
             int index;
 
-            public _TakeWhileIntAwaitWithCancellation(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, int, CancellationToken, UniTask<bool>> predicate, CancellationToken cancellationToken)
+            public _TakeWhileIntAwaitWithCancellation(
+                IUniTaskAsyncEnumerable<TSource> source,
+                Func<TSource, int, CancellationToken, UniTask<bool>> predicate,
+                CancellationToken cancellationToken
+            )
                 : base(source, cancellationToken)
             {
                 this.predicate = predicate;

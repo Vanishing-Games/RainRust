@@ -5,7 +5,9 @@ namespace Cysharp.Threading.Tasks.Linq
 {
     public static partial class UniTaskAsyncEnumerable
     {
-        public static IUniTaskAsyncEnumerable<TSource> Queue<TSource>(this IUniTaskAsyncEnumerable<TSource> source)
+        public static IUniTaskAsyncEnumerable<TSource> Queue<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source
+        )
         {
             return new QueueOperator<TSource>(source);
         }
@@ -20,7 +22,9 @@ namespace Cysharp.Threading.Tasks.Linq
             this.source = source;
         }
 
-        public IUniTaskAsyncEnumerator<TSource> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+        public IUniTaskAsyncEnumerator<TSource> GetAsyncEnumerator(
+            CancellationToken cancellationToken = default
+        )
         {
             return new _Queue(source, cancellationToken);
         }
@@ -35,7 +39,10 @@ namespace Cysharp.Threading.Tasks.Linq
             IUniTaskAsyncEnumerator<TSource> sourceEnumerator;
             bool channelClosed;
 
-            public _Queue(IUniTaskAsyncEnumerable<TSource> source, CancellationToken cancellationToken)
+            public _Queue(
+                IUniTaskAsyncEnumerable<TSource> source,
+                CancellationToken cancellationToken
+            )
             {
                 this.source = source;
                 this.cancellationToken = cancellationToken;
@@ -52,7 +59,9 @@ namespace Cysharp.Threading.Tasks.Linq
                     sourceEnumerator = source.GetAsyncEnumerator(cancellationToken);
                     channel = Channel.CreateSingleConsumerUnbounded<TSource>();
 
-                    channelEnumerator = channel.Reader.ReadAllAsync().GetAsyncEnumerator(cancellationToken);
+                    channelEnumerator = channel
+                        .Reader.ReadAllAsync()
+                        .GetAsyncEnumerator(cancellationToken);
 
                     ConsumeAll(this, sourceEnumerator, channel).Forget();
                 }
@@ -60,7 +69,11 @@ namespace Cysharp.Threading.Tasks.Linq
                 return channelEnumerator.MoveNextAsync();
             }
 
-            static async UniTaskVoid ConsumeAll(_Queue self, IUniTaskAsyncEnumerator<TSource> enumerator, ChannelWriter<TSource> writer)
+            static async UniTaskVoid ConsumeAll(
+                _Queue self,
+                IUniTaskAsyncEnumerator<TSource> enumerator,
+                ChannelWriter<TSource> writer
+            )
             {
                 try
                 {

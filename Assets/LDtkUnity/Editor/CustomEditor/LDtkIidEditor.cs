@@ -10,9 +10,9 @@ namespace LDtkUnity.Editor
         private static readonly GUIContent IidInfo = new GUIContent()
         {
             text = "iid",
-            tooltip = "Unique instance identifier"
+            tooltip = "Unique instance identifier",
         };
-        
+
         public override void OnInspectorGUI()
         {
             SerializedProperty property = serializedObject.FindProperty(LDtkIid.PROPERTY_IID);
@@ -24,12 +24,17 @@ namespace LDtkUnity.Editor
         }
 
         /// <returns>If the iid component was found</returns>
-        public static bool DrawIidAndGameObject(Rect position, Rect labelRect, SerializedProperty iidProp, GUIContent label)
+        public static bool DrawIidAndGameObject(
+            Rect position,
+            Rect labelRect,
+            SerializedProperty iidProp,
+            GUIContent label
+        )
         {
             LDtkProfiler.BeginSample("LDtkFieldElementDrawer.DrawEntityRef");
 
             //GUILayout.BeginArea(position);
-            
+
             string iid = iidProp.stringValue;
 
             if (string.IsNullOrEmpty(iid))
@@ -47,20 +52,20 @@ namespace LDtkUnity.Editor
             }
 
             float desiredObjectWidth = 175;
-            float objectWidth = Mathf.Min(desiredObjectWidth, position.width - desiredObjectWidth * 0.83f);
+            float objectWidth = Mathf.Min(
+                desiredObjectWidth,
+                position.width - desiredObjectWidth * 0.83f
+            );
             float fieldWidth = Mathf.Max(position.width - objectWidth);
-            
-            Rect fieldRect = new Rect(
-                position.x, 
-                position.y, 
-                fieldWidth - 2, 
-                position.height);
-            
+
+            Rect fieldRect = new Rect(position.x, position.y, fieldWidth - 2, position.height);
+
             Rect gameObjectRect = new Rect(
-                position.x + fieldWidth, 
-                position.y, 
-                Mathf.Max(desiredObjectWidth, objectWidth), 
-                position.height);
+                position.x + fieldWidth,
+                position.y,
+                Mathf.Max(desiredObjectWidth, objectWidth),
+                position.height
+            );
 
             fieldRect.xMin = labelRect.xMin;
 
@@ -68,7 +73,12 @@ namespace LDtkUnity.Editor
 
             using (new EditorGUI.DisabledScope(true))
             {
-                EditorGUI.ObjectField(gameObjectRect, component.gameObject, typeof(GameObject), true);
+                EditorGUI.ObjectField(
+                    gameObjectRect,
+                    component.gameObject,
+                    typeof(GameObject),
+                    true
+                );
             }
 
             LDtkProfiler.EndSample();

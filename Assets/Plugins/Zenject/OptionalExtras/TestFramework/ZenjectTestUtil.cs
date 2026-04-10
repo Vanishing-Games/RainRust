@@ -26,8 +26,8 @@ namespace Zenject.Internal
 
             if (ProjectContext.HasInstance)
             {
-                var dontDestroyOnLoadRoots = ProjectContext.Instance.gameObject.scene
-                    .GetRootGameObjects();
+                var dontDestroyOnLoadRoots =
+                    ProjectContext.Instance.gameObject.scene.GetRootGameObjects();
 
                 foreach (var rootObj in dontDestroyOnLoadRoots)
                 {

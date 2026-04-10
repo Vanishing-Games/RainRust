@@ -12,12 +12,14 @@ namespace Zenject
         // This will use the ProjectContext container as parent for the new scene
         // This is similar to just running the new scene normally
         None,
+
         // This will use current scene as parent for the new scene
         // This will allow the new scene to refer to dependencies in the current scene
         Child,
+
         // This will use the parent of the current scene as the parent for the next scene
         // In most cases this will be the same as None
-        Sibling
+        Sibling,
     }
 
     public class ZenjectSceneLoader
@@ -26,9 +28,9 @@ namespace Zenject
         readonly DiContainer _sceneContainer;
 
         public ZenjectSceneLoader(
-            [InjectOptional]
-            SceneContext sceneRoot,
-            ProjectKernel projectKernel)
+            [InjectOptional] SceneContext sceneRoot,
+            ProjectKernel projectKernel
+        )
         {
             _projectKernel = projectKernel;
             _sceneContainer = sceneRoot == null ? null : sceneRoot.Container;
@@ -39,12 +41,16 @@ namespace Zenject
             LoadSceneMode loadMode = LoadSceneMode.Single,
             Action<DiContainer> extraBindings = null,
             LoadSceneRelationship containerMode = LoadSceneRelationship.None,
-            Action<DiContainer> extraBindingsLate = null)
+            Action<DiContainer> extraBindingsLate = null
+        )
         {
             PrepareForLoadScene(loadMode, extraBindings, extraBindingsLate, containerMode);
 
-            Assert.That(Application.CanStreamedLevelBeLoaded(sceneName),
-                "Unable to load scene '{0}'", sceneName);
+            Assert.That(
+                Application.CanStreamedLevelBeLoaded(sceneName),
+                "Unable to load scene '{0}'",
+                sceneName
+            );
 
             SceneManager.LoadScene(sceneName, loadMode);
 
@@ -53,17 +59,21 @@ namespace Zenject
             // we can't do that in this case since the scene isn't loaded until the next frame
         }
 
-            public AsyncOperation LoadSceneAsync(
+        public AsyncOperation LoadSceneAsync(
             string sceneName,
             LoadSceneMode loadMode = LoadSceneMode.Single,
             Action<DiContainer> extraBindings = null,
             LoadSceneRelationship containerMode = LoadSceneRelationship.None,
-            Action<DiContainer> extraBindingsLate = null)
+            Action<DiContainer> extraBindingsLate = null
+        )
         {
             PrepareForLoadScene(loadMode, extraBindings, extraBindingsLate, containerMode);
 
-            Assert.That(Application.CanStreamedLevelBeLoaded(sceneName),
-                "Unable to load scene '{0}'", sceneName);
+            Assert.That(
+                Application.CanStreamedLevelBeLoaded(sceneName),
+                "Unable to load scene '{0}'",
+                sceneName
+            );
 
             return SceneManager.LoadSceneAsync(sceneName, loadMode);
         }
@@ -72,7 +82,8 @@ namespace Zenject
             LoadSceneMode loadMode,
             Action<DiContainer> extraBindings,
             Action<DiContainer> extraBindingsLate,
-            LoadSceneRelationship containerMode)
+            LoadSceneRelationship containerMode
+        )
         {
             if (loadMode == LoadSceneMode.Single)
             {
@@ -102,8 +113,10 @@ namespace Zenject
             }
             else
             {
-                Assert.IsNotNull(_sceneContainer,
-                    "Cannot use LoadSceneRelationship.Sibling when loading scenes from ProjectContext");
+                Assert.IsNotNull(
+                    _sceneContainer,
+                    "Cannot use LoadSceneRelationship.Sibling when loading scenes from ProjectContext"
+                );
                 Assert.IsEqual(containerMode, LoadSceneRelationship.Sibling);
                 SceneContext.ParentContainers = _sceneContainer.ParentContainers;
             }
@@ -117,12 +130,16 @@ namespace Zenject
             LoadSceneMode loadMode = LoadSceneMode.Single,
             Action<DiContainer> extraBindings = null,
             LoadSceneRelationship containerMode = LoadSceneRelationship.None,
-            Action<DiContainer> extraBindingsLate = null)
+            Action<DiContainer> extraBindingsLate = null
+        )
         {
             PrepareForLoadScene(loadMode, extraBindings, extraBindingsLate, containerMode);
 
-            Assert.That(Application.CanStreamedLevelBeLoaded(sceneIndex),
-                "Unable to load scene '{0}'", sceneIndex);
+            Assert.That(
+                Application.CanStreamedLevelBeLoaded(sceneIndex),
+                "Unable to load scene '{0}'",
+                sceneIndex
+            );
 
             SceneManager.LoadScene(sceneIndex, loadMode);
 
@@ -136,12 +153,16 @@ namespace Zenject
             LoadSceneMode loadMode = LoadSceneMode.Single,
             Action<DiContainer> extraBindings = null,
             LoadSceneRelationship containerMode = LoadSceneRelationship.None,
-            Action<DiContainer> extraBindingsLate = null)
+            Action<DiContainer> extraBindingsLate = null
+        )
         {
             PrepareForLoadScene(loadMode, extraBindings, extraBindingsLate, containerMode);
 
-            Assert.That(Application.CanStreamedLevelBeLoaded(sceneIndex),
-                "Unable to load scene '{0}'", sceneIndex);
+            Assert.That(
+                Application.CanStreamedLevelBeLoaded(sceneIndex),
+                "Unable to load scene '{0}'",
+                sceneIndex
+            );
 
             return SceneManager.LoadSceneAsync(sceneIndex, loadMode);
         }

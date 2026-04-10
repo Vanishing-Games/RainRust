@@ -15,7 +15,8 @@ namespace Zenject
         public SignalCallbackWrapper(
             SignalBindingBindInfo bindInfo,
             Action<object> action,
-            SignalBus signalBus)
+            SignalBus signalBus
+        )
         {
             _signalType = bindInfo.SignalType;
             _identifier = bindInfo.Identifier;

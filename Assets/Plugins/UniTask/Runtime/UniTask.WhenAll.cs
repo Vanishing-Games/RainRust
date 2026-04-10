@@ -87,18 +87,29 @@ namespace Cysharp.Threading.Tasks
                     }
                     else
                     {
-                        awaiter.SourceOnCompleted(state =>
-                        {
-                            using (var t = (StateTuple<WhenAllPromise<T>, UniTask<T>.Awaiter, int>)state)
+                        awaiter.SourceOnCompleted(
+                            state =>
                             {
-                                TryInvokeContinuation(t.Item1, t.Item2, t.Item3);
-                            }
-                        }, StateTuple.Create(this, awaiter, i));
+                                using (
+                                    var t =
+                                        (StateTuple<WhenAllPromise<T>, UniTask<T>.Awaiter, int>)
+                                            state
+                                )
+                                {
+                                    TryInvokeContinuation(t.Item1, t.Item2, t.Item3);
+                                }
+                            },
+                            StateTuple.Create(this, awaiter, i)
+                        );
                     }
                 }
             }
 
-            static void TryInvokeContinuation(WhenAllPromise<T> self, in UniTask<T>.Awaiter awaiter, int i)
+            static void TryInvokeContinuation(
+                WhenAllPromise<T> self,
+                in UniTask<T>.Awaiter awaiter,
+                int i
+            )
             {
                 try
                 {
@@ -182,13 +193,16 @@ namespace Cysharp.Threading.Tasks
                     }
                     else
                     {
-                        awaiter.SourceOnCompleted(state =>
-                        {
-                            using (var t = (StateTuple<WhenAllPromise, UniTask.Awaiter>)state)
+                        awaiter.SourceOnCompleted(
+                            state =>
                             {
-                                TryInvokeContinuation(t.Item1, t.Item2);
-                            }
-                        }, StateTuple.Create(this, awaiter));
+                                using (var t = (StateTuple<WhenAllPromise, UniTask.Awaiter>)state)
+                                {
+                                    TryInvokeContinuation(t.Item1, t.Item2);
+                                }
+                            },
+                            StateTuple.Create(this, awaiter)
+                        );
                     }
                 }
             }

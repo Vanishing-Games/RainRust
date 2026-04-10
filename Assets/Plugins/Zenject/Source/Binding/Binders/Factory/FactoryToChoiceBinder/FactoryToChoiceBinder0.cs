@@ -7,10 +7,11 @@ namespace Zenject
     public class FactoryToChoiceBinder<TContract> : FactoryFromBinder<TContract>
     {
         public FactoryToChoiceBinder(
-            DiContainer container, BindInfo bindInfo, FactoryBindInfo factoryBindInfo)
-            : base(container, bindInfo, factoryBindInfo)
-        {
-        }
+            DiContainer container,
+            BindInfo bindInfo,
+            FactoryBindInfo factoryBindInfo
+        )
+            : base(container, bindInfo, factoryBindInfo) { }
 
         // Note that this is the default, so not necessary to call
         public FactoryFromBinder<TContract> ToSelf()
@@ -26,7 +27,11 @@ namespace Zenject
             BindInfo.ToTypes.Add(concreteType);
 
             return new FactoryFromBinderUntyped(
-                BindContainer, concreteType, BindInfo, FactoryBindInfo);
+                BindContainer,
+                concreteType,
+                BindInfo,
+                FactoryBindInfo
+            );
         }
 
         public FactoryFromBinder<TConcrete> To<TConcrete>()

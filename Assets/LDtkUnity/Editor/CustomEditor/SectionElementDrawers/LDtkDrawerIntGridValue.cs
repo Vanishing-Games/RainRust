@@ -7,18 +7,23 @@ namespace LDtkUnity.Editor
     internal sealed class LDtkDrawerIntGridValue : LDtkAssetDrawer<IntGridValueDefinition, TileBase>
     {
         private readonly float _opacity;
-        
-        public LDtkDrawerIntGridValue(IntGridValueDefinition def, SerializedProperty obj, float opacity) : base(def, obj)
+
+        public LDtkDrawerIntGridValue(
+            IntGridValueDefinition def,
+            SerializedProperty obj,
+            float opacity
+        )
+            : base(def, obj)
         {
             _opacity = opacity;
         }
-        
+
         public override void Draw()
         {
             Color color = _data.UnityColor;
             color.a = _opacity;
             DrawField(color);
-            
+
             Rect controlRect = GUILayoutUtility.GetLastRect();
             DrawIconIndex(controlRect, _data);
         }
@@ -29,10 +34,7 @@ namespace LDtkUnity.Editor
 
             GUIStyle style = new GUIStyle(GUI.skin.label)
             {
-                normal = new GUIStyleState()
-                {
-                    textColor = color
-                }
+                normal = new GUIStyleState() { textColor = color },
             };
 
             string value = $"{data.Value}";

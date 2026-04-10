@@ -39,7 +39,8 @@ namespace Cysharp.Threading.Tasks.Internal
 
     internal static class StatePool<T1>
     {
-        static readonly ConcurrentQueue<StateTuple<T1>> queue = new ConcurrentQueue<StateTuple<T1>>();
+        static readonly ConcurrentQueue<StateTuple<T1>> queue =
+            new ConcurrentQueue<StateTuple<T1>>();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static StateTuple<T1> Create(T1 item1)
@@ -80,7 +81,8 @@ namespace Cysharp.Threading.Tasks.Internal
 
     internal static class StatePool<T1, T2>
     {
-        static readonly ConcurrentQueue<StateTuple<T1, T2>> queue = new ConcurrentQueue<StateTuple<T1, T2>>();
+        static readonly ConcurrentQueue<StateTuple<T1, T2>> queue =
+            new ConcurrentQueue<StateTuple<T1, T2>>();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static StateTuple<T1, T2> Create(T1 item1, T2 item2)
@@ -125,7 +127,8 @@ namespace Cysharp.Threading.Tasks.Internal
 
     internal static class StatePool<T1, T2, T3>
     {
-        static readonly ConcurrentQueue<StateTuple<T1, T2, T3>> queue = new ConcurrentQueue<StateTuple<T1, T2, T3>>();
+        static readonly ConcurrentQueue<StateTuple<T1, T2, T3>> queue =
+            new ConcurrentQueue<StateTuple<T1, T2, T3>>();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static StateTuple<T1, T2, T3> Create(T1 item1, T2 item2, T3 item3)
@@ -138,7 +141,12 @@ namespace Cysharp.Threading.Tasks.Internal
                 return value;
             }
 
-            return new StateTuple<T1, T2, T3> { Item1 = item1, Item2 = item2, Item3 = item3 };
+            return new StateTuple<T1, T2, T3>
+            {
+                Item1 = item1,
+                Item2 = item2,
+                Item3 = item3,
+            };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

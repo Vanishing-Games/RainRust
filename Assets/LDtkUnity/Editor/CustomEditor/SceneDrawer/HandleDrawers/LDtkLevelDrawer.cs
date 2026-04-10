@@ -31,7 +31,7 @@ namespace LDtkUnity.Editor
                 Vector3 pos = _position + halfSize;
                 HandleAAUtil.DrawAABox(pos, _size, LDtkPrefs.LevelBorderThickness, 0);
             }
-            
+
             if (LDtkPrefs.ShowLevelIdentifier)
             {
                 HandleUtil.DrawText(_identifier, _position, _bgColor);

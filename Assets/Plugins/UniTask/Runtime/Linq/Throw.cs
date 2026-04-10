@@ -1,6 +1,6 @@
-﻿using Cysharp.Threading.Tasks.Internal;
-using System;
+﻿using System;
 using System.Threading;
+using Cysharp.Threading.Tasks.Internal;
 
 namespace Cysharp.Threading.Tasks.Linq
 {
@@ -21,7 +21,9 @@ namespace Cysharp.Threading.Tasks.Linq
             this.exception = exception;
         }
 
-        public IUniTaskAsyncEnumerator<TValue> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+        public IUniTaskAsyncEnumerator<TValue> GetAsyncEnumerator(
+            CancellationToken cancellationToken = default
+        )
         {
             return new _Throw(exception, cancellationToken);
         }

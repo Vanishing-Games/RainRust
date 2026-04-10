@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using UnityEngine;
-using UnityEditor;
 using System.Collections;
+using UnityEditor;
+using UnityEngine;
 using static FMODUnityResonance.FmodResonanceAudioRoom;
 
 namespace FMODUnityResonance
@@ -46,7 +46,8 @@ namespace FMODUnityResonance
         private GUIContent reverbTimeLabel;
         private GUIContent sizeLabel;
 
-        private static readonly string[] SurfaceMaterialDisplay = new string[] {
+        private static readonly string[] SurfaceMaterialDisplay = new string[]
+        {
             L10n.Tr("Transparent"),
             L10n.Tr("Acoustic Ceiling Tiles"),
             L10n.Tr("Brick Bare"),
@@ -72,7 +73,8 @@ namespace FMODUnityResonance
             L10n.Tr("Wood Panel"),
         };
 
-        private static readonly int[] SurfaceMaterialValues = new int[] {
+        private static readonly int[] SurfaceMaterialValues = new int[]
+        {
             (int)SurfaceMaterial.Transparent,
             (int)SurfaceMaterial.AcousticCeilingTiles,
             (int)SurfaceMaterial.BrickBare,
@@ -100,20 +102,38 @@ namespace FMODUnityResonance
 
         private void OnEnable()
         {
-            surfaceMaterialsLabel = new GUIContent(L10n.Tr("Surface Materials"),
-            L10n.Tr("Room surface materials to calculate the acoustic properties of the room."));
-            surfaceMaterialLabel = new GUIContent(L10n.Tr("Surface Material"),
-            L10n.Tr("Surface material used to calculate the acoustic properties of the room."));
-            reflectivityLabel = new GUIContent(L10n.Tr("Reflectivity"),
-            L10n.Tr("Adjusts what proportion of the direct sound is reflected back by each surface, after an appropriate delay. Reverberation is unaffected by this setting."));
-            reverbGainLabel = new GUIContent(L10n.Tr("Gain (dB)"),
-            L10n.Tr("Applies a gain adjustment to the reverberation in the room. The default value will leave reverb unaffected."));
-            reverbPropertiesLabel = new GUIContent(L10n.Tr("Reverb Properties"),
-            L10n.Tr("Parameters to adjust the reverb properties of the room."));
-            reverbBrightnessLabel = new GUIContent(L10n.Tr("Brightness"),
-            L10n.Tr("Adjusts the balance between high and low frequencies in the reverb."));
-            reverbTimeLabel = new GUIContent(L10n.Tr("Time"),
-            L10n.Tr("Adjusts the overall duration of the reverb by a positive scaling factor."));
+            surfaceMaterialsLabel = new GUIContent(
+                L10n.Tr("Surface Materials"),
+                L10n.Tr("Room surface materials to calculate the acoustic properties of the room.")
+            );
+            surfaceMaterialLabel = new GUIContent(
+                L10n.Tr("Surface Material"),
+                L10n.Tr("Surface material used to calculate the acoustic properties of the room.")
+            );
+            reflectivityLabel = new GUIContent(
+                L10n.Tr("Reflectivity"),
+                L10n.Tr(
+                    "Adjusts what proportion of the direct sound is reflected back by each surface, after an appropriate delay. Reverberation is unaffected by this setting."
+                )
+            );
+            reverbGainLabel = new GUIContent(
+                L10n.Tr("Gain (dB)"),
+                L10n.Tr(
+                    "Applies a gain adjustment to the reverberation in the room. The default value will leave reverb unaffected."
+                )
+            );
+            reverbPropertiesLabel = new GUIContent(
+                L10n.Tr("Reverb Properties"),
+                L10n.Tr("Parameters to adjust the reverb properties of the room.")
+            );
+            reverbBrightnessLabel = new GUIContent(
+                L10n.Tr("Brightness"),
+                L10n.Tr("Adjusts the balance between high and low frequencies in the reverb.")
+            );
+            reverbTimeLabel = new GUIContent(
+                L10n.Tr("Time"),
+                L10n.Tr("Adjusts the overall duration of the reverb by a positive scaling factor.")
+            );
             sizeLabel = new GUIContent(L10n.Tr("Size"), L10n.Tr("Sets the room dimensions."));
             leftWall = serializedObject.FindProperty("LeftWall");
             rightWall = serializedObject.FindProperty("RightWall");
@@ -150,17 +170,35 @@ namespace FMODUnityResonance
 
             EditorGUILayout.Separator();
 
-            EditorGUILayout.Slider(reflectivity, 0.0f, FmodResonanceAudio.MaxReflectivity, reflectivityLabel);
+            EditorGUILayout.Slider(
+                reflectivity,
+                0.0f,
+                FmodResonanceAudio.MaxReflectivity,
+                reflectivityLabel
+            );
 
             EditorGUILayout.Separator();
 
             EditorGUILayout.LabelField(reverbPropertiesLabel);
             ++EditorGUI.indentLevel;
-            EditorGUILayout.Slider(reverbGainDb, FmodResonanceAudio.MinGainDb, FmodResonanceAudio.MaxGainDb,
-                                   reverbGainLabel);
-            EditorGUILayout.Slider(reverbBrightness, FmodResonanceAudio.MinReverbBrightness,
-                                   FmodResonanceAudio.MaxReverbBrightness, reverbBrightnessLabel);
-            EditorGUILayout.Slider(reverbTime, 0.0f, FmodResonanceAudio.MaxReverbTime, reverbTimeLabel);
+            EditorGUILayout.Slider(
+                reverbGainDb,
+                FmodResonanceAudio.MinGainDb,
+                FmodResonanceAudio.MaxGainDb,
+                reverbGainLabel
+            );
+            EditorGUILayout.Slider(
+                reverbBrightness,
+                FmodResonanceAudio.MinReverbBrightness,
+                FmodResonanceAudio.MaxReverbBrightness,
+                reverbBrightnessLabel
+            );
+            EditorGUILayout.Slider(
+                reverbTime,
+                0.0f,
+                FmodResonanceAudio.MaxReverbTime,
+                reverbTimeLabel
+            );
             --EditorGUI.indentLevel;
 
             EditorGUILayout.Separator();
@@ -169,8 +207,8 @@ namespace FMODUnityResonance
 
             serializedObject.ApplyModifiedProperties();
         }
-        /// @endcond
 
+        /// @endcond
         private void DrawSurfaceMaterial(SerializedProperty surfaceMaterial, string displayName)
         {
             EditorGUILayout.BeginHorizontal();
@@ -178,7 +216,10 @@ namespace FMODUnityResonance
             GUIContent labelContent = new GUIContent(displayName, surfaceMaterialLabel.tooltip);
             EditorGUILayout.LabelField(labelContent, GUILayout.Width(150));
             surfaceMaterial.intValue = EditorGUILayout.IntPopup(
-                        surfaceMaterial.intValue, SurfaceMaterialDisplay, SurfaceMaterialValues);
+                surfaceMaterial.intValue,
+                SurfaceMaterialDisplay,
+                SurfaceMaterialValues
+            );
 
             EditorGUILayout.EndHorizontal();
         }

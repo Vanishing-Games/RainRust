@@ -1,13 +1,15 @@
-﻿using Cysharp.Threading.Tasks.Internal;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Cysharp.Threading.Tasks.Internal;
 
 namespace Cysharp.Threading.Tasks.Linq
 {
     public static partial class UniTaskAsyncEnumerable
     {
-        public static IUniTaskAsyncEnumerable<TSource> Reverse<TSource>(this IUniTaskAsyncEnumerable<TSource> source)
+        public static IUniTaskAsyncEnumerable<TSource> Reverse<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
             return new Reverse<TSource>(source);
@@ -23,7 +25,9 @@ namespace Cysharp.Threading.Tasks.Linq
             this.source = source;
         }
 
-        public IUniTaskAsyncEnumerator<TSource> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+        public IUniTaskAsyncEnumerator<TSource> GetAsyncEnumerator(
+            CancellationToken cancellationToken = default
+        )
         {
             return new _Reverse(source, cancellationToken);
         }
@@ -36,7 +40,10 @@ namespace Cysharp.Threading.Tasks.Linq
             TSource[] array;
             int index;
 
-            public _Reverse(IUniTaskAsyncEnumerable<TSource> source, CancellationToken cancellationToken)
+            public _Reverse(
+                IUniTaskAsyncEnumerable<TSource> source,
+                CancellationToken cancellationToken
+            )
             {
                 this.source = source;
                 this.cancellationToken = cancellationToken;

@@ -9,10 +9,11 @@ namespace GameMain.RunTime
         private void Start()
         {
             CLogger.LogInfo(
-                "[GameEndInvoker] Start, Publishing GameEndInitEvent...",
+                "[GameEndInvoker] Start, Publishing GamePostEndEvent...",
                 LogTag.GameCoreStart
             );
-            MessageBroker.Global.Publish(new GameEndInitEvent());
+
+            MessageBroker.Global.Publish(new GameCoreInvokerEvents.GameCorePostEndEvent());
         }
     }
 }

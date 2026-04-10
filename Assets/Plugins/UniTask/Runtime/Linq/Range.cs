@@ -1,5 +1,5 @@
-﻿using Cysharp.Threading.Tasks.Internal;
-using System.Threading;
+﻿using System.Threading;
+using Cysharp.Threading.Tasks.Internal;
 
 namespace Cysharp.Threading.Tasks.Linq
 {
@@ -7,12 +7,15 @@ namespace Cysharp.Threading.Tasks.Linq
     {
         public static IUniTaskAsyncEnumerable<int> Range(int start, int count)
         {
-            if (count < 0) throw Error.ArgumentOutOfRange(nameof(count));
+            if (count < 0)
+                throw Error.ArgumentOutOfRange(nameof(count));
 
             var end = (long)start + count - 1L;
-            if (end > int.MaxValue) throw Error.ArgumentOutOfRange(nameof(count));
+            if (end > int.MaxValue)
+                throw Error.ArgumentOutOfRange(nameof(count));
 
-            if (count == 0) UniTaskAsyncEnumerable.Empty<int>();
+            if (count == 0)
+                UniTaskAsyncEnumerable.Empty<int>();
 
             return new Cysharp.Threading.Tasks.Linq.Range(start, count);
         }
@@ -29,7 +32,9 @@ namespace Cysharp.Threading.Tasks.Linq
             this.end = start + count;
         }
 
-        public IUniTaskAsyncEnumerator<int> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+        public IUniTaskAsyncEnumerator<int> GetAsyncEnumerator(
+            CancellationToken cancellationToken = default
+        )
         {
             return new _Range(start, end, cancellationToken);
         }

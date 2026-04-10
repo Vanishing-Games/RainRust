@@ -18,8 +18,10 @@ namespace FMODUnity
             EditorGUILayout.PropertyField(load, new GUIContent(L10n.Tr("Load")));
             EditorGUILayout.PropertyField(unload, new GUIContent(L10n.Tr("Unload")));
 
-            if ((load.enumValueIndex >= 3 && load.enumValueIndex <= 6) ||
-                (unload.enumValueIndex >= 3 && unload.enumValueIndex <= 6))
+            if (
+                (load.enumValueIndex >= 3 && load.enumValueIndex <= 6)
+                || (unload.enumValueIndex >= 3 && unload.enumValueIndex <= 6)
+            )
             {
                 tag.stringValue = EditorGUILayout.TagField("Collision Tag", tag.stringValue);
             }
@@ -70,24 +72,30 @@ namespace FMODUnity
             Event e = Event.current;
             if (e.type == EventType.DragPerform)
             {
-                if (DragAndDrop.objectReferences.Length > 0 &&
-                    DragAndDrop.objectReferences[0] != null &&
-                    DragAndDrop.objectReferences[0].GetType() == typeof(EditorBankRef))
+                if (
+                    DragAndDrop.objectReferences.Length > 0
+                    && DragAndDrop.objectReferences[0] != null
+                    && DragAndDrop.objectReferences[0].GetType() == typeof(EditorBankRef)
+                )
                 {
                     int pos = banks.arraySize;
                     banks.InsertArrayElementAtIndex(pos);
                     var pathProperty = banks.GetArrayElementAtIndex(pos);
 
-                    pathProperty.stringValue = ((EditorBankRef)DragAndDrop.objectReferences[0]).Name;
+                    pathProperty.stringValue = (
+                        (EditorBankRef)DragAndDrop.objectReferences[0]
+                    ).Name;
 
                     e.Use();
                 }
             }
             if (e.type == EventType.DragUpdated)
             {
-                if (DragAndDrop.objectReferences.Length > 0 &&
-                    DragAndDrop.objectReferences[0] != null &&
-                    DragAndDrop.objectReferences[0].GetType() == typeof(EditorBankRef))
+                if (
+                    DragAndDrop.objectReferences.Length > 0
+                    && DragAndDrop.objectReferences[0] != null
+                    && DragAndDrop.objectReferences[0].GetType() == typeof(EditorBankRef)
+                )
                 {
                     DragAndDrop.visualMode = DragAndDropVisualMode.Move;
                     DragAndDrop.AcceptDrag();

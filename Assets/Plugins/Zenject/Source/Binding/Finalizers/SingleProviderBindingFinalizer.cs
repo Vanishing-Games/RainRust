@@ -9,7 +9,9 @@ namespace Zenject
         readonly Func<DiContainer, Type, IProvider> _providerFactory;
 
         public SingleProviderBindingFinalizer(
-            BindInfo bindInfo, Func<DiContainer, Type, IProvider> providerFactory)
+            BindInfo bindInfo,
+            Func<DiContainer, Type, IProvider> providerFactory
+        )
             : base(bindInfo)
         {
             _providerFactory = providerFactory;
@@ -29,7 +31,10 @@ namespace Zenject
                 if (!BindInfo.ToTypes.IsEmpty())
                 {
                     RegisterProvidersForAllContractsPerConcreteType(
-                        container, BindInfo.ToTypes, _providerFactory);
+                        container,
+                        BindInfo.ToTypes,
+                        _providerFactory
+                    );
                 }
             }
         }

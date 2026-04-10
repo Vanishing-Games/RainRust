@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e819770822a816141b8e8be79a3c1461, type: 3}
+  m_Name: audioSheet_bgm
+  m_EditorClassIdentifier: Core::Core.AudioEventSheet
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes:
+    - Name: Entries
+      Entry: 7
+      Data: 0|System.Collections.Generic.List`1[[Core.AudioEntry, Core]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 1
+    - Name: 
+      Entry: 7
+      Data: 1|Core.StringManagedAudioEntry, Core
+    - Name: ListenEventType
+      Entry: 7
+      Data: 2|System.RuntimeType, mscorlib
+    - Name: 
+      Entry: 1
+      Data: GameMain.RunTime.LevelManagerEvents+LevelManagerPreEnterChapterEvent,
+        GameMain.RunTime
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: TriggerMode
+      Entry: 3
+      Data: 0
+    - Name: EventPathPrefix
+      Entry: 1
+      Data: event:/Test/BGM/
+    - Name: StopEventType
+      Entry: 7
+      Data: 3|System.RuntimeType, mscorlib
+    - Name: 
+      Entry: 1
+      Data: GameMain.RunTime.LevelManagerEvents+LevelManagerPostExitChapterEvent,
+        GameMain.RunTime
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 

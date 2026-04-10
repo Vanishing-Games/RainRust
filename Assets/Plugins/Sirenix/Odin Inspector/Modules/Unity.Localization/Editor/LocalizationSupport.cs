@@ -8,10 +8,10 @@
 
 namespace Sirenix.OdinInspector.Modules.Localization.Editor
 {
-    using UnityEngine.Localization;
-    using Sirenix.OdinInspector.Editor;
     using System;
+    using Sirenix.OdinInspector.Editor;
     using Sirenix.Utilities.Editor;
+    using UnityEngine.Localization;
 
     public class LocalizedReferenceResolver : OdinPropertyResolver<LocalizedReference>
     {

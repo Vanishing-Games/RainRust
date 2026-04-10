@@ -8,6 +8,7 @@ namespace LDtkUnity
         /// <summary>
         /// User defined color
         /// </summary>
-        [IgnoreDataMember] public Color UnityColor => Color.ToColor();
+        [IgnoreDataMember]
+        public Color UnityColor => Color.ToColor();
     }
 }

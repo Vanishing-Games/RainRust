@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.03.00">
+	<object class="AudioFile" id="{4b86daec-1e8d-485c-bd93-a30922a20501}">
+		<property name="assetPath">
+			<value>Test/BGM/Vol 1 - 04 - Blood Cultures - Into Pure Momentum.mp3</value>
+		</property>
+		<property name="isStreaming">
+			<value>true</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>44.0999985</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>175.25551020408165</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{135c980b-e629-4c54-a575-e11274f7016e}</destination>
+		</relationship>
+	</object>
+</objects>

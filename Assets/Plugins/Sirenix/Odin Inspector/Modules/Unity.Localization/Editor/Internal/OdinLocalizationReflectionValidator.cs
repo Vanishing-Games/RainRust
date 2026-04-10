@@ -11,6 +11,7 @@ using Sirenix.OdinInspector.Editor.Validation;
 using Sirenix.OdinInspector.Modules.Localization.Editor.Internal;
 
 [assembly: RegisterValidator(typeof(OdinLocalizationReflectionValidator))]
+
 namespace Sirenix.OdinInspector.Modules.Localization.Editor.Internal
 {
     public class OdinLocalizationReflectionValidator : GlobalValidator
@@ -18,8 +19,10 @@ namespace Sirenix.OdinInspector.Modules.Localization.Editor.Internal
         public override IEnumerable RunValidation(ValidationResult result)
         {
             OdinLocalizationReflectionValues.EnsureInit();
-            
-            FieldInfo[] fields = typeof(OdinLocalizationReflectionValues).GetFields(BindingFlags.Static | BindingFlags.Public);
+
+            FieldInfo[] fields = typeof(OdinLocalizationReflectionValues).GetFields(
+                BindingFlags.Static | BindingFlags.Public
+            );
 
             for (var i = 0; i < fields.Length; i++)
             {

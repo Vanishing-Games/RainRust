@@ -8,8 +8,10 @@ namespace Zenject
     public class ConcreteBinderNonGeneric : FromBinderNonGeneric
     {
         public ConcreteBinderNonGeneric(
-            DiContainer bindContainer, BindInfo bindInfo,
-            BindStatement bindStatement)
+            DiContainer bindContainer,
+            BindInfo bindInfo,
+            BindStatement bindStatement
+        )
             : base(bindContainer, bindInfo, bindStatement)
         {
             ToSelf();
@@ -22,9 +24,17 @@ namespace Zenject
 
             BindInfo.RequireExplicitScope = true;
             SubFinalizer = new ScopableBindingFinalizer(
-                BindInfo, (container, type) => new TransientProvider(
-                    type, container, BindInfo.Arguments, BindInfo.ContextInfo, BindInfo.ConcreteIdentifier,
-                    BindInfo.InstantiatedCallback));
+                BindInfo,
+                (container, type) =>
+                    new TransientProvider(
+                        type,
+                        container,
+                        BindInfo.Arguments,
+                        BindInfo.ContextInfo,
+                        BindInfo.ConcreteIdentifier,
+                        BindInfo.InstantiatedCallback
+                    )
+            );
 
             return this;
         }
@@ -52,15 +62,18 @@ namespace Zenject
             }
             else
             {
-                BindingUtil.AssertIsDerivedFromTypes(concreteTypes, BindInfo.ContractTypes, BindInfo.InvalidBindResponse);
+                BindingUtil.AssertIsDerivedFromTypes(
+                    concreteTypes,
+                    BindInfo.ContractTypes,
+                    BindInfo.InvalidBindResponse
+                );
             }
 
             return this;
         }
 
 #if !(UNITY_WSA && ENABLE_DOTNET)
-        public FromBinderNonGeneric To(
-            Action<ConventionSelectTypesBinder> generator)
+        public FromBinderNonGeneric To(Action<ConventionSelectTypesBinder> generator)
         {
             var bindInfo = new ConventionBindInfo();
 

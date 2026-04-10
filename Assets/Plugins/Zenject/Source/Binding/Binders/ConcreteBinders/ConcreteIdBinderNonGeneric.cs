@@ -4,11 +4,11 @@ namespace Zenject
     public class ConcreteIdBinderNonGeneric : ConcreteBinderNonGeneric
     {
         public ConcreteIdBinderNonGeneric(
-            DiContainer bindContainer, BindInfo bindInfo,
-            BindStatement bindStatement)
-            : base(bindContainer, bindInfo, bindStatement)
-        {
-        }
+            DiContainer bindContainer,
+            BindInfo bindInfo,
+            BindStatement bindStatement
+        )
+            : base(bindContainer, bindInfo, bindStatement) { }
 
         public ConcreteBinderNonGeneric WithId(object identifier)
         {
@@ -17,4 +17,3 @@ namespace Zenject
         }
     }
 }
-

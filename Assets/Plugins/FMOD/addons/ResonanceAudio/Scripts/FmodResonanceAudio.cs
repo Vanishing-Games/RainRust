@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using FMODUnity;
+using UnityEngine;
 
 namespace FMODUnityResonance
 {
@@ -60,7 +60,8 @@ namespace FMODUnityResonance
         private static Bounds bounds = new Bounds(Vector3.zero, Vector3.zero);
 
         // Container to store the currently active rooms in the scene.
-        private static List<FmodResonanceAudioRoom> enabledRooms = new List<FmodResonanceAudioRoom>();
+        private static List<FmodResonanceAudioRoom> enabledRooms =
+            new List<FmodResonanceAudioRoom>();
 
         // Current listener position.
         private static FMOD.VECTOR listenerPositionFmod = new FMOD.VECTOR();
@@ -92,8 +93,10 @@ namespace FMODUnityResonance
                 // Pass the room properties into a pointer.
                 IntPtr roomPropertiesPtr = Marshal.AllocHGlobal(roomPropertiesSize);
                 Marshal.StructureToPtr(roomProperties, roomPropertiesPtr, false);
-                ListenerPlugin.setParameterData(roomPropertiesIndex, GetBytes(roomPropertiesPtr,
-                                                                               roomPropertiesSize));
+                ListenerPlugin.setParameterData(
+                    roomPropertiesIndex,
+                    GetBytes(roomPropertiesPtr, roomPropertiesSize)
+                );
                 Marshal.FreeHGlobal(roomPropertiesPtr);
             }
             else
@@ -108,10 +111,18 @@ namespace FMODUnityResonance
         {
             // Compute the room position relative to the listener.
             FMOD.VECTOR unused;
-            RuntimeManager.CoreSystem.get3DListenerAttributes(0, out listenerPositionFmod, out unused,
-                                                                  out unused, out unused);
-            Vector3 listenerPosition = new Vector3(listenerPositionFmod.x, listenerPositionFmod.y,
-                                                   listenerPositionFmod.z);
+            RuntimeManager.CoreSystem.get3DListenerAttributes(
+                0,
+                out listenerPositionFmod,
+                out unused,
+                out unused,
+                out unused
+            );
+            Vector3 listenerPosition = new Vector3(
+                listenerPositionFmod.x,
+                listenerPositionFmod.y,
+                listenerPositionFmod.z
+            );
             Vector3 relativePosition = listenerPosition - room.transform.position;
             Quaternion rotationInverse = Quaternion.Inverse(room.transform.rotation);
             // Set the size of the room as the boundary and return whether the listener is inside.
@@ -182,8 +193,10 @@ namespace FMODUnityResonance
         }
 
         // Converts given |position| and |rotation| from Unity space to audio space.
-        private static void ConvertAudioTransformFromUnity(ref Vector3 position,
-          ref Quaternion rotation)
+        private static void ConvertAudioTransformFromUnity(
+            ref Vector3 position,
+            ref Quaternion rotation
+        )
         {
             // Compose the transformation matrix.
             Matrix4x4 transformMatrix = Matrix4x4.TRS(position, rotation, Vector3.one);
@@ -191,7 +204,10 @@ namespace FMODUnityResonance
             transformMatrix = flipZ * transformMatrix * flipZ;
             // Update |position| and |rotation| respectively.
             position = transformMatrix.GetColumn(3);
-            rotation = Quaternion.LookRotation(transformMatrix.GetColumn(2), transformMatrix.GetColumn(1));
+            rotation = Quaternion.LookRotation(
+                transformMatrix.GetColumn(2),
+                transformMatrix.GetColumn(1)
+            );
         }
 
         // Returns a byte array of |length| created from |ptr|.
@@ -273,7 +289,13 @@ namespace FMODUnityResonance
                             string dspNameSb;
                             int unusedInt = 0;
                             uint unusedUint = 0;
-                            dsp.getInfo(out dspNameSb, out unusedUint, out unusedInt, out unusedInt, out unusedInt);
+                            dsp.getInfo(
+                                out dspNameSb,
+                                out unusedUint,
+                                out unusedInt,
+                                out unusedInt,
+                                out unusedInt
+                            );
                             if (dspNameSb.ToString().Equals(listenerPluginName) && dsp.hasHandle())
                             {
                                 return dsp;

@@ -5,8 +5,9 @@ namespace LDtkUnity.Editor
     internal sealed class LDtkTreeViewLevel : LDtkTreeView
     {
         private readonly Level _json;
-        
-        public LDtkTreeViewLevel(TreeViewState state, Level json) : base(state)
+
+        public LDtkTreeViewLevel(TreeViewState state, Level json)
+            : base(state)
         {
             _json = json;
         }

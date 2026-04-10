@@ -1,5 +1,4 @@
-﻿
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+﻿#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
 using System;
 using System.Diagnostics;
@@ -74,7 +73,10 @@ namespace Cysharp.Threading.Tasks.CompilerServices
         // 5. AwaitOnCompleted
         [DebuggerHidden]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void AwaitOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine)
+        public void AwaitOnCompleted<TAwaiter, TStateMachine>(
+            ref TAwaiter awaiter,
+            ref TStateMachine stateMachine
+        )
             where TAwaiter : INotifyCompletion
             where TStateMachine : IAsyncStateMachine
         {
@@ -90,7 +92,10 @@ namespace Cysharp.Threading.Tasks.CompilerServices
         [DebuggerHidden]
         [SecuritySafeCritical]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void AwaitUnsafeOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine)
+        public void AwaitUnsafeOnCompleted<TAwaiter, TStateMachine>(
+            ref TAwaiter awaiter,
+            ref TStateMachine stateMachine
+        )
             where TAwaiter : ICriticalNotifyCompletion
             where TStateMachine : IAsyncStateMachine
         {
@@ -205,7 +210,10 @@ namespace Cysharp.Threading.Tasks.CompilerServices
         // 5. AwaitOnCompleted
         [DebuggerHidden]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void AwaitOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine)
+        public void AwaitOnCompleted<TAwaiter, TStateMachine>(
+            ref TAwaiter awaiter,
+            ref TStateMachine stateMachine
+        )
             where TAwaiter : INotifyCompletion
             where TStateMachine : IAsyncStateMachine
         {
@@ -221,7 +229,10 @@ namespace Cysharp.Threading.Tasks.CompilerServices
         [DebuggerHidden]
         [SecuritySafeCritical]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void AwaitUnsafeOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine)
+        public void AwaitUnsafeOnCompleted<TAwaiter, TStateMachine>(
+            ref TAwaiter awaiter,
+            ref TStateMachine stateMachine
+        )
             where TAwaiter : ICriticalNotifyCompletion
             where TStateMachine : IAsyncStateMachine
         {
@@ -264,6 +275,5 @@ namespace Cysharp.Threading.Tasks.CompilerServices
             }
         }
 #endif
-
     }
 }

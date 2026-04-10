@@ -9,7 +9,9 @@ namespace Zenject
         readonly FactoryBindInfo _factoryBindInfo;
 
         public PlaceholderFactoryBindingFinalizer(
-            BindInfo bindInfo, FactoryBindInfo factoryBindInfo)
+            BindInfo bindInfo,
+            FactoryBindInfo factoryBindInfo
+        )
             : base(bindInfo)
         {
             // Note that it doesn't derive from PlaceholderFactory<TContract>
@@ -26,11 +28,18 @@ namespace Zenject
             var transientProvider = new TransientProvider(
                 _factoryBindInfo.FactoryType,
                 container,
-                _factoryBindInfo.Arguments.Concat(
-                    InjectUtil.CreateArgListExplicit(
-                        provider,
-                        new InjectContext(container, typeof(TContract)))).ToList(),
-                BindInfo.ContextInfo, BindInfo.ConcreteIdentifier, null);
+                _factoryBindInfo
+                    .Arguments.Concat(
+                        InjectUtil.CreateArgListExplicit(
+                            provider,
+                            new InjectContext(container, typeof(TContract))
+                        )
+                    )
+                    .ToList(),
+                BindInfo.ContextInfo,
+                BindInfo.ConcreteIdentifier,
+                null
+            );
 
             IProvider mainProvider;
 

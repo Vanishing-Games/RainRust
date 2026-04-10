@@ -1,12 +1,15 @@
-﻿using Cysharp.Threading.Tasks.Internal;
-using System;
+﻿using System;
 using System.Threading;
+using Cysharp.Threading.Tasks.Internal;
 
 namespace Cysharp.Threading.Tasks.Linq
 {
     public static partial class UniTaskAsyncEnumerable
     {
-        public static IUniTaskAsyncEnumerable<TSource> Skip<TSource>(this IUniTaskAsyncEnumerable<TSource> source, Int32 count)
+        public static IUniTaskAsyncEnumerable<TSource> Skip<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            Int32 count
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
 
@@ -25,7 +28,9 @@ namespace Cysharp.Threading.Tasks.Linq
             this.count = count;
         }
 
-        public IUniTaskAsyncEnumerator<TSource> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+        public IUniTaskAsyncEnumerator<TSource> GetAsyncEnumerator(
+            CancellationToken cancellationToken = default
+        )
         {
             return new _Skip(source, count, cancellationToken);
         }
@@ -36,7 +41,11 @@ namespace Cysharp.Threading.Tasks.Linq
 
             int index;
 
-            public _Skip(IUniTaskAsyncEnumerable<TSource> source, int count, CancellationToken cancellationToken)
+            public _Skip(
+                IUniTaskAsyncEnumerable<TSource> source,
+                int count,
+                CancellationToken cancellationToken
+            )
                 : base(source, cancellationToken)
             {
                 this.count = count;

@@ -93,7 +93,9 @@ namespace ModestTree.Util
                 return false;
             }
 
-            return object.Equals(First, that.First) && object.Equals(Second, that.Second) && object.Equals(Third, that.Third);
+            return object.Equals(First, that.First)
+                && object.Equals(Second, that.Second)
+                && object.Equals(Third, that.Third);
         }
 
         public override int GetHashCode()
@@ -151,8 +153,10 @@ namespace ModestTree.Util
                 return false;
             }
 
-            return object.Equals(First, that.First) && object.Equals(Second, that.Second)
-                && object.Equals(Third, that.Third) && object.Equals(Fourth, that.Fourth);
+            return object.Equals(First, that.First)
+                && object.Equals(Second, that.Second)
+                && object.Equals(Third, that.Third)
+                && object.Equals(Fourth, that.Fourth);
         }
 
         public override int GetHashCode()
@@ -181,10 +185,14 @@ namespace ModestTree.Util
             return new ValuePair<T1, T2, T3>(first, second, third);
         }
 
-        public static ValuePair<T1, T2, T3, T4> New<T1, T2, T3, T4>(T1 first, T2 second, T3 third, T4 fourth)
+        public static ValuePair<T1, T2, T3, T4> New<T1, T2, T3, T4>(
+            T1 first,
+            T2 second,
+            T3 third,
+            T4 fourth
+        )
         {
             return new ValuePair<T1, T2, T3, T4>(first, second, third, fourth);
         }
     }
 }
-

@@ -20,7 +20,8 @@ namespace Zenject.SpaceFighter
             EnemyTunables tunables,
             EnemyDeathHandler deathHandler,
             EnemyStateManager stateManager,
-            EnemyRegistry registry)
+            EnemyRegistry registry
+        )
         {
             _view = view;
             _tunables = tunables;
@@ -75,8 +76,6 @@ namespace Zenject.SpaceFighter
             _registry.AddEnemy(this);
         }
 
-        public class Factory : PlaceholderFactory<float, float, EnemyFacade>
-        {
-        }
+        public class Factory : PlaceholderFactory<float, float, EnemyFacade> { }
     }
 }

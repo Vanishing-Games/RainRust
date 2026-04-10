@@ -10,17 +10,31 @@ namespace Cysharp.Threading.Tasks
     public static partial class TextMeshProAsyncExtensions
     {
         // <string> -> Text
-        public static void BindTo(this IUniTaskAsyncEnumerable<string> source, TMP_Text text, bool rebindOnError = true)
+        public static void BindTo(
+            this IUniTaskAsyncEnumerable<string> source,
+            TMP_Text text,
+            bool rebindOnError = true
+        )
         {
             BindToCore(source, text, text.GetCancellationTokenOnDestroy(), rebindOnError).Forget();
         }
 
-        public static void BindTo(this IUniTaskAsyncEnumerable<string> source, TMP_Text text, CancellationToken cancellationToken, bool rebindOnError = true)
+        public static void BindTo(
+            this IUniTaskAsyncEnumerable<string> source,
+            TMP_Text text,
+            CancellationToken cancellationToken,
+            bool rebindOnError = true
+        )
         {
             BindToCore(source, text, cancellationToken, rebindOnError).Forget();
         }
 
-        static async UniTaskVoid BindToCore(IUniTaskAsyncEnumerable<string> source, TMP_Text text, CancellationToken cancellationToken, bool rebindOnError)
+        static async UniTaskVoid BindToCore(
+            IUniTaskAsyncEnumerable<string> source,
+            TMP_Text text,
+            CancellationToken cancellationToken,
+            bool rebindOnError
+        )
         {
             var repeat = false;
             BIND_AGAIN:
@@ -37,7 +51,8 @@ namespace Cysharp.Threading.Tasks
                     }
                     catch (Exception ex)
                     {
-                        if (ex is OperationCanceledException) return;
+                        if (ex is OperationCanceledException)
+                            return;
 
                         if (rebindOnError && !repeat)
                         {
@@ -50,7 +65,8 @@ namespace Cysharp.Threading.Tasks
                         }
                     }
 
-                    if (!moveNext) return;
+                    if (!moveNext)
+                        return;
 
                     text.text = e.Current;
                 }
@@ -66,22 +82,40 @@ namespace Cysharp.Threading.Tasks
 
         // <T> -> Text
 
-        public static void BindTo<T>(this IUniTaskAsyncEnumerable<T> source, TMP_Text text, bool rebindOnError = true)
+        public static void BindTo<T>(
+            this IUniTaskAsyncEnumerable<T> source,
+            TMP_Text text,
+            bool rebindOnError = true
+        )
         {
             BindToCore(source, text, text.GetCancellationTokenOnDestroy(), rebindOnError).Forget();
         }
 
-        public static void BindTo<T>(this IUniTaskAsyncEnumerable<T> source, TMP_Text text, CancellationToken cancellationToken, bool rebindOnError = true)
+        public static void BindTo<T>(
+            this IUniTaskAsyncEnumerable<T> source,
+            TMP_Text text,
+            CancellationToken cancellationToken,
+            bool rebindOnError = true
+        )
         {
             BindToCore(source, text, cancellationToken, rebindOnError).Forget();
         }
 
-        public static void BindTo<T>(this AsyncReactiveProperty<T> source, TMP_Text text, bool rebindOnError = true)
+        public static void BindTo<T>(
+            this AsyncReactiveProperty<T> source,
+            TMP_Text text,
+            bool rebindOnError = true
+        )
         {
             BindToCore(source, text, text.GetCancellationTokenOnDestroy(), rebindOnError).Forget();
         }
 
-        static async UniTaskVoid BindToCore<T>(IUniTaskAsyncEnumerable<T> source, TMP_Text text, CancellationToken cancellationToken, bool rebindOnError)
+        static async UniTaskVoid BindToCore<T>(
+            IUniTaskAsyncEnumerable<T> source,
+            TMP_Text text,
+            CancellationToken cancellationToken,
+            bool rebindOnError
+        )
         {
             var repeat = false;
             BIND_AGAIN:
@@ -98,7 +132,8 @@ namespace Cysharp.Threading.Tasks
                     }
                     catch (Exception ex)
                     {
-                        if (ex is OperationCanceledException) return;
+                        if (ex is OperationCanceledException)
+                            return;
 
                         if (rebindOnError && !repeat)
                         {
@@ -111,7 +146,8 @@ namespace Cysharp.Threading.Tasks
                         }
                     }
 
-                    if (!moveNext) return;
+                    if (!moveNext)
+                        return;
 
                     text.text = e.Current.ToString();
                 }

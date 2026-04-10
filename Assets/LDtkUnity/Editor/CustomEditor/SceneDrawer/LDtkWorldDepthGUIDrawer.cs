@@ -1,5 +1,4 @@
 ﻿using UnityEditor;
-
 #if UNITY_2021_2_OR_NEWER
 using UnityEditor.Overlays;
 #else
@@ -13,7 +12,7 @@ namespace LDtkUnity.Editor
     internal sealed class LDtkWorldDepthGUIDrawer : IMGUIOverlay
     {
         private readonly LDtkWorldDepthGUI _worldDepthGUI = new LDtkWorldDepthGUI();
-        
+
         public override void OnGUI()
         {
             if (_worldDepthGUI.CanDraw())
@@ -28,10 +27,12 @@ namespace LDtkUnity.Editor
     internal sealed class LDtkWorldDepthGUIDrawer
     {
         private static readonly LDtkWorldDepthGUI WorldDepthGUI = new LDtkWorldDepthGUI();
+
         static LDtkWorldDepthGUIDrawer()
         {
             SceneView.duringSceneGui += CustomOnSceneGUI;
         }
+
         private static void CustomOnSceneGUI(SceneView view)
         {
             LDtkProfiler.BeginSample("WorldDepthGUI");

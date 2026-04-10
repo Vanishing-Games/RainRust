@@ -9,8 +9,10 @@ namespace Zenject
     public class ConcreteBinderGeneric<TContract> : FromBinderGeneric<TContract>
     {
         public ConcreteBinderGeneric(
-            DiContainer bindContainer, BindInfo bindInfo,
-            BindStatement bindStatement)
+            DiContainer bindContainer,
+            BindInfo bindInfo,
+            BindStatement bindStatement
+        )
             : base(bindContainer, bindInfo, bindStatement)
         {
             ToSelf();
@@ -23,10 +25,17 @@ namespace Zenject
 
             BindInfo.RequireExplicitScope = true;
             SubFinalizer = new ScopableBindingFinalizer(
-                BindInfo, (container, type) => new TransientProvider(
-                    type, container, BindInfo.Arguments,
-                    BindInfo.ContextInfo, BindInfo.ConcreteIdentifier,
-                    BindInfo.InstantiatedCallback));
+                BindInfo,
+                (container, type) =>
+                    new TransientProvider(
+                        type,
+                        container,
+                        BindInfo.Arguments,
+                        BindInfo.ContextInfo,
+                        BindInfo.ConcreteIdentifier,
+                        BindInfo.InstantiatedCallback
+                    )
+            );
 
             return this;
         }
@@ -38,8 +47,7 @@ namespace Zenject
             BindInfo.ToTypes.Clear();
             BindInfo.ToTypes.Add(typeof(TConcrete));
 
-            return new FromBinderGeneric<TConcrete>(
-                BindContainer, BindInfo, BindStatement);
+            return new FromBinderGeneric<TConcrete>(BindContainer, BindInfo, BindStatement);
         }
 
         public FromBinderNonGeneric To(params Type[] concreteTypes)
@@ -50,25 +58,29 @@ namespace Zenject
         public FromBinderNonGeneric To(IEnumerable<Type> concreteTypes)
         {
             BindingUtil.AssertIsDerivedFromTypes(
-                concreteTypes, BindInfo.ContractTypes, BindInfo.InvalidBindResponse);
+                concreteTypes,
+                BindInfo.ContractTypes,
+                BindInfo.InvalidBindResponse
+            );
 
             BindInfo.ToChoice = ToChoices.Concrete;
             BindInfo.ToTypes.Clear();
             BindInfo.ToTypes.AddRange(concreteTypes);
 
-            return new FromBinderNonGeneric(
-                BindContainer, BindInfo, BindStatement);
+            return new FromBinderNonGeneric(BindContainer, BindInfo, BindStatement);
         }
 
 #if !(UNITY_WSA && ENABLE_DOTNET)
-        public FromBinderNonGeneric To(
-            Action<ConventionSelectTypesBinder> generator)
+        public FromBinderNonGeneric To(Action<ConventionSelectTypesBinder> generator)
         {
             var bindInfo = new ConventionBindInfo();
 
             // Automatically filter by the given contract types
-            bindInfo.AddTypeFilter(
-                concreteType => BindInfo.ContractTypes.All(contractType => concreteType.DerivesFromOrEqual(contractType)));
+            bindInfo.AddTypeFilter(concreteType =>
+                BindInfo.ContractTypes.All(contractType =>
+                    concreteType.DerivesFromOrEqual(contractType)
+                )
+            );
 
             generator(new ConventionSelectTypesBinder(bindInfo));
             return To(bindInfo.ResolveTypes());

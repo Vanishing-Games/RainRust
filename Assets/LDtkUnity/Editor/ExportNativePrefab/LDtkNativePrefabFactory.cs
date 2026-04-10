@@ -10,18 +10,20 @@ namespace LDtkUnity.Editor
     internal sealed class LDtkNativePrefabFactory
     {
         private readonly LDtkNativePrefabAssets _assets;
-        
+
         private readonly List<Tilemap> _tilemaps = new List<Tilemap>();
         private readonly List<SpriteRenderer> _renderers = new List<SpriteRenderer>();
 
-        private readonly Dictionary<TileBase, TileBase> _oldToNewTiles = new Dictionary<TileBase, TileBase>();
-        private readonly Dictionary<Sprite, Sprite> _oldToNewBackgrounds = new Dictionary<Sprite, Sprite>();
+        private readonly Dictionary<TileBase, TileBase> _oldToNewTiles =
+            new Dictionary<TileBase, TileBase>();
+        private readonly Dictionary<Sprite, Sprite> _oldToNewBackgrounds =
+            new Dictionary<Sprite, Sprite>();
 
         public LDtkNativePrefabFactory(LDtkNativePrefabAssets assets)
         {
             _assets = assets;
         }
-        
+
         public GameObject CreateNativePrefabInstance(GameObject importRoot)
         {
             if (importRoot == null)
@@ -37,17 +39,21 @@ namespace LDtkUnity.Editor
                 return null;
             }
 
-            PrefabUtility.UnpackPrefabInstance(newRoot, PrefabUnpackMode.OutermostRoot, InteractionMode.UserAction);
+            PrefabUtility.UnpackPrefabInstance(
+                newRoot,
+                PrefabUnpackMode.OutermostRoot,
+                InteractionMode.UserAction
+            );
             TryRemove<LDtkComponentProject>(newRoot);
 
             foreach (Transform world in newRoot.transform)
             {
                 StripWorld(world.gameObject);
             }
-            
+
             PopulateOldToNewTiles();
             PopulateOldToNewBackgrounds();
-            
+
             SwapOldToNewTiles();
             SwapOldToNewBackgrounds();
 
@@ -63,7 +69,7 @@ namespace LDtkUnity.Editor
                 StripLevel(level.gameObject);
             }
         }
-        
+
         private void StripLevel(GameObject level)
         {
             TryRemove<LDtkFields>(level);
@@ -89,18 +95,19 @@ namespace LDtkUnity.Editor
                 StripLayerElements(layerElement.gameObject);
             }
         }
-        
+
         private void StripLayerElements(GameObject layerElement)
         {
             //for entity
             TryRemove<LDtkFields>(layerElement);
             TryRemove<LDtkEntityDrawerComponent>(layerElement);
             TryRemove<LDtkIid>(layerElement);
-            
+
             TryCollectComponent(layerElement, _tilemaps);
         }
 
-        private static void TryRemove<T>(GameObject obj) where T : Component
+        private static void TryRemove<T>(GameObject obj)
+            where T : Component
         {
             T[] components = obj.GetComponents<T>();
             if (components.IsNullOrEmpty())
@@ -115,7 +122,12 @@ namespace LDtkUnity.Editor
         }
 
         private delegate bool ComponentCheck<in T>(T input);
-        private void TryCollectComponent<T>(GameObject obj, List<T> list, ComponentCheck<T> onlyIf = null)
+
+        private void TryCollectComponent<T>(
+            GameObject obj,
+            List<T> list,
+            ComponentCheck<T> onlyIf = null
+        )
         {
             if (!obj.TryGetComponent(out T component))
             {
@@ -141,7 +153,9 @@ namespace LDtkUnity.Editor
                         continue;
                     }
 
-                    TileBase newTile = newTiles.FirstOrDefault(newPotentialTile => newPotentialTile.name == oldTile.name);
+                    TileBase newTile = newTiles.FirstOrDefault(newPotentialTile =>
+                        newPotentialTile.name == oldTile.name
+                    );
                     if (newTile == null)
                     {
                         LDtkDebug.LogError("Problem getting a new tile, they should always exist");
@@ -168,12 +182,16 @@ namespace LDtkUnity.Editor
                 {
                     continue;
                 }
-                
-                Sprite newBg = _assets.BackgroundArtifacts.FirstOrDefault(newPotentialBg => newPotentialBg.name == oldBg.name);
+
+                Sprite newBg = _assets.BackgroundArtifacts.FirstOrDefault(newPotentialBg =>
+                    newPotentialBg.name == oldBg.name
+                );
 
                 if (newBg == null)
                 {
-                    LDtkDebug.LogError("Problem getting a new background, they should always exist.");
+                    LDtkDebug.LogError(
+                        "Problem getting a new background, they should always exist."
+                    );
                     continue;
                 }
 

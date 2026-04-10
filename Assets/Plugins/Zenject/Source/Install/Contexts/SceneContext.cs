@@ -31,15 +31,21 @@ namespace Zenject
 
         [FormerlySerializedAs("ParentNewObjectsUnderRoot")]
         [FormerlySerializedAs("_parentNewObjectsUnderRoot")]
-        [Tooltip("When true, objects that are created at runtime will be parented to the SceneContext")]
+        [Tooltip(
+            "When true, objects that are created at runtime will be parented to the SceneContext"
+        )]
         [SerializeField]
         bool _parentNewObjectsUnderSceneContext;
 
-        [Tooltip("Optional contract names for this SceneContext, allowing contexts in subsequently loaded scenes to depend on it and be parented to it, and also for previously loaded decorators to be included")]
+        [Tooltip(
+            "Optional contract names for this SceneContext, allowing contexts in subsequently loaded scenes to depend on it and be parented to it, and also for previously loaded decorators to be included"
+        )]
         [SerializeField]
         List<string> _contractNames = new List<string>();
 
-        [Tooltip("Optional contract names of SceneContexts in previously loaded scenes that this context depends on and to which it should be parented")]
+        [Tooltip(
+            "Optional contract names of SceneContexts in previously loaded scenes that this context depends on and to which it should be parented"
+        )]
         [SerializeField]
         List<string> _parentContractNames = new List<string>();
 
@@ -67,10 +73,7 @@ namespace Zenject
 
         public bool IsValidating
         {
-            get
-            {
-                return ProjectContext.Instance.Container.IsValidating;
-            }
+            get { return ProjectContext.Instance.Container.IsValidating; }
         }
 
         public IEnumerable<string> ContractNames
@@ -91,10 +94,7 @@ namespace Zenject
                 result.AddRange(_parentContractNames);
                 return result;
             }
-            set
-            {
-                _parentContractNames = value.ToList();
-            }
+            set { _parentContractNames = value.ToList(); }
         }
 
         public bool ParentNewObjectsUnderSceneContext
@@ -167,14 +167,18 @@ namespace Zenject
                 return new[] { ProjectContext.Instance.Container };
             }
 
-            Assert.IsNull(ParentContainers,
-                "Scene cannot have both a parent scene context name set and also an explicit parent container given");
+            Assert.IsNull(
+                ParentContainers,
+                "Scene cannot have both a parent scene context name set and also an explicit parent container given"
+            );
 
-            var parentContainers = UnityUtil.AllLoadedScenes
-                .Except(gameObject.scene)
+            var parentContainers = UnityUtil
+                .AllLoadedScenes.Except(gameObject.scene)
                 .SelectMany(scene => scene.GetRootGameObjects())
                 .SelectMany(root => root.GetComponentsInChildren<SceneContext>())
-                .Where(sceneContext => sceneContext.ContractNames.Where(x => parentContractNames.Contains(x)).Any())
+                .Where(sceneContext =>
+                    sceneContext.ContractNames.Where(x => parentContractNames.Contains(x)).Any()
+                )
                 .Select(x => x.Container)
                 .ToList();
 
@@ -184,7 +188,8 @@ namespace Zenject
                     "SceneContext on object {0} of scene {1} requires at least one of contracts '{2}', but none of the loaded SceneContexts implements that contract.",
                     gameObject.name,
                     gameObject.scene.name,
-                    parentContractNames.Join(", "));
+                    parentContractNames.Join(", ")
+                );
             }
 
             return parentContainers;
@@ -197,11 +202,13 @@ namespace Zenject
                 return new List<SceneDecoratorContext>();
             }
 
-            return UnityUtil.AllLoadedScenes
-                .Except(gameObject.scene)
+            return UnityUtil
+                .AllLoadedScenes.Except(gameObject.scene)
                 .SelectMany(scene => scene.GetRootGameObjects())
                 .SelectMany(root => root.GetComponentsInChildren<SceneDecoratorContext>())
-                .Where(decoratorContext => _contractNames.Contains(decoratorContext.DecoratedContractName))
+                .Where(decoratorContext =>
+                    _contractNames.Contains(decoratorContext.DecoratedContractName)
+                )
                 .ToList();
         }
 
@@ -311,7 +318,10 @@ namespace Zenject
 
         void InstallBindings(List<MonoBehaviour> injectableMonoBehaviours)
         {
-            _container.Bind(typeof(Context), typeof(SceneContext)).To<SceneContext>().FromInstance(this);
+            _container
+                .Bind(typeof(Context), typeof(SceneContext))
+                .To<SceneContext>()
+                .FromInstance(this);
             _container.BindInterfacesTo<SceneContextRegistryAdderAndRemover>().AsSingle();
 
             // Add to registry first and remove from registry last
@@ -324,8 +334,12 @@ namespace Zenject
 
             InstallSceneBindings(injectableMonoBehaviours);
 
-            _container.Bind(typeof(SceneKernel), typeof(MonoKernel))
-                .To<SceneKernel>().FromNewComponentOn(gameObject).AsSingle().NonLazy();
+            _container
+                .Bind(typeof(SceneKernel), typeof(MonoKernel))
+                .To<SceneKernel>()
+                .FromNewComponentOn(gameObject)
+                .AsSingle()
+                .NonLazy();
 
             _container.Bind<ZenjectSceneLoader>().AsSingle();
 
@@ -372,8 +386,7 @@ namespace Zenject
         // and add what installers you want before kicking off the Install/Resolve
         public static SceneContext Create()
         {
-            return CreateComponent<SceneContext>(
-                new GameObject("SceneContext"));
+            return CreateComponent<SceneContext>(new GameObject("SceneContext"));
         }
     }
 }

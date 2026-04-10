@@ -1,9 +1,5 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
-using R3;
-using static Core.LoadRequestEvent;
 
 namespace Core
 {
@@ -28,7 +24,9 @@ namespace Core
             CLogger.LogVerbose($"SystemMonoModule: {GetType()} OnDestroy", LogTag.Loading);
         }
 
-        protected virtual void OnReceiveLoadRequest(LoadRequestEvent loadEventInfo)
+        protected virtual void OnReceiveLoadRequest(
+            CoreModuleLoaderEvents.LoadRequestEvent loadEventInfo
+        )
         {
             var info = loadEventInfo.GetLoadInfo(GetLoaderType());
 
@@ -71,7 +69,7 @@ namespace Core
             }
             else
             {
-                MessageBroker.Global.PublishErrorResume<LoadRequestEvent>(
+                MessageBroker.Global.PublishErrorResume<CoreModuleLoaderEvents.LoadRequestEvent>(
                     this,
                     new LoadFailedException($"LoadInfo is not a {typeof(TLoadInfo).Name}")
                 );
@@ -80,11 +78,12 @@ namespace Core
 
         public virtual void RegisterLoadEvent()
         {
-            m_LoadEventSubscription = MessageBroker.Global.Subscribe<LoadRequestEvent>(
-                OnReceiveLoadRequest,
-                OnLoadingError,
-                OnLoadingEnd
-            );
+            m_LoadEventSubscription =
+                MessageBroker.Global.Subscribe<CoreModuleLoaderEvents.LoadRequestEvent>(
+                    OnReceiveLoadRequest,
+                    OnLoadingError,
+                    OnLoadingEnd
+                );
 
             CLogger.LogVerbose($"SystemMonoModule: {GetType()} RegisterLoadEvent", LogTag.Loading);
         }

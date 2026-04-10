@@ -9,15 +9,19 @@ namespace LDtkUnity.Editor
     internal static class LDtkDependencyCache
     {
         private static string Key(string path) => $"{nameof(LDtkDependencyCache)}_{path}";
+
         internal sealed class DependencyRelocator : UnityEditor.AssetModificationProcessor
         {
-            private static AssetMoveResult OnWillMoveAsset(string sourcePath, string destinationPath)
+            private static AssetMoveResult OnWillMoveAsset(
+                string sourcePath,
+                string destinationPath
+            )
             {
                 if (!IsFileValid(sourcePath))
                 {
                     return AssetMoveResult.DidNotMove;
                 }
-                
+
                 string srcKey = Key(sourcePath);
                 if (EditorPrefs.HasKey(srcKey))
                 {
@@ -31,7 +35,10 @@ namespace LDtkUnity.Editor
                 return AssetMoveResult.DidNotMove;
             }
 
-            private static AssetDeleteResult OnWillDeleteAsset(string assetPath, RemoveAssetOptions options)
+            private static AssetDeleteResult OnWillDeleteAsset(
+                string assetPath,
+                RemoveAssetOptions options
+            )
             {
                 if (IsFileValid(assetPath))
                 {
@@ -59,7 +66,7 @@ namespace LDtkUnity.Editor
             {
                 return Array.Empty<string>();
             }
-            
+
             string json = EditorPrefs.GetString(key, string.Empty);
             return JsonSerializer.Deserialize<string[]>(json);
         }

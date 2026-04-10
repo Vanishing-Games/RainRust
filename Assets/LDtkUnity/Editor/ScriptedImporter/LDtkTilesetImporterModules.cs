@@ -8,11 +8,11 @@ using Object = UnityEngine.Object;
 
 namespace LDtkUnity.Editor
 {
-    internal sealed partial class LDtkTilesetImporter :
-        ISpriteEditorDataProvider, 
-        ITextureDataProvider, 
-        ISpritePhysicsOutlineDataProvider, 
-        ISecondaryTextureDataProvider
+    internal sealed partial class LDtkTilesetImporter
+        : ISpriteEditorDataProvider,
+            ITextureDataProvider,
+            ISpritePhysicsOutlineDataProvider,
+            ISecondaryTextureDataProvider
     {
         SpriteImportMode ISpriteEditorDataProvider.spriteImportMode => SpriteImportMode.Multiple;
         float ISpriteEditorDataProvider.pixelsPerUnit => _pixelsPerUnit;
@@ -33,12 +33,12 @@ namespace LDtkUnity.Editor
         /// We'd select "apply", and that attempts to populate new sprites through this function;
         /// For our tileset importer needs, we do not want to add/remove any tiles. if any new ones are made from the sprite editor window, we IGNORE them.
         /// Only the importer will have agency over what's added/removed.
-        /// With that said, we should have complete freedom over modifying these sprite's pivot, and physics shape.  
+        /// With that said, we should have complete freedom over modifying these sprite's pivot, and physics shape.
         /// </summary>
         void ISpriteEditorDataProvider.SetSpriteRects(SpriteRect[] spritesToWrite)
         {
             //when we apply new data. we should never want to add any new stuff
-            
+
             //remove those that have become null or otherwise deleted and/or irrelevant
             //_sprites.RemoveAll(data => newSprites.FirstOrDefault(x => x.spriteID == data.spriteID) == null);
 
@@ -50,10 +50,10 @@ namespace LDtkUnity.Editor
             {
                 if (!dict.TryGetValue(writeSprite.spriteID, out LDtkSpriteRect metaSprite))
                 {
-                    //if the new sprite is foreign to our current list of tiles (aka,newly made from the sprite editor window, 
+                    //if the new sprite is foreign to our current list of tiles (aka,newly made from the sprite editor window,
                     continue;
                 }
-                
+
                 //overwrite just these
                 metaSprite.alignment = writeSprite.alignment;
                 metaSprite.border = writeSprite.border;
@@ -61,16 +61,18 @@ namespace LDtkUnity.Editor
             }
         }
 
-
         #region ReferenceFromAseprite
 
         /// <summary>
-        /// Compared 
+        /// Compared
         /// </summary>
         /// <param name="newRects"></param>
         /// <param name="oldMetaRects"></param>
         /// <returns></returns>
-        private static List<LDtkSpriteRect> UpdateLayers(in List<LDtkSpriteRect> newRects, in List<LDtkSpriteRect> oldMetaRects)
+        private static List<LDtkSpriteRect> UpdateLayers(
+            in List<LDtkSpriteRect> newRects,
+            in List<LDtkSpriteRect> oldMetaRects
+        )
         {
             if (oldMetaRects.Count == 0)
             {
@@ -78,7 +80,7 @@ namespace LDtkUnity.Editor
             }
 
             var finalLayers = new List<LDtkSpriteRect>(oldMetaRects);
-            
+
             // Remove old layers
             foreach (LDtkSpriteRect oldLayer in oldMetaRects)
             {
@@ -87,7 +89,7 @@ namespace LDtkUnity.Editor
                     finalLayers.Remove(oldLayer);
                 }
             }
-            
+
             // Add new layers
             foreach (LDtkSpriteRect newLayer in newRects)
             {
@@ -96,7 +98,7 @@ namespace LDtkUnity.Editor
                     finalLayers.Add(newLayer);
                 }
             }
-            
+
             // Retain guids for any existing meta fiels
             foreach (LDtkSpriteRect finalLayer in finalLayers)
             {
@@ -111,7 +113,7 @@ namespace LDtkUnity.Editor
 
             return finalLayers;
         }
-        
+
         /// <summary>
         /// The main rewrite of the meta data, NO additional sprites.
         ///
@@ -120,10 +122,10 @@ namespace LDtkUnity.Editor
         /// In here, out goal is to have every tile that exists.
         ///
         ///
-        /// If the metadata had tiles that the importer no longer makes, remove them. 
+        /// If the metadata had tiles that the importer no longer makes, remove them.
         /// If the importer made some tiles that weren't metadata yet, make them.
         /// don't make any modifications from inside here. the user can configure what they want later.
-        /// 
+        ///
         /// </summary>
         /// <param name="srcRects">The rectangles from the deserialized file. they should always overwrite the rects that we had at hand</param>
         /// <returns></returns>
@@ -138,7 +140,7 @@ namespace LDtkUnity.Editor
             {
                 _sprites = new List<LDtkSpriteRect>(jsonTileCount);
             }
-            
+
             // trim metas off the end of the list to match the new src count.
             // LDtk handles this in the exact same way where if the tile count decreased, then any old tiles are complete
             if (_sprites.Count > jsonTileCount)
@@ -147,7 +149,7 @@ namespace LDtkUnity.Editor
                 changed = true;
             }
 
-            //add new blank ones to the end of the sprites list with new src rects 
+            //add new blank ones to the end of the sprites list with new src rects
             if (_sprites.Count < jsonTileCount)
             {
                 for (int tileId = _sprites.Count; tileId < jsonTileCount; tileId++)
@@ -165,7 +167,7 @@ namespace LDtkUnity.Editor
                 }
                 changed = true;
             }
-            
+
             Debug.Assert(_sprites.Count == jsonTileCount, "Sprite counts were not equal!");
 
             //force rects to what they should really be.
@@ -177,12 +179,11 @@ namespace LDtkUnity.Editor
             return changed;
         }
 
-
         #endregion
-        
+
         //GOAL: Find a way to get tiles in an optimized manner. should we do this by looking for a tile via it's id? it's a lot better than checking via a string.
-        //But at the same time, tiles could be abnormally shaped, and the only way to get those would be through giving then an id ourselves, or index via a rectint.  
-        
+        //But at the same time, tiles could be abnormally shaped, and the only way to get those would be through giving then an id ourselves, or index via a rectint.
+
         /// <summary>
         /// This may be used in the actual sprite generation step instead of here.
         /// IMPORTANT NOTE: The list is ordered like the tile order in ldtk from top left in rows.
@@ -195,19 +196,19 @@ namespace LDtkUnity.Editor
             int padding = def.Padding;
             int gridSize = def.TileGridSize;
             int spacing = def.Spacing;
-            
+
             for (int y = 0; y < def.CHei; y++)
             {
                 for (int x = 0; x < def.CWid; x++)
                 {
                     //id++;
 
-                    int pxX = (x * (gridSize+spacing)) + padding;
+                    int pxX = (x * (gridSize + spacing)) + padding;
                     //Debug.Log(pxX);
-                    int pxY = (y * (gridSize+spacing)) + padding;
+                    int pxY = (y * (gridSize + spacing)) + padding;
                     int wid = Mathf.Min(gridSize, def.PxWid - pxX - padding);
                     int hei = Mathf.Min(gridSize, def.PxHei - pxY - padding);
-                    
+
                     TilesetRectangle slice = new TilesetRectangle()
                     {
                         X = pxX,
@@ -228,19 +229,20 @@ namespace LDtkUnity.Editor
             // Do this so that asset change save dialog will not show
             var originalValue = EditorPrefs.GetBool("VerifySavingAssets", false);
             EditorPrefs.SetBool("VerifySavingAssets", false);
-            AssetDatabase.ForceReserializeAssets(new string[] { assetPath }, ForceReserializeAssetsOptions.ReserializeMetadata);
+            AssetDatabase.ForceReserializeAssets(
+                new string[] { assetPath },
+                ForceReserializeAssetsOptions.ReserializeMetadata
+            );
             EditorPrefs.SetBool("VerifySavingAssets", originalValue);
         }
 
-        void ISpriteEditorDataProvider.InitSpriteEditorDataProvider() 
-        { }
+        void ISpriteEditorDataProvider.InitSpriteEditorDataProvider() { }
 
-        T ISpriteEditorDataProvider.GetDataProvider<T>() => 
-            this as T;
+        T ISpriteEditorDataProvider.GetDataProvider<T>() => this as T;
 
-        bool ISpriteEditorDataProvider.HasDataProvider(Type type) => 
+        bool ISpriteEditorDataProvider.HasDataProvider(Type type) =>
             type.IsAssignableFrom(GetType());
-        
+
         #endregion
 
         #region ITextureDataProvider
@@ -252,9 +254,10 @@ namespace LDtkUnity.Editor
         }
 
         Texture2D ITextureDataProvider.GetReadableTexture2D() => LoadTex();
+
         Texture2D ITextureDataProvider.texture => LoadTex();
         Texture2D ITextureDataProvider.previewTexture => LoadTex();
-        
+
         #endregion
 
         #region ISpritePhysicsOutlineDataProvider
@@ -265,10 +268,10 @@ namespace LDtkUnity.Editor
         void ISpritePhysicsOutlineDataProvider.SetOutlines(GUID guid, List<Vector2[]> data) =>
             GetSpriteData(guid).SetOutlines(data);
 
-        float ISpritePhysicsOutlineDataProvider.GetTessellationDetail(GUID guid) => 
+        float ISpritePhysicsOutlineDataProvider.GetTessellationDetail(GUID guid) =>
             GetSpriteData(guid).tessellationDetail;
 
-        void ISpritePhysicsOutlineDataProvider.SetTessellationDetail(GUID guid, float value) => 
+        void ISpritePhysicsOutlineDataProvider.SetTessellationDetail(GUID guid, float value) =>
             GetSpriteData(guid).tessellationDetail = value;
         #endregion
 
@@ -277,7 +280,7 @@ namespace LDtkUnity.Editor
             get => _secondaryTextures;
             set => _secondaryTextures = value;
         }
-        
+
         /*
      *
      * byte[] bytes = File.ReadAllBytes(texturePath);
@@ -306,6 +309,5 @@ namespace LDtkUnity.Editor
         Debug.Log($"bytesToColors: {bytesToColors.Length}");
         Debug.Log($"expect: {width*height}");
      */
-        
     }
 }

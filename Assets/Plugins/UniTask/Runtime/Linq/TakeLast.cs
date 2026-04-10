@@ -1,13 +1,16 @@
-﻿using Cysharp.Threading.Tasks.Internal;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using Cysharp.Threading.Tasks.Internal;
 
 namespace Cysharp.Threading.Tasks.Linq
 {
     public static partial class UniTaskAsyncEnumerable
     {
-        public static IUniTaskAsyncEnumerable<TSource> TakeLast<TSource>(this IUniTaskAsyncEnumerable<TSource> source, Int32 count)
+        public static IUniTaskAsyncEnumerable<TSource> TakeLast<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            Int32 count
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
 
@@ -32,7 +35,9 @@ namespace Cysharp.Threading.Tasks.Linq
             this.count = count;
         }
 
-        public IUniTaskAsyncEnumerator<TSource> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+        public IUniTaskAsyncEnumerator<TSource> GetAsyncEnumerator(
+            CancellationToken cancellationToken = default
+        )
         {
             return new _TakeLast(source, count, cancellationToken);
         }
@@ -52,7 +57,11 @@ namespace Cysharp.Threading.Tasks.Linq
             bool iterateCompleted;
             bool continueNext;
 
-            public _TakeLast(IUniTaskAsyncEnumerable<TSource> source, int count, CancellationToken cancellationToken)
+            public _TakeLast(
+                IUniTaskAsyncEnumerable<TSource> source,
+                int count,
+                CancellationToken cancellationToken
+            )
             {
                 this.source = source;
                 this.count = count;
@@ -118,7 +127,6 @@ namespace Cysharp.Threading.Tasks.Linq
                     completionSource.TrySetException(ex);
                 }
             }
-
 
             static void MoveNextCore(object state)
             {

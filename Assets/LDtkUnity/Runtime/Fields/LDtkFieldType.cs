@@ -16,6 +16,6 @@
         Enum,
         Point,
         EntityRef,
-        Tile
+        Tile,
     }
 }

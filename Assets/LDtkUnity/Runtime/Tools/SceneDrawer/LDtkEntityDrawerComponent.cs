@@ -9,8 +9,11 @@ namespace LDtkUnity
     [ExcludeFromDocs]
     public class LDtkEntityDrawerComponent : MonoBehaviour
     {
-        [SerializeField] private LDtkEntityDrawerData _entityDrawer;
-        [SerializeField] private List<LDtkFieldDrawerData> _fieldDrawers = new List<LDtkFieldDrawerData>();
+        [SerializeField]
+        private LDtkEntityDrawerData _entityDrawer;
+
+        [SerializeField]
+        private List<LDtkFieldDrawerData> _fieldDrawers = new List<LDtkFieldDrawerData>();
 
         internal LDtkEntityDrawerData EntityDrawer => _entityDrawer;
         internal List<LDtkFieldDrawerData> FieldDrawers => _fieldDrawers;

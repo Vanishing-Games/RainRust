@@ -24,7 +24,7 @@ namespace LDtkUnity.Editor
             LDtkDebug.LogError($"Issue here. input was {input}");
             return null;
         }
-        
+
         public static ReferenceToAnEntityInstance ConvertDict(object input)
         {
             if (input == null)

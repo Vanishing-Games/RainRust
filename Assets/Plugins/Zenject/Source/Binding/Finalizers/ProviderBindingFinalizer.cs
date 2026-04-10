@@ -19,21 +19,20 @@ namespace Zenject
             get { return BindInfo.BindingInheritanceMethod; }
         }
 
-        protected BindInfo BindInfo
-        {
-            get;
-            private set;
-        }
+        protected BindInfo BindInfo { get; private set; }
 
         protected ScopeTypes GetScope()
         {
             if (BindInfo.Scope == ScopeTypes.Unset)
             {
                 // If condition is set then it's probably fine to allow the default of transient
-                Assert.That(!BindInfo.RequireExplicitScope || BindInfo.Condition != null,
+                Assert.That(
+                    !BindInfo.RequireExplicitScope || BindInfo.Condition != null,
                     "Scope must be set for the previous binding!  Please either specify AsTransient, AsCached, or AsSingle. Last binding: Contract: {0}, Identifier: {1} {2}",
-                    BindInfo.ContractTypes.Select(x => x.PrettyName()).Join(", "), BindInfo.Identifier,
-                    BindInfo.ContextInfo != null ? "Context: '{0}'".Fmt(BindInfo.ContextInfo) : "");
+                    BindInfo.ContractTypes.Select(x => x.PrettyName()).Join(", "),
+                    BindInfo.Identifier,
+                    BindInfo.ContextInfo != null ? "Context: '{0}'".Fmt(BindInfo.ContextInfo) : ""
+                );
                 return ScopeTypes.Transient;
             }
 
@@ -57,24 +56,32 @@ namespace Zenject
             catch (Exception e)
             {
                 throw Assert.CreateException(
-                    e, "Error while finalizing previous binding! Contract: {0}, Identifier: {1} {2}",
-                    BindInfo.ContractTypes.Select(x => x.PrettyName()).Join(", "), BindInfo.Identifier,
-                    BindInfo.ContextInfo != null ? "Context: '{0}'".Fmt(BindInfo.ContextInfo) : "");
+                    e,
+                    "Error while finalizing previous binding! Contract: {0}, Identifier: {1} {2}",
+                    BindInfo.ContractTypes.Select(x => x.PrettyName()).Join(", "),
+                    BindInfo.Identifier,
+                    BindInfo.ContextInfo != null ? "Context: '{0}'".Fmt(BindInfo.ContextInfo) : ""
+                );
             }
         }
 
         protected abstract void OnFinalizeBinding(DiContainer container);
 
-        protected void RegisterProvider<TContract>(
-            DiContainer container, IProvider provider)
+        protected void RegisterProvider<TContract>(DiContainer container, IProvider provider)
         {
             RegisterProvider(container, typeof(TContract), provider);
         }
 
         protected void RegisterProvider(
-            DiContainer container, Type contractType, IProvider provider)
+            DiContainer container,
+            Type contractType,
+            IProvider provider
+        )
         {
-            if (BindInfo.OnlyBindIfNotBound && container.HasBindingId(contractType, BindInfo.Identifier))
+            if (
+                BindInfo.OnlyBindIfNotBound
+                && container.HasBindingId(contractType, BindInfo.Identifier)
+            )
             {
                 return;
             }
@@ -82,9 +89,17 @@ namespace Zenject
             container.RegisterProvider(
                 new BindingId(contractType, BindInfo.Identifier),
                 BindInfo.Condition,
-                provider, BindInfo.NonLazy);
+                provider,
+                BindInfo.NonLazy
+            );
 
-            if (contractType.IsValueType() && !(contractType.IsGenericType() && contractType.GetGenericTypeDefinition() == typeof(Nullable<>)))
+            if (
+                contractType.IsValueType()
+                && !(
+                    contractType.IsGenericType()
+                    && contractType.GetGenericTypeDefinition() == typeof(Nullable<>)
+                )
+            )
             {
                 var nullableType = typeof(Nullable<>).MakeGenericType(contractType);
 
@@ -93,12 +108,16 @@ namespace Zenject
                 container.RegisterProvider(
                     new BindingId(nullableType, BindInfo.Identifier),
                     BindInfo.Condition,
-                    provider, BindInfo.NonLazy);
+                    provider,
+                    BindInfo.NonLazy
+                );
             }
         }
 
         protected void RegisterProviderPerContract(
-            DiContainer container, Func<DiContainer, Type, IProvider> providerFunc)
+            DiContainer container,
+            Func<DiContainer, Type, IProvider> providerFunc
+        )
         {
             foreach (var contractType in BindInfo.ContractTypes)
             {
@@ -117,8 +136,7 @@ namespace Zenject
             }
         }
 
-        protected void RegisterProviderForAllContracts(
-            DiContainer container, IProvider provider)
+        protected void RegisterProviderForAllContracts(DiContainer container, IProvider provider)
         {
             foreach (var contractType in BindInfo.ContractTypes)
             {
@@ -138,7 +156,8 @@ namespace Zenject
         protected void RegisterProvidersPerContractAndConcreteType(
             DiContainer container,
             List<Type> concreteTypes,
-            Func<Type, Type, IProvider> providerFunc)
+            Func<Type, Type, IProvider> providerFunc
+        )
         {
             Assert.That(!BindInfo.ContractTypes.IsEmpty());
             Assert.That(!concreteTypes.IsEmpty());
@@ -149,7 +168,11 @@ namespace Zenject
                 {
                     if (ValidateBindTypes(concreteType, contractType))
                     {
-                        RegisterProvider(container, contractType, providerFunc(contractType, concreteType));
+                        RegisterProvider(
+                            container,
+                            contractType,
+                            providerFunc(contractType, concreteType)
+                        );
                     }
                 }
             }
@@ -191,7 +214,10 @@ namespace Zenject
             if (BindInfo.InvalidBindResponse == InvalidBindResponses.Assert)
             {
                 throw Assert.CreateException(
-                    "Expected type '{0}' to derive from or be equal to '{1}'", concreteType, contractType);
+                    "Expected type '{0}' to derive from or be equal to '{1}'",
+                    concreteType,
+                    contractType
+                );
             }
 
             Assert.IsEqual(BindInfo.InvalidBindResponse, InvalidBindResponses.Skip);
@@ -204,7 +230,8 @@ namespace Zenject
         protected void RegisterProvidersForAllContractsPerConcreteType(
             DiContainer container,
             List<Type> concreteTypes,
-            Func<DiContainer, Type, IProvider> providerFunc)
+            Func<DiContainer, Type, IProvider> providerFunc
+        )
         {
             Assert.That(!BindInfo.ContractTypes.IsEmpty());
             Assert.That(!concreteTypes.IsEmpty());

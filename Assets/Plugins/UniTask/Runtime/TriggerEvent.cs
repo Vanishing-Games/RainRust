@@ -170,7 +170,8 @@ namespace Cysharp.Threading.Tasks
 
         public void Add(ITriggerHandler<T> handler)
         {
-            if (handler == null) throw new ArgumentNullException(nameof(handler));
+            if (handler == null)
+                throw new ArgumentNullException(nameof(handler));
 
             // zero node.
             if (head == null)
@@ -225,7 +226,8 @@ namespace Cysharp.Threading.Tasks
 
         public void Remove(ITriggerHandler<T> handler)
         {
-            if (handler == null) throw new ArgumentNullException(nameof(handler));
+            if (handler == null)
+                throw new ArgumentNullException(nameof(handler));
 
             var prev = handler.Prev;
             var next = handler.Next;

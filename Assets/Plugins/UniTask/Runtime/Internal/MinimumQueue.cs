@@ -18,7 +18,8 @@ namespace Cysharp.Threading.Tasks.Internal
 
         public MinimumQueue(int capacity)
         {
-            if (capacity < 0) throw new ArgumentOutOfRangeException("capacity");
+            if (capacity < 0)
+                throw new ArgumentOutOfRangeException("capacity");
             array = new T[capacity];
             head = tail = size = 0;
         }
@@ -31,7 +32,8 @@ namespace Cysharp.Threading.Tasks.Internal
 
         public T Peek()
         {
-            if (size == 0) ThrowForEmptyQueue();
+            if (size == 0)
+                ThrowForEmptyQueue();
             return array[head];
         }
 
@@ -51,7 +53,8 @@ namespace Cysharp.Threading.Tasks.Internal
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T Dequeue()
         {
-            if (size == 0) ThrowForEmptyQueue();
+            if (size == 0)
+                ThrowForEmptyQueue();
 
             int head = this.head;
             T[] array = this.array;

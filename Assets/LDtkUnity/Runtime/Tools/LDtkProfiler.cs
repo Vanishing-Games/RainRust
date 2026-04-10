@@ -10,25 +10,26 @@ namespace LDtkUnity
     {
         //don't need to worry about statically resetting this
         private static bool _prevProfilingState;
-        
+
         internal sealed class Scope : IDisposable
         {
             public Scope(string path) => BeginWriting(path);
+
             public void Dispose() => EndWriting();
         }
-        
+
         [Conditional("LDTK_ENABLE_PROFILER")]
         public static void BeginSample(string name)
         {
             Profiler.BeginSample(name);
         }
-    
+
         [Conditional("LDTK_ENABLE_PROFILER")]
         public static void EndSample()
         {
             Profiler.EndSample();
         }
-        
+
         [Conditional("LDTK_ENABLE_PROFILER")]
         public static void BeginWriting(string path)
         {
@@ -43,14 +44,14 @@ namespace LDtkUnity
             Profiler.enabled = true;
             Profiler.BeginSample(path);
         }
-        
+
         public static string GetOutputFilePath(string assetName)
         {
             string directory = $"{Path.GetDirectoryName(Application.dataPath)}/Profiler";
             string fullPath = $"{directory}/{assetName}.raw";
             return fullPath;
         }
-        
+
         [Conditional("LDTK_ENABLE_PROFILER")]
         public static void EndWriting()
         {
@@ -63,7 +64,9 @@ namespace LDtkUnity
             }
             catch (Exception e)
             {
-                LDtkDebug.LogError($"Failed to end a profiler sample for \"{Profiler.logFile}\". Reason: {e}");
+                LDtkDebug.LogError(
+                    $"Failed to end a profiler sample for \"{Profiler.logFile}\". Reason: {e}"
+                );
             }
         }
     }

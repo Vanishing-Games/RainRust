@@ -1,19 +1,26 @@
-﻿using Cysharp.Threading.Tasks.Internal;
-using System;
+﻿using System;
 using System.Threading;
+using Cysharp.Threading.Tasks.Internal;
 
 namespace Cysharp.Threading.Tasks.Linq
 {
     public static partial class UniTaskAsyncEnumerable
     {
-        public static UniTask<long> LongCountAsync<TSource>(this IUniTaskAsyncEnumerable<TSource> source, CancellationToken cancellationToken = default)
+        public static UniTask<long> LongCountAsync<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            CancellationToken cancellationToken = default
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
 
             return LongCount.LongCountAsync(source, cancellationToken);
         }
 
-        public static UniTask<long> LongCountAsync<TSource>(this IUniTaskAsyncEnumerable<TSource> source, Func<TSource, Boolean> predicate, CancellationToken cancellationToken = default)
+        public static UniTask<long> LongCountAsync<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, Boolean> predicate,
+            CancellationToken cancellationToken = default
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
             Error.ThrowArgumentNullException(predicate, nameof(predicate));
@@ -21,7 +28,11 @@ namespace Cysharp.Threading.Tasks.Linq
             return LongCount.LongCountAsync(source, predicate, cancellationToken);
         }
 
-        public static UniTask<long> LongCountAwaitAsync<TSource>(this IUniTaskAsyncEnumerable<TSource> source, Func<TSource, UniTask<Boolean>> predicate, CancellationToken cancellationToken = default)
+        public static UniTask<long> LongCountAwaitAsync<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, UniTask<Boolean>> predicate,
+            CancellationToken cancellationToken = default
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
             Error.ThrowArgumentNullException(predicate, nameof(predicate));
@@ -29,18 +40,29 @@ namespace Cysharp.Threading.Tasks.Linq
             return LongCount.LongCountAwaitAsync(source, predicate, cancellationToken);
         }
 
-        public static UniTask<long> LongCountAwaitWithCancellationAsync<TSource>(this IUniTaskAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, UniTask<Boolean>> predicate, CancellationToken cancellationToken = default)
+        public static UniTask<long> LongCountAwaitWithCancellationAsync<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, CancellationToken, UniTask<Boolean>> predicate,
+            CancellationToken cancellationToken = default
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
             Error.ThrowArgumentNullException(predicate, nameof(predicate));
 
-            return LongCount.LongCountAwaitWithCancellationAsync(source, predicate, cancellationToken);
+            return LongCount.LongCountAwaitWithCancellationAsync(
+                source,
+                predicate,
+                cancellationToken
+            );
         }
     }
 
     internal static class LongCount
     {
-        internal static async UniTask<long> LongCountAsync<TSource>(IUniTaskAsyncEnumerable<TSource> source, CancellationToken cancellationToken)
+        internal static async UniTask<long> LongCountAsync<TSource>(
+            IUniTaskAsyncEnumerable<TSource> source,
+            CancellationToken cancellationToken
+        )
         {
             long count = 0;
 
@@ -49,7 +71,10 @@ namespace Cysharp.Threading.Tasks.Linq
             {
                 while (await e.MoveNextAsync())
                 {
-                    checked { count++; }
+                    checked
+                    {
+                        count++;
+                    }
                 }
             }
             finally
@@ -63,7 +88,11 @@ namespace Cysharp.Threading.Tasks.Linq
             return count;
         }
 
-        internal static async UniTask<long> LongCountAsync<TSource>(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, Boolean> predicate, CancellationToken cancellationToken)
+        internal static async UniTask<long> LongCountAsync<TSource>(
+            IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, Boolean> predicate,
+            CancellationToken cancellationToken
+        )
         {
             long count = 0;
 
@@ -74,7 +103,10 @@ namespace Cysharp.Threading.Tasks.Linq
                 {
                     if (predicate(e.Current))
                     {
-                        checked { count++; }
+                        checked
+                        {
+                            count++;
+                        }
                     }
                 }
             }
@@ -89,7 +121,11 @@ namespace Cysharp.Threading.Tasks.Linq
             return count;
         }
 
-        internal static async UniTask<long> LongCountAwaitAsync<TSource>(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, UniTask<Boolean>> predicate, CancellationToken cancellationToken)
+        internal static async UniTask<long> LongCountAwaitAsync<TSource>(
+            IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, UniTask<Boolean>> predicate,
+            CancellationToken cancellationToken
+        )
         {
             long count = 0;
 
@@ -100,7 +136,10 @@ namespace Cysharp.Threading.Tasks.Linq
                 {
                     if (await predicate(e.Current))
                     {
-                        checked { count++; }
+                        checked
+                        {
+                            count++;
+                        }
                     }
                 }
             }
@@ -115,7 +154,11 @@ namespace Cysharp.Threading.Tasks.Linq
             return count;
         }
 
-        internal static async UniTask<long> LongCountAwaitWithCancellationAsync<TSource>(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, UniTask<Boolean>> predicate, CancellationToken cancellationToken)
+        internal static async UniTask<long> LongCountAwaitWithCancellationAsync<TSource>(
+            IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, CancellationToken, UniTask<Boolean>> predicate,
+            CancellationToken cancellationToken
+        )
         {
             long count = 0;
 
@@ -126,7 +169,10 @@ namespace Cysharp.Threading.Tasks.Linq
                 {
                     if (await predicate(e.Current, cancellationToken))
                     {
-                        checked { count++; }
+                        checked
+                        {
+                            count++;
+                        }
                     }
                 }
             }

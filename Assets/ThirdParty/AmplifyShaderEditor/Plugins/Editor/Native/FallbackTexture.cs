@@ -6,50 +6,47 @@ using UnityEngine;
 
 namespace AmplifyShaderEditor
 {
-	[Serializable]
-	public class FallbackTexture : IFallbackVars
-	{
-		[SerializeField]
-		private Texture m_current;
-		[SerializeField]
-		private Texture m_previous;
+    [Serializable]
+    public class FallbackTexture : IFallbackVars
+    {
+        [SerializeField]
+        private Texture m_current;
 
-		public FallbackTexture()
-		{
-			m_current = null;
-			m_previous = null;
-		}
+        [SerializeField]
+        private Texture m_previous;
 
-		public FallbackTexture( Texture data )
-		{
-			m_current = data;
-			m_previous = data;
-		}
+        public FallbackTexture()
+        {
+            m_current = null;
+            m_previous = null;
+        }
 
-		public void Revert()
-		{
-			Texture aux = m_current;
-			m_current = m_previous;
-			m_previous = aux;
-		}
+        public FallbackTexture(Texture data)
+        {
+            m_current = data;
+            m_previous = data;
+        }
 
-		public Texture Current
-		{
-			get
-			{
-				return m_current;
-			}
+        public void Revert()
+        {
+            Texture aux = m_current;
+            m_current = m_previous;
+            m_previous = aux;
+        }
 
-			set
-			{
-				m_previous = m_current;
-				m_current = value;
-			}
-		}
+        public Texture Current
+        {
+            get { return m_current; }
+            set
+            {
+                m_previous = m_current;
+                m_current = value;
+            }
+        }
 
-		public override string ToString()
-		{
-			return m_current.ToString();
-		}
-	}
+        public override string ToString()
+        {
+            return m_current.ToString();
+        }
+    }
 }

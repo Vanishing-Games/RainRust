@@ -28,7 +28,7 @@ namespace LDtkUnity.Editor
                 LDtkProfiler.BeginSample("LDtkSceneDrawerEntity");
                 ProcessData(entity.EntityDrawer, LDtkSceneDrawerEntity.DrawEntity);
                 LDtkProfiler.EndSample();
-                
+
                 LDtkProfiler.BeginSample("LDtkSceneDrawerField");
                 foreach (LDtkFieldDrawerData data in entity.FieldDrawers)
                 {
@@ -40,14 +40,17 @@ namespace LDtkUnity.Editor
             }
         }
 
-        private delegate ILDtkHandleDrawer DrawerGetter<in T>(T data) where T : LDtkSceneDrawerBase;
-        private static void ProcessData<T>(T data, DrawerGetter<T> getter) where T : LDtkSceneDrawerBase
+        private delegate ILDtkHandleDrawer DrawerGetter<in T>(T data)
+            where T : LDtkSceneDrawerBase;
+
+        private static void ProcessData<T>(T data, DrawerGetter<T> getter)
+            where T : LDtkSceneDrawerBase
         {
             if (!data.Enabled)
             {
                 return;
             }
-            
+
             Handles.color = data.SmartColor;
             ILDtkHandleDrawer drawer = getter.Invoke(data);
             drawer?.OnDrawHandles();

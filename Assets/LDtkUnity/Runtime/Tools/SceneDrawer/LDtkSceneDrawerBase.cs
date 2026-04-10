@@ -7,9 +7,15 @@ namespace LDtkUnity
     [Serializable]
     internal abstract class LDtkSceneDrawerBase
     {
-        [SerializeField] private string _identifier;
-        [SerializeField] private bool _enabled = true;
-        [FormerlySerializedAs("_gizmoColor")] [SerializeField] private Color _smartColor;
+        [SerializeField]
+        private string _identifier;
+
+        [SerializeField]
+        private bool _enabled = true;
+
+        [FormerlySerializedAs("_gizmoColor")]
+        [SerializeField]
+        private Color _smartColor;
 
         public string Identifier => _identifier;
         public bool Enabled => _enabled;
@@ -32,6 +38,5 @@ namespace LDtkUnity
             c.b += incrementDifference;
             _smartColor = c;
         }
-        
     }
 }

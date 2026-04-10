@@ -14,8 +14,10 @@ namespace Zenject
         readonly DiContainer _container;
 
         public SubContainerCreatorByNewPrefab(
-            DiContainer container, IPrefabProvider prefabProvider,
-            GameObjectCreationParameters gameObjectBindInfo)
+            DiContainer container,
+            IPrefabProvider prefabProvider,
+            GameObjectCreationParameters gameObjectBindInfo
+        )
         {
             _gameObjectBindInfo = gameObjectBindInfo;
             _prefabProvider = prefabProvider;
@@ -23,7 +25,10 @@ namespace Zenject
         }
 
         public DiContainer CreateSubContainer(
-            List<TypeValuePair> args, InjectContext parentContext, out Action injectAction)
+            List<TypeValuePair> args,
+            InjectContext parentContext,
+            out Action injectAction
+        )
         {
             Assert.That(args.IsEmpty());
 
@@ -31,12 +36,19 @@ namespace Zenject
 
             bool shouldMakeActive;
             var gameObject = _container.CreateAndParentPrefab(
-                prefab, _gameObjectBindInfo, null, out shouldMakeActive);
+                prefab,
+                _gameObjectBindInfo,
+                null,
+                out shouldMakeActive
+            );
 
             var context = gameObject.GetComponent<GameObjectContext>();
 
-            Assert.That(context != null,
-                "Expected prefab with name '{0}' to contain a component of type 'GameObjectContext' on the root", prefab.name);
+            Assert.That(
+                context != null,
+                "Expected prefab with name '{0}' to contain a component of type 'GameObjectContext' on the root",
+                prefab.name
+            );
 
             context.Install(_container);
 

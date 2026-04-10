@@ -1,5 +1,5 @@
-using Core;
 using System;
+using Core;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.RenderGraphModule;
@@ -67,7 +67,10 @@ namespace RainRust.Rendering
 
             if (settings == null)
             {
-                CLogger.LogError("[RainRust] Settings are null in AddRenderPasses!", LogTag.Rendering);
+                CLogger.LogError(
+                    "[RainRust] Settings are null in AddRenderPasses!",
+                    LogTag.Rendering
+                );
                 return;
             }
 
@@ -84,7 +87,6 @@ namespace RainRust.Rendering
                 CLogger.LogError("[RainRust] Composition Shader is MISSING!", LogTag.Rendering);
             if (settings.blitShader == null)
                 CLogger.LogError("[RainRust] Blit Shader is MISSING!", LogTag.Rendering);
-
             // csharpier-ignore-start
             // Apply settings to all passes
             m_RainRustDrawObjectsPass.renderPassEvent = settings.injectionPoint;

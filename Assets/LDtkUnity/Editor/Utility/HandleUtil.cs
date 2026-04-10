@@ -20,21 +20,24 @@ namespace LDtkUnity.Editor
         public static float GetIconGUISize(Vector3 worldPosition, Vector2 pxSize)
         {
             const int maxResolution = 32;
-            
+
             int maxVector = Mathf.Max((int)pxSize.x, (int)pxSize.y, 1);
             if (maxVector >= maxResolution)
             {
                 return maxResolution;
             }
 
-            int scale = 1 + Mathf.FloorToInt(((float)maxResolution-9) / maxVector);
+            int scale = 1 + Mathf.FloorToInt(((float)maxResolution - 9) / maxVector);
             return maxVector * scale;
         }
 
-        public static Vector2 GetPositionForWorldPointSizedRect(Vector2 textArea, bool forTextArea = true)
+        public static Vector2 GetPositionForWorldPointSizedRect(
+            Vector2 textArea,
+            bool forTextArea = true
+        )
         {
             float origX = textArea.x;
-            
+
 #if UNITY_2021_3_OR_NEWER
             textArea.x += 1;
             textArea.y -= 1;
@@ -50,11 +53,16 @@ namespace LDtkUnity.Editor
             {
                 textArea.x = origX;
             }
-            
+
             return textArea;
         }
-        
-        public static void DrawText(string text, Vector3 pos, Color color, Vector2 guiOffset = default)
+
+        public static void DrawText(
+            string text,
+            Vector3 pos,
+            Color color,
+            Vector2 guiOffset = default
+        )
         {
             Vector3 guiPoint = HandleUtility.WorldToGUIPointWithDepth(pos);
             //if camera is in front of the point, then don't draw it
@@ -62,11 +70,14 @@ namespace LDtkUnity.Editor
             {
                 return;
             }
-            
+
             Handles.BeginGUI();
-            
+
             GUIContent content = new GUIContent(text);
-            GUIStyle style = new GUIStyle(EditorStyles.whiteMiniLabel) { alignment = TextAnchor.UpperLeft };
+            GUIStyle style = new GUIStyle(EditorStyles.whiteMiniLabel)
+            {
+                alignment = TextAnchor.UpperLeft,
+            };
             Rect textArea = HandleUtility.WorldPointToSizedRect(pos, content, style);
 
             textArea.position = GetPositionForWorldPointSizedRect(textArea.position);
@@ -77,7 +88,7 @@ namespace LDtkUnity.Editor
             backdropArea.y += 4;
             backdropArea.width -= 6;
             backdropArea.height -= 10;
-                
+
             //don't draw the text at all if it manages to be offscreen in the scene view
             SceneView view = SceneView.currentDrawingSceneView;
             if (view != null)
@@ -86,11 +97,11 @@ namespace LDtkUnity.Editor
                 Rect sceneViewRect = new Rect(Vector2.zero, size);
 
                 if (
-                    backdropArea.xMin > sceneViewRect.xMax ||
-                    backdropArea.xMax < sceneViewRect.xMin ||
-                    backdropArea.yMin > sceneViewRect.yMax ||
-                    backdropArea.yMax < sceneViewRect.yMin
-                    )
+                    backdropArea.xMin > sceneViewRect.xMax
+                    || backdropArea.xMax < sceneViewRect.xMin
+                    || backdropArea.yMin > sceneViewRect.yMax
+                    || backdropArea.yMax < sceneViewRect.yMin
+                )
                 {
                     Handles.EndGUI();
                     return;
@@ -107,14 +118,11 @@ namespace LDtkUnity.Editor
 
             Color backdropColor = color;
             backdropColor.a *= 0.75f;
-            
+
             Color textColor = GetTextColorForSceneText(backdropColor);
             textColor.a *= a;
-            style.normal = new GUIStyleState()
-            {
-                textColor = textColor
-            };
-            
+            style.normal = new GUIStyleState() { textColor = textColor };
+
             EditorGUI.DrawRect(backdropArea, backdropColor);
             GUI.Label(textArea, content, style);
             Handles.EndGUI();
@@ -127,19 +135,22 @@ namespace LDtkUnity.Editor
             {
                 return 0;
             }
-            
+
             float drawDistance = LDtkPrefs.DrawDistance;
             if (drawDistance >= LDtkPrefs.DISTANCE_MAX)
             {
                 return 1;
             }
-            
+
             float transitionGap = 0.5f * drawDistance;
             float alphaForDistanceThreshold = drawDistance - transitionGap;
 
-            return Mathf.InverseLerp(alphaForDistanceThreshold + transitionGap, alphaForDistanceThreshold, view.cameraDistance);
+            return Mathf.InverseLerp(
+                alphaForDistanceThreshold + transitionGap,
+                alphaForDistanceThreshold,
+                view.cameraDistance
+            );
         }
-
 
         public static Color GetTextColorForSceneText(Color backdropColor)
         {
@@ -150,7 +161,7 @@ namespace LDtkUnity.Editor
         {
             return GetTextColorForBackdrop(backdropColor, 75);
         }
-        
+
         private static Color GetTextColorForBackdrop(Color backdropColor, float threshold)
         {
             const float colorValue = 0.1f;
@@ -159,10 +170,10 @@ namespace LDtkUnity.Editor
             float green = backdropColor.g * 255;
             float blue = backdropColor.b * 255;
             float luminosity = red * 0.299f + green * 0.587f + blue * 0.114f;
-            
+
             //credit https://stackoverflow.com/questions/3942878/how-to-decide-font-color-in-white-or-black-depending-on-background-color
-            return luminosity > threshold 
-                ? new Color(colorValue, colorValue, colorValue) 
+            return luminosity > threshold
+                ? new Color(colorValue, colorValue, colorValue)
                 : Color.white;
         }
 
@@ -173,13 +184,5 @@ namespace LDtkUnity.Editor
                 Selection.activeGameObject = obj;
             }
         }
-
-
     }
 }
-
-
-
-
-
- 

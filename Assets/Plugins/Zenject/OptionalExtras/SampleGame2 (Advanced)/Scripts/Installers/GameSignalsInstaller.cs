@@ -21,9 +21,13 @@ namespace Zenject.SpaceFighter
             Container.DeclareSignal<PlayerDiedSignal>();
 
             // Include these just to ensure BindSignal works
-            Container.BindSignal<PlayerDiedSignal>().ToMethod<PlayerDiedSignalObserver>(x => x.OnPlayerDied).FromNew();
-            Container.BindSignal<EnemyKilledSignal>().ToMethod(() => Debug.Log("Fired EnemyKilledSignal"));
+            Container
+                .BindSignal<PlayerDiedSignal>()
+                .ToMethod<PlayerDiedSignalObserver>(x => x.OnPlayerDied)
+                .FromNew();
+            Container
+                .BindSignal<EnemyKilledSignal>()
+                .ToMethod(() => Debug.Log("Fired EnemyKilledSignal"));
         }
     }
-
 }

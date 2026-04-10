@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using UnityEngine;
 
 namespace Cysharp.Threading.Tasks.Internal
@@ -17,8 +16,6 @@ namespace Cysharp.Threading.Tasks.Internal
         bool running = false;
         IPlayerLoopItem[] loopItems = new IPlayerLoopItem[InitialSize];
         MinimumQueue<IPlayerLoopItem> waitQueue = new MinimumQueue<IPlayerLoopItem>(InitialSize);
-
-
 
         public PlayerLoopRunner(PlayerLoopTiming timing)
         {
@@ -135,21 +132,36 @@ namespace Cysharp.Threading.Tasks.Internal
         }
 
         void Initialization() => RunCore();
+
         void LastInitialization() => RunCore();
+
         void EarlyUpdate() => RunCore();
+
         void LastEarlyUpdate() => RunCore();
+
         void FixedUpdate() => RunCore();
+
         void LastFixedUpdate() => RunCore();
+
         void PreUpdate() => RunCore();
+
         void LastPreUpdate() => RunCore();
+
         void Update() => RunCore();
+
         void LastUpdate() => RunCore();
+
         void PreLateUpdate() => RunCore();
+
         void LastPreLateUpdate() => RunCore();
+
         void PostLateUpdate() => RunCore();
+
         void LastPostLateUpdate() => RunCore();
+
 #if UNITY_2020_2_OR_NEWER
         void TimeUpdate() => RunCore();
+
         void LastTimeUpdate() => RunCore();
 #endif
 
@@ -178,7 +190,7 @@ namespace Cysharp.Threading.Tasks.Internal
                             }
                             else
                             {
-                                continue; // next i 
+                                continue; // next i
                             }
                         }
                         catch (Exception ex)
@@ -240,7 +252,6 @@ namespace Cysharp.Threading.Tasks.Internal
                     continue;
                 }
 
-
                 lock (runningAndQueueLock)
                 {
                     running = false;
@@ -257,4 +268,3 @@ namespace Cysharp.Threading.Tasks.Internal
         }
     }
 }
-

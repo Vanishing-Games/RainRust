@@ -19,12 +19,10 @@ namespace LDtkUnity.Editor
         private LDtkSectionEnums _sectionEnums;
         private bool _shouldApply = true;
 
-
-
         private static readonly GUIContent ExportButtonContent = new GUIContent()
         {
             text = "Export",
-            tooltip = "Export Native Prefab"
+            tooltip = "Export Native Prefab",
         };
 
         public override void OnEnable()
@@ -36,7 +34,7 @@ namespace LDtkUnity.Editor
             LDtkUidBank.CacheUidData(_cache.Json);
 
             _commandUpdater = new LDtkEditorCommandUpdater(_importer.assetPath);
-            
+
             _sectionMain = new LDtkSectionMain(this, serializedObject);
             _sectionIntGrids = new LDtkSectionIntGrids(this, serializedObject);
             _sectionEntities = new LDtkSectionEntities(this, serializedObject);
@@ -48,7 +46,7 @@ namespace LDtkUnity.Editor
                 _sectionIntGrids,
                 _sectionEntities,
                 _sectionEnums,
-                SectionDependencies
+                SectionDependencies,
             };
 
             foreach (ILDtkSectionDrawer drawer in _sectionDrawers)
@@ -94,7 +92,7 @@ namespace LDtkUnity.Editor
             }
 
             DrawLogEntries();
-            
+
             TryReconstructCache();
 
             LDtkUidBank.CacheUidData(_cache.Json);
@@ -121,14 +119,14 @@ namespace LDtkUnity.Editor
                 LDtkDebug.LogError("Bug, cache is null, but its expected to never be null");
                 return;
             }
-            
+
             if (_cache.ShouldForceReconstruct())
             {
                 ConstructCache();
                 _shouldApply = true;
             }
         }
-        
+
         private void ConstructCache()
         {
             _cache = new LDtkJsonEditorCache((LDtkProjectImporter)target);
@@ -146,12 +144,12 @@ namespace LDtkUnity.Editor
                 LDtkProfiler.EndSample();
                 return;
             }
-            
+
             //todo disabled for now. Currently doesn't work perfectly as expected
             //DrawExportButton();
             DrawProfilerButton();
             LDtkEditorGUIUtility.DrawDivider();
-            
+
             _sectionMain.SetJson(data);
             _commandUpdater.TryDrawFixButton(data);
             EditorGUIUtility.SetIconSize(Vector2.one * 16);
@@ -162,23 +160,23 @@ namespace LDtkUnity.Editor
             LDtkProfiler.BeginSample("MainSection");
             _sectionMain.Draw();
             LDtkProfiler.EndSample();
-            
+
             LDtkProfiler.BeginSample("IntGridSection");
             _sectionIntGrids.Draw(defs.IntGridLayers);
             LDtkProfiler.EndSample();
-            
+
             LDtkProfiler.BeginSample("EntitiesSection");
             _sectionEntities.Draw(defs.Entities);
             LDtkProfiler.EndSample();
-            
+
             LDtkProfiler.BeginSample("EnumsSection");
             _sectionEnums.Draw(defs.Enums);
-            LDtkProfiler.EndSample();            
-            
+            LDtkProfiler.EndSample();
+
             LDtkProfiler.BeginSample("DependenciesSection");
             SectionDependencies.Draw();
             LDtkProfiler.EndSample();
-            
+
             LDtkEditorGUIUtility.DrawDivider();
         }
 
@@ -194,7 +192,7 @@ namespace LDtkUnity.Editor
                 GameObject gameObject = (GameObject)assetTarget;
                 LDtkNativeExportWindow.CreateWindowWithContext(gameObject);
             }
-            
+
             LDtkEditorGUIUtility.DrawDivider();
         }
 
@@ -205,7 +203,7 @@ namespace LDtkUnity.Editor
                 LDtkDebug.LogError("Cache was null");
                 return null;
             }
-            
+
             LdtkJson cachedJson = _cache.Json;
             if (cachedJson != null)
             {
@@ -214,20 +212,20 @@ namespace LDtkUnity.Editor
 
             return null;
         }
-        
+
         private void ApplyIfArraySizesChanged()
         {
             //IMPORTANT: if there are any new/removed array elements via this setup of automatically resizing arrays as LDtk definitions change,
             //then Unity's going to notice and make the apply/revert buttons appear active which normally gives us trouble when we try clicking out.
             //So, try applying right now when this specific case happens; whenever there is an array resize.
-            
+
             if (_sectionDrawers.Any(drawer => drawer.HasResizedArrayPropThisUpdate))
             {
                 Apply();
                 //Debug.Log("Applied an array resize and reimported as a result");
             }
         }
-        
+
         private void DrawPotentialProblem()
         {
             bool problem = _sectionDrawers.Any(drawer => drawer.HasProblem);
@@ -237,10 +235,9 @@ namespace LDtkUnity.Editor
                 EditorGUIUtility.SetIconSize(Vector2.one * 32);
                 EditorGUILayout.HelpBox(
                     "LDtk Project asset configuration has unresolved issues, mouse over them to see the problem",
-                    MessageType.Warning);
+                    MessageType.Warning
+                );
             }
         }
-
-        
     }
 }

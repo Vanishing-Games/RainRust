@@ -8,25 +8,27 @@ namespace LDtkUnity.Editor
     /// <summary>
     /// Reminder: Responsibility is just for drawing the Header content and and other unique functionality. All of the numerous content is handled in the Reference Drawers
     /// </summary>
-    internal abstract class LDtkSectionDataDrawer<T> : LDtkSectionDrawer, ILDtkSectionDataDrawer where T : ILDtkIdentifier
+    internal abstract class LDtkSectionDataDrawer<T> : LDtkSectionDrawer, ILDtkSectionDataDrawer
+        where T : ILDtkIdentifier
     {
         protected abstract string PropertyName { get; }
-        
+
         protected SerializedProperty ArrayProp;
 
         private LDtkContentDrawer<T>[] _drawers;
 
-        protected LDtkSectionDataDrawer(LDtkImporterEditor editor, SerializedObject serializedObject) : base(editor, serializedObject)
-        {
-            
-        }
+        protected LDtkSectionDataDrawer(
+            LDtkImporterEditor editor,
+            SerializedObject serializedObject
+        )
+            : base(editor, serializedObject) { }
 
         public override void Init()
         {
             base.Init();
             ArrayProp = SerializedObject.FindProperty(PropertyName);
         }
-        
+
         public void Draw(IEnumerable<ILDtkIdentifier> datas)
         {
             DrawInternal(datas.Cast<T>().ToArray());
@@ -36,7 +38,7 @@ namespace LDtkUnity.Editor
         {
             HasResizedArrayPropThisUpdate = false;
             int newArraySize = GetSizeOfArray(datas);
-            
+
             //don't draw if there is no data for this project relating to this.
             //in this case, we should also clear the array for this if there was previous data that is simply no longer here.
             if (newArraySize == 0 && !SerializedObject.isEditingMultipleObjects)
@@ -44,19 +46,22 @@ namespace LDtkUnity.Editor
                 TryRestructureArray(datas);
                 return;
             }
-            
+
             LDtkEditorGUIUtility.DrawDivider();
             DrawFoldoutArea();
-            
+
             //don't process any data or resize arrays when we have multi-selections; references will break because of how dynamic the arrays can be.
             if (SerializedObject.isEditingMultipleObjects && !SupportsMultipleSelection)
             {
-                EditorGUILayout.HelpBox($"Multi-object editing not supported for {GuiText}.", MessageType.None);
+                EditorGUILayout.HelpBox(
+                    $"Multi-object editing not supported for {GuiText}.",
+                    MessageType.None
+                );
                 return;
             }
-            
+
             TryRestructureArray(datas);
-            
+
             DrawValues(datas);
         }
 
@@ -65,7 +70,7 @@ namespace LDtkUnity.Editor
             List<LDtkContentDrawer<T>> drawers = new List<LDtkContentDrawer<T>>();
             GetDrawers(datas, drawers);
             _drawers = drawers.ToArray();
-            
+
             if (CanDrawDropdown())
             {
                 DrawDropdownContent();
@@ -80,13 +85,13 @@ namespace LDtkUnity.Editor
             {
                 return;
             }
-            
+
             string[] keepers = GetAssetKeysFromDefs(defs);
 
             LDtkProfiler.BeginSample("ShouldRestructureArray");
             bool shouldRestructureArray = ShouldRestructureArray(keepers);
             LDtkProfiler.EndSample();
-            
+
             if (!shouldRestructureArray)
             {
                 return;
@@ -96,10 +101,10 @@ namespace LDtkUnity.Editor
             RemoveDupes();
             AddMissingData(keepers);
             BubbleSortArray(keepers);
-            
+
             HasResizedArrayPropThisUpdate = true;
         }
-        
+
         //for any reason. if array sizes are different, if all the orderings don't match.
         private bool ShouldRestructureArray(string[] assetKeys)
         {
@@ -115,10 +120,10 @@ namespace LDtkUnity.Editor
                     return true;
                 }
             }
-            
+
             return false;
         }
-        
+
         private void RemoveUnusedData(string[] keepers)
         {
             //remove any serialized data that no longer exists from the json data
@@ -135,6 +140,7 @@ namespace LDtkUnity.Editor
                 ArrayProp.DeleteArrayElementAtIndex(i);
             }
         }
+
         private void RemoveDupes()
         {
             HashSet<string> set = new HashSet<string>();
@@ -153,7 +159,7 @@ namespace LDtkUnity.Editor
 
         private void AddMissingData(string[] newAssetKeys)
         {
-            //add json data that didn't exist in the serialized array 
+            //add json data that didn't exist in the serialized array
             SerializedProperty[] elements = ArrayProp.GetArrayElements();
             string[] elementKeys = elements.Select(GetKeyForElement).ToArray();
 
@@ -164,11 +170,11 @@ namespace LDtkUnity.Editor
                     //we previously already have it, don't add one
                     continue;
                 }
-                
+
                 //insert new one with the unique new key
                 ArrayProp.InsertArrayElementAtIndex(0);
                 SerializedProperty insertedProp = ArrayProp.GetArrayElementAtIndex(0);
-                
+
                 SerializedProperty insertedKeyProp = GetKeyPropForElement(insertedProp);
                 insertedKeyProp.stringValue = newAssetKey;
 
@@ -178,7 +184,7 @@ namespace LDtkUnity.Editor
                 //Debug.Log($"Inserted new asset at {0} for key {newAssetKey}");
             }
         }
-        
+
         private void BubbleSortArray(string[] assetKeys)
         {
             if (ArrayProp.arraySize != assetKeys.Length)
@@ -198,12 +204,12 @@ namespace LDtkUnity.Editor
                 string keyForArray = GetKeyForArray(i);
                 strings.Add(keyForArray);
             }
-            
+
             string debugString = string.Join(", ", strings);
             string assetKeyss = string.Join(", ", assetKeys);
 
             string joined = $"SERIALIZED: {debugString}\nLDTK_DATA: {assetKeyss}";
-            
+
             LDtkDebug.Log(joined);
         }
 
@@ -230,10 +236,12 @@ namespace LDtkUnity.Editor
 
                 if (indexToMove == -1)
                 {
-                    LDtkDebug.LogError("LDtk: Was not able to properly get the matching named element");
+                    LDtkDebug.LogError(
+                        "LDtk: Was not able to properly get the matching named element"
+                    );
                     continue;
                 }
-                
+
                 if (indexToMove == i)
                 {
                     //Debug.Log($"LDtk: {indexToMove} was already in the same index position");
@@ -251,20 +259,23 @@ namespace LDtkUnity.Editor
             SerializedProperty element = ArrayProp.GetArrayElementAtIndex(arrayIndex);
             return GetKeyPropForElement(element);
         }
+
         private SerializedProperty GetKeyPropForElement(SerializedProperty element)
         {
             return element.FindPropertyRelative(LDtkAsset<Object>.PROPERTY_KEY);
         }
+
         private SerializedProperty GetValuePropForElement(SerializedProperty element)
         {
             return element.FindPropertyRelative(LDtkAsset<Object>.PROPERTY_ASSET);
         }
-        
+
         private string GetKeyForArray(int arrayIndex)
         {
             SerializedProperty keyProp = GetKeyPropForArray(arrayIndex);
             return keyProp.stringValue;
         }
+
         private string GetKeyForElement(SerializedProperty element)
         {
             SerializedProperty keyProp = GetKeyPropForElement(element);
@@ -272,10 +283,12 @@ namespace LDtkUnity.Editor
         }
 
         protected abstract void GetDrawers(T[] defs, List<LDtkContentDrawer<T>> drawers);
+
         protected virtual int GetSizeOfArray(T[] datas)
         {
             return datas.Length;
         }
+
         protected virtual string[] GetAssetKeysFromDefs(T[] defs)
         {
             return defs.Select(p => p.Identifier).ToArray();

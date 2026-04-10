@@ -35,8 +35,7 @@ namespace Zenject.Asteroids
         SignalBus _signalBus;
 
         [Inject]
-        public void Construct(
-            GameController gameController, SignalBus signalBus)
+        public void Construct(GameController gameController, SignalBus signalBus)
         {
             _gameController = gameController;
             _signalBus = signalBus;
@@ -80,7 +79,10 @@ namespace Zenject.Asteroids
 
             if (_gameOverElapsed > _gameOverStartFadeTime)
             {
-                var px = Mathf.Min(1.0f, (_gameOverElapsed - _gameOverStartFadeTime) / _gameOverFadeInTime);
+                var px = Mathf.Min(
+                    1.0f,
+                    (_gameOverElapsed - _gameOverStartFadeTime) / _gameOverFadeInTime
+                );
                 _titleStyle.normal.textColor = new Color(1, 1, 1, px);
             }
             else
@@ -90,7 +92,10 @@ namespace Zenject.Asteroids
 
             if (_gameOverElapsed > _restartTextStartFadeTime)
             {
-                var px = Mathf.Min(1.0f, (_gameOverElapsed - _restartTextStartFadeTime) / _restartTextFadeInTime);
+                var px = Mathf.Min(
+                    1.0f,
+                    (_gameOverElapsed - _restartTextStartFadeTime) / _restartTextFadeInTime
+                );
                 _instructionsStyle.normal.textColor = new Color(1, 1, 1, px);
             }
             else
@@ -147,7 +152,10 @@ namespace Zenject.Asteroids
                 GUILayout.BeginHorizontal();
                 {
                     GUILayout.Space(30);
-                    GUILayout.Label("Time: " + _gameController.ElapsedTime.ToString("0.##"), _timeStyle);
+                    GUILayout.Label(
+                        "Time: " + _gameController.ElapsedTime.ToString("0.##"),
+                        _timeStyle
+                    );
                     GUILayout.FlexibleSpace();
                 }
                 GUILayout.EndHorizontal();
@@ -215,4 +223,3 @@ namespace Zenject.Asteroids
         }
     }
 }
-

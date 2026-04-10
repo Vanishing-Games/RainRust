@@ -8,14 +8,22 @@ namespace IngameDebugConsole
     {
         [SerializeField]
         private int maxLogCount = int.MaxValue;
+
         [SerializeField]
         private float maxElapsedTime = float.PositiveInfinity;
 
         void IPointerClickHandler.OnPointerClick(PointerEventData eventData)
         {
-            if (!eventData.dragging && eventData.eligibleForClick && DebugLogManager.Instance.copyAllLogsOnResizeButtonClick)
+            if (
+                !eventData.dragging
+                && eventData.eligibleForClick
+                && DebugLogManager.Instance.copyAllLogsOnResizeButtonClick
+            )
             {
-                GUIUtility.systemCopyBuffer = DebugLogManager.Instance.GetAllLogs(maxLogCount, maxElapsedTime);
+                GUIUtility.systemCopyBuffer = DebugLogManager.Instance.GetAllLogs(
+                    maxLogCount,
+                    maxElapsedTime
+                );
                 StartCoroutine(ScaleAnimationCoroutine());
             }
         }

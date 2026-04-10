@@ -14,7 +14,7 @@ namespace Zenject
     {
         FallbackToDirectReflection,
         NoCheckAssumeFullCoverage,
-        FallbackToDirectReflectionWithWarning
+        FallbackToDirectReflectionWithWarning,
     }
 
     public static class TypeAnalyzer
@@ -34,10 +34,7 @@ namespace Zenject
         public const string ReflectionBakingFieldSetterPrefix = "__zenFieldSetter";
         public const string ReflectionBakingPropertySetterPrefix = "__zenPropertySetter";
 
-        public static ReflectionBakingCoverageModes ReflectionBakingCoverageMode
-        {
-            get; set;
-        }
+        public static ReflectionBakingCoverageModes ReflectionBakingCoverageMode { get; set; }
 
         public static bool ShouldAllowDuringValidation<T>()
         {
@@ -77,7 +74,8 @@ namespace Zenject
 #endif
 
 #if UNITY_WSA && ENABLE_DOTNET && !UNITY_EDITOR
-            return type.GetTypeInfo().GetCustomAttribute<ZenjectAllowDuringValidationAttribute>() != null;
+            return type.GetTypeInfo().GetCustomAttribute<ZenjectAllowDuringValidationAttribute>()
+                != null;
 #else
             return type.HasAttribute<ZenjectAllowDuringValidationAttribute>();
 #endif
@@ -170,28 +168,36 @@ namespace Zenject
 #endif
 
 #if ZEN_INTERNAL_PROFILING
-            using (ProfileTimers.CreateTimedBlock("Type Analysis - Calling Baked Reflection Getter"))
+            using (
+                ProfileTimers.CreateTimedBlock("Type Analysis - Calling Baked Reflection Getter")
+            )
 #endif
             {
                 var getInfoMethod = type.GetMethod(
                     ReflectionBakingGetInjectInfoMethodName,
-                    BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public);
+                    BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public
+                );
 
                 if (getInfoMethod != null)
                 {
 #if UNITY_WSA && ENABLE_DOTNET && !UNITY_EDITOR
-                    var infoGetter = (ZenTypeInfoGetter)getInfoMethod.CreateDelegate(
-                        typeof(ZenTypeInfoGetter), null);
+                    var infoGetter = (ZenTypeInfoGetter)
+                        getInfoMethod.CreateDelegate(typeof(ZenTypeInfoGetter), null);
 #else
-                    var infoGetter = ((ZenTypeInfoGetter)Delegate.CreateDelegate(
-                        typeof(ZenTypeInfoGetter), getInfoMethod));
+                    var infoGetter = (
+                        (ZenTypeInfoGetter)
+                            Delegate.CreateDelegate(typeof(ZenTypeInfoGetter), getInfoMethod)
+                    );
 #endif
 
                     return infoGetter();
                 }
             }
 
-            if (ReflectionBakingCoverageMode == ReflectionBakingCoverageModes.NoCheckAssumeFullCoverage)
+            if (
+                ReflectionBakingCoverageMode
+                == ReflectionBakingCoverageModes.NoCheckAssumeFullCoverage
+            )
             {
                 // If we are confident that the reflection baking supplies all the injection information,
                 // then we can avoid the costs of doing reflection on types that were not covered
@@ -200,9 +206,15 @@ namespace Zenject
             }
 
 #if !(UNITY_WSA && ENABLE_DOTNET) || UNITY_EDITOR
-            if (ReflectionBakingCoverageMode == ReflectionBakingCoverageModes.FallbackToDirectReflectionWithWarning)
+            if (
+                ReflectionBakingCoverageMode
+                == ReflectionBakingCoverageModes.FallbackToDirectReflectionWithWarning
+            )
             {
-                Log.Warn("No reflection baking information found for type '{0}' - using more costly direct reflection instead", type);
+                Log.Warn(
+                    "No reflection baking information found for type '{0}' - using more costly direct reflection instead",
+                    type
+                );
             }
 #endif
 
@@ -216,8 +228,12 @@ namespace Zenject
 
         public static bool ShouldSkipTypeAnalysis(Type type)
         {
-            return type == null || type.IsEnum() || type.IsArray || type.IsInterface()
-                || type.ContainsGenericParameters() || IsStaticType(type)
+            return type == null
+                || type.IsEnum()
+                || type.IsArray
+                || type.IsInterface()
+                || type.ContainsGenericParameters()
+                || IsStaticType(type)
                 || type == typeof(object);
         }
 
@@ -232,18 +248,24 @@ namespace Zenject
             var reflectionInfo = ReflectionTypeAnalyzer.GetReflectionInfo(type);
 
             var injectConstructor = ReflectionInfoTypeInfoConverter.ConvertConstructor(
-                reflectionInfo.InjectConstructor, type);
+                reflectionInfo.InjectConstructor,
+                type
+            );
 
-            var injectMethods = reflectionInfo.InjectMethods.Select(
-                ReflectionInfoTypeInfoConverter.ConvertMethod).ToArray();
+            var injectMethods = reflectionInfo
+                .InjectMethods.Select(ReflectionInfoTypeInfoConverter.ConvertMethod)
+                .ToArray();
 
-            var memberInfos = reflectionInfo.InjectFields.Select(
-                x => ReflectionInfoTypeInfoConverter.ConvertField(type, x)).Concat(
-                    reflectionInfo.InjectProperties.Select(
-                        x => ReflectionInfoTypeInfoConverter.ConvertProperty(type, x))).ToArray();
+            var memberInfos = reflectionInfo
+                .InjectFields.Select(x => ReflectionInfoTypeInfoConverter.ConvertField(type, x))
+                .Concat(
+                    reflectionInfo.InjectProperties.Select(x =>
+                        ReflectionInfoTypeInfoConverter.ConvertProperty(type, x)
+                    )
+                )
+                .ToArray();
 
-            return new InjectTypeInfo(
-                type, injectConstructor, injectMethods, memberInfos);
+            return new InjectTypeInfo(type, injectConstructor, injectMethods, memberInfos);
         }
     }
 }

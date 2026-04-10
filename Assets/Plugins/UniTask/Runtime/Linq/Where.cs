@@ -1,12 +1,15 @@
-﻿using Cysharp.Threading.Tasks.Internal;
-using System;
+﻿using System;
 using System.Threading;
+using Cysharp.Threading.Tasks.Internal;
 
 namespace Cysharp.Threading.Tasks.Linq
 {
     public static partial class UniTaskAsyncEnumerable
     {
-        public static IUniTaskAsyncEnumerable<TSource> Where<TSource>(this IUniTaskAsyncEnumerable<TSource> source, Func<TSource, Boolean> predicate)
+        public static IUniTaskAsyncEnumerable<TSource> Where<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, Boolean> predicate
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
             Error.ThrowArgumentNullException(predicate, nameof(predicate));
@@ -14,7 +17,10 @@ namespace Cysharp.Threading.Tasks.Linq
             return new Where<TSource>(source, predicate);
         }
 
-        public static IUniTaskAsyncEnumerable<TSource> Where<TSource>(this IUniTaskAsyncEnumerable<TSource> source, Func<TSource, Int32, Boolean> predicate)
+        public static IUniTaskAsyncEnumerable<TSource> Where<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, Int32, Boolean> predicate
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
             Error.ThrowArgumentNullException(predicate, nameof(predicate));
@@ -22,7 +28,10 @@ namespace Cysharp.Threading.Tasks.Linq
             return new WhereInt<TSource>(source, predicate);
         }
 
-        public static IUniTaskAsyncEnumerable<TSource> WhereAwait<TSource>(this IUniTaskAsyncEnumerable<TSource> source, Func<TSource, UniTask<Boolean>> predicate)
+        public static IUniTaskAsyncEnumerable<TSource> WhereAwait<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, UniTask<Boolean>> predicate
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
             Error.ThrowArgumentNullException(predicate, nameof(predicate));
@@ -30,7 +39,10 @@ namespace Cysharp.Threading.Tasks.Linq
             return new WhereAwait<TSource>(source, predicate);
         }
 
-        public static IUniTaskAsyncEnumerable<TSource> WhereAwait<TSource>(this IUniTaskAsyncEnumerable<TSource> source, Func<TSource, Int32, UniTask<Boolean>> predicate)
+        public static IUniTaskAsyncEnumerable<TSource> WhereAwait<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, Int32, UniTask<Boolean>> predicate
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
             Error.ThrowArgumentNullException(predicate, nameof(predicate));
@@ -38,7 +50,10 @@ namespace Cysharp.Threading.Tasks.Linq
             return new WhereIntAwait<TSource>(source, predicate);
         }
 
-        public static IUniTaskAsyncEnumerable<TSource> WhereAwaitWithCancellation<TSource>(this IUniTaskAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, UniTask<Boolean>> predicate)
+        public static IUniTaskAsyncEnumerable<TSource> WhereAwaitWithCancellation<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, CancellationToken, UniTask<Boolean>> predicate
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
             Error.ThrowArgumentNullException(predicate, nameof(predicate));
@@ -46,7 +61,10 @@ namespace Cysharp.Threading.Tasks.Linq
             return new WhereAwaitWithCancellation<TSource>(source, predicate);
         }
 
-        public static IUniTaskAsyncEnumerable<TSource> WhereAwaitWithCancellation<TSource>(this IUniTaskAsyncEnumerable<TSource> source, Func<TSource, Int32, CancellationToken, UniTask<Boolean>> predicate)
+        public static IUniTaskAsyncEnumerable<TSource> WhereAwaitWithCancellation<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, Int32, CancellationToken, UniTask<Boolean>> predicate
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
             Error.ThrowArgumentNullException(predicate, nameof(predicate));
@@ -66,7 +84,9 @@ namespace Cysharp.Threading.Tasks.Linq
             this.predicate = predicate;
         }
 
-        public IUniTaskAsyncEnumerator<TSource> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+        public IUniTaskAsyncEnumerator<TSource> GetAsyncEnumerator(
+            CancellationToken cancellationToken = default
+        )
         {
             return new _Where(source, predicate, cancellationToken);
         }
@@ -82,7 +102,11 @@ namespace Cysharp.Threading.Tasks.Linq
             UniTask<bool>.Awaiter awaiter;
             Action moveNextAction;
 
-            public _Where(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, bool> predicate, CancellationToken cancellationToken)
+            public _Where(
+                IUniTaskAsyncEnumerable<TSource> source,
+                Func<TSource, bool> predicate,
+                CancellationToken cancellationToken
+            )
             {
                 this.source = source;
                 this.predicate = predicate;
@@ -95,7 +119,8 @@ namespace Cysharp.Threading.Tasks.Linq
 
             public UniTask<bool> MoveNextAsync()
             {
-                if (state == -2) return default;
+                if (state == -2)
+                    return default;
 
                 completionSource.Reset();
                 MoveNext();
@@ -183,7 +208,9 @@ namespace Cysharp.Threading.Tasks.Linq
             this.predicate = predicate;
         }
 
-        public IUniTaskAsyncEnumerator<TSource> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+        public IUniTaskAsyncEnumerator<TSource> GetAsyncEnumerator(
+            CancellationToken cancellationToken = default
+        )
         {
             return new _Where(source, predicate, cancellationToken);
         }
@@ -200,7 +227,11 @@ namespace Cysharp.Threading.Tasks.Linq
             Action moveNextAction;
             int index;
 
-            public _Where(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, int, bool> predicate, CancellationToken cancellationToken)
+            public _Where(
+                IUniTaskAsyncEnumerable<TSource> source,
+                Func<TSource, int, bool> predicate,
+                CancellationToken cancellationToken
+            )
             {
                 this.source = source;
                 this.predicate = predicate;
@@ -213,7 +244,8 @@ namespace Cysharp.Threading.Tasks.Linq
 
             public UniTask<bool> MoveNextAsync()
             {
-                if (state == -2) return default;
+                if (state == -2)
+                    return default;
 
                 completionSource.Reset();
                 MoveNext();
@@ -295,13 +327,18 @@ namespace Cysharp.Threading.Tasks.Linq
         readonly IUniTaskAsyncEnumerable<TSource> source;
         readonly Func<TSource, UniTask<bool>> predicate;
 
-        public WhereAwait(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, UniTask<bool>> predicate)
+        public WhereAwait(
+            IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, UniTask<bool>> predicate
+        )
         {
             this.source = source;
             this.predicate = predicate;
         }
 
-        public IUniTaskAsyncEnumerator<TSource> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+        public IUniTaskAsyncEnumerator<TSource> GetAsyncEnumerator(
+            CancellationToken cancellationToken = default
+        )
         {
             return new _WhereAwait(source, predicate, cancellationToken);
         }
@@ -318,7 +355,11 @@ namespace Cysharp.Threading.Tasks.Linq
             UniTask<bool>.Awaiter awaiter2;
             Action moveNextAction;
 
-            public _WhereAwait(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, UniTask<bool>> predicate, CancellationToken cancellationToken)
+            public _WhereAwait(
+                IUniTaskAsyncEnumerable<TSource> source,
+                Func<TSource, UniTask<bool>> predicate,
+                CancellationToken cancellationToken
+            )
             {
                 this.source = source;
                 this.predicate = predicate;
@@ -331,7 +372,8 @@ namespace Cysharp.Threading.Tasks.Linq
 
             public UniTask<bool> MoveNextAsync()
             {
-                if (state == -2) return default;
+                if (state == -2)
+                    return default;
 
                 completionSource.Reset();
                 MoveNext();
@@ -426,13 +468,18 @@ namespace Cysharp.Threading.Tasks.Linq
         readonly IUniTaskAsyncEnumerable<TSource> source;
         readonly Func<TSource, int, UniTask<bool>> predicate;
 
-        public WhereIntAwait(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, int, UniTask<bool>> predicate)
+        public WhereIntAwait(
+            IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, int, UniTask<bool>> predicate
+        )
         {
             this.source = source;
             this.predicate = predicate;
         }
 
-        public IUniTaskAsyncEnumerator<TSource> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+        public IUniTaskAsyncEnumerator<TSource> GetAsyncEnumerator(
+            CancellationToken cancellationToken = default
+        )
         {
             return new _WhereAwait(source, predicate, cancellationToken);
         }
@@ -450,7 +497,11 @@ namespace Cysharp.Threading.Tasks.Linq
             Action moveNextAction;
             int index;
 
-            public _WhereAwait(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, int, UniTask<bool>> predicate, CancellationToken cancellationToken)
+            public _WhereAwait(
+                IUniTaskAsyncEnumerable<TSource> source,
+                Func<TSource, int, UniTask<bool>> predicate,
+                CancellationToken cancellationToken
+            )
             {
                 this.source = source;
                 this.predicate = predicate;
@@ -463,7 +514,8 @@ namespace Cysharp.Threading.Tasks.Linq
 
             public UniTask<bool> MoveNextAsync()
             {
-                if (state == -2) return default;
+                if (state == -2)
+                    return default;
 
                 completionSource.Reset();
                 MoveNext();
@@ -558,13 +610,18 @@ namespace Cysharp.Threading.Tasks.Linq
         readonly IUniTaskAsyncEnumerable<TSource> source;
         readonly Func<TSource, CancellationToken, UniTask<bool>> predicate;
 
-        public WhereAwaitWithCancellation(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, UniTask<bool>> predicate)
+        public WhereAwaitWithCancellation(
+            IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, CancellationToken, UniTask<bool>> predicate
+        )
         {
             this.source = source;
             this.predicate = predicate;
         }
 
-        public IUniTaskAsyncEnumerator<TSource> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+        public IUniTaskAsyncEnumerator<TSource> GetAsyncEnumerator(
+            CancellationToken cancellationToken = default
+        )
         {
             return new _WhereAwaitWithCancellation(source, predicate, cancellationToken);
         }
@@ -581,7 +638,11 @@ namespace Cysharp.Threading.Tasks.Linq
             UniTask<bool>.Awaiter awaiter2;
             Action moveNextAction;
 
-            public _WhereAwaitWithCancellation(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, UniTask<bool>> predicate, CancellationToken cancellationToken)
+            public _WhereAwaitWithCancellation(
+                IUniTaskAsyncEnumerable<TSource> source,
+                Func<TSource, CancellationToken, UniTask<bool>> predicate,
+                CancellationToken cancellationToken
+            )
             {
                 this.source = source;
                 this.predicate = predicate;
@@ -594,7 +655,8 @@ namespace Cysharp.Threading.Tasks.Linq
 
             public UniTask<bool> MoveNextAsync()
             {
-                if (state == -2) return default;
+                if (state == -2)
+                    return default;
 
                 completionSource.Reset();
                 MoveNext();
@@ -689,13 +751,18 @@ namespace Cysharp.Threading.Tasks.Linq
         readonly IUniTaskAsyncEnumerable<TSource> source;
         readonly Func<TSource, int, CancellationToken, UniTask<bool>> predicate;
 
-        public WhereIntAwaitWithCancellation(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, int, CancellationToken, UniTask<bool>> predicate)
+        public WhereIntAwaitWithCancellation(
+            IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, int, CancellationToken, UniTask<bool>> predicate
+        )
         {
             this.source = source;
             this.predicate = predicate;
         }
 
-        public IUniTaskAsyncEnumerator<TSource> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+        public IUniTaskAsyncEnumerator<TSource> GetAsyncEnumerator(
+            CancellationToken cancellationToken = default
+        )
         {
             return new _WhereAwaitWithCancellation(source, predicate, cancellationToken);
         }
@@ -713,7 +780,11 @@ namespace Cysharp.Threading.Tasks.Linq
             Action moveNextAction;
             int index;
 
-            public _WhereAwaitWithCancellation(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, int, CancellationToken, UniTask<bool>> predicate, CancellationToken cancellationToken)
+            public _WhereAwaitWithCancellation(
+                IUniTaskAsyncEnumerable<TSource> source,
+                Func<TSource, int, CancellationToken, UniTask<bool>> predicate,
+                CancellationToken cancellationToken
+            )
             {
                 this.source = source;
                 this.predicate = predicate;
@@ -726,7 +797,8 @@ namespace Cysharp.Threading.Tasks.Linq
 
             public UniTask<bool> MoveNextAsync()
             {
-                if (state == -2) return default;
+                if (state == -2)
+                    return default;
 
                 completionSource.Reset();
                 MoveNext();
@@ -760,7 +832,8 @@ namespace Cysharp.Threading.Tasks.Linq
                             {
                                 Current = enumerator.Current;
 
-                                awaiter2 = predicate(Current, checked(index++), cancellationToken).GetAwaiter();
+                                awaiter2 = predicate(Current, checked(index++), cancellationToken)
+                                    .GetAwaiter();
                                 if (awaiter2.IsCompleted)
                                 {
                                     goto case 2;

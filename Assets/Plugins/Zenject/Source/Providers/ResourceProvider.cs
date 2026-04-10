@@ -14,8 +14,7 @@ namespace Zenject
         readonly string _resourcePath;
         readonly bool _matchSingle;
 
-        public ResourceProvider(
-            string resourcePath, Type resourceType, bool matchSingle)
+        public ResourceProvider(string resourcePath, Type resourceType, bool matchSingle)
         {
             _resourceType = resourceType;
             _resourcePath = resourcePath;
@@ -38,7 +37,11 @@ namespace Zenject
         }
 
         public void GetAllInstancesWithInjectSplit(
-            InjectContext context, List<TypeValuePair> args, out Action injectAction, List<object> buffer)
+            InjectContext context,
+            List<TypeValuePair> args,
+            out Action injectAction,
+            List<object> buffer
+        )
         {
             Assert.IsEmpty(args);
 
@@ -48,8 +51,12 @@ namespace Zenject
             {
                 var obj = Resources.Load(_resourcePath, _resourceType);
 
-                Assert.That(obj != null,
-                "Could not find resource at path '{0}' with type '{1}'", _resourcePath, _resourceType);
+                Assert.That(
+                    obj != null,
+                    "Could not find resource at path '{0}' with type '{1}'",
+                    _resourcePath,
+                    _resourceType
+                );
 
                 // Are there any resource types which can be injected?
                 injectAction = null;
@@ -59,8 +66,12 @@ namespace Zenject
 
             var objects = Resources.LoadAll(_resourcePath, _resourceType);
 
-            Assert.That(objects.Length > 0,
-            "Could not find resource at path '{0}' with type '{1}'", _resourcePath, _resourceType);
+            Assert.That(
+                objects.Length > 0,
+                "Could not find resource at path '{0}' with type '{1}'",
+                _resourcePath,
+                _resourceType
+            );
 
             // Are there any resource types which can be injected?
             injectAction = null;
@@ -71,5 +82,3 @@ namespace Zenject
 }
 
 #endif
-
-

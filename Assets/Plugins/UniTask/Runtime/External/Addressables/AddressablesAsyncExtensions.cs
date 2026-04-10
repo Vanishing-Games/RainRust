@@ -14,21 +14,39 @@ namespace Cysharp.Threading.Tasks
 {
     public static class AddressablesAsyncExtensions
     {
-#region AsyncOperationHandle
+        #region AsyncOperationHandle
 
         public static UniTask.Awaiter GetAwaiter(this AsyncOperationHandle handle)
         {
             return ToUniTask(handle).GetAwaiter();
         }
 
-        public static UniTask WithCancellation(this AsyncOperationHandle handle, CancellationToken cancellationToken, bool cancelImmediately = false, bool autoReleaseWhenCanceled = false)
+        public static UniTask WithCancellation(
+            this AsyncOperationHandle handle,
+            CancellationToken cancellationToken,
+            bool cancelImmediately = false,
+            bool autoReleaseWhenCanceled = false
+        )
         {
-            return ToUniTask(handle, cancellationToken: cancellationToken, cancelImmediately: cancelImmediately, autoReleaseWhenCanceled: autoReleaseWhenCanceled);
+            return ToUniTask(
+                handle,
+                cancellationToken: cancellationToken,
+                cancelImmediately: cancelImmediately,
+                autoReleaseWhenCanceled: autoReleaseWhenCanceled
+            );
         }
 
-        public static UniTask ToUniTask(this AsyncOperationHandle handle, IProgress<float> progress = null, PlayerLoopTiming timing = PlayerLoopTiming.Update, CancellationToken cancellationToken = default(CancellationToken), bool cancelImmediately = false, bool autoReleaseWhenCanceled = false)
+        public static UniTask ToUniTask(
+            this AsyncOperationHandle handle,
+            IProgress<float> progress = null,
+            PlayerLoopTiming timing = PlayerLoopTiming.Update,
+            CancellationToken cancellationToken = default(CancellationToken),
+            bool cancelImmediately = false,
+            bool autoReleaseWhenCanceled = false
+        )
         {
-            if (cancellationToken.IsCancellationRequested) return UniTask.FromCanceled(cancellationToken);
+            if (cancellationToken.IsCancellationRequested)
+                return UniTask.FromCanceled(cancellationToken);
 
             if (!handle.IsValid())
             {
@@ -45,7 +63,18 @@ namespace Cysharp.Threading.Tasks
                 return UniTask.CompletedTask;
             }
 
-            return new UniTask(AsyncOperationHandleConfiguredSource.Create(handle, timing, progress, cancellationToken, cancelImmediately, autoReleaseWhenCanceled, out var token), token);
+            return new UniTask(
+                AsyncOperationHandleConfiguredSource.Create(
+                    handle,
+                    timing,
+                    progress,
+                    cancellationToken,
+                    cancelImmediately,
+                    autoReleaseWhenCanceled,
+                    out var token
+                ),
+                token
+            );
         }
 
         public struct AsyncOperationHandleAwaiter : ICriticalNotifyCompletion
@@ -93,7 +122,10 @@ namespace Cysharp.Threading.Tasks
             }
         }
 
-        sealed class AsyncOperationHandleConfiguredSource : IUniTaskSource, IPlayerLoopItem, ITaskPoolNode<AsyncOperationHandleConfiguredSource>
+        sealed class AsyncOperationHandleConfiguredSource
+            : IUniTaskSource,
+                IPlayerLoopItem,
+                ITaskPoolNode<AsyncOperationHandleConfiguredSource>
         {
             static TaskPool<AsyncOperationHandleConfiguredSource> pool;
             AsyncOperationHandleConfiguredSource nextNode;
@@ -101,7 +133,10 @@ namespace Cysharp.Threading.Tasks
 
             static AsyncOperationHandleConfiguredSource()
             {
-                TaskPool.RegisterSizeGetter(typeof(AsyncOperationHandleConfiguredSource), () => pool.Size);
+                TaskPool.RegisterSizeGetter(
+                    typeof(AsyncOperationHandleConfiguredSource),
+                    () => pool.Size
+                );
             }
 
             readonly Action<AsyncOperationHandle> completedCallback;
@@ -120,11 +155,22 @@ namespace Cysharp.Threading.Tasks
                 completedCallback = HandleCompleted;
             }
 
-            public static IUniTaskSource Create(AsyncOperationHandle handle, PlayerLoopTiming timing, IProgress<float> progress, CancellationToken cancellationToken, bool cancelImmediately, bool autoReleaseWhenCanceled, out short token)
+            public static IUniTaskSource Create(
+                AsyncOperationHandle handle,
+                PlayerLoopTiming timing,
+                IProgress<float> progress,
+                CancellationToken cancellationToken,
+                bool cancelImmediately,
+                bool autoReleaseWhenCanceled,
+                out short token
+            )
             {
                 if (cancellationToken.IsCancellationRequested)
                 {
-                    return AutoResetUniTaskCompletionSource.CreateFromCanceled(cancellationToken, out token);
+                    return AutoResetUniTaskCompletionSource.CreateFromCanceled(
+                        cancellationToken,
+                        out token
+                    );
                 }
 
                 if (!pool.TryPop(out var result))
@@ -138,18 +184,22 @@ namespace Cysharp.Threading.Tasks
                 result.cancelImmediately = cancelImmediately;
                 result.autoReleaseWhenCanceled = autoReleaseWhenCanceled;
                 result.completed = false;
-                
+
                 if (cancelImmediately && cancellationToken.CanBeCanceled)
                 {
-                    result.cancellationTokenRegistration = cancellationToken.RegisterWithoutCaptureExecutionContext(state =>
-                    {
-                        var promise = (AsyncOperationHandleConfiguredSource)state;
-                        if (promise.autoReleaseWhenCanceled && promise.handle.IsValid())
-                        {
-                            Addressables.Release(promise.handle);
-                        }
-                        promise.core.TrySetCanceled(promise.cancellationToken);
-                    }, result);
+                    result.cancellationTokenRegistration =
+                        cancellationToken.RegisterWithoutCaptureExecutionContext(
+                            state =>
+                            {
+                                var promise = (AsyncOperationHandleConfiguredSource)state;
+                                if (promise.autoReleaseWhenCanceled && promise.handle.IsValid())
+                                {
+                                    Addressables.Release(promise.handle);
+                                }
+                                promise.core.TrySetCanceled(promise.cancellationToken);
+                            },
+                            result
+                        );
                 }
 
                 TaskTracker.TrackActiveTask(result, 3);
@@ -173,7 +223,7 @@ namespace Cysharp.Threading.Tasks
                 {
                     return;
                 }
-                
+
                 completed = true;
                 if (cancellationToken.IsCancellationRequested)
                 {
@@ -265,23 +315,41 @@ namespace Cysharp.Threading.Tasks
             }
         }
 
-#endregion
+        #endregion
 
-#region AsyncOperationHandle_T
+        #region AsyncOperationHandle_T
 
         public static UniTask<T>.Awaiter GetAwaiter<T>(this AsyncOperationHandle<T> handle)
         {
             return ToUniTask(handle).GetAwaiter();
         }
 
-        public static UniTask<T> WithCancellation<T>(this AsyncOperationHandle<T> handle, CancellationToken cancellationToken, bool cancelImmediately = false, bool autoReleaseWhenCanceled = false)
+        public static UniTask<T> WithCancellation<T>(
+            this AsyncOperationHandle<T> handle,
+            CancellationToken cancellationToken,
+            bool cancelImmediately = false,
+            bool autoReleaseWhenCanceled = false
+        )
         {
-            return ToUniTask(handle, cancellationToken: cancellationToken, cancelImmediately: cancelImmediately, autoReleaseWhenCanceled: autoReleaseWhenCanceled);
+            return ToUniTask(
+                handle,
+                cancellationToken: cancellationToken,
+                cancelImmediately: cancelImmediately,
+                autoReleaseWhenCanceled: autoReleaseWhenCanceled
+            );
         }
 
-        public static UniTask<T> ToUniTask<T>(this AsyncOperationHandle<T> handle, IProgress<float> progress = null, PlayerLoopTiming timing = PlayerLoopTiming.Update, CancellationToken cancellationToken = default(CancellationToken), bool cancelImmediately = false, bool autoReleaseWhenCanceled = false)
+        public static UniTask<T> ToUniTask<T>(
+            this AsyncOperationHandle<T> handle,
+            IProgress<float> progress = null,
+            PlayerLoopTiming timing = PlayerLoopTiming.Update,
+            CancellationToken cancellationToken = default(CancellationToken),
+            bool cancelImmediately = false,
+            bool autoReleaseWhenCanceled = false
+        )
         {
-            if (cancellationToken.IsCancellationRequested) return UniTask.FromCanceled<T>(cancellationToken);
+            if (cancellationToken.IsCancellationRequested)
+                return UniTask.FromCanceled<T>(cancellationToken);
 
             if (!handle.IsValid())
             {
@@ -297,10 +365,24 @@ namespace Cysharp.Threading.Tasks
                 return UniTask.FromResult(handle.Result);
             }
 
-            return new UniTask<T>(AsyncOperationHandleConfiguredSource<T>.Create(handle, timing, progress, cancellationToken, cancelImmediately, autoReleaseWhenCanceled, out var token), token);
+            return new UniTask<T>(
+                AsyncOperationHandleConfiguredSource<T>.Create(
+                    handle,
+                    timing,
+                    progress,
+                    cancellationToken,
+                    cancelImmediately,
+                    autoReleaseWhenCanceled,
+                    out var token
+                ),
+                token
+            );
         }
 
-        sealed class AsyncOperationHandleConfiguredSource<T> : IUniTaskSource<T>, IPlayerLoopItem, ITaskPoolNode<AsyncOperationHandleConfiguredSource<T>>
+        sealed class AsyncOperationHandleConfiguredSource<T>
+            : IUniTaskSource<T>,
+                IPlayerLoopItem,
+                ITaskPoolNode<AsyncOperationHandleConfiguredSource<T>>
         {
             static TaskPool<AsyncOperationHandleConfiguredSource<T>> pool;
             AsyncOperationHandleConfiguredSource<T> nextNode;
@@ -308,7 +390,10 @@ namespace Cysharp.Threading.Tasks
 
             static AsyncOperationHandleConfiguredSource()
             {
-                TaskPool.RegisterSizeGetter(typeof(AsyncOperationHandleConfiguredSource<T>), () => pool.Size);
+                TaskPool.RegisterSizeGetter(
+                    typeof(AsyncOperationHandleConfiguredSource<T>),
+                    () => pool.Size
+                );
             }
 
             readonly Action<AsyncOperationHandle<T>> completedCallback;
@@ -327,11 +412,22 @@ namespace Cysharp.Threading.Tasks
                 completedCallback = HandleCompleted;
             }
 
-            public static IUniTaskSource<T> Create(AsyncOperationHandle<T> handle, PlayerLoopTiming timing, IProgress<float> progress, CancellationToken cancellationToken, bool cancelImmediately, bool autoReleaseWhenCanceled, out short token)
+            public static IUniTaskSource<T> Create(
+                AsyncOperationHandle<T> handle,
+                PlayerLoopTiming timing,
+                IProgress<float> progress,
+                CancellationToken cancellationToken,
+                bool cancelImmediately,
+                bool autoReleaseWhenCanceled,
+                out short token
+            )
             {
                 if (cancellationToken.IsCancellationRequested)
                 {
-                    return AutoResetUniTaskCompletionSource<T>.CreateFromCanceled(cancellationToken, out token);
+                    return AutoResetUniTaskCompletionSource<T>.CreateFromCanceled(
+                        cancellationToken,
+                        out token
+                    );
                 }
 
                 if (!pool.TryPop(out var result))
@@ -345,18 +441,22 @@ namespace Cysharp.Threading.Tasks
                 result.progress = progress;
                 result.autoReleaseWhenCanceled = autoReleaseWhenCanceled;
                 result.cancelImmediately = cancelImmediately;
-                
+
                 if (cancelImmediately && cancellationToken.CanBeCanceled)
                 {
-                    result.cancellationTokenRegistration = cancellationToken.RegisterWithoutCaptureExecutionContext(state =>
-                    {
-                        var promise = (AsyncOperationHandleConfiguredSource<T>)state;
-                        if (promise.autoReleaseWhenCanceled && promise.handle.IsValid())
-                        {
-                            Addressables.Release(promise.handle);
-                        }
-                        promise.core.TrySetCanceled(promise.cancellationToken);
-                    }, result);
+                    result.cancellationTokenRegistration =
+                        cancellationToken.RegisterWithoutCaptureExecutionContext(
+                            state =>
+                            {
+                                var promise = (AsyncOperationHandleConfiguredSource<T>)state;
+                                if (promise.autoReleaseWhenCanceled && promise.handle.IsValid())
+                                {
+                                    Addressables.Release(promise.handle);
+                                }
+                                promise.core.TrySetCanceled(promise.cancellationToken);
+                            },
+                            result
+                        );
                 }
 
                 TaskTracker.TrackActiveTask(result, 3);
@@ -476,7 +576,7 @@ namespace Cysharp.Threading.Tasks
             }
         }
 
-#endregion
+        #endregion
     }
 }
 

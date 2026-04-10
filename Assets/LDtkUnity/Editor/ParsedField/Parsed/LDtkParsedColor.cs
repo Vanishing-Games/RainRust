@@ -14,9 +14,9 @@ namespace LDtkUnity.Editor
                 LDtkDebug.LogWarning("Color field was unexpectedly null");
                 return "#000000".ToColor();
             }
-            
-            string colorString = (string) input;
-            
+
+            string colorString = (string)input;
+
             return colorString.ToColor();
         }
     }

@@ -4,7 +4,10 @@ namespace Cysharp.Threading.Tasks.Linq
 {
     public static partial class UniTaskAsyncEnumerable
     {
-        public static IUniTaskAsyncEnumerable<AsyncUnit> EveryUpdate(PlayerLoopTiming updateTiming = PlayerLoopTiming.Update, bool cancelImmediately = false)
+        public static IUniTaskAsyncEnumerable<AsyncUnit> EveryUpdate(
+            PlayerLoopTiming updateTiming = PlayerLoopTiming.Update,
+            bool cancelImmediately = false
+        )
         {
             return new EveryUpdate(updateTiming, cancelImmediately);
         }
@@ -21,7 +24,9 @@ namespace Cysharp.Threading.Tasks.Linq
             this.cancelImmediately = cancelImmediately;
         }
 
-        public IUniTaskAsyncEnumerator<AsyncUnit> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+        public IUniTaskAsyncEnumerator<AsyncUnit> GetAsyncEnumerator(
+            CancellationToken cancellationToken = default
+        )
         {
             return new _EveryUpdate(updateTiming, cancellationToken, cancelImmediately);
         }
@@ -34,18 +39,26 @@ namespace Cysharp.Threading.Tasks.Linq
 
             bool disposed;
 
-            public _EveryUpdate(PlayerLoopTiming updateTiming, CancellationToken cancellationToken, bool cancelImmediately)
+            public _EveryUpdate(
+                PlayerLoopTiming updateTiming,
+                CancellationToken cancellationToken,
+                bool cancelImmediately
+            )
             {
                 this.updateTiming = updateTiming;
                 this.cancellationToken = cancellationToken;
 
                 if (cancelImmediately && cancellationToken.CanBeCanceled)
                 {
-                    cancellationTokenRegistration = cancellationToken.RegisterWithoutCaptureExecutionContext(state =>
-                    {
-                        var source = (_EveryUpdate)state;
-                        source.completionSource.TrySetCanceled(source.cancellationToken);
-                    }, this);
+                    cancellationTokenRegistration =
+                        cancellationToken.RegisterWithoutCaptureExecutionContext(
+                            state =>
+                            {
+                                var source = (_EveryUpdate)state;
+                                source.completionSource.TrySetCanceled(source.cancellationToken);
+                            },
+                            this
+                        );
                 }
 
                 TaskTracker.TrackActiveTask(this, 2);
@@ -56,8 +69,9 @@ namespace Cysharp.Threading.Tasks.Linq
 
             public UniTask<bool> MoveNextAsync()
             {
-                if (disposed) return CompletedTasks.False;
-                
+                if (disposed)
+                    return CompletedTasks.False;
+
                 completionSource.Reset();
 
                 if (cancellationToken.IsCancellationRequested)
@@ -85,7 +99,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     completionSource.TrySetCanceled(cancellationToken);
                     return false;
                 }
-                
+
                 if (disposed)
                 {
                     completionSource.TrySetResult(false);

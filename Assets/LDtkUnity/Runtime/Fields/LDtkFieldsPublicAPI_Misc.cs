@@ -39,7 +39,7 @@ namespace LDtkUnity
         {
             return !TryGetField(identifier, out LDtkField field) || field.IsSingleNull();
         }
-        
+
         /// <summary>
         /// Used to check if a field's array element is null in this component.
         /// </summary>
@@ -70,13 +70,15 @@ namespace LDtkUnity
         {
             if (!TryGetField(identifier, out LDtkField field))
             {
-                LDtkDebug.LogError($"Didn't check if field is an array for \"{identifier}\", couldn't find the field.");
+                LDtkDebug.LogError(
+                    $"Didn't check if field is an array for \"{identifier}\", couldn't find the field."
+                );
                 return false;
             }
 
             return field.IsArray;
         }
-        
+
         /// <summary>
         /// Used to get the size of an array field.
         /// </summary>
@@ -90,20 +92,24 @@ namespace LDtkUnity
         {
             if (!TryGetField(identifier, out LDtkField field))
             {
-                LDtkDebug.LogError($"Didn't get array size for \"{identifier}\", couldn't find the field.");
+                LDtkDebug.LogError(
+                    $"Didn't get array size for \"{identifier}\", couldn't find the field."
+                );
                 return 0;
             }
 
             if (!field.IsArray)
             {
-                LDtkDebug.LogError($"Didn't get array size for \"{identifier}\", this field is not an array.");
+                LDtkDebug.LogError(
+                    $"Didn't get array size for \"{identifier}\", this field is not an array."
+                );
                 return 0;
             }
 
             bool success = field.TryGetArray(out LDtkFieldElement[] array);
             return success ? array.Length : 0;
         }
-        
+
         [Obsolete("Use EntityInstance.UnitySmartColor instead.")]
         public bool GetSmartColor(out Color firstColor)
         {

@@ -7,8 +7,7 @@ namespace Zenject
         readonly IProvider _provider;
         readonly InjectContext _injectContext;
 
-        public FactoryProviderWrapper(
-            IProvider provider, InjectContext injectContext)
+        public FactoryProviderWrapper(IProvider provider, InjectContext injectContext)
         {
             Assert.That(injectContext.MemberType.DerivesFromOrEqual<TContract>());
 
@@ -26,11 +25,11 @@ namespace Zenject
                 return default(TContract);
             }
 
-            Assert.That(instance == null
-                || instance.GetType().DerivesFromOrEqual(_injectContext.MemberType));
+            Assert.That(
+                instance == null || instance.GetType().DerivesFromOrEqual(_injectContext.MemberType)
+            );
 
             return (TContract)instance;
         }
     }
 }
-

@@ -15,7 +15,7 @@ namespace LDtkUnity.Editor
             //{ "tilesetUid": 104, "srcRect": [144,128,16,16] },
             //or
             //null
-            
+
             if (input == null)
             {
                 return default;
@@ -27,7 +27,7 @@ namespace LDtkUnity.Editor
                 //a tile can safely be null
                 return default;
             }
-            
+
             if (ctx.Project == null || ctx.Importer == null)
             {
                 LDtkDebug.LogError("Couldn't parse point, importer and/or project was null");
@@ -40,11 +40,11 @@ namespace LDtkUnity.Editor
             {
                 return default;
             }
-            
+
             Sprite sprite = ctx.Importer.GetAdditionalSprite(ctx.Project, tileset, tile.UnityRect);
             return sprite;
         }
-        
+
         public static TilesetRectangle ConvertDict(object obj)
         {
             if (obj == null)
@@ -65,7 +65,7 @@ namespace LDtkUnity.Editor
                     X = (int)x,
                     Y = (int)y,
                     W = (int)w,
-                    H = (int)h
+                    H = (int)h,
                 };
             }
 

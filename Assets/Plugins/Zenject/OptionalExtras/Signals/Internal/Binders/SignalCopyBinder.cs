@@ -14,10 +14,7 @@ namespace Zenject
 
         public SignalCopyBinder(BindInfo bindInfo)
         {
-            _bindInfos = new List<BindInfo>
-            {
-                bindInfo
-            };
+            _bindInfos = new List<BindInfo> { bindInfo };
         }
 
         // This is used in cases where you have multiple bindings that depend on each other so should

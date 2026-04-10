@@ -9,6 +9,7 @@ namespace LDtkUnity.Editor
         {
             GL.Begin(mode);
         }
+
         public void Dispose()
         {
             GL.End();

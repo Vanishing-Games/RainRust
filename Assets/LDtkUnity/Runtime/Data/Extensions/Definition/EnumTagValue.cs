@@ -3,8 +3,5 @@
 namespace LDtkUnity
 {
     [ExcludeFromDocs]
-    public partial class EnumTagValue
-    {
-
-    }
+    public partial class EnumTagValue { }
 }

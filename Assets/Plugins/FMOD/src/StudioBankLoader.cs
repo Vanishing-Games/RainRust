@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace FMODUnity
 {
@@ -8,6 +8,7 @@ namespace FMODUnity
     {
         public LoaderGameEvent LoadEvent;
         public LoaderGameEvent UnloadEvent;
+
         [BankRef]
         public List<string> Banks;
         public string CollisionTag;

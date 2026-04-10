@@ -8,7 +8,10 @@ namespace Zenject
         FactoryBindInfo _factoryBindInfo;
 
         public DecoratorToChoiceFromBinder(
-            DiContainer bindContainer, BindInfo bindInfo, FactoryBindInfo factoryBindInfo)
+            DiContainer bindContainer,
+            BindInfo bindInfo,
+            FactoryBindInfo factoryBindInfo
+        )
         {
             _bindContainer = bindContainer;
             _bindInfo = bindInfo;
@@ -23,7 +26,10 @@ namespace Zenject
             _bindInfo.ToTypes.Add(typeof(TConcrete));
 
             return new FactoryFromBinder<TContract, TConcrete>(
-                _bindContainer, _bindInfo, _factoryBindInfo);
+                _bindContainer,
+                _bindInfo,
+                _factoryBindInfo
+            );
         }
     }
 }

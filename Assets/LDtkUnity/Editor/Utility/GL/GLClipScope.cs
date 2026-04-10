@@ -9,6 +9,7 @@ namespace LDtkUnity.Editor
         {
             GUI.BeginClip(rect);
         }
+
         public void Dispose()
         {
             GUI.EndClip();

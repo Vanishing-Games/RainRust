@@ -1,6 +1,4 @@
 namespace Zenject.Asteroids
 {
-    public class ShipCrashedSignal
-    {
-    }
+    public class ShipCrashedSignal { }
 }

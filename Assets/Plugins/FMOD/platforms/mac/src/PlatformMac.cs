@@ -35,7 +35,11 @@ namespace FMODUnity
             Settings.AddPlatformTemplate<PlatformMac>("52eb9df5db46521439908db3a29a1bbb");
         }
 
-        internal override string DisplayName { get { return "macOS"; } }
+        internal override string DisplayName
+        {
+            get { return "macOS"; }
+        }
+
         internal override void DeclareRuntimePlatforms(Settings settings)
         {
             settings.DeclareRuntimePlatform(RuntimePlatform.OSXPlayer, this);
@@ -47,19 +51,29 @@ namespace FMODUnity
             yield return BuildTarget.StandaloneOSX;
         }
 
-        internal override Legacy.Platform LegacyIdentifier { get { return Legacy.Platform.Mac; } }
+        internal override Legacy.Platform LegacyIdentifier
+        {
+            get { return Legacy.Platform.Mac; }
+        }
 
         protected override BinaryAssetFolderInfo GetBinaryAssetFolder(BuildTarget buildTarget)
         {
             return new BinaryAssetFolderInfo("mac", "Plugins");
         }
 
-        protected override IEnumerable<FileRecord> GetBinaryFiles(BuildTarget buildTarget, bool allVariants, string suffix)
+        protected override IEnumerable<FileRecord> GetBinaryFiles(
+            BuildTarget buildTarget,
+            bool allVariants,
+            string suffix
+        )
         {
             yield return new FileRecord(string.Format("fmodstudio{0}.bundle", suffix));
         }
 
-        protected override IEnumerable<FileRecord> GetOptionalBinaryFiles(BuildTarget buildTarget, bool allVariants)
+        protected override IEnumerable<FileRecord> GetOptionalBinaryFiles(
+            BuildTarget buildTarget,
+            bool allVariants
+        )
         {
             yield return new FileRecord("gvraudio.bundle");
             yield return new FileRecord("resonanceaudio.bundle");
@@ -83,21 +97,23 @@ namespace FMODUnity
                 return string.Format("{0}/{1}.dylib", GetPluginBasePath(), pluginName);
             }
         }
+
 #if UNITY_EDITOR
         internal override OutputType[] ValidOutputTypes
         {
-            get
-            {
-                return sValidOutputTypes;
-            }
+            get { return sValidOutputTypes; }
         }
 
-        private static OutputType[] sValidOutputTypes = {
-           new OutputType() { displayName = "Core Audio", outputType = FMOD.OUTPUTTYPE.COREAUDIO },
+        private static OutputType[] sValidOutputTypes =
+        {
+            new OutputType() { displayName = "Core Audio", outputType = FMOD.OUTPUTTYPE.COREAUDIO },
         };
 #endif
 
-        internal override List<CodecChannelCount> DefaultCodecChannels { get { return staticCodecChannels; } }
+        internal override List<CodecChannelCount> DefaultCodecChannels
+        {
+            get { return staticCodecChannels; }
+        }
 
         private static List<CodecChannelCount> staticCodecChannels = new List<CodecChannelCount>()
         {

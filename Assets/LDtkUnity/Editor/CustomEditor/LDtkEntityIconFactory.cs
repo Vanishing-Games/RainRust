@@ -6,7 +6,7 @@ namespace LDtkUnity.Editor
     {
         private readonly EntityDefinition _data;
         private readonly LDtkProjectImporter _importer;
-        
+
         public LDtkEntityIconFactory(EntityDefinition def, LDtkProjectImporter importer)
         {
             _data = def;
@@ -18,13 +18,13 @@ namespace LDtkUnity.Editor
             LDtkProfiler.BeginSample("GetShapeForRenderMode");
             Texture2D srcBackground = GetShapeForRenderMode();
             LDtkProfiler.EndSample();
-            
+
             if (srcBackground == null)
             {
                 LDtkDebug.LogError("Did not get source icon for entity icon");
                 return null;
             }
-            
+
             LDtkProfiler.BeginSample("CopySrcBackground");
             Texture2D tex = srcBackground.Copy();
             LDtkProfiler.EndSample();
@@ -32,33 +32,28 @@ namespace LDtkUnity.Editor
             LDtkProfiler.BeginSample("TintTexture");
             TintTexture(tex, _data.UnityColor);
             LDtkProfiler.EndSample();
-            
-            
+
             //Profiler.BeginSample("ResizeStretch");
             //LDtkTextureUtil.ResizeStretch(tex, 12, 12);
             //Profiler.EndSample();
-            
+
             //Profiler.BeginSample("ReframeTexture");
             //ReframeTexture(tex);
             //Profiler.EndSample();
-            
 
-            
-            
             //Profiler.BeginSample("ApplyOverlay");
             //ApplyOverlay(tex);
             //Profiler.EndSample();
-            
-            
+
             //Profiler.BeginSample("SquarifyTexture");
             SquarifyTexture(tex);
             //Profiler.EndSample();
-            
+
             LDtkProfiler.BeginSample("Apply");
             tex.filterMode = FilterMode.Point;
             tex.Apply(true);
             LDtkProfiler.EndSample();
-            
+
             return tex;
         }
 
@@ -74,7 +69,7 @@ namespace LDtkUnity.Editor
             }
 
             //Debug.Log("overlay");
-            
+
             LDtkProfiler.BeginSample("ModifyOverlayForRenderType");
             ModifyOverlayForRenderType(tex, overlayTex);
             LDtkProfiler.EndSample();
@@ -94,15 +89,13 @@ namespace LDtkUnity.Editor
         {
             TilesetRectangle mine = _data.TileRect;
 
-
-            TilesetRectangle tile = mine;//new TilesetRectangle();
+            TilesetRectangle tile = mine; //new TilesetRectangle();
             //HACK test: (x:16, y:128, width:16, height:16)
             //tile.X = 16;
             //tile.Y = 128;
             //tile.W = 16;
             //tile.H = 16;
             //tile.TilesetUid = 60;
-            
 
             if (tile == null)
             {
@@ -110,10 +103,9 @@ namespace LDtkUnity.Editor
                 //Debug.Log($"no tile for {_data.Identifier}");
                 return null;
             }
-            
+
             //Debug.Log(tile.TilesetUid);
             //Debug.Log(tile.UnityRect);
-            
 
             TilesetDefinition tileset = tile.Tileset;
             if (tileset == null)
@@ -149,9 +141,9 @@ namespace LDtkUnity.Editor
             //Debug.Log(background.height);
             //Debug.Log(overlay.width);
             //Debug.Log(overlay.height);
-            
+
             int startY = background.height - overlay.height;
-            
+
             for (int x = 0; x < overlay.width; x++)
             {
                 for (int y = 0; y < overlay.height; y++)
@@ -166,7 +158,7 @@ namespace LDtkUnity.Editor
                 }
             }
         }
-        
+
         private Texture2D GetShapeForRenderMode()
         {
             Texture2D icon = null;
@@ -185,22 +177,22 @@ namespace LDtkUnity.Editor
             }
             return icon;
         }
-        
+
         private void SquarifyTexture(Texture2D tex)
         {
             Vector2Int newSize = GetSquareTexSize(tex);
             Vector2Int srcSize = new Vector2Int(tex.width, tex.height);
-            
+
             Color[] clearColors = GetClearPixels(newSize.x * newSize.y);
             Color[] pixels = tex.GetPixels();
-            
+
             LDtkTextureUtility.Resize(tex, newSize.x, newSize.y);
             tex.SetPixels(clearColors);
-                
+
             Vector2Int padding = (newSize - srcSize) / 2;
             tex.SetPixels(padding.x, padding.y, srcSize.x, srcSize.y, pixels);
         }
-        
+
         private void ReframeTexture(Texture2D tex)
         {
             Vector2Int newSize = GetSquareTexSize(tex);
@@ -229,7 +221,6 @@ namespace LDtkUnity.Editor
                 float scaleUp = (float)_data.Height / _data.Width;
                 finalX = Mathf.FloorToInt(finalX * scaleUp);
             }
-            
             //expand height
             else if (_data.Height < _data.Width)
             {
@@ -246,7 +237,7 @@ namespace LDtkUnity.Editor
             {
                 case TileRenderMode.FitInside:
                 case TileRenderMode.Repeat:
-                case TileRenderMode.Cover: 
+                case TileRenderMode.Cover:
                     //live in the top left, scaling both axis to the background's smallest axis
                     int min = Mathf.Min(background.width, background.height);
                     LDtkTextureUtility.ResizeStretch(overlay, min, min);
@@ -256,9 +247,8 @@ namespace LDtkUnity.Editor
                     //stretch the image so that it's the same resolution as the background
                     LDtkTextureUtility.ResizeStretch(overlay, background.width, background.height);
                     break;
-                
-                
-                case TileRenderMode.FullSizeCropped: 
+
+                case TileRenderMode.FullSizeCropped:
                 case TileRenderMode.FullSizeUncropped:
                     //draw the image overlay, but only the first 24x24 pixels of the overlay, then stretched to fit the background
 
@@ -269,14 +259,10 @@ namespace LDtkUnity.Editor
                             //todo setup some handling here
                         }
                     }
-                    
+
                     LDtkTextureUtility.ResizeStretch(overlay, 24, 24);
                     break;
-                
-
             }
         }
-        
-        
     }
 }

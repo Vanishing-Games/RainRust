@@ -9,19 +9,19 @@ namespace Zenject
     {
         Unset,
         Transient,
-        Singleton
+        Singleton,
     }
 
     public enum ToChoices
     {
         Self,
-        Concrete
+        Concrete,
     }
 
     public enum InvalidBindResponses
     {
         Assert,
-        Skip
+        Skip,
     }
 
     public enum BindingInheritanceMethods
@@ -30,7 +30,7 @@ namespace Zenject
         CopyIntoAll,
         CopyDirectOnly,
         MoveIntoAll,
-        MoveDirectOnly
+        MoveDirectOnly,
     }
 
     [NoReflectionBaking]

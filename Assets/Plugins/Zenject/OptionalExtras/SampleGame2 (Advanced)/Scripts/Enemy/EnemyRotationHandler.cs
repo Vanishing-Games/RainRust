@@ -11,18 +11,13 @@ namespace Zenject.SpaceFighter
         readonly Settings _settings;
         readonly EnemyView _view;
 
-        public EnemyRotationHandler(
-            EnemyView view,
-            Settings settings)
+        public EnemyRotationHandler(EnemyView view, Settings settings)
         {
             _settings = settings;
             _view = view;
         }
 
-        public Vector2 DesiredLookDir
-        {
-            get; set;
-        }
+        public Vector2 DesiredLookDir { get; set; }
 
         public void FixedTick()
         {

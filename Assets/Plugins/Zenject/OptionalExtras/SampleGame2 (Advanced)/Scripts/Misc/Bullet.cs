@@ -5,7 +5,7 @@ namespace Zenject.SpaceFighter
     public enum BulletTypes
     {
         FromEnemy,
-        FromPlayer
+        FromPlayer,
     }
 
     public class Bullet : MonoBehaviour, IPoolable<float, float, BulletTypes, IMemoryPool>
@@ -84,8 +84,6 @@ namespace Zenject.SpaceFighter
             _pool = null;
         }
 
-        public class Factory : PlaceholderFactory<float, float, BulletTypes, Bullet>
-        {
-        }
+        public class Factory : PlaceholderFactory<float, float, BulletTypes, Bullet> { }
     }
 }

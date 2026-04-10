@@ -14,7 +14,7 @@ namespace LDtkUnity.Editor
                 ctx.Importer.Logger.LogWarning("Bool field was unexpectedly null");
                 return false;
             }
-            
+
             return Convert.ToBoolean(ctx.Input);
         }
     }

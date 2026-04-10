@@ -80,11 +80,15 @@ namespace Core
 
         private void SubscribeToSaveEvents()
         {
-            MessageBroker.Global.Subscribe<BeforeWriteSaveEvent>(OnBeforeWriteSave).AddTo(this);
-            MessageBroker.Global.Subscribe<OnLoadSaveEvent>(OnLoadSave).AddTo(this);
+            MessageBroker
+                .Global.Subscribe<SaveSystemEvents.SavePreWriteEvent>(OnBeforeWriteSave)
+                .AddTo(this);
+            MessageBroker
+                .Global.Subscribe<SaveSystemEvents.SaveOnLoadEvent>(OnLoadSave)
+                .AddTo(this);
         }
 
-        private void OnBeforeWriteSave(BeforeWriteSaveEvent evt)
+        private void OnBeforeWriteSave(SaveSystemEvents.SavePreWriteEvent evt)
         {
             if (evt.IsGlobal)
             {
@@ -94,7 +98,7 @@ namespace Core
             SaveManager.Instance.UpdateSaveValue(m_SaveID, CaptureSaveData());
         }
 
-        private void OnLoadSave(OnLoadSaveEvent evt)
+        private void OnLoadSave(SaveSystemEvents.SaveOnLoadEvent evt)
         {
             if (evt.IsGlobal)
             {
@@ -150,7 +154,7 @@ namespace Core
                 if (publishEvent && oldValue != newValue)
                 {
                     MessageBroker.Global.Publish(
-                        new StatChangedEvent(key, oldValue, newValue, stat.Type)
+                        new StatsEvents.StatChangedEvent(key, oldValue, newValue, stat.Type)
                     );
                 }
             }

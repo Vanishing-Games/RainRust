@@ -49,7 +49,7 @@ namespace Cysharp.Threading.Tasks
             {
                 if (msg == null)
                 {
-                    if(!string.IsNullOrWhiteSpace(Text))
+                    if (!string.IsNullOrWhiteSpace(Text))
                     {
                         msg = Error + Environment.NewLine + Text;
                     }

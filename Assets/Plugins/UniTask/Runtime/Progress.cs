@@ -11,17 +11,28 @@ namespace Cysharp.Threading.Tasks
     {
         public static IProgress<T> Create<T>(Action<T> handler)
         {
-            if (handler == null) return NullProgress<T>.Instance;
+            if (handler == null)
+                return NullProgress<T>.Instance;
             return new AnonymousProgress<T>(handler);
         }
 
-        public static IProgress<T> CreateOnlyValueChanged<T>(Action<T> handler, IEqualityComparer<T> comparer = null)
+        public static IProgress<T> CreateOnlyValueChanged<T>(
+            Action<T> handler,
+            IEqualityComparer<T> comparer = null
+        )
         {
-            if (handler == null) return NullProgress<T>.Instance;
+            if (handler == null)
+                return NullProgress<T>.Instance;
 #if UNITY_2018_3_OR_NEWER
-            return new OnlyValueChangedProgress<T>(handler, comparer ?? UnityEqualityComparer.GetDefault<T>());
+            return new OnlyValueChangedProgress<T>(
+                handler,
+                comparer ?? UnityEqualityComparer.GetDefault<T>()
+            );
 #else
-            return new OnlyValueChangedProgress<T>(handler, comparer ?? EqualityComparer<T>.Default);
+            return new OnlyValueChangedProgress<T>(
+                handler,
+                comparer ?? EqualityComparer<T>.Default
+            );
 #endif
         }
 
@@ -29,14 +40,9 @@ namespace Cysharp.Threading.Tasks
         {
             public static readonly IProgress<T> Instance = new NullProgress<T>();
 
-            NullProgress()
-            {
+            NullProgress() { }
 
-            }
-
-            public void Report(T value)
-            {
-            }
+            public void Report(T value) { }
         }
 
         sealed class AnonymousProgress<T> : IProgress<T>

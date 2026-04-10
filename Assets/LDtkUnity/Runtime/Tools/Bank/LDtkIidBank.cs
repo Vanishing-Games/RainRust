@@ -33,20 +33,23 @@ namespace LDtkUnity
             LDtkProfiler.BeginSample("CreateIidDictionary");
             _iids = new LDtkDictionaryIid(200);
             LDtkProfiler.EndSample();
-            
+
             LDtkProfiler.BeginSample("CacheIidData");
             _iids.CacheAllData(project, separateLevel);
             LDtkProfiler.EndSample();
         }
 
-        internal static T GetIidData<T>(string iid) where T : ILDtkIid
+        internal static T GetIidData<T>(string iid)
+            where T : ILDtkIid
         {
             if (_iids != null)
             {
                 return (T)_iids.TryGet(iid);
             }
-            
-            LDtkDebug.LogError($"{nameof(LDtkIidBank)} Dictionary<{typeof(T).Name}> is null; is the database not cached or already released?");
+
+            LDtkDebug.LogError(
+                $"{nameof(LDtkIidBank)} Dictionary<{typeof(T).Name}> is null; is the database not cached or already released?"
+            );
             return default;
         }
     }

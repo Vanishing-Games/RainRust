@@ -13,18 +13,24 @@ namespace Zenject
         bool _isSpawned;
 
         public PoolableManager(
-            [InjectLocal]
-            List<IPoolable> poolables,
+            [InjectLocal] List<IPoolable> poolables,
             [Inject(Optional = true, Source = InjectSources.Local)]
-            List<ValuePair<Type, int>> priorities)
+                List<ValuePair<Type, int>> priorities
+        )
         {
-            _poolables = poolables.Select(x => CreatePoolableInfo(x, priorities))
-                .OrderBy(x => x.Priority).Select(x => x.Poolable).ToList();
+            _poolables = poolables
+                .Select(x => CreatePoolableInfo(x, priorities))
+                .OrderBy(x => x.Priority)
+                .Select(x => x.Poolable)
+                .ToList();
         }
 
         PoolableInfo CreatePoolableInfo(IPoolable poolable, List<ValuePair<Type, int>> priorities)
         {
-            var match = priorities.Where(x => poolable.GetType().DerivesFromOrEqual(x.First)).Select(x => (int?)(x.Second)).SingleOrDefault();
+            var match = priorities
+                .Where(x => poolable.GetType().DerivesFromOrEqual(x.First))
+                .Select(x => (int?)(x.Second))
+                .SingleOrDefault();
             int priority = match.HasValue ? match.Value : 0;
 
             return new PoolableInfo(poolable, priority);
@@ -93,18 +99,27 @@ namespace Zenject
         bool _isSpawned;
 
         public PoolableManager(
-            [InjectLocal]
-            List<IPoolable<T>> poolables,
+            [InjectLocal] List<IPoolable<T>> poolables,
             [Inject(Optional = true, Source = InjectSources.Local)]
-            List<ValuePair<Type, int>> priorities)
+                List<ValuePair<Type, int>> priorities
+        )
         {
-            _poolables = poolables.Select(x => CreatePoolableInfo(x, priorities))
-                .OrderBy(x => x.Priority).Select(x => x.Poolable).ToList();
+            _poolables = poolables
+                .Select(x => CreatePoolableInfo(x, priorities))
+                .OrderBy(x => x.Priority)
+                .Select(x => x.Poolable)
+                .ToList();
         }
 
-        PoolableInfo CreatePoolableInfo(IPoolable<T> poolable, List<ValuePair<Type, int>> priorities)
+        PoolableInfo CreatePoolableInfo(
+            IPoolable<T> poolable,
+            List<ValuePair<Type, int>> priorities
+        )
         {
-            var match = priorities.Where(x => poolable.GetType().DerivesFromOrEqual(x.First)).Select(x => (int?)(x.Second)).SingleOrDefault();
+            var match = priorities
+                .Where(x => poolable.GetType().DerivesFromOrEqual(x.First))
+                .Select(x => (int?)(x.Second))
+                .SingleOrDefault();
             int priority = match.HasValue ? match.Value : 0;
 
             return new PoolableInfo(poolable, priority);
@@ -173,18 +188,27 @@ namespace Zenject
         bool _isSpawned;
 
         public PoolableManager(
-            [InjectLocal]
-            List<IPoolable<T1, T2>> poolables,
+            [InjectLocal] List<IPoolable<T1, T2>> poolables,
             [Inject(Optional = true, Source = InjectSources.Local)]
-            List<ValuePair<Type, int>> priorities)
+                List<ValuePair<Type, int>> priorities
+        )
         {
-            _poolables = poolables.Select(x => CreatePoolableInfo(x, priorities))
-                .OrderBy(x => x.Priority).Select(x => x.Poolable).ToList();
+            _poolables = poolables
+                .Select(x => CreatePoolableInfo(x, priorities))
+                .OrderBy(x => x.Priority)
+                .Select(x => x.Poolable)
+                .ToList();
         }
 
-        PoolableInfo CreatePoolableInfo(IPoolable<T1, T2> poolable, List<ValuePair<Type, int>> priorities)
+        PoolableInfo CreatePoolableInfo(
+            IPoolable<T1, T2> poolable,
+            List<ValuePair<Type, int>> priorities
+        )
         {
-            var match = priorities.Where(x => poolable.GetType().DerivesFromOrEqual(x.First)).Select(x => (int?)(x.Second)).SingleOrDefault();
+            var match = priorities
+                .Where(x => poolable.GetType().DerivesFromOrEqual(x.First))
+                .Select(x => (int?)(x.Second))
+                .SingleOrDefault();
             int priority = match.HasValue ? match.Value : 0;
 
             return new PoolableInfo(poolable, priority);
@@ -253,18 +277,27 @@ namespace Zenject
         bool _isSpawned;
 
         public PoolableManager(
-            [InjectLocal]
-            List<IPoolable<T1, T2, T3>> poolables,
+            [InjectLocal] List<IPoolable<T1, T2, T3>> poolables,
             [Inject(Optional = true, Source = InjectSources.Local)]
-            List<ValuePair<Type, int>> priorities)
+                List<ValuePair<Type, int>> priorities
+        )
         {
-            _poolables = poolables.Select(x => CreatePoolableInfo(x, priorities))
-                .OrderBy(x => x.Priority).Select(x => x.Poolable).ToList();
+            _poolables = poolables
+                .Select(x => CreatePoolableInfo(x, priorities))
+                .OrderBy(x => x.Priority)
+                .Select(x => x.Poolable)
+                .ToList();
         }
 
-        PoolableInfo CreatePoolableInfo(IPoolable<T1, T2, T3> poolable, List<ValuePair<Type, int>> priorities)
+        PoolableInfo CreatePoolableInfo(
+            IPoolable<T1, T2, T3> poolable,
+            List<ValuePair<Type, int>> priorities
+        )
         {
-            var match = priorities.Where(x => poolable.GetType().DerivesFromOrEqual(x.First)).Select(x => (int?)(x.Second)).SingleOrDefault();
+            var match = priorities
+                .Where(x => poolable.GetType().DerivesFromOrEqual(x.First))
+                .Select(x => (int?)(x.Second))
+                .SingleOrDefault();
             int priority = match.HasValue ? match.Value : 0;
 
             return new PoolableInfo(poolable, priority);
@@ -333,18 +366,27 @@ namespace Zenject
         bool _isSpawned;
 
         public PoolableManager(
-            [InjectLocal]
-            List<IPoolable<T1, T2, T3, T4>> poolables,
+            [InjectLocal] List<IPoolable<T1, T2, T3, T4>> poolables,
             [Inject(Optional = true, Source = InjectSources.Local)]
-            List<ValuePair<Type, int>> priorities)
+                List<ValuePair<Type, int>> priorities
+        )
         {
-            _poolables = poolables.Select(x => CreatePoolableInfo(x, priorities))
-                .OrderBy(x => x.Priority).Select(x => x.Poolable).ToList();
+            _poolables = poolables
+                .Select(x => CreatePoolableInfo(x, priorities))
+                .OrderBy(x => x.Priority)
+                .Select(x => x.Poolable)
+                .ToList();
         }
 
-        PoolableInfo CreatePoolableInfo(IPoolable<T1, T2, T3, T4> poolable, List<ValuePair<Type, int>> priorities)
+        PoolableInfo CreatePoolableInfo(
+            IPoolable<T1, T2, T3, T4> poolable,
+            List<ValuePair<Type, int>> priorities
+        )
         {
-            var match = priorities.Where(x => poolable.GetType().DerivesFromOrEqual(x.First)).Select(x => (int?)(x.Second)).SingleOrDefault();
+            var match = priorities
+                .Where(x => poolable.GetType().DerivesFromOrEqual(x.First))
+                .Select(x => (int?)(x.Second))
+                .SingleOrDefault();
             int priority = match.HasValue ? match.Value : 0;
 
             return new PoolableInfo(poolable, priority);
@@ -402,7 +444,6 @@ namespace Zenject
         }
     }
 
-
     /// <summary>
     /// A modified version of PoolableManager that adds a generic argument, allowing
     /// the passing of a parameter to all IPoolable<T1, T2> objects in the container.
@@ -414,18 +455,27 @@ namespace Zenject
         bool _isSpawned;
 
         public PoolableManager(
-            [InjectLocal]
-            List<IPoolable<T1, T2, T3, T4, T5>> poolables,
+            [InjectLocal] List<IPoolable<T1, T2, T3, T4, T5>> poolables,
             [Inject(Optional = true, Source = InjectSources.Local)]
-            List<ValuePair<Type, int>> priorities)
+                List<ValuePair<Type, int>> priorities
+        )
         {
-            _poolables = poolables.Select(x => CreatePoolableInfo(x, priorities))
-                .OrderBy(x => x.Priority).Select(x => x.Poolable).ToList();
+            _poolables = poolables
+                .Select(x => CreatePoolableInfo(x, priorities))
+                .OrderBy(x => x.Priority)
+                .Select(x => x.Poolable)
+                .ToList();
         }
 
-        PoolableInfo CreatePoolableInfo(IPoolable<T1, T2, T3, T4, T5> poolable, List<ValuePair<Type, int>> priorities)
+        PoolableInfo CreatePoolableInfo(
+            IPoolable<T1, T2, T3, T4, T5> poolable,
+            List<ValuePair<Type, int>> priorities
+        )
         {
-            var match = priorities.Where(x => poolable.GetType().DerivesFromOrEqual(x.First)).Select(x => (int?)(x.Second)).SingleOrDefault();
+            var match = priorities
+                .Where(x => poolable.GetType().DerivesFromOrEqual(x.First))
+                .Select(x => (int?)(x.Second))
+                .SingleOrDefault();
             int priority = match.HasValue ? match.Value : 0;
 
             return new PoolableInfo(poolable, priority);

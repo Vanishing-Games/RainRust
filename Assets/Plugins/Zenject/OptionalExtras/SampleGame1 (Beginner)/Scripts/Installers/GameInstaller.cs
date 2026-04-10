@@ -54,7 +54,8 @@ namespace Zenject.Asteroids
             // Here, we're defining a generic factory to create asteroid objects using the given prefab
             // So any classes that want to create new asteroid objects can simply include an injected field
             // or constructor parameter of type Asteroid.Factory, then call Create() on that
-            Container.BindFactory<Asteroid, Asteroid.Factory>()
+            Container
+                .BindFactory<Asteroid, Asteroid.Factory>()
                 // This means that any time Asteroid.Factory.Create is called, it will instantiate
                 // this prefab and then search it for the Asteroid component
                 .FromComponentInNewPrefab(_settings.AsteroidPrefab)
@@ -74,10 +75,12 @@ namespace Zenject.Asteroids
 
             // FromComponentInNewPrefab matches the first transform only just like GetComponentsInChildren
             // So can be useful in cases where we don't need a custom MonoBehaviour attached
-            Container.BindFactory<Transform, ExplosionFactory>()
+            Container
+                .BindFactory<Transform, ExplosionFactory>()
                 .FromComponentInNewPrefab(_settings.ExplosionPrefab);
 
-            Container.BindFactory<Transform, BrokenShipFactory>()
+            Container
+                .BindFactory<Transform, BrokenShipFactory>()
                 .FromComponentInNewPrefab(_settings.BrokenShipPrefab);
         }
 
@@ -98,9 +101,15 @@ namespace Zenject.Asteroids
             // Note that the ship itself is bound using a ZenjectBinding component (see Ship
             // game object in scene heirarchy)
 
-            Container.BindFactory<ShipStateWaitingToStart, ShipStateWaitingToStart.Factory>().WhenInjectedInto<ShipStateFactory>();
-            Container.BindFactory<ShipStateDead, ShipStateDead.Factory>().WhenInjectedInto<ShipStateFactory>();
-            Container.BindFactory<ShipStateMoving, ShipStateMoving.Factory>().WhenInjectedInto<ShipStateFactory>();
+            Container
+                .BindFactory<ShipStateWaitingToStart, ShipStateWaitingToStart.Factory>()
+                .WhenInjectedInto<ShipStateFactory>();
+            Container
+                .BindFactory<ShipStateDead, ShipStateDead.Factory>()
+                .WhenInjectedInto<ShipStateFactory>();
+            Container
+                .BindFactory<ShipStateMoving, ShipStateMoving.Factory>()
+                .WhenInjectedInto<ShipStateFactory>();
         }
 
         void InstallExecutionOrder()
@@ -126,4 +135,3 @@ namespace Zenject.Asteroids
         }
     }
 }
-

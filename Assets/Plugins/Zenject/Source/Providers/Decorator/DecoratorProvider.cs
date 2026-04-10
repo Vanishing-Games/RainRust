@@ -6,8 +6,7 @@ namespace Zenject.Internal
 {
     public interface IDecoratorProvider
     {
-        void GetAllInstances(
-            IProvider provider, InjectContext context, List<object> buffer);
+        void GetAllInstances(IProvider provider, InjectContext context, List<object> buffer);
     }
 
     [NoReflectionBaking]
@@ -50,8 +49,7 @@ namespace Zenject.Internal
             }
         }
 
-        public void GetAllInstances(
-            IProvider provider, InjectContext context, List<object> buffer)
+        public void GetAllInstances(IProvider provider, InjectContext context, List<object> buffer)
         {
             if (provider.IsCached)
             {
@@ -93,8 +91,10 @@ namespace Zenject.Internal
         {
             for (int i = 0; i < _decoratorFactories.Count; i++)
             {
-                instance = _decoratorFactories[i].Create(
-                    context.Container.IsValidating ? default(TContract) : (TContract)instance);
+                instance = _decoratorFactories[i]
+                    .Create(
+                        context.Container.IsValidating ? default(TContract) : (TContract)instance
+                    );
             }
 
             return instance;

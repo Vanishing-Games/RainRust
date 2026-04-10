@@ -4,10 +4,12 @@ namespace Zenject
     public class MemoryPoolMaxSizeBinder<TContract> : MemoryPoolExpandBinder<TContract>
     {
         public MemoryPoolMaxSizeBinder(
-            DiContainer bindContainer, BindInfo bindInfo, FactoryBindInfo factoryBindInfo, MemoryPoolBindInfo poolBindInfo)
-            : base(bindContainer, bindInfo, factoryBindInfo, poolBindInfo)
-        {
-        }
+            DiContainer bindContainer,
+            BindInfo bindInfo,
+            FactoryBindInfo factoryBindInfo,
+            MemoryPoolBindInfo poolBindInfo
+        )
+            : base(bindContainer, bindInfo, factoryBindInfo, poolBindInfo) { }
 
         public MemoryPoolExpandBinder<TContract> WithMaxSize(int size)
         {
@@ -20,10 +22,12 @@ namespace Zenject
     public class MemoryPoolInitialSizeMaxSizeBinder<TContract> : MemoryPoolMaxSizeBinder<TContract>
     {
         public MemoryPoolInitialSizeMaxSizeBinder(
-            DiContainer bindContainer, BindInfo bindInfo, FactoryBindInfo factoryBindInfo, MemoryPoolBindInfo poolBindInfo)
-            : base(bindContainer, bindInfo, factoryBindInfo, poolBindInfo)
-        {
-        }
+            DiContainer bindContainer,
+            BindInfo bindInfo,
+            FactoryBindInfo factoryBindInfo,
+            MemoryPoolBindInfo poolBindInfo
+        )
+            : base(bindContainer, bindInfo, factoryBindInfo, poolBindInfo) { }
 
         public MemoryPoolMaxSizeBinder<TContract> WithInitialSize(int size)
         {
@@ -41,13 +45,16 @@ namespace Zenject
     }
 
     [NoReflectionBaking]
-    public class MemoryPoolIdInitialSizeMaxSizeBinder<TContract> : MemoryPoolInitialSizeMaxSizeBinder<TContract>
+    public class MemoryPoolIdInitialSizeMaxSizeBinder<TContract>
+        : MemoryPoolInitialSizeMaxSizeBinder<TContract>
     {
         public MemoryPoolIdInitialSizeMaxSizeBinder(
-            DiContainer bindContainer, BindInfo bindInfo, FactoryBindInfo factoryBindInfo, MemoryPoolBindInfo poolBindInfo)
-            : base(bindContainer, bindInfo, factoryBindInfo, poolBindInfo)
-        {
-        }
+            DiContainer bindContainer,
+            BindInfo bindInfo,
+            FactoryBindInfo factoryBindInfo,
+            MemoryPoolBindInfo poolBindInfo
+        )
+            : base(bindContainer, bindInfo, factoryBindInfo, poolBindInfo) { }
 
         public MemoryPoolInitialSizeMaxSizeBinder<TContract> WithId(object identifier)
         {
@@ -56,4 +63,3 @@ namespace Zenject
         }
     }
 }
-

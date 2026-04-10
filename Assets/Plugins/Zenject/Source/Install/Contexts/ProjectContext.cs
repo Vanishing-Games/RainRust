@@ -22,15 +22,19 @@ namespace Zenject
         static ProjectContext _instance;
 
         // TODO: Set this to false the next time major version is incremented
-        [Tooltip("When true, objects that are created at runtime will be parented to the ProjectContext")]
+        [Tooltip(
+            "When true, objects that are created at runtime will be parented to the ProjectContext"
+        )]
         [SerializeField]
         bool _parentNewObjectsUnderContext = true;
 
         [SerializeField]
-        ReflectionBakingCoverageModes _editorReflectionBakingCoverageMode = ReflectionBakingCoverageModes.FallbackToDirectReflection;
+        ReflectionBakingCoverageModes _editorReflectionBakingCoverageMode =
+            ReflectionBakingCoverageModes.FallbackToDirectReflection;
 
         [SerializeField]
-        ReflectionBakingCoverageModes _buildsReflectionBakingCoverageMode = ReflectionBakingCoverageModes.FallbackToDirectReflection;
+        ReflectionBakingCoverageModes _buildsReflectionBakingCoverageMode =
+            ReflectionBakingCoverageModes.FallbackToDirectReflection;
 
         [SerializeField]
         ZenjectSettings _settings = null;
@@ -61,11 +65,7 @@ namespace Zenject
             }
         }
 
-        public static bool ValidateOnNextRun
-        {
-            get;
-            set;
-        }
+        public static bool ValidateOnNextRun { get; set; }
 
         public override IEnumerable<GameObject> GetRootGameObjects()
         {
@@ -78,8 +78,11 @@ namespace Zenject
 
             if (prefabs.Length > 0)
             {
-                Assert.That(prefabs.Length == 1,
-                    "Found multiple project context prefabs at resource path '{0}'", ProjectContextResourcePath);
+                Assert.That(
+                    prefabs.Length == 1,
+                    "Found multiple project context prefabs at resource path '{0}'",
+                    ProjectContextResourcePath
+                );
                 return (GameObject)prefabs[0];
             }
 
@@ -87,8 +90,11 @@ namespace Zenject
 
             if (prefabs.Length > 0)
             {
-                Assert.That(prefabs.Length == 1,
-                    "Found multiple project context prefabs at resource path '{0}'", ProjectContextResourcePathOld);
+                Assert.That(
+                    prefabs.Length == 1,
+                    "Found multiple project context prefabs at resource path '{0}'",
+                    ProjectContextResourcePathOld
+                );
                 return (GameObject)prefabs[0];
             }
 
@@ -101,8 +107,10 @@ namespace Zenject
             ProfileBlock.UnityMainThread = Thread.CurrentThread;
 #endif
 
-            Assert.That(FindObjectsOfType<ProjectContext>().IsEmpty(),
-                "Tried to create multiple instances of ProjectContext!");
+            Assert.That(
+                FindObjectsOfType<ProjectContext>().IsEmpty(),
+                "Tried to create multiple instances of ProjectContext!"
+            );
 
             var prefab = TryGetPrefab();
 
@@ -114,8 +122,7 @@ namespace Zenject
             {
                 if (prefab == null)
                 {
-                    _instance = new GameObject("ProjectContext")
-                        .AddComponent<ProjectContext>();
+                    _instance = new GameObject("ProjectContext").AddComponent<ProjectContext>();
                 }
                 else
                 {
@@ -123,10 +130,13 @@ namespace Zenject
 
                     GameObject gameObjectInstance;
 #if UNITY_EDITOR
-                    if(prefabWasActive)
+                    if (prefabWasActive)
                     {
                         // This ensures the prefab's Awake() methods don't fire (and, if in the editor, that the prefab file doesn't get modified)
-                        gameObjectInstance = GameObject.Instantiate(prefab, ZenUtilInternal.GetOrCreateInactivePrefabParent());
+                        gameObjectInstance = GameObject.Instantiate(
+                            prefab,
+                            ZenUtilInternal.GetOrCreateInactivePrefabParent()
+                        );
                         gameObjectInstance.SetActive(false);
                         gameObjectInstance.transform.SetParent(null, false);
                     }
@@ -135,7 +145,7 @@ namespace Zenject
                         gameObjectInstance = GameObject.Instantiate(prefab);
                     }
 #else
-                    if(prefabWasActive)
+                    if (prefabWasActive)
                     {
                         prefab.SetActive(false);
                         gameObjectInstance = GameObject.Instantiate(prefab);
@@ -149,8 +159,11 @@ namespace Zenject
 
                     _instance = gameObjectInstance.GetComponent<ProjectContext>();
 
-                    Assert.IsNotNull(_instance,
-                        "Could not find ProjectContext component on prefab 'Resources/{0}.prefab'", ProjectContextResourcePath);
+                    Assert.IsNotNull(
+                        _instance,
+                        "Could not find ProjectContext component on prefab 'Resources/{0}.prefab'",
+                        ProjectContextResourcePath
+                    );
                 }
             }
 
@@ -184,10 +197,10 @@ namespace Zenject
         public void Awake()
         {
             if (Application.isPlaying)
-                // DontDestroyOnLoad can only be called when in play mode and otherwise produces errors
-                // ProjectContext is created during design time (in an empty scene) when running validation
-                // and also when running unit tests
-                // In these cases we don't need DontDestroyOnLoad so just skip it
+            // DontDestroyOnLoad can only be called when in play mode and otherwise produces errors
+            // ProjectContext is created during design time (in an empty scene) when running validation
+            // and also when running unit tests
+            // In these cases we don't need DontDestroyOnLoad so just skip it
             {
                 DontDestroyOnLoad(gameObject);
             }
@@ -211,8 +224,7 @@ namespace Zenject
             // Reset immediately to ensure it doesn't get used in another run
             ValidateOnNextRun = false;
 
-            _container = new DiContainer(
-                new[] { StaticContext.Container }, isValidating);
+            _container = new DiContainer(new[] { StaticContext.Container }, isValidating);
 
             // Do this after creating DiContainer in case it's needed by the pre install logic
             if (PreInstall != null)
@@ -282,15 +294,18 @@ namespace Zenject
 
             _container.Bind<Context>().FromInstance(this);
 
-            _container.Bind(typeof(ProjectKernel), typeof(MonoKernel))
-                .To<ProjectKernel>().FromNewComponentOn(gameObject).AsSingle().NonLazy();
+            _container
+                .Bind(typeof(ProjectKernel), typeof(MonoKernel))
+                .To<ProjectKernel>()
+                .FromNewComponentOn(gameObject)
+                .AsSingle()
+                .NonLazy();
 
             _container.Bind<SceneContextRegistry>().AsSingle();
 
             InstallSceneBindings(injectableMonoBehaviours);
 
             InstallInstallers();
-
         }
     }
 }

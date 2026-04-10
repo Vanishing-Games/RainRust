@@ -10,274 +10,564 @@ namespace Cysharp.Threading.Tasks
 {
     public static partial class UnityAsyncExtensions
     {
-        public static AsyncUnityEventHandler GetAsyncEventHandler(this UnityEvent unityEvent, CancellationToken cancellationToken)
+        public static AsyncUnityEventHandler GetAsyncEventHandler(
+            this UnityEvent unityEvent,
+            CancellationToken cancellationToken
+        )
         {
             return new AsyncUnityEventHandler(unityEvent, cancellationToken, false);
         }
 
-        public static UniTask OnInvokeAsync(this UnityEvent unityEvent, CancellationToken cancellationToken)
+        public static UniTask OnInvokeAsync(
+            this UnityEvent unityEvent,
+            CancellationToken cancellationToken
+        )
         {
             return new AsyncUnityEventHandler(unityEvent, cancellationToken, true).OnInvokeAsync();
         }
 
-        public static IUniTaskAsyncEnumerable<AsyncUnit> OnInvokeAsAsyncEnumerable(this UnityEvent unityEvent, CancellationToken cancellationToken)
+        public static IUniTaskAsyncEnumerable<AsyncUnit> OnInvokeAsAsyncEnumerable(
+            this UnityEvent unityEvent,
+            CancellationToken cancellationToken
+        )
         {
             return new UnityEventHandlerAsyncEnumerable(unityEvent, cancellationToken);
         }
 
-        public static AsyncUnityEventHandler<T> GetAsyncEventHandler<T>(this UnityEvent<T> unityEvent, CancellationToken cancellationToken)
+        public static AsyncUnityEventHandler<T> GetAsyncEventHandler<T>(
+            this UnityEvent<T> unityEvent,
+            CancellationToken cancellationToken
+        )
         {
             return new AsyncUnityEventHandler<T>(unityEvent, cancellationToken, false);
         }
 
-        public static UniTask<T> OnInvokeAsync<T>(this UnityEvent<T> unityEvent, CancellationToken cancellationToken)
+        public static UniTask<T> OnInvokeAsync<T>(
+            this UnityEvent<T> unityEvent,
+            CancellationToken cancellationToken
+        )
         {
-            return new AsyncUnityEventHandler<T>(unityEvent, cancellationToken, true).OnInvokeAsync();
+            return new AsyncUnityEventHandler<T>(
+                unityEvent,
+                cancellationToken,
+                true
+            ).OnInvokeAsync();
         }
 
-        public static IUniTaskAsyncEnumerable<T> OnInvokeAsAsyncEnumerable<T>(this UnityEvent<T> unityEvent, CancellationToken cancellationToken)
+        public static IUniTaskAsyncEnumerable<T> OnInvokeAsAsyncEnumerable<T>(
+            this UnityEvent<T> unityEvent,
+            CancellationToken cancellationToken
+        )
         {
             return new UnityEventHandlerAsyncEnumerable<T>(unityEvent, cancellationToken);
         }
 
         public static IAsyncClickEventHandler GetAsyncClickEventHandler(this Button button)
         {
-            return new AsyncUnityEventHandler(button.onClick, button.GetCancellationTokenOnDestroy(), false);
+            return new AsyncUnityEventHandler(
+                button.onClick,
+                button.GetCancellationTokenOnDestroy(),
+                false
+            );
         }
 
-        public static IAsyncClickEventHandler GetAsyncClickEventHandler(this Button button, CancellationToken cancellationToken)
+        public static IAsyncClickEventHandler GetAsyncClickEventHandler(
+            this Button button,
+            CancellationToken cancellationToken
+        )
         {
             return new AsyncUnityEventHandler(button.onClick, cancellationToken, false);
         }
 
         public static UniTask OnClickAsync(this Button button)
         {
-            return new AsyncUnityEventHandler(button.onClick, button.GetCancellationTokenOnDestroy(), true).OnInvokeAsync();
+            return new AsyncUnityEventHandler(
+                button.onClick,
+                button.GetCancellationTokenOnDestroy(),
+                true
+            ).OnInvokeAsync();
         }
 
         public static UniTask OnClickAsync(this Button button, CancellationToken cancellationToken)
         {
-            return new AsyncUnityEventHandler(button.onClick, cancellationToken, true).OnInvokeAsync();
+            return new AsyncUnityEventHandler(
+                button.onClick,
+                cancellationToken,
+                true
+            ).OnInvokeAsync();
         }
 
-        public static IUniTaskAsyncEnumerable<AsyncUnit> OnClickAsAsyncEnumerable(this Button button)
+        public static IUniTaskAsyncEnumerable<AsyncUnit> OnClickAsAsyncEnumerable(
+            this Button button
+        )
         {
-            return new UnityEventHandlerAsyncEnumerable(button.onClick, button.GetCancellationTokenOnDestroy());
+            return new UnityEventHandlerAsyncEnumerable(
+                button.onClick,
+                button.GetCancellationTokenOnDestroy()
+            );
         }
 
-        public static IUniTaskAsyncEnumerable<AsyncUnit> OnClickAsAsyncEnumerable(this Button button, CancellationToken cancellationToken)
+        public static IUniTaskAsyncEnumerable<AsyncUnit> OnClickAsAsyncEnumerable(
+            this Button button,
+            CancellationToken cancellationToken
+        )
         {
             return new UnityEventHandlerAsyncEnumerable(button.onClick, cancellationToken);
         }
 
-        public static IAsyncValueChangedEventHandler<bool> GetAsyncValueChangedEventHandler(this Toggle toggle)
+        public static IAsyncValueChangedEventHandler<bool> GetAsyncValueChangedEventHandler(
+            this Toggle toggle
+        )
         {
-            return new AsyncUnityEventHandler<bool>(toggle.onValueChanged, toggle.GetCancellationTokenOnDestroy(), false);
+            return new AsyncUnityEventHandler<bool>(
+                toggle.onValueChanged,
+                toggle.GetCancellationTokenOnDestroy(),
+                false
+            );
         }
 
-        public static IAsyncValueChangedEventHandler<bool> GetAsyncValueChangedEventHandler(this Toggle toggle, CancellationToken cancellationToken)
+        public static IAsyncValueChangedEventHandler<bool> GetAsyncValueChangedEventHandler(
+            this Toggle toggle,
+            CancellationToken cancellationToken
+        )
         {
-            return new AsyncUnityEventHandler<bool>(toggle.onValueChanged, cancellationToken, false);
+            return new AsyncUnityEventHandler<bool>(
+                toggle.onValueChanged,
+                cancellationToken,
+                false
+            );
         }
 
         public static UniTask<bool> OnValueChangedAsync(this Toggle toggle)
         {
-            return new AsyncUnityEventHandler<bool>(toggle.onValueChanged, toggle.GetCancellationTokenOnDestroy(), true).OnInvokeAsync();
+            return new AsyncUnityEventHandler<bool>(
+                toggle.onValueChanged,
+                toggle.GetCancellationTokenOnDestroy(),
+                true
+            ).OnInvokeAsync();
         }
 
-        public static UniTask<bool> OnValueChangedAsync(this Toggle toggle, CancellationToken cancellationToken)
+        public static UniTask<bool> OnValueChangedAsync(
+            this Toggle toggle,
+            CancellationToken cancellationToken
+        )
         {
-            return new AsyncUnityEventHandler<bool>(toggle.onValueChanged, cancellationToken, true).OnInvokeAsync();
+            return new AsyncUnityEventHandler<bool>(
+                toggle.onValueChanged,
+                cancellationToken,
+                true
+            ).OnInvokeAsync();
         }
 
-        public static IUniTaskAsyncEnumerable<bool> OnValueChangedAsAsyncEnumerable(this Toggle toggle)
+        public static IUniTaskAsyncEnumerable<bool> OnValueChangedAsAsyncEnumerable(
+            this Toggle toggle
+        )
         {
-            return new UnityEventHandlerAsyncEnumerable<bool>(toggle.onValueChanged, toggle.GetCancellationTokenOnDestroy());
+            return new UnityEventHandlerAsyncEnumerable<bool>(
+                toggle.onValueChanged,
+                toggle.GetCancellationTokenOnDestroy()
+            );
         }
 
-        public static IUniTaskAsyncEnumerable<bool> OnValueChangedAsAsyncEnumerable(this Toggle toggle, CancellationToken cancellationToken)
+        public static IUniTaskAsyncEnumerable<bool> OnValueChangedAsAsyncEnumerable(
+            this Toggle toggle,
+            CancellationToken cancellationToken
+        )
         {
-            return new UnityEventHandlerAsyncEnumerable<bool>(toggle.onValueChanged, cancellationToken);
+            return new UnityEventHandlerAsyncEnumerable<bool>(
+                toggle.onValueChanged,
+                cancellationToken
+            );
         }
 
-        public static IAsyncValueChangedEventHandler<float> GetAsyncValueChangedEventHandler(this Scrollbar scrollbar)
+        public static IAsyncValueChangedEventHandler<float> GetAsyncValueChangedEventHandler(
+            this Scrollbar scrollbar
+        )
         {
-            return new AsyncUnityEventHandler<float>(scrollbar.onValueChanged, scrollbar.GetCancellationTokenOnDestroy(), false);
+            return new AsyncUnityEventHandler<float>(
+                scrollbar.onValueChanged,
+                scrollbar.GetCancellationTokenOnDestroy(),
+                false
+            );
         }
 
-        public static IAsyncValueChangedEventHandler<float> GetAsyncValueChangedEventHandler(this Scrollbar scrollbar, CancellationToken cancellationToken)
+        public static IAsyncValueChangedEventHandler<float> GetAsyncValueChangedEventHandler(
+            this Scrollbar scrollbar,
+            CancellationToken cancellationToken
+        )
         {
-            return new AsyncUnityEventHandler<float>(scrollbar.onValueChanged, cancellationToken, false);
+            return new AsyncUnityEventHandler<float>(
+                scrollbar.onValueChanged,
+                cancellationToken,
+                false
+            );
         }
 
         public static UniTask<float> OnValueChangedAsync(this Scrollbar scrollbar)
         {
-            return new AsyncUnityEventHandler<float>(scrollbar.onValueChanged, scrollbar.GetCancellationTokenOnDestroy(), true).OnInvokeAsync();
+            return new AsyncUnityEventHandler<float>(
+                scrollbar.onValueChanged,
+                scrollbar.GetCancellationTokenOnDestroy(),
+                true
+            ).OnInvokeAsync();
         }
 
-        public static UniTask<float> OnValueChangedAsync(this Scrollbar scrollbar, CancellationToken cancellationToken)
+        public static UniTask<float> OnValueChangedAsync(
+            this Scrollbar scrollbar,
+            CancellationToken cancellationToken
+        )
         {
-            return new AsyncUnityEventHandler<float>(scrollbar.onValueChanged, cancellationToken, true).OnInvokeAsync();
+            return new AsyncUnityEventHandler<float>(
+                scrollbar.onValueChanged,
+                cancellationToken,
+                true
+            ).OnInvokeAsync();
         }
 
-        public static IUniTaskAsyncEnumerable<float> OnValueChangedAsAsyncEnumerable(this Scrollbar scrollbar)
+        public static IUniTaskAsyncEnumerable<float> OnValueChangedAsAsyncEnumerable(
+            this Scrollbar scrollbar
+        )
         {
-            return new UnityEventHandlerAsyncEnumerable<float>(scrollbar.onValueChanged, scrollbar.GetCancellationTokenOnDestroy());
+            return new UnityEventHandlerAsyncEnumerable<float>(
+                scrollbar.onValueChanged,
+                scrollbar.GetCancellationTokenOnDestroy()
+            );
         }
 
-        public static IUniTaskAsyncEnumerable<float> OnValueChangedAsAsyncEnumerable(this Scrollbar scrollbar, CancellationToken cancellationToken)
+        public static IUniTaskAsyncEnumerable<float> OnValueChangedAsAsyncEnumerable(
+            this Scrollbar scrollbar,
+            CancellationToken cancellationToken
+        )
         {
-            return new UnityEventHandlerAsyncEnumerable<float>(scrollbar.onValueChanged, cancellationToken);
+            return new UnityEventHandlerAsyncEnumerable<float>(
+                scrollbar.onValueChanged,
+                cancellationToken
+            );
         }
 
-        public static IAsyncValueChangedEventHandler<Vector2> GetAsyncValueChangedEventHandler(this ScrollRect scrollRect)
+        public static IAsyncValueChangedEventHandler<Vector2> GetAsyncValueChangedEventHandler(
+            this ScrollRect scrollRect
+        )
         {
-            return new AsyncUnityEventHandler<Vector2>(scrollRect.onValueChanged, scrollRect.GetCancellationTokenOnDestroy(), false);
+            return new AsyncUnityEventHandler<Vector2>(
+                scrollRect.onValueChanged,
+                scrollRect.GetCancellationTokenOnDestroy(),
+                false
+            );
         }
 
-        public static IAsyncValueChangedEventHandler<Vector2> GetAsyncValueChangedEventHandler(this ScrollRect scrollRect, CancellationToken cancellationToken)
+        public static IAsyncValueChangedEventHandler<Vector2> GetAsyncValueChangedEventHandler(
+            this ScrollRect scrollRect,
+            CancellationToken cancellationToken
+        )
         {
-            return new AsyncUnityEventHandler<Vector2>(scrollRect.onValueChanged, cancellationToken, false);
+            return new AsyncUnityEventHandler<Vector2>(
+                scrollRect.onValueChanged,
+                cancellationToken,
+                false
+            );
         }
 
         public static UniTask<Vector2> OnValueChangedAsync(this ScrollRect scrollRect)
         {
-            return new AsyncUnityEventHandler<Vector2>(scrollRect.onValueChanged, scrollRect.GetCancellationTokenOnDestroy(), true).OnInvokeAsync();
+            return new AsyncUnityEventHandler<Vector2>(
+                scrollRect.onValueChanged,
+                scrollRect.GetCancellationTokenOnDestroy(),
+                true
+            ).OnInvokeAsync();
         }
 
-        public static UniTask<Vector2> OnValueChangedAsync(this ScrollRect scrollRect, CancellationToken cancellationToken)
+        public static UniTask<Vector2> OnValueChangedAsync(
+            this ScrollRect scrollRect,
+            CancellationToken cancellationToken
+        )
         {
-            return new AsyncUnityEventHandler<Vector2>(scrollRect.onValueChanged, cancellationToken, true).OnInvokeAsync();
+            return new AsyncUnityEventHandler<Vector2>(
+                scrollRect.onValueChanged,
+                cancellationToken,
+                true
+            ).OnInvokeAsync();
         }
 
-        public static IUniTaskAsyncEnumerable<Vector2> OnValueChangedAsAsyncEnumerable(this ScrollRect scrollRect)
+        public static IUniTaskAsyncEnumerable<Vector2> OnValueChangedAsAsyncEnumerable(
+            this ScrollRect scrollRect
+        )
         {
-            return new UnityEventHandlerAsyncEnumerable<Vector2>(scrollRect.onValueChanged, scrollRect.GetCancellationTokenOnDestroy());
+            return new UnityEventHandlerAsyncEnumerable<Vector2>(
+                scrollRect.onValueChanged,
+                scrollRect.GetCancellationTokenOnDestroy()
+            );
         }
 
-        public static IUniTaskAsyncEnumerable<Vector2> OnValueChangedAsAsyncEnumerable(this ScrollRect scrollRect, CancellationToken cancellationToken)
+        public static IUniTaskAsyncEnumerable<Vector2> OnValueChangedAsAsyncEnumerable(
+            this ScrollRect scrollRect,
+            CancellationToken cancellationToken
+        )
         {
-            return new UnityEventHandlerAsyncEnumerable<Vector2>(scrollRect.onValueChanged, cancellationToken);
+            return new UnityEventHandlerAsyncEnumerable<Vector2>(
+                scrollRect.onValueChanged,
+                cancellationToken
+            );
         }
 
-        public static IAsyncValueChangedEventHandler<float> GetAsyncValueChangedEventHandler(this Slider slider)
+        public static IAsyncValueChangedEventHandler<float> GetAsyncValueChangedEventHandler(
+            this Slider slider
+        )
         {
-            return new AsyncUnityEventHandler<float>(slider.onValueChanged, slider.GetCancellationTokenOnDestroy(), false);
+            return new AsyncUnityEventHandler<float>(
+                slider.onValueChanged,
+                slider.GetCancellationTokenOnDestroy(),
+                false
+            );
         }
 
-        public static IAsyncValueChangedEventHandler<float> GetAsyncValueChangedEventHandler(this Slider slider, CancellationToken cancellationToken)
+        public static IAsyncValueChangedEventHandler<float> GetAsyncValueChangedEventHandler(
+            this Slider slider,
+            CancellationToken cancellationToken
+        )
         {
-            return new AsyncUnityEventHandler<float>(slider.onValueChanged, cancellationToken, false);
+            return new AsyncUnityEventHandler<float>(
+                slider.onValueChanged,
+                cancellationToken,
+                false
+            );
         }
 
         public static UniTask<float> OnValueChangedAsync(this Slider slider)
         {
-            return new AsyncUnityEventHandler<float>(slider.onValueChanged, slider.GetCancellationTokenOnDestroy(), true).OnInvokeAsync();
+            return new AsyncUnityEventHandler<float>(
+                slider.onValueChanged,
+                slider.GetCancellationTokenOnDestroy(),
+                true
+            ).OnInvokeAsync();
         }
 
-        public static UniTask<float> OnValueChangedAsync(this Slider slider, CancellationToken cancellationToken)
+        public static UniTask<float> OnValueChangedAsync(
+            this Slider slider,
+            CancellationToken cancellationToken
+        )
         {
-            return new AsyncUnityEventHandler<float>(slider.onValueChanged, cancellationToken, true).OnInvokeAsync();
+            return new AsyncUnityEventHandler<float>(
+                slider.onValueChanged,
+                cancellationToken,
+                true
+            ).OnInvokeAsync();
         }
 
-        public static IUniTaskAsyncEnumerable<float> OnValueChangedAsAsyncEnumerable(this Slider slider)
+        public static IUniTaskAsyncEnumerable<float> OnValueChangedAsAsyncEnumerable(
+            this Slider slider
+        )
         {
-            return new UnityEventHandlerAsyncEnumerable<float>(slider.onValueChanged, slider.GetCancellationTokenOnDestroy());
+            return new UnityEventHandlerAsyncEnumerable<float>(
+                slider.onValueChanged,
+                slider.GetCancellationTokenOnDestroy()
+            );
         }
 
-        public static IUniTaskAsyncEnumerable<float> OnValueChangedAsAsyncEnumerable(this Slider slider, CancellationToken cancellationToken)
+        public static IUniTaskAsyncEnumerable<float> OnValueChangedAsAsyncEnumerable(
+            this Slider slider,
+            CancellationToken cancellationToken
+        )
         {
-            return new UnityEventHandlerAsyncEnumerable<float>(slider.onValueChanged, cancellationToken);
+            return new UnityEventHandlerAsyncEnumerable<float>(
+                slider.onValueChanged,
+                cancellationToken
+            );
         }
 
-        public static IAsyncEndEditEventHandler<string> GetAsyncEndEditEventHandler(this InputField inputField)
+        public static IAsyncEndEditEventHandler<string> GetAsyncEndEditEventHandler(
+            this InputField inputField
+        )
         {
-            return new AsyncUnityEventHandler<string>(inputField.onEndEdit, inputField.GetCancellationTokenOnDestroy(), false);
+            return new AsyncUnityEventHandler<string>(
+                inputField.onEndEdit,
+                inputField.GetCancellationTokenOnDestroy(),
+                false
+            );
         }
 
-        public static IAsyncEndEditEventHandler<string> GetAsyncEndEditEventHandler(this InputField inputField, CancellationToken cancellationToken)
+        public static IAsyncEndEditEventHandler<string> GetAsyncEndEditEventHandler(
+            this InputField inputField,
+            CancellationToken cancellationToken
+        )
         {
-            return new AsyncUnityEventHandler<string>(inputField.onEndEdit, cancellationToken, false);
+            return new AsyncUnityEventHandler<string>(
+                inputField.onEndEdit,
+                cancellationToken,
+                false
+            );
         }
 
         public static UniTask<string> OnEndEditAsync(this InputField inputField)
         {
-            return new AsyncUnityEventHandler<string>(inputField.onEndEdit, inputField.GetCancellationTokenOnDestroy(), true).OnInvokeAsync();
+            return new AsyncUnityEventHandler<string>(
+                inputField.onEndEdit,
+                inputField.GetCancellationTokenOnDestroy(),
+                true
+            ).OnInvokeAsync();
         }
 
-        public static UniTask<string> OnEndEditAsync(this InputField inputField, CancellationToken cancellationToken)
+        public static UniTask<string> OnEndEditAsync(
+            this InputField inputField,
+            CancellationToken cancellationToken
+        )
         {
-            return new AsyncUnityEventHandler<string>(inputField.onEndEdit, cancellationToken, true).OnInvokeAsync();
+            return new AsyncUnityEventHandler<string>(
+                inputField.onEndEdit,
+                cancellationToken,
+                true
+            ).OnInvokeAsync();
         }
 
-        public static IUniTaskAsyncEnumerable<string> OnEndEditAsAsyncEnumerable(this InputField inputField)
+        public static IUniTaskAsyncEnumerable<string> OnEndEditAsAsyncEnumerable(
+            this InputField inputField
+        )
         {
-            return new UnityEventHandlerAsyncEnumerable<string>(inputField.onEndEdit, inputField.GetCancellationTokenOnDestroy());
+            return new UnityEventHandlerAsyncEnumerable<string>(
+                inputField.onEndEdit,
+                inputField.GetCancellationTokenOnDestroy()
+            );
         }
 
-        public static IUniTaskAsyncEnumerable<string> OnEndEditAsAsyncEnumerable(this InputField inputField, CancellationToken cancellationToken)
+        public static IUniTaskAsyncEnumerable<string> OnEndEditAsAsyncEnumerable(
+            this InputField inputField,
+            CancellationToken cancellationToken
+        )
         {
-            return new UnityEventHandlerAsyncEnumerable<string>(inputField.onEndEdit, cancellationToken);
+            return new UnityEventHandlerAsyncEnumerable<string>(
+                inputField.onEndEdit,
+                cancellationToken
+            );
         }
 
-        public static IAsyncValueChangedEventHandler<string> GetAsyncValueChangedEventHandler(this InputField inputField)
+        public static IAsyncValueChangedEventHandler<string> GetAsyncValueChangedEventHandler(
+            this InputField inputField
+        )
         {
-            return new AsyncUnityEventHandler<string>(inputField.onValueChanged, inputField.GetCancellationTokenOnDestroy(), false);
+            return new AsyncUnityEventHandler<string>(
+                inputField.onValueChanged,
+                inputField.GetCancellationTokenOnDestroy(),
+                false
+            );
         }
 
-        public static IAsyncValueChangedEventHandler<string> GetAsyncValueChangedEventHandler(this InputField inputField, CancellationToken cancellationToken)
+        public static IAsyncValueChangedEventHandler<string> GetAsyncValueChangedEventHandler(
+            this InputField inputField,
+            CancellationToken cancellationToken
+        )
         {
-            return new AsyncUnityEventHandler<string>(inputField.onValueChanged, cancellationToken, false);
+            return new AsyncUnityEventHandler<string>(
+                inputField.onValueChanged,
+                cancellationToken,
+                false
+            );
         }
 
         public static UniTask<string> OnValueChangedAsync(this InputField inputField)
         {
-            return new AsyncUnityEventHandler<string>(inputField.onValueChanged, inputField.GetCancellationTokenOnDestroy(), true).OnInvokeAsync();
+            return new AsyncUnityEventHandler<string>(
+                inputField.onValueChanged,
+                inputField.GetCancellationTokenOnDestroy(),
+                true
+            ).OnInvokeAsync();
         }
 
-        public static UniTask<string> OnValueChangedAsync(this InputField inputField, CancellationToken cancellationToken)
+        public static UniTask<string> OnValueChangedAsync(
+            this InputField inputField,
+            CancellationToken cancellationToken
+        )
         {
-            return new AsyncUnityEventHandler<string>(inputField.onValueChanged, cancellationToken, true).OnInvokeAsync();
+            return new AsyncUnityEventHandler<string>(
+                inputField.onValueChanged,
+                cancellationToken,
+                true
+            ).OnInvokeAsync();
         }
 
-        public static IUniTaskAsyncEnumerable<string> OnValueChangedAsAsyncEnumerable(this InputField inputField)
+        public static IUniTaskAsyncEnumerable<string> OnValueChangedAsAsyncEnumerable(
+            this InputField inputField
+        )
         {
-            return new UnityEventHandlerAsyncEnumerable<string>(inputField.onValueChanged, inputField.GetCancellationTokenOnDestroy());
+            return new UnityEventHandlerAsyncEnumerable<string>(
+                inputField.onValueChanged,
+                inputField.GetCancellationTokenOnDestroy()
+            );
         }
 
-        public static IUniTaskAsyncEnumerable<string> OnValueChangedAsAsyncEnumerable(this InputField inputField, CancellationToken cancellationToken)
+        public static IUniTaskAsyncEnumerable<string> OnValueChangedAsAsyncEnumerable(
+            this InputField inputField,
+            CancellationToken cancellationToken
+        )
         {
-            return new UnityEventHandlerAsyncEnumerable<string>(inputField.onValueChanged, cancellationToken);
+            return new UnityEventHandlerAsyncEnumerable<string>(
+                inputField.onValueChanged,
+                cancellationToken
+            );
         }
 
-        public static IAsyncValueChangedEventHandler<int> GetAsyncValueChangedEventHandler(this Dropdown dropdown)
+        public static IAsyncValueChangedEventHandler<int> GetAsyncValueChangedEventHandler(
+            this Dropdown dropdown
+        )
         {
-            return new AsyncUnityEventHandler<int>(dropdown.onValueChanged, dropdown.GetCancellationTokenOnDestroy(), false);
+            return new AsyncUnityEventHandler<int>(
+                dropdown.onValueChanged,
+                dropdown.GetCancellationTokenOnDestroy(),
+                false
+            );
         }
 
-        public static IAsyncValueChangedEventHandler<int> GetAsyncValueChangedEventHandler(this Dropdown dropdown, CancellationToken cancellationToken)
+        public static IAsyncValueChangedEventHandler<int> GetAsyncValueChangedEventHandler(
+            this Dropdown dropdown,
+            CancellationToken cancellationToken
+        )
         {
-            return new AsyncUnityEventHandler<int>(dropdown.onValueChanged, cancellationToken, false);
+            return new AsyncUnityEventHandler<int>(
+                dropdown.onValueChanged,
+                cancellationToken,
+                false
+            );
         }
 
         public static UniTask<int> OnValueChangedAsync(this Dropdown dropdown)
         {
-            return new AsyncUnityEventHandler<int>(dropdown.onValueChanged, dropdown.GetCancellationTokenOnDestroy(), true).OnInvokeAsync();
+            return new AsyncUnityEventHandler<int>(
+                dropdown.onValueChanged,
+                dropdown.GetCancellationTokenOnDestroy(),
+                true
+            ).OnInvokeAsync();
         }
 
-        public static UniTask<int> OnValueChangedAsync(this Dropdown dropdown, CancellationToken cancellationToken)
+        public static UniTask<int> OnValueChangedAsync(
+            this Dropdown dropdown,
+            CancellationToken cancellationToken
+        )
         {
-            return new AsyncUnityEventHandler<int>(dropdown.onValueChanged, cancellationToken, true).OnInvokeAsync();
+            return new AsyncUnityEventHandler<int>(
+                dropdown.onValueChanged,
+                cancellationToken,
+                true
+            ).OnInvokeAsync();
         }
 
-        public static IUniTaskAsyncEnumerable<int> OnValueChangedAsAsyncEnumerable(this Dropdown dropdown)
+        public static IUniTaskAsyncEnumerable<int> OnValueChangedAsAsyncEnumerable(
+            this Dropdown dropdown
+        )
         {
-            return new UnityEventHandlerAsyncEnumerable<int>(dropdown.onValueChanged, dropdown.GetCancellationTokenOnDestroy());
+            return new UnityEventHandlerAsyncEnumerable<int>(
+                dropdown.onValueChanged,
+                dropdown.GetCancellationTokenOnDestroy()
+            );
         }
 
-        public static IUniTaskAsyncEnumerable<int> OnValueChangedAsAsyncEnumerable(this Dropdown dropdown, CancellationToken cancellationToken)
+        public static IUniTaskAsyncEnumerable<int> OnValueChangedAsAsyncEnumerable(
+            this Dropdown dropdown,
+            CancellationToken cancellationToken
+        )
         {
-            return new UnityEventHandlerAsyncEnumerable<int>(dropdown.onValueChanged, cancellationToken);
+            return new UnityEventHandlerAsyncEnumerable<int>(
+                dropdown.onValueChanged,
+                cancellationToken
+            );
         }
     }
 
@@ -328,7 +618,6 @@ namespace Cysharp.Threading.Tasks
         readonly UnityEvent<string, int, int> innerEvent;
         readonly UnityAction<string, int, int> invokeDelegate;
 
-
         public TextSelectionEventConverter(UnityEvent<string, int, int> unityEvent)
         {
             this.innerEvent = unityEvent;
@@ -362,7 +651,11 @@ namespace Cysharp.Threading.Tasks
 
         UniTaskCompletionSourceCore<AsyncUnit> core;
 
-        public AsyncUnityEventHandler(UnityEvent unityEvent, CancellationToken cancellationToken, bool callOnce)
+        public AsyncUnityEventHandler(
+            UnityEvent unityEvent,
+            CancellationToken cancellationToken,
+            bool callOnce
+        )
         {
             this.cancellationToken = cancellationToken;
             if (cancellationToken.IsCancellationRequested)
@@ -379,7 +672,10 @@ namespace Cysharp.Threading.Tasks
 
             if (cancellationToken.CanBeCanceled)
             {
-                registration = cancellationToken.RegisterWithoutCaptureExecutionContext(cancellationCallback, this);
+                registration = cancellationToken.RegisterWithoutCaptureExecutionContext(
+                    cancellationCallback,
+                    this
+                );
             }
 
             TaskTracker.TrackActiveTask(this, 3);
@@ -457,8 +753,16 @@ namespace Cysharp.Threading.Tasks
         }
     }
 
-    public class AsyncUnityEventHandler<T> : IUniTaskSource<T>, IDisposable, IAsyncValueChangedEventHandler<T>, IAsyncEndEditEventHandler<T>
-        , IAsyncEndTextSelectionEventHandler<T>, IAsyncTextSelectionEventHandler<T>, IAsyncDeselectEventHandler<T>, IAsyncSelectEventHandler<T>, IAsyncSubmitEventHandler<T>
+    public class AsyncUnityEventHandler<T>
+        : IUniTaskSource<T>,
+            IDisposable,
+            IAsyncValueChangedEventHandler<T>,
+            IAsyncEndEditEventHandler<T>,
+            IAsyncEndTextSelectionEventHandler<T>,
+            IAsyncTextSelectionEventHandler<T>,
+            IAsyncDeselectEventHandler<T>,
+            IAsyncSelectEventHandler<T>,
+            IAsyncSubmitEventHandler<T>
     {
         static Action<object> cancellationCallback = CancellationCallback;
 
@@ -472,7 +776,11 @@ namespace Cysharp.Threading.Tasks
 
         UniTaskCompletionSourceCore<T> core;
 
-        public AsyncUnityEventHandler(UnityEvent<T> unityEvent, CancellationToken cancellationToken, bool callOnce)
+        public AsyncUnityEventHandler(
+            UnityEvent<T> unityEvent,
+            CancellationToken cancellationToken,
+            bool callOnce
+        )
         {
             this.cancellationToken = cancellationToken;
             if (cancellationToken.IsCancellationRequested)
@@ -489,7 +797,10 @@ namespace Cysharp.Threading.Tasks
 
             if (cancellationToken.CanBeCanceled)
             {
-                registration = cancellationToken.RegisterWithoutCaptureExecutionContext(cancellationCallback, this);
+                registration = cancellationToken.RegisterWithoutCaptureExecutionContext(
+                    cancellationCallback,
+                    this
+                );
             }
 
             TaskTracker.TrackActiveTask(this, 3);
@@ -614,21 +925,34 @@ namespace Cysharp.Threading.Tasks
         readonly UnityEvent unityEvent;
         readonly CancellationToken cancellationToken1;
 
-        public UnityEventHandlerAsyncEnumerable(UnityEvent unityEvent, CancellationToken cancellationToken)
+        public UnityEventHandlerAsyncEnumerable(
+            UnityEvent unityEvent,
+            CancellationToken cancellationToken
+        )
         {
             this.unityEvent = unityEvent;
             this.cancellationToken1 = cancellationToken;
         }
 
-        public IUniTaskAsyncEnumerator<AsyncUnit> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+        public IUniTaskAsyncEnumerator<AsyncUnit> GetAsyncEnumerator(
+            CancellationToken cancellationToken = default
+        )
         {
             if (this.cancellationToken1 == cancellationToken)
             {
-                return new UnityEventHandlerAsyncEnumerator(unityEvent, this.cancellationToken1, CancellationToken.None);
+                return new UnityEventHandlerAsyncEnumerator(
+                    unityEvent,
+                    this.cancellationToken1,
+                    CancellationToken.None
+                );
             }
             else
             {
-                return new UnityEventHandlerAsyncEnumerator(unityEvent, this.cancellationToken1, cancellationToken);
+                return new UnityEventHandlerAsyncEnumerator(
+                    unityEvent,
+                    this.cancellationToken1,
+                    cancellationToken
+                );
             }
         }
 
@@ -646,7 +970,11 @@ namespace Cysharp.Threading.Tasks
             CancellationTokenRegistration registration2;
             bool isDisposed;
 
-            public UnityEventHandlerAsyncEnumerator(UnityEvent unityEvent, CancellationToken cancellationToken1, CancellationToken cancellationToken2)
+            public UnityEventHandlerAsyncEnumerator(
+                UnityEvent unityEvent,
+                CancellationToken cancellationToken1,
+                CancellationToken cancellationToken2
+            )
             {
                 this.unityEvent = unityEvent;
                 this.cancellationToken1 = cancellationToken1;
@@ -669,11 +997,17 @@ namespace Cysharp.Threading.Tasks
                     unityEvent.AddListener(unityAction);
                     if (cancellationToken1.CanBeCanceled)
                     {
-                        registration1 = cancellationToken1.RegisterWithoutCaptureExecutionContext(cancel1, this);
+                        registration1 = cancellationToken1.RegisterWithoutCaptureExecutionContext(
+                            cancel1,
+                            this
+                        );
                     }
                     if (cancellationToken2.CanBeCanceled)
                     {
-                        registration2 = cancellationToken2.RegisterWithoutCaptureExecutionContext(cancel2, this);
+                        registration2 = cancellationToken2.RegisterWithoutCaptureExecutionContext(
+                            cancel2,
+                            this
+                        );
                     }
                 }
 
@@ -734,21 +1068,34 @@ namespace Cysharp.Threading.Tasks
         readonly UnityEvent<T> unityEvent;
         readonly CancellationToken cancellationToken1;
 
-        public UnityEventHandlerAsyncEnumerable(UnityEvent<T> unityEvent, CancellationToken cancellationToken)
+        public UnityEventHandlerAsyncEnumerable(
+            UnityEvent<T> unityEvent,
+            CancellationToken cancellationToken
+        )
         {
             this.unityEvent = unityEvent;
             this.cancellationToken1 = cancellationToken;
         }
 
-        public IUniTaskAsyncEnumerator<T> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+        public IUniTaskAsyncEnumerator<T> GetAsyncEnumerator(
+            CancellationToken cancellationToken = default
+        )
         {
             if (this.cancellationToken1 == cancellationToken)
             {
-                return new UnityEventHandlerAsyncEnumerator(unityEvent, this.cancellationToken1, CancellationToken.None);
+                return new UnityEventHandlerAsyncEnumerator(
+                    unityEvent,
+                    this.cancellationToken1,
+                    CancellationToken.None
+                );
             }
             else
             {
-                return new UnityEventHandlerAsyncEnumerator(unityEvent, this.cancellationToken1, cancellationToken);
+                return new UnityEventHandlerAsyncEnumerator(
+                    unityEvent,
+                    this.cancellationToken1,
+                    cancellationToken
+                );
             }
         }
 
@@ -766,7 +1113,11 @@ namespace Cysharp.Threading.Tasks
             CancellationTokenRegistration registration2;
             bool isDisposed;
 
-            public UnityEventHandlerAsyncEnumerator(UnityEvent<T> unityEvent, CancellationToken cancellationToken1, CancellationToken cancellationToken2)
+            public UnityEventHandlerAsyncEnumerator(
+                UnityEvent<T> unityEvent,
+                CancellationToken cancellationToken1,
+                CancellationToken cancellationToken2
+            )
             {
                 this.unityEvent = unityEvent;
                 this.cancellationToken1 = cancellationToken1;
@@ -789,11 +1140,17 @@ namespace Cysharp.Threading.Tasks
                     unityEvent.AddListener(unityAction);
                     if (cancellationToken1.CanBeCanceled)
                     {
-                        registration1 = cancellationToken1.RegisterWithoutCaptureExecutionContext(cancel1, this);
+                        registration1 = cancellationToken1.RegisterWithoutCaptureExecutionContext(
+                            cancel1,
+                            this
+                        );
                     }
                     if (cancellationToken2.CanBeCanceled)
                     {
-                        registration2 = cancellationToken2.RegisterWithoutCaptureExecutionContext(cancel2, this);
+                        registration2 = cancellationToken2.RegisterWithoutCaptureExecutionContext(
+                            cancel2,
+                            this
+                        );
                     }
                 }
 

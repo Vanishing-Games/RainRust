@@ -12,20 +12,10 @@ namespace Zenject
             Arguments = new List<TypeValuePair>();
         }
 
-        public Type FactoryType
-        {
-            get; private set;
-        }
+        public Type FactoryType { get; private set; }
 
-        public Func<DiContainer, IProvider> ProviderFunc
-        {
-            get; set;
-        }
+        public Func<DiContainer, IProvider> ProviderFunc { get; set; }
 
-        public List<TypeValuePair> Arguments
-        {
-            get;
-            set;
-        }
+        public List<TypeValuePair> Arguments { get; set; }
     }
 }

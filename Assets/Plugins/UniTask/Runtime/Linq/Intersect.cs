@@ -1,13 +1,16 @@
-﻿using Cysharp.Threading.Tasks.Internal;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using Cysharp.Threading.Tasks.Internal;
 
 namespace Cysharp.Threading.Tasks.Linq
 {
     public static partial class UniTaskAsyncEnumerable
     {
-        public static IUniTaskAsyncEnumerable<TSource> Intersect<TSource>(this IUniTaskAsyncEnumerable<TSource> first, IUniTaskAsyncEnumerable<TSource> second)
+        public static IUniTaskAsyncEnumerable<TSource> Intersect<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> first,
+            IUniTaskAsyncEnumerable<TSource> second
+        )
         {
             Error.ThrowArgumentNullException(first, nameof(first));
             Error.ThrowArgumentNullException(second, nameof(second));
@@ -15,7 +18,11 @@ namespace Cysharp.Threading.Tasks.Linq
             return new Intersect<TSource>(first, second, EqualityComparer<TSource>.Default);
         }
 
-        public static IUniTaskAsyncEnumerable<TSource> Intersect<TSource>(this IUniTaskAsyncEnumerable<TSource> first, IUniTaskAsyncEnumerable<TSource> second, IEqualityComparer<TSource> comparer)
+        public static IUniTaskAsyncEnumerable<TSource> Intersect<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> first,
+            IUniTaskAsyncEnumerable<TSource> second,
+            IEqualityComparer<TSource> comparer
+        )
         {
             Error.ThrowArgumentNullException(first, nameof(first));
             Error.ThrowArgumentNullException(second, nameof(second));
@@ -31,14 +38,20 @@ namespace Cysharp.Threading.Tasks.Linq
         readonly IUniTaskAsyncEnumerable<TSource> second;
         readonly IEqualityComparer<TSource> comparer;
 
-        public Intersect(IUniTaskAsyncEnumerable<TSource> first, IUniTaskAsyncEnumerable<TSource> second, IEqualityComparer<TSource> comparer)
+        public Intersect(
+            IUniTaskAsyncEnumerable<TSource> first,
+            IUniTaskAsyncEnumerable<TSource> second,
+            IEqualityComparer<TSource> comparer
+        )
         {
             this.first = first;
             this.second = second;
             this.comparer = comparer;
         }
 
-        public IUniTaskAsyncEnumerator<TSource> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+        public IUniTaskAsyncEnumerator<TSource> GetAsyncEnumerator(
+            CancellationToken cancellationToken = default
+        )
         {
             return new _Intersect(first, second, comparer, cancellationToken);
         }
@@ -53,8 +66,12 @@ namespace Cysharp.Threading.Tasks.Linq
             HashSet<TSource> set;
             UniTask<HashSet<TSource>>.Awaiter awaiter;
 
-            public _Intersect(IUniTaskAsyncEnumerable<TSource> first, IUniTaskAsyncEnumerable<TSource> second, IEqualityComparer<TSource> comparer, CancellationToken cancellationToken)
-
+            public _Intersect(
+                IUniTaskAsyncEnumerable<TSource> first,
+                IUniTaskAsyncEnumerable<TSource> second,
+                IEqualityComparer<TSource> comparer,
+                CancellationToken cancellationToken
+            )
                 : base(first, cancellationToken)
             {
                 this.second = second;
@@ -63,7 +80,8 @@ namespace Cysharp.Threading.Tasks.Linq
 
             protected override bool OnFirstIteration()
             {
-                if (set != null) return false;
+                if (set != null)
+                    return false;
 
                 awaiter = second.ToHashSetAsync(cancellationToken).GetAwaiter();
                 if (awaiter.IsCompleted)

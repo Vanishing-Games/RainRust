@@ -21,11 +21,22 @@ namespace FMODUnity
             serializedObject.Update();
             EditorGUI.BeginDisabledGroup(true);
             int index = ((StudioListener)serializedObject.targetObject).ListenerNumber;
-            EditorGUILayout.IntSlider(L10n.Tr("Listener Index"), index, 0, FMOD.CONSTANTS.MAX_LISTENERS - 1);
+            EditorGUILayout.IntSlider(
+                L10n.Tr("Listener Index"),
+                index,
+                0,
+                FMOD.CONSTANTS.MAX_LISTENERS - 1
+            );
             EditorGUI.EndDisabledGroup();
 
-            EditorGUILayout.PropertyField(attenuationObject, new GUIContent(L10n.Tr("Attenuation Object")));
-            EditorGUILayout.PropertyField(nonRigidbodyVelocity, new GUIContent(L10n.Tr("Non-Rigidbody Velocity")));
+            EditorGUILayout.PropertyField(
+                attenuationObject,
+                new GUIContent(L10n.Tr("Attenuation Object"))
+            );
+            EditorGUILayout.PropertyField(
+                nonRigidbodyVelocity,
+                new GUIContent(L10n.Tr("Non-Rigidbody Velocity"))
+            );
             serializedObject.ApplyModifiedProperties();
         }
     }

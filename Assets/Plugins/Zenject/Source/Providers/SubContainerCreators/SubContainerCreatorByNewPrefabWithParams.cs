@@ -17,8 +17,11 @@ namespace Zenject
         readonly GameObjectCreationParameters _gameObjectBindInfo;
 
         public SubContainerCreatorByNewPrefabWithParams(
-            Type installerType, DiContainer container, IPrefabProvider prefabProvider,
-            GameObjectCreationParameters gameObjectBindInfo)
+            Type installerType,
+            DiContainer container,
+            IPrefabProvider prefabProvider,
+            GameObjectCreationParameters gameObjectBindInfo
+        )
         {
             _gameObjectBindInfo = gameObjectBindInfo;
             _prefabProvider = prefabProvider;
@@ -31,13 +34,13 @@ namespace Zenject
             get { return _container; }
         }
 
-        IEnumerable<InjectableInfo> GetAllInjectableIncludingBaseTypes() 
+        IEnumerable<InjectableInfo> GetAllInjectableIncludingBaseTypes()
         {
             var info = TypeAnalyzer.GetInfo(_installerType);
 
-            while (info != null) 
+            while (info != null)
             {
-                foreach (var injectable in info.AllInjectables) 
+                foreach (var injectable in info.AllInjectables)
                 {
                     yield return injectable;
                 }
@@ -58,20 +61,30 @@ namespace Zenject
                 // brought up in github issue #217
                 var match = allInjectables
                     .Where(x => argPair.Type.DerivesFromOrEqual(x.MemberType))
-                    .OrderBy(x => ZenUtilInternal.GetInheritanceDelta(argPair.Type, x.MemberType)).FirstOrDefault();
+                    .OrderBy(x => ZenUtilInternal.GetInheritanceDelta(argPair.Type, x.MemberType))
+                    .FirstOrDefault();
 
-                Assert.That(match != null,
+                Assert.That(
+                    match != null,
                     "Could not find match for argument type '{0}' when injecting into sub container installer '{1}'",
-                    argPair.Type, _installerType);
+                    argPair.Type,
+                    _installerType
+                );
 
-                tempSubContainer.Bind(match.MemberType)
-                    .FromInstance(argPair.Value).WhenInjectedInto(_installerType);
+                tempSubContainer
+                    .Bind(match.MemberType)
+                    .FromInstance(argPair.Value)
+                    .WhenInjectedInto(_installerType);
             }
 
             return tempSubContainer;
         }
 
-        public DiContainer CreateSubContainer(List<TypeValuePair> args, InjectContext parentContext, out Action injectAction)
+        public DiContainer CreateSubContainer(
+            List<TypeValuePair> args,
+            InjectContext parentContext,
+            out Action injectAction
+        )
         {
             Assert.That(!args.IsEmpty());
 
@@ -80,16 +93,23 @@ namespace Zenject
 
             bool shouldMakeActive;
             var gameObject = tempContainer.CreateAndParentPrefab(
-                prefab, _gameObjectBindInfo, null, out shouldMakeActive);
+                prefab,
+                _gameObjectBindInfo,
+                null,
+                out shouldMakeActive
+            );
 
             var context = gameObject.GetComponent<GameObjectContext>();
 
-            Assert.That(context != null,
-                "Expected prefab with name '{0}' to container a component of type 'GameObjectContext'", prefab.name);
+            Assert.That(
+                context != null,
+                "Expected prefab with name '{0}' to container a component of type 'GameObjectContext'",
+                prefab.name
+            );
 
             context.Install(tempContainer);
 
-            injectAction = () => 
+            injectAction = () =>
             {
                 // Note: We don't need to call ResolveRoots here because GameObjectContext does this for us
                 tempContainer.Inject(context);
@@ -111,4 +131,3 @@ namespace Zenject
 }
 
 #endif
-

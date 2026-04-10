@@ -14,8 +14,12 @@ namespace Zenject
         readonly InjectSources _sourceType;
 
         public GetterProvider(
-            object identifier, Func<TObj, TResult> method,
-            DiContainer container, InjectSources sourceType, bool matchAll)
+            object identifier,
+            Func<TObj, TResult> method,
+            DiContainer container,
+            InjectSources sourceType,
+            bool matchAll
+        )
         {
             _container = container;
             _identifier = identifier;
@@ -41,8 +45,7 @@ namespace Zenject
 
         InjectContext GetSubContext(InjectContext parent)
         {
-            var subContext = parent.CreateSubContext(
-                typeof(TObj), _identifier);
+            var subContext = parent.CreateSubContext(typeof(TObj), _identifier);
 
             subContext.Optional = false;
             subContext.SourceType = _sourceType;
@@ -51,7 +54,11 @@ namespace Zenject
         }
 
         public void GetAllInstancesWithInjectSplit(
-            InjectContext context, List<TypeValuePair> args, out Action injectAction, List<object> buffer)
+            InjectContext context,
+            List<TypeValuePair> args,
+            out Action injectAction,
+            List<object> buffer
+        )
         {
             Assert.IsEmpty(args);
             Assert.IsNotNull(context);
@@ -88,8 +95,7 @@ namespace Zenject
             }
             else
             {
-                buffer.Add(_method(
-                    (TObj)_container.Resolve(GetSubContext(context))));
+                buffer.Add(_method((TObj)_container.Resolve(GetSubContext(context))));
             }
         }
     }

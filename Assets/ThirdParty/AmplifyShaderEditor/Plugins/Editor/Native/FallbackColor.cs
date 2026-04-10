@@ -11,6 +11,7 @@ namespace AmplifyShaderEditor
     {
         [SerializeField]
         private Color m_current;
+
         [SerializeField]
         private Color m_previous;
 
@@ -32,14 +33,10 @@ namespace AmplifyShaderEditor
             m_current = m_previous;
             m_previous = aux;
         }
-        
+
         public Color Current
         {
-            get
-            {
-                return m_current;
-            }
-
+            get { return m_current; }
             set
             {
                 m_previous = m_current;

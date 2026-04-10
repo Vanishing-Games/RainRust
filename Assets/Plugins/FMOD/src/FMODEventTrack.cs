@@ -16,7 +16,11 @@ namespace FMODUnity
     {
         public FMODEventMixerBehaviour template = new FMODEventMixerBehaviour();
 
-        public override Playable CreateTrackMixer(PlayableGraph graph, GameObject go, int inputCount)
+        public override Playable CreateTrackMixer(
+            PlayableGraph graph,
+            GameObject go,
+            int inputCount
+        )
         {
             var director = go.GetComponent<PlayableDirector>();
             var trackTargetObject = director.GetGenericBinding(this) as GameObject;
@@ -32,7 +36,11 @@ namespace FMODUnity
                 }
             }
 
-            var scriptPlayable = ScriptPlayable<FMODEventMixerBehaviour>.Create(graph, template, inputCount);
+            var scriptPlayable = ScriptPlayable<FMODEventMixerBehaviour>.Create(
+                graph,
+                template,
+                inputCount
+            );
             return scriptPlayable;
         }
     }
@@ -62,7 +70,8 @@ namespace FMODUnity
 
             for (int i = 0; i < inputCount; i++)
             {
-                ScriptPlayable<FMODEventPlayableBehavior> inputPlayable = (ScriptPlayable<FMODEventPlayableBehavior>)playable.GetInput(i);
+                ScriptPlayable<FMODEventPlayableBehavior> inputPlayable =
+                    (ScriptPlayable<FMODEventPlayableBehavior>)playable.GetInput(i);
                 FMODEventPlayableBehavior input = inputPlayable.GetBehaviour();
 
                 input.UpdateBehavior(time, volume);

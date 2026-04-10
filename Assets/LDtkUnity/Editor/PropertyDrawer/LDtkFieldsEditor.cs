@@ -7,20 +7,24 @@ namespace LDtkUnity.Editor
     internal sealed class LDtkFieldsEditor : UnityEditor.Editor
     {
         private SerializedProperty[] _elements;
+
         //private LDtkFieldDrawer[] _drawers;
-        
+
         private static readonly GUIContent HelpBox = new GUIContent()
         {
-            text = $"Access with GetComponent<{nameof(LDtkFields)}>, or with a custom component inheriting {nameof(ILDtkImportedFields)}",
+            text =
+                $"Access with GetComponent<{nameof(LDtkFields)}>, or with a custom component inheriting {nameof(ILDtkImportedFields)}",
         };
 
         private void OnEnable()
         {
-            SerializedProperty fieldsProp = serializedObject.FindProperty(LDtkFields.PROPERTY_FIELDS);
-            
+            SerializedProperty fieldsProp = serializedObject.FindProperty(
+                LDtkFields.PROPERTY_FIELDS
+            );
+
             _elements = new SerializedProperty[fieldsProp.arraySize];
             //_drawers = new LDtkFieldDrawer[fieldsProp.arraySize];
-            
+
             for (int i = 0; i < fieldsProp.arraySize; i++)
             {
                 _elements[i] = fieldsProp.GetArrayElementAtIndex(i);
@@ -32,9 +36,9 @@ namespace LDtkUnity.Editor
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
-            
+
             EditorGUILayout.HelpBox(HelpBox, true);
-            
+
             LDtkProfiler.BeginSample("LDtkFieldsEditor DrawElements");
             for (int i = 0; i < _elements.Length; i++)
             {
@@ -45,6 +49,5 @@ namespace LDtkUnity.Editor
 
             serializedObject.ApplyModifiedProperties();
         }
-
     }
 }

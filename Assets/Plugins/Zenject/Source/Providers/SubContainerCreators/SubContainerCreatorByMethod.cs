@@ -13,14 +13,19 @@ namespace Zenject
         readonly SubContainerCreatorBindInfo _containerBindInfo;
 
         public SubContainerCreatorByMethodBase(
-            DiContainer container, SubContainerCreatorBindInfo containerBindInfo)
+            DiContainer container,
+            SubContainerCreatorBindInfo containerBindInfo
+        )
         {
             _container = container;
             _containerBindInfo = containerBindInfo;
         }
 
         public abstract DiContainer CreateSubContainer(
-            List<TypeValuePair> args, InjectContext context, out Action injectAction);
+            List<TypeValuePair> args,
+            InjectContext context,
+            out Action injectAction
+        );
 
         protected DiContainer CreateEmptySubContainer()
         {
@@ -38,13 +43,18 @@ namespace Zenject
         public SubContainerCreatorByMethod(
             DiContainer container,
             SubContainerCreatorBindInfo containerBindInfo,
-            Action<DiContainer> installMethod)
+            Action<DiContainer> installMethod
+        )
             : base(container, containerBindInfo)
         {
             _installMethod = installMethod;
         }
 
-        public override DiContainer CreateSubContainer(List<TypeValuePair> args, InjectContext context, out Action injectAction)
+        public override DiContainer CreateSubContainer(
+            List<TypeValuePair> args,
+            InjectContext context,
+            out Action injectAction
+        )
         {
             Assert.IsEmpty(args);
 
@@ -52,7 +62,7 @@ namespace Zenject
 
             _installMethod(subContainer);
 
-            injectAction = () => 
+            injectAction = () =>
             {
                 subContainer.ResolveRoots();
             };
@@ -71,13 +81,18 @@ namespace Zenject
         public SubContainerCreatorByMethod(
             DiContainer container,
             SubContainerCreatorBindInfo containerBindInfo,
-            Action<DiContainer, TParam1> installMethod)
+            Action<DiContainer, TParam1> installMethod
+        )
             : base(container, containerBindInfo)
         {
             _installMethod = installMethod;
         }
 
-        public override DiContainer CreateSubContainer(List<TypeValuePair> args, InjectContext context, out Action injectAction)
+        public override DiContainer CreateSubContainer(
+            List<TypeValuePair> args,
+            InjectContext context,
+            out Action injectAction
+        )
         {
             Assert.IsEqual(args.Count, 1);
             Assert.That(args[0].Type.DerivesFromOrEqual<TParam1>());
@@ -86,7 +101,7 @@ namespace Zenject
 
             _installMethod(subContainer, (TParam1)args[0].Value);
 
-            injectAction = () => 
+            injectAction = () =>
             {
                 subContainer.ResolveRoots();
             };
@@ -105,13 +120,18 @@ namespace Zenject
         public SubContainerCreatorByMethod(
             DiContainer container,
             SubContainerCreatorBindInfo containerBindInfo,
-            Action<DiContainer, TParam1, TParam2> installMethod)
+            Action<DiContainer, TParam1, TParam2> installMethod
+        )
             : base(container, containerBindInfo)
         {
             _installMethod = installMethod;
         }
 
-        public override DiContainer CreateSubContainer(List<TypeValuePair> args, InjectContext context, out Action injectAction)
+        public override DiContainer CreateSubContainer(
+            List<TypeValuePair> args,
+            InjectContext context,
+            out Action injectAction
+        )
         {
             Assert.IsEqual(args.Count, 2);
             Assert.That(args[0].Type.DerivesFromOrEqual<TParam1>());
@@ -119,12 +139,9 @@ namespace Zenject
 
             var subContainer = CreateEmptySubContainer();
 
-            _installMethod(
-                subContainer,
-                (TParam1)args[0].Value,
-                (TParam2)args[1].Value);
+            _installMethod(subContainer, (TParam1)args[0].Value, (TParam2)args[1].Value);
 
-            injectAction = () => 
+            injectAction = () =>
             {
                 subContainer.ResolveRoots();
             };
@@ -136,20 +153,26 @@ namespace Zenject
     // Three parameters
 
     [NoReflectionBaking]
-    public class SubContainerCreatorByMethod<TParam1, TParam2, TParam3> : SubContainerCreatorByMethodBase
+    public class SubContainerCreatorByMethod<TParam1, TParam2, TParam3>
+        : SubContainerCreatorByMethodBase
     {
         readonly Action<DiContainer, TParam1, TParam2, TParam3> _installMethod;
 
         public SubContainerCreatorByMethod(
             DiContainer container,
             SubContainerCreatorBindInfo containerBindInfo,
-            Action<DiContainer, TParam1, TParam2, TParam3> installMethod)
+            Action<DiContainer, TParam1, TParam2, TParam3> installMethod
+        )
             : base(container, containerBindInfo)
         {
             _installMethod = installMethod;
         }
 
-        public override DiContainer CreateSubContainer(List<TypeValuePair> args, InjectContext context, out Action injectAction)
+        public override DiContainer CreateSubContainer(
+            List<TypeValuePair> args,
+            InjectContext context,
+            out Action injectAction
+        )
         {
             Assert.IsEqual(args.Count, 3);
             Assert.That(args[0].Type.DerivesFromOrEqual<TParam1>());
@@ -162,9 +185,10 @@ namespace Zenject
                 subContainer,
                 (TParam1)args[0].Value,
                 (TParam2)args[1].Value,
-                (TParam3)args[2].Value);
+                (TParam3)args[2].Value
+            );
 
-            injectAction = () => 
+            injectAction = () =>
             {
                 subContainer.ResolveRoots();
             };
@@ -176,13 +200,14 @@ namespace Zenject
     // Four parameters
 
     [NoReflectionBaking]
-    public class SubContainerCreatorByMethod<TParam1, TParam2, TParam3, TParam4> : SubContainerCreatorByMethodBase
+    public class SubContainerCreatorByMethod<TParam1, TParam2, TParam3, TParam4>
+        : SubContainerCreatorByMethodBase
     {
         readonly
 #if !NET_4_6
-            ModestTree.Util.
+        ModestTree.Util.
 #endif
-            Action<DiContainer, TParam1, TParam2, TParam3, TParam4> _installMethod;
+        Action<DiContainer, TParam1, TParam2, TParam3, TParam4> _installMethod;
 
         public SubContainerCreatorByMethod(
             DiContainer container,
@@ -190,13 +215,18 @@ namespace Zenject
 #if !NET_4_6
             ModestTree.Util.
 #endif
-            Action<DiContainer, TParam1, TParam2, TParam3, TParam4> installMethod)
+            Action<DiContainer, TParam1, TParam2, TParam3, TParam4> installMethod
+        )
             : base(container, containerBindInfo)
         {
             _installMethod = installMethod;
         }
 
-        public override DiContainer CreateSubContainer(List<TypeValuePair> args, InjectContext context, out Action injectAction)
+        public override DiContainer CreateSubContainer(
+            List<TypeValuePair> args,
+            InjectContext context,
+            out Action injectAction
+        )
         {
             Assert.IsEqual(args.Count, 4);
             Assert.That(args[0].Type.DerivesFromOrEqual<TParam1>());
@@ -211,9 +241,10 @@ namespace Zenject
                 (TParam1)args[0].Value,
                 (TParam2)args[1].Value,
                 (TParam3)args[2].Value,
-                (TParam4)args[3].Value);
+                (TParam4)args[3].Value
+            );
 
-            injectAction = () => 
+            injectAction = () =>
             {
                 subContainer.ResolveRoots();
             };
@@ -225,13 +256,14 @@ namespace Zenject
     // Five parameters
 
     [NoReflectionBaking]
-    public class SubContainerCreatorByMethod<TParam1, TParam2, TParam3, TParam4, TParam5> : SubContainerCreatorByMethodBase
+    public class SubContainerCreatorByMethod<TParam1, TParam2, TParam3, TParam4, TParam5>
+        : SubContainerCreatorByMethodBase
     {
         readonly
 #if !NET_4_6
-            ModestTree.Util.
+        ModestTree.Util.
 #endif
-            Action<DiContainer, TParam1, TParam2, TParam3, TParam4, TParam5> _installMethod;
+        Action<DiContainer, TParam1, TParam2, TParam3, TParam4, TParam5> _installMethod;
 
         public SubContainerCreatorByMethod(
             DiContainer container,
@@ -239,13 +271,18 @@ namespace Zenject
 #if !NET_4_6
             ModestTree.Util.
 #endif
-            Action<DiContainer, TParam1, TParam2, TParam3, TParam4, TParam5> installMethod)
+            Action<DiContainer, TParam1, TParam2, TParam3, TParam4, TParam5> installMethod
+        )
             : base(container, containerBindInfo)
         {
             _installMethod = installMethod;
         }
 
-        public override DiContainer CreateSubContainer(List<TypeValuePair> args, InjectContext context, out Action injectAction)
+        public override DiContainer CreateSubContainer(
+            List<TypeValuePair> args,
+            InjectContext context,
+            out Action injectAction
+        )
         {
             Assert.IsEqual(args.Count, 5);
             Assert.That(args[0].Type.DerivesFromOrEqual<TParam1>());
@@ -262,9 +299,10 @@ namespace Zenject
                 (TParam2)args[1].Value,
                 (TParam3)args[2].Value,
                 (TParam4)args[3].Value,
-                (TParam5)args[4].Value);
+                (TParam5)args[4].Value
+            );
 
-            injectAction = () => 
+            injectAction = () =>
             {
                 subContainer.ResolveRoots();
             };
@@ -276,13 +314,14 @@ namespace Zenject
     // Six parameters
 
     [NoReflectionBaking]
-    public class SubContainerCreatorByMethod<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6> : SubContainerCreatorByMethodBase
+    public class SubContainerCreatorByMethod<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6>
+        : SubContainerCreatorByMethodBase
     {
         readonly
 #if !NET_4_6
-            ModestTree.Util.
+        ModestTree.Util.
 #endif
-            Action<DiContainer, TParam1, TParam2, TParam3, TParam4, TParam5, TParam6> _installMethod;
+        Action<DiContainer, TParam1, TParam2, TParam3, TParam4, TParam5, TParam6> _installMethod;
 
         public SubContainerCreatorByMethod(
             DiContainer container,
@@ -290,13 +329,18 @@ namespace Zenject
 #if !NET_4_6
             ModestTree.Util.
 #endif
-            Action<DiContainer, TParam1, TParam2, TParam3, TParam4, TParam5, TParam6> installMethod)
+            Action<DiContainer, TParam1, TParam2, TParam3, TParam4, TParam5, TParam6> installMethod
+        )
             : base(container, containerBindInfo)
         {
             _installMethod = installMethod;
         }
 
-        public override DiContainer CreateSubContainer(List<TypeValuePair> args, InjectContext context, out Action injectAction)
+        public override DiContainer CreateSubContainer(
+            List<TypeValuePair> args,
+            InjectContext context,
+            out Action injectAction
+        )
         {
             Assert.IsEqual(args.Count, 5);
             Assert.That(args[0].Type.DerivesFromOrEqual<TParam1>());
@@ -315,9 +359,10 @@ namespace Zenject
                 (TParam3)args[2].Value,
                 (TParam4)args[3].Value,
                 (TParam5)args[4].Value,
-                (TParam6)args[5].Value);
+                (TParam6)args[5].Value
+            );
 
-            injectAction = () => 
+            injectAction = () =>
             {
                 subContainer.ResolveRoots();
             };
@@ -329,13 +374,36 @@ namespace Zenject
     // 10 parameters
 
     [NoReflectionBaking]
-    public class SubContainerCreatorByMethod<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8, TParam9, TParam10> : SubContainerCreatorByMethodBase
+    public class SubContainerCreatorByMethod<
+        TParam1,
+        TParam2,
+        TParam3,
+        TParam4,
+        TParam5,
+        TParam6,
+        TParam7,
+        TParam8,
+        TParam9,
+        TParam10
+    > : SubContainerCreatorByMethodBase
     {
         readonly
 #if !NET_4_6
-            ModestTree.Util.
+        ModestTree.Util.
 #endif
-            Action<DiContainer, TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8, TParam9, TParam10> _installMethod;
+        Action<
+            DiContainer,
+            TParam1,
+            TParam2,
+            TParam3,
+            TParam4,
+            TParam5,
+            TParam6,
+            TParam7,
+            TParam8,
+            TParam9,
+            TParam10
+        > _installMethod;
 
         public SubContainerCreatorByMethod(
             DiContainer container,
@@ -343,13 +411,30 @@ namespace Zenject
 #if !NET_4_6
             ModestTree.Util.
 #endif
-            Action<DiContainer, TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8, TParam9, TParam10> installMethod)
+            Action<
+                DiContainer,
+                TParam1,
+                TParam2,
+                TParam3,
+                TParam4,
+                TParam5,
+                TParam6,
+                TParam7,
+                TParam8,
+                TParam9,
+                TParam10
+            > installMethod
+        )
             : base(container, containerBindInfo)
         {
             _installMethod = installMethod;
         }
 
-        public override DiContainer CreateSubContainer(List<TypeValuePair> args, InjectContext context, out Action injectAction)
+        public override DiContainer CreateSubContainer(
+            List<TypeValuePair> args,
+            InjectContext context,
+            out Action injectAction
+        )
         {
             Assert.IsEqual(args.Count, 10);
 
@@ -377,9 +462,10 @@ namespace Zenject
                 (TParam7)args[6].Value,
                 (TParam8)args[7].Value,
                 (TParam9)args[8].Value,
-                (TParam10)args[9].Value);
+                (TParam10)args[9].Value
+            );
 
-            injectAction = () => 
+            injectAction = () =>
             {
                 subContainer.ResolveRoots();
             };

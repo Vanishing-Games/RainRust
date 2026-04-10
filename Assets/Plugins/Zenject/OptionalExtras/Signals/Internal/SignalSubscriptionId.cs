@@ -48,16 +48,15 @@ namespace Zenject
 
         public bool Equals(SignalSubscriptionId that)
         {
-            return Equals(_signalId, that._signalId)
-                && Equals(Callback, that.Callback);
+            return Equals(_signalId, that._signalId) && Equals(Callback, that.Callback);
         }
 
-        public static bool operator == (SignalSubscriptionId left, SignalSubscriptionId right)
+        public static bool operator ==(SignalSubscriptionId left, SignalSubscriptionId right)
         {
             return left.Equals(right);
         }
 
-        public static bool operator != (SignalSubscriptionId left, SignalSubscriptionId right)
+        public static bool operator !=(SignalSubscriptionId left, SignalSubscriptionId right)
         {
             return !left.Equals(right);
         }

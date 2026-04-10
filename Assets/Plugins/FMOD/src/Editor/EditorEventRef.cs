@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 using UnityEditor;
+using UnityEngine;
 
 namespace FMODUnity
 {
@@ -16,18 +16,25 @@ namespace FMODUnity
 
         [SerializeField]
         public List<EditorBankRef> Banks;
+
         [SerializeField]
         public bool IsStream;
+
         [SerializeField]
         public bool Is3D;
+
         [SerializeField]
         public bool IsOneShot;
+
         [SerializeField]
         public List<EditorParamRef> Parameters;
+
         [SerializeField]
         public float MinDistance;
+
         [SerializeField]
         public float MaxDistance;
+
         [SerializeField]
         public int Length;
 

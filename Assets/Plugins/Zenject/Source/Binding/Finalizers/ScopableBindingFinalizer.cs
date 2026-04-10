@@ -10,7 +10,9 @@ namespace Zenject
         readonly Func<DiContainer, Type, IProvider> _providerFactory;
 
         public ScopableBindingFinalizer(
-            BindInfo bindInfo, Func<DiContainer, Type, IProvider> providerFactory)
+            BindInfo bindInfo,
+            Func<DiContainer, Type, IProvider> providerFactory
+        )
             : base(bindInfo)
         {
             _providerFactory = providerFactory;
@@ -43,7 +45,10 @@ namespace Zenject
                 case ScopeTypes.Transient:
                 {
                     RegisterProvidersForAllContractsPerConcreteType(
-                        container, concreteTypes, _providerFactory);
+                        container,
+                        concreteTypes,
+                        _providerFactory
+                    );
                     break;
                 }
                 case ScopeTypes.Singleton:
@@ -53,7 +58,9 @@ namespace Zenject
                         concreteTypes,
                         (_, concreteType) =>
                             BindingUtil.CreateCachedProvider(
-                                _providerFactory(container, concreteType)));
+                                _providerFactory(container, concreteType)
+                            )
+                    );
                     break;
                 }
                 default:
@@ -80,7 +87,9 @@ namespace Zenject
                         container,
                         (_, contractType) =>
                             BindingUtil.CreateCachedProvider(
-                                _providerFactory(container, contractType)));
+                                _providerFactory(container, contractType)
+                            )
+                    );
                     break;
                 }
                 default:

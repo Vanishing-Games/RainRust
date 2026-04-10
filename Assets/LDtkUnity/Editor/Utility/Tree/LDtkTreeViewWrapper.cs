@@ -7,17 +7,18 @@ namespace LDtkUnity.Editor
 {
     internal sealed class LDtkTreeViewWrapper : IDisposable
     {
-        private const string PREFS_KEY = "LDtkUnityTreeState"; 
-        
+        private const string PREFS_KEY = "LDtkUnityTreeState";
+
         private TreeViewState _state;
         private readonly LDtkTreeView _tree;
-        
+
         public LDtkTreeViewWrapper(LdtkJson data, string projectName)
         {
             InitState();
             _tree = new LDtkTreeViewProject(_state, data, projectName);
             InitTree();
         }
+
         public LDtkTreeViewWrapper(Level data)
         {
             InitState();
@@ -49,7 +50,7 @@ namespace LDtkUnity.Editor
             string json = JsonUtility.ToJson(_state);
             EditorPrefs.SetString(PREFS_KEY, json);
         }
-        
+
         public void OnGUI()
         {
             if (_tree == null)
@@ -57,7 +58,7 @@ namespace LDtkUnity.Editor
                 LDtkDebug.LogError("tree null");
                 return;
             }
-            
+
             Rect controlRect = EditorGUILayout.GetControlRect(false, Mathf.Min(_tree.totalHeight));
             _tree?.OnGUI(controlRect);
         }

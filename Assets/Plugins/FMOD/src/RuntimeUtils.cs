@@ -14,9 +14,9 @@ namespace FMOD
         {
             byte[] bytes = guid.ToByteArray();
 
-            Data1 = BitConverter.ToInt32(bytes,  0);
-            Data2 = BitConverter.ToInt32(bytes,  4);
-            Data3 = BitConverter.ToInt32(bytes,  8);
+            Data1 = BitConverter.ToInt32(bytes, 0);
+            Data2 = BitConverter.ToInt32(bytes, 4);
+            Data3 = BitConverter.ToInt32(bytes, 8);
             Data4 = BitConverter.ToInt32(bytes, 12);
         }
 
@@ -27,13 +27,7 @@ namespace FMOD
 
         public bool IsNull
         {
-            get
-            {
-                return Data1 == 0
-                    && Data2 == 0
-                    && Data3 == 0
-                    && Data4 == 0;
-            }
+            get { return Data1 == 0 && Data2 == 0 && Data3 == 0 && Data4 == 0; }
         }
 
         public override bool Equals(object other)
@@ -49,12 +43,12 @@ namespace FMOD
                 && Data4 == other.Data4;
         }
 
-        public static bool operator==(GUID a, GUID b)
+        public static bool operator ==(GUID a, GUID b)
         {
             return a.Equals(b);
         }
 
-        public static bool operator!=(GUID a, GUID b)
+        public static bool operator !=(GUID a, GUID b)
         {
             return !a.Equals(b);
         }
@@ -66,18 +60,19 @@ namespace FMOD
 
         public static implicit operator Guid(GUID guid)
         {
-            return new Guid(guid.Data1,
-                    (short) ((guid.Data2 >>  0) & 0xFFFF),
-                    (short) ((guid.Data2 >> 16) & 0xFFFF),
-                    (byte)  ((guid.Data3 >>  0) & 0xFF),
-                    (byte)  ((guid.Data3 >>  8) & 0xFF),
-                    (byte)  ((guid.Data3 >> 16) & 0xFF),
-                    (byte)  ((guid.Data3 >> 24) & 0xFF),
-                    (byte)  ((guid.Data4 >>  0) & 0xFF),
-                    (byte)  ((guid.Data4 >>  8) & 0xFF),
-                    (byte)  ((guid.Data4 >> 16) & 0xFF),
-                    (byte)  ((guid.Data4 >> 24) & 0xFF)
-                );
+            return new Guid(
+                guid.Data1,
+                (short)((guid.Data2 >> 0) & 0xFFFF),
+                (short)((guid.Data2 >> 16) & 0xFFFF),
+                (byte)((guid.Data3 >> 0) & 0xFF),
+                (byte)((guid.Data3 >> 8) & 0xFF),
+                (byte)((guid.Data3 >> 16) & 0xFF),
+                (byte)((guid.Data3 >> 24) & 0xFF),
+                (byte)((guid.Data4 >> 0) & 0xFF),
+                (byte)((guid.Data4 >> 8) & 0xFF),
+                (byte)((guid.Data4 >> 16) & 0xFF),
+                (byte)((guid.Data4 >> 24) & 0xFF)
+            );
         }
 
         public override string ToString()
@@ -145,11 +140,19 @@ namespace FMODUnity
         public FMOD.RESULT Result;
 
         public BankLoadException(string path, FMOD.RESULT result)
-            : base(string.Format("[FMOD] Could not load bank '{0}' : {1} : {2}", path, result.ToString(), FMOD.Error.String(result)))
+            : base(
+                string.Format(
+                    "[FMOD] Could not load bank '{0}' : {1} : {2}",
+                    path,
+                    result.ToString(),
+                    FMOD.Error.String(result)
+                )
+            )
         {
             Path = path;
             Result = result;
         }
+
         public BankLoadException(string path, string error)
             : base(string.Format("[FMOD] Could not load bank '{0}' : {1}", path, error))
         {
@@ -164,16 +167,21 @@ namespace FMODUnity
         public string Location;
 
         public SystemNotInitializedException(FMOD.RESULT result, string location)
-            : base(string.Format("[FMOD] Initialization failed : {2} : {0} : {1}", result.ToString(), FMOD.Error.String(result), location))
+            : base(
+                string.Format(
+                    "[FMOD] Initialization failed : {2} : {0} : {1}",
+                    result.ToString(),
+                    FMOD.Error.String(result),
+                    location
+                )
+            )
         {
             Result = result;
             Location = location;
         }
 
         public SystemNotInitializedException(Exception inner)
-            : base("[FMOD] Initialization failed", inner)
-        {
-        }
+            : base("[FMOD] Initialization failed", inner) { }
     }
 
     public enum EmitterGameEvent : int
@@ -262,7 +270,7 @@ namespace FMODUnity
         Vorbis,
         AT9,
         XMA,
-        Opus
+        Opus,
     }
 
     [Serializable]
@@ -271,9 +279,7 @@ namespace FMODUnity
         public List<ThreadType> threads = new List<ThreadType>();
         public ThreadAffinity affinity = ThreadAffinity.Any;
 
-        public ThreadAffinityGroup()
-        {
-        }
+        public ThreadAffinityGroup() { }
 
         public ThreadAffinityGroup(ThreadAffinityGroup other)
         {
@@ -323,8 +329,11 @@ namespace FMODUnity
                     {
                         pluginBasePath = PluginBasePathDefault;
 
-                        LogWarningFormat("FMOD: Couldn't find base folder with GUID {0}; defaulting to {1}",
-                            BaseFolderGUID, pluginBasePath);
+                        LogWarningFormat(
+                            "FMOD: Couldn't find base folder with GUID {0}; defaulting to {1}",
+                            BaseFolderGUID,
+                            pluginBasePath
+                        );
                     }
                 }
 
@@ -390,7 +399,10 @@ namespace FMODUnity
         }
 
 #if UNITY_PHYSICS_EXIST
-        public static FMOD.ATTRIBUTES_3D To3DAttributes(Transform transform, Rigidbody rigidbody = null)
+        public static FMOD.ATTRIBUTES_3D To3DAttributes(
+            Transform transform,
+            Rigidbody rigidbody = null
+        )
         {
             FMOD.ATTRIBUTES_3D attributes = transform.To3DAttributes();
 
@@ -447,7 +459,6 @@ namespace FMODUnity
             return attributes;
         }
 
-
         public static FMOD.ATTRIBUTES_3D To3DAttributes(GameObject go, Rigidbody2D rigidbody)
         {
             FMOD.ATTRIBUTES_3D attributes = go.transform.To3DAttributes();
@@ -503,7 +514,9 @@ namespace FMODUnity
                 case ThreadType.Convolution_2:
                     return FMOD.THREAD_TYPE.CONVOLUTION2;
                 default:
-                    throw new ArgumentException("Unrecognised thread type '" + threadType.ToString() + "'");
+                    throw new ArgumentException(
+                        "Unrecognised thread type '" + threadType.ToString() + "'"
+                    );
             }
         }
 
@@ -516,28 +529,112 @@ namespace FMODUnity
         {
             FMOD.THREAD_AFFINITY fmodAffinity = FMOD.THREAD_AFFINITY.CORE_ALL;
 
-            SetFMODAffinityBit(affinity, ThreadAffinity.Core0, FMOD.THREAD_AFFINITY.CORE_0, ref fmodAffinity);
-            SetFMODAffinityBit(affinity, ThreadAffinity.Core1, FMOD.THREAD_AFFINITY.CORE_1, ref fmodAffinity);
-            SetFMODAffinityBit(affinity, ThreadAffinity.Core2, FMOD.THREAD_AFFINITY.CORE_2, ref fmodAffinity);
-            SetFMODAffinityBit(affinity, ThreadAffinity.Core3, FMOD.THREAD_AFFINITY.CORE_3, ref fmodAffinity);
-            SetFMODAffinityBit(affinity, ThreadAffinity.Core4, FMOD.THREAD_AFFINITY.CORE_4, ref fmodAffinity);
-            SetFMODAffinityBit(affinity, ThreadAffinity.Core5, FMOD.THREAD_AFFINITY.CORE_5, ref fmodAffinity);
-            SetFMODAffinityBit(affinity, ThreadAffinity.Core6, FMOD.THREAD_AFFINITY.CORE_6, ref fmodAffinity);
-            SetFMODAffinityBit(affinity, ThreadAffinity.Core7, FMOD.THREAD_AFFINITY.CORE_7, ref fmodAffinity);
-            SetFMODAffinityBit(affinity, ThreadAffinity.Core8, FMOD.THREAD_AFFINITY.CORE_8, ref fmodAffinity);
-            SetFMODAffinityBit(affinity, ThreadAffinity.Core9, FMOD.THREAD_AFFINITY.CORE_9, ref fmodAffinity);
-            SetFMODAffinityBit(affinity, ThreadAffinity.Core10, FMOD.THREAD_AFFINITY.CORE_10, ref fmodAffinity);
-            SetFMODAffinityBit(affinity, ThreadAffinity.Core11, FMOD.THREAD_AFFINITY.CORE_11, ref fmodAffinity);
-            SetFMODAffinityBit(affinity, ThreadAffinity.Core12, FMOD.THREAD_AFFINITY.CORE_12, ref fmodAffinity);
-            SetFMODAffinityBit(affinity, ThreadAffinity.Core13, FMOD.THREAD_AFFINITY.CORE_13, ref fmodAffinity);
-            SetFMODAffinityBit(affinity, ThreadAffinity.Core14, FMOD.THREAD_AFFINITY.CORE_14, ref fmodAffinity);
-            SetFMODAffinityBit(affinity, ThreadAffinity.Core15, FMOD.THREAD_AFFINITY.CORE_15, ref fmodAffinity);
+            SetFMODAffinityBit(
+                affinity,
+                ThreadAffinity.Core0,
+                FMOD.THREAD_AFFINITY.CORE_0,
+                ref fmodAffinity
+            );
+            SetFMODAffinityBit(
+                affinity,
+                ThreadAffinity.Core1,
+                FMOD.THREAD_AFFINITY.CORE_1,
+                ref fmodAffinity
+            );
+            SetFMODAffinityBit(
+                affinity,
+                ThreadAffinity.Core2,
+                FMOD.THREAD_AFFINITY.CORE_2,
+                ref fmodAffinity
+            );
+            SetFMODAffinityBit(
+                affinity,
+                ThreadAffinity.Core3,
+                FMOD.THREAD_AFFINITY.CORE_3,
+                ref fmodAffinity
+            );
+            SetFMODAffinityBit(
+                affinity,
+                ThreadAffinity.Core4,
+                FMOD.THREAD_AFFINITY.CORE_4,
+                ref fmodAffinity
+            );
+            SetFMODAffinityBit(
+                affinity,
+                ThreadAffinity.Core5,
+                FMOD.THREAD_AFFINITY.CORE_5,
+                ref fmodAffinity
+            );
+            SetFMODAffinityBit(
+                affinity,
+                ThreadAffinity.Core6,
+                FMOD.THREAD_AFFINITY.CORE_6,
+                ref fmodAffinity
+            );
+            SetFMODAffinityBit(
+                affinity,
+                ThreadAffinity.Core7,
+                FMOD.THREAD_AFFINITY.CORE_7,
+                ref fmodAffinity
+            );
+            SetFMODAffinityBit(
+                affinity,
+                ThreadAffinity.Core8,
+                FMOD.THREAD_AFFINITY.CORE_8,
+                ref fmodAffinity
+            );
+            SetFMODAffinityBit(
+                affinity,
+                ThreadAffinity.Core9,
+                FMOD.THREAD_AFFINITY.CORE_9,
+                ref fmodAffinity
+            );
+            SetFMODAffinityBit(
+                affinity,
+                ThreadAffinity.Core10,
+                FMOD.THREAD_AFFINITY.CORE_10,
+                ref fmodAffinity
+            );
+            SetFMODAffinityBit(
+                affinity,
+                ThreadAffinity.Core11,
+                FMOD.THREAD_AFFINITY.CORE_11,
+                ref fmodAffinity
+            );
+            SetFMODAffinityBit(
+                affinity,
+                ThreadAffinity.Core12,
+                FMOD.THREAD_AFFINITY.CORE_12,
+                ref fmodAffinity
+            );
+            SetFMODAffinityBit(
+                affinity,
+                ThreadAffinity.Core13,
+                FMOD.THREAD_AFFINITY.CORE_13,
+                ref fmodAffinity
+            );
+            SetFMODAffinityBit(
+                affinity,
+                ThreadAffinity.Core14,
+                FMOD.THREAD_AFFINITY.CORE_14,
+                ref fmodAffinity
+            );
+            SetFMODAffinityBit(
+                affinity,
+                ThreadAffinity.Core15,
+                FMOD.THREAD_AFFINITY.CORE_15,
+                ref fmodAffinity
+            );
 
             return fmodAffinity;
         }
 
-        private static void SetFMODAffinityBit(ThreadAffinity affinity, ThreadAffinity mask,
-            FMOD.THREAD_AFFINITY fmodMask, ref FMOD.THREAD_AFFINITY fmodAffinity)
+        private static void SetFMODAffinityBit(
+            ThreadAffinity affinity,
+            ThreadAffinity mask,
+            FMOD.THREAD_AFFINITY fmodMask,
+            ref FMOD.THREAD_AFFINITY fmodAffinity
+        )
         {
             if ((affinity & mask) != 0)
             {
@@ -548,7 +645,8 @@ namespace FMODUnity
         public static void EnforceLibraryOrder()
         {
             // Call a function in fmod.dll to make sure it's loaded before fmodstudio.dll
-            int temp1, temp2;
+            int temp1,
+                temp2;
             FMOD.Memory.GetStats(out temp1, out temp2);
 
             FMOD.GUID temp3;
@@ -573,7 +671,10 @@ namespace FMODUnity
 
         public static void LogWarning(string message)
         {
-            if (!Settings.IsInitialized() || Settings.Instance.LoggingLevel >= FMOD.DEBUG_FLAGS.WARNING)
+            if (
+                !Settings.IsInitialized()
+                || Settings.Instance.LoggingLevel >= FMOD.DEBUG_FLAGS.WARNING
+            )
             {
                 Debug.LogWarning(message);
             }
@@ -581,7 +682,10 @@ namespace FMODUnity
 
         public static void LogWarningFormat(string format, params object[] args)
         {
-            if (!Settings.IsInitialized() || Settings.Instance.LoggingLevel >= FMOD.DEBUG_FLAGS.WARNING)
+            if (
+                !Settings.IsInitialized()
+                || Settings.Instance.LoggingLevel >= FMOD.DEBUG_FLAGS.WARNING
+            )
             {
                 Debug.LogWarningFormat(format, args);
             }
@@ -589,7 +693,10 @@ namespace FMODUnity
 
         public static void LogError(string message)
         {
-            if (!Settings.IsInitialized() || Settings.Instance.LoggingLevel >= FMOD.DEBUG_FLAGS.ERROR)
+            if (
+                !Settings.IsInitialized()
+                || Settings.Instance.LoggingLevel >= FMOD.DEBUG_FLAGS.ERROR
+            )
             {
                 Debug.LogError(message);
             }
@@ -597,7 +704,10 @@ namespace FMODUnity
 
         public static void LogErrorFormat(string format, params object[] args)
         {
-            if (!Settings.IsInitialized() || Settings.Instance.LoggingLevel >= FMOD.DEBUG_FLAGS.ERROR)
+            if (
+                !Settings.IsInitialized()
+                || Settings.Instance.LoggingLevel >= FMOD.DEBUG_FLAGS.ERROR
+            )
             {
                 Debug.LogErrorFormat(format, args);
             }
@@ -605,7 +715,10 @@ namespace FMODUnity
 
         public static void DebugLogException(Exception e)
         {
-            if (!Settings.IsInitialized() || Settings.Instance.LoggingLevel >= FMOD.DEBUG_FLAGS.ERROR)
+            if (
+                !Settings.IsInitialized()
+                || Settings.Instance.LoggingLevel >= FMOD.DEBUG_FLAGS.ERROR
+            )
             {
                 Debug.LogException(e);
             }

@@ -1,12 +1,14 @@
-﻿using Cysharp.Threading.Tasks.Internal;
-using System;
+﻿using System;
 using System.Threading;
+using Cysharp.Threading.Tasks.Internal;
 
 namespace Cysharp.Threading.Tasks.Linq
 {
     public static partial class UniTaskAsyncEnumerable
     {
-        public static IUniTaskAsyncEnumerable<TResult> OfType<TResult>(this IUniTaskAsyncEnumerable<Object> source)
+        public static IUniTaskAsyncEnumerable<TResult> OfType<TResult>(
+            this IUniTaskAsyncEnumerable<Object> source
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
 
@@ -23,18 +25,20 @@ namespace Cysharp.Threading.Tasks.Linq
             this.source = source;
         }
 
-        public IUniTaskAsyncEnumerator<TResult> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+        public IUniTaskAsyncEnumerator<TResult> GetAsyncEnumerator(
+            CancellationToken cancellationToken = default
+        )
         {
             return new _OfType(source, cancellationToken);
         }
 
         class _OfType : AsyncEnumeratorBase<object, TResult>
         {
-            public _OfType(IUniTaskAsyncEnumerable<object> source, CancellationToken cancellationToken)
-
-                : base(source, cancellationToken)
-            {
-            }
+            public _OfType(
+                IUniTaskAsyncEnumerable<object> source,
+                CancellationToken cancellationToken
+            )
+                : base(source, cancellationToken) { }
 
             protected override bool TryMoveNextCore(bool sourceHasCurrent, out bool result)
             {

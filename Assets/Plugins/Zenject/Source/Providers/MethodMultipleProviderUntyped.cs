@@ -12,7 +12,8 @@ namespace Zenject
 
         public MethodMultipleProviderUntyped(
             Func<InjectContext, IEnumerable<object>> method,
-            DiContainer container)
+            DiContainer container
+        )
         {
             _container = container;
             _method = method;
@@ -34,13 +35,20 @@ namespace Zenject
         }
 
         public void GetAllInstancesWithInjectSplit(
-            InjectContext context, List<TypeValuePair> args, out Action injectAction, List<object> buffer)
+            InjectContext context,
+            List<TypeValuePair> args,
+            out Action injectAction,
+            List<object> buffer
+        )
         {
             Assert.IsEmpty(args);
             Assert.IsNotNull(context);
 
             injectAction = null;
-            if (_container.IsValidating && !TypeAnalyzer.ShouldAllowDuringValidation(context.MemberType))
+            if (
+                _container.IsValidating
+                && !TypeAnalyzer.ShouldAllowDuringValidation(context.MemberType)
+            )
             {
                 buffer.Add(new ValidationMarker(context.MemberType));
             }
@@ -52,7 +60,9 @@ namespace Zenject
                 {
                     throw Assert.CreateException(
                         "Method '{0}' returned null when list was expected. Object graph:\n {1}",
-                        _method.ToDebugString(), context.GetObjectGraphString());
+                        _method.ToDebugString(),
+                        context.GetObjectGraphString()
+                    );
                 }
 
                 foreach (var obj in result)
@@ -63,4 +73,3 @@ namespace Zenject
         }
     }
 }
-

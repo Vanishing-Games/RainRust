@@ -6,7 +6,7 @@ namespace LDtkUnity.Editor
     internal sealed class LDtkParsedInt : ILDtkValueParser, ILDtkPostParser
     {
         private ILDtkPostParseProcess<float> _process;
-        
+
         public object ImportString(LDtkFieldParseContext ctx)
         {
             object input = ctx.Input;
@@ -20,12 +20,12 @@ namespace LDtkUnity.Editor
             {
                 return default;
             }
-            
+
             if (_process != null)
             {
                 value = (int)_process.Postprocess(value);
             }
-            
+
             //a required cast to fix an issue with null ints
             return value;
         }

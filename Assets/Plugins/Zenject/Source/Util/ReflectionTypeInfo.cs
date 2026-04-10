@@ -20,7 +20,8 @@ namespace Zenject.Internal
             InjectConstructorInfo injectConstructor,
             List<InjectMethodInfo> injectMethods,
             List<InjectFieldInfo> injectFields,
-            List<InjectPropertyInfo> injectProperties)
+            List<InjectPropertyInfo> injectProperties
+        )
         {
             Type = type;
             BaseType = baseType;
@@ -36,9 +37,7 @@ namespace Zenject.Internal
             public readonly FieldInfo FieldInfo;
             public readonly InjectableInfo InjectableInfo;
 
-            public InjectFieldInfo(
-                FieldInfo fieldInfo,
-                InjectableInfo injectableInfo)
+            public InjectFieldInfo(FieldInfo fieldInfo, InjectableInfo injectableInfo)
             {
                 InjectableInfo = injectableInfo;
                 FieldInfo = fieldInfo;
@@ -51,9 +50,7 @@ namespace Zenject.Internal
             public readonly ParameterInfo ParameterInfo;
             public readonly InjectableInfo InjectableInfo;
 
-            public InjectParameterInfo(
-                ParameterInfo parameterInfo,
-                InjectableInfo injectableInfo)
+            public InjectParameterInfo(ParameterInfo parameterInfo, InjectableInfo injectableInfo)
             {
                 InjectableInfo = injectableInfo;
                 ParameterInfo = parameterInfo;
@@ -66,9 +63,7 @@ namespace Zenject.Internal
             public readonly PropertyInfo PropertyInfo;
             public readonly InjectableInfo InjectableInfo;
 
-            public InjectPropertyInfo(
-                PropertyInfo propertyInfo,
-                InjectableInfo injectableInfo)
+            public InjectPropertyInfo(PropertyInfo propertyInfo, InjectableInfo injectableInfo)
             {
                 InjectableInfo = injectableInfo;
                 PropertyInfo = propertyInfo;
@@ -81,9 +76,7 @@ namespace Zenject.Internal
             public readonly MethodInfo MethodInfo;
             public readonly List<InjectParameterInfo> Parameters;
 
-            public InjectMethodInfo(
-                MethodInfo methodInfo,
-                List<InjectParameterInfo> parameters)
+            public InjectMethodInfo(MethodInfo methodInfo, List<InjectParameterInfo> parameters)
             {
                 MethodInfo = methodInfo;
                 Parameters = parameters;
@@ -98,7 +91,8 @@ namespace Zenject.Internal
 
             public InjectConstructorInfo(
                 ConstructorInfo constructorInfo,
-                List<InjectParameterInfo> parameters)
+                List<InjectParameterInfo> parameters
+            )
             {
                 ConstructorInfo = constructorInfo;
                 Parameters = parameters;
@@ -106,4 +100,3 @@ namespace Zenject.Internal
         }
     }
 }
-

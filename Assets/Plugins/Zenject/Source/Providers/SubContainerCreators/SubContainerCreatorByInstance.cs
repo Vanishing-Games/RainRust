@@ -1,5 +1,5 @@
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
 using ModestTree;
 
 namespace Zenject
@@ -14,7 +14,11 @@ namespace Zenject
             _subcontainer = subcontainer;
         }
 
-        public DiContainer CreateSubContainer(List<TypeValuePair> args, InjectContext context, out Action injectAction)
+        public DiContainer CreateSubContainer(
+            List<TypeValuePair> args,
+            InjectContext context,
+            out Action injectAction
+        )
         {
             Assert.That(args.IsEmpty());
 
@@ -27,4 +31,3 @@ namespace Zenject
         }
     }
 }
-

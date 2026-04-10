@@ -4,9 +4,9 @@ namespace Core
 {
     public class LoadRequestCommand : AbastractManagerCommand<LoadManager>
     {
-        public LoadRequestEvent LoadEvent { get; set; }
+        public CoreModuleLoaderEvents.LoadRequestEvent LoadEvent { get; set; }
 
-        public LoadRequestCommand(LoadRequestEvent loadEvent)
+        public LoadRequestCommand(CoreModuleLoaderEvents.LoadRequestEvent loadEvent)
         {
             LoadEvent = loadEvent;
         }
@@ -39,10 +39,11 @@ namespace Core
                 succeed = loadEvent.IsSuccess;
             }
 
-            using var subscription = MessageBroker.Global.Subscribe<LoadRequestEvent>(
-                _ => { },
-                OnLoadComplete
-            );
+            using var subscription =
+                MessageBroker.Global.Subscribe<CoreModuleLoaderEvents.LoadRequestEvent>(
+                    _ => { },
+                    OnLoadComplete
+                );
             if (!Execute())
                 return false;
 

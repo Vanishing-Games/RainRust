@@ -20,63 +20,74 @@ using UnityEngine.Localization.Tables;
 
 namespace Sirenix.OdinInspector.Modules.Localization.Editor
 {
-	public class OdinStringTableCollectionEditor : OdinTableCollectionEditor<StringTableCollection, StringTable, StringTableEntry>
-	{
-		private string currentSyntaxSource;
-		private string currentSyntaxHighlightedText;
-		private string currentSyntaxErrorMessage;
-		private Exception currentSyntaxException;
-		private bool currentSyntaxHasErrors;
+    public class OdinStringTableCollectionEditor
+        : OdinTableCollectionEditor<StringTableCollection, StringTable, StringTableEntry>
+    {
+        private string currentSyntaxSource;
+        private string currentSyntaxHighlightedText;
+        private string currentSyntaxErrorMessage;
+        private Exception currentSyntaxException;
+        private bool currentSyntaxHasErrors;
 
-		public OdinStringTableCollectionEditor(StringTableCollection collection, OdinMenuEditorWindow relatedWindow,
-															OdinLocalizationEditorWindow.WindowState windowState) :
-			base(collection, relatedWindow, windowState) { }
+        public OdinStringTableCollectionEditor(
+            StringTableCollection collection,
+            OdinMenuEditorWindow relatedWindow,
+            OdinLocalizationEditorWindow.WindowState windowState
+        )
+            : base(collection, relatedWindow, windowState) { }
 
-		protected override void OnInitialize()
-		{
-			for (var i = 0; i < this.SharedEntries.Length; i++)
-			{
-				SharedTableData.SharedTableEntry sharedEntry = this.SharedEntries[i];
+        protected override void OnInitialize()
+        {
+            for (var i = 0; i < this.SharedEntries.Length; i++)
+            {
+                SharedTableData.SharedTableEntry sharedEntry = this.SharedEntries[i];
 
-				this.MeasureEntry(sharedEntry);
-			}
+                this.MeasureEntry(sharedEntry);
+            }
 
-			//this.SharedEntries.OnSharedEntryAdded += (i, sharedEntry) => { this.MeasureEntry(sharedEntry); };
+            //this.SharedEntries.OnSharedEntryAdded += (i, sharedEntry) => { this.MeasureEntry(sharedEntry); };
 
-			//this.SharedEntries.OnSharedEntryRemoved += (i, sharedEntry) => { this.SharedEntryHeights.Remove(sharedEntry.Id); };
+            //this.SharedEntries.OnSharedEntryRemoved += (i, sharedEntry) => { this.SharedEntryHeights.Remove(sharedEntry.Id); };
 
-			this.OnTableEntryModified = sharedEntry =>
-			{
-				if (!this.Collection.SharedData.Contains(sharedEntry.Id))
-				{
-					return;
-				}
+            this.OnTableEntryModified = sharedEntry =>
+            {
+                if (!this.Collection.SharedData.Contains(sharedEntry.Id))
+                {
+                    return;
+                }
 
-				int index = this.SharedEntries.GetIndex(sharedEntry);
+                int index = this.SharedEntries.GetIndex(sharedEntry);
 
-				this.MeasureEntry(sharedEntry);
+                this.MeasureEntry(sharedEntry);
 
-				this.EntryScrollView.ReallocateRect(index, this.SharedEntryHeights[sharedEntry.Id], sharedEntry);
-			};
-		}
+                this.EntryScrollView.ReallocateRect(
+                    index,
+                    this.SharedEntryHeights[sharedEntry.Id],
+                    sharedEntry
+                );
+            };
+        }
 
-		protected override void AllocateItems()
-		{
-			for (var i = 0; i < this.SharedEntries.Length; i++)
-			{
-				SharedTableData.SharedTableEntry sharedEntry = this.SharedEntries[i];
+        protected override void AllocateItems()
+        {
+            for (var i = 0; i < this.SharedEntries.Length; i++)
+            {
+                SharedTableData.SharedTableEntry sharedEntry = this.SharedEntries[i];
 
-				if (!this.SharedEntries.IsVisible(sharedEntry))
-				{
-					continue;
-				}
+                if (!this.SharedEntries.IsVisible(sharedEntry))
+                {
+                    continue;
+                }
 
-				if (!this.SharedEntryHeights.ContainsKey(sharedEntry.Id))
-				{
-					this.MeasureEntry(sharedEntry);
-				}
+                if (!this.SharedEntryHeights.ContainsKey(sharedEntry.Id))
+                {
+                    this.MeasureEntry(sharedEntry);
+                }
 
-				this.EntryScrollView.AllocateRect(this.SharedEntryHeights[sharedEntry.Id], sharedEntry);
+                this.EntryScrollView.AllocateRect(
+                    this.SharedEntryHeights[sharedEntry.Id],
+                    sharedEntry
+                );
 
 #if false
 				this.ControlIds[sharedEntry] = GUIUtility.GetControlID(FocusType.Keyboard);
@@ -102,348 +113,443 @@ namespace Sirenix.OdinInspector.Modules.Localization.Editor
 					this.ControlIds[entry] = GUIUtility.GetControlID(FocusType.Keyboard);
 				}
 #endif
-			}
-		}
+            }
+        }
 
-		protected override void DrawItems(ref OdinGUIScrollView.VisibleItems visibleItems)
-		{
-			this.MeasureVisibleEntries(ref visibleItems);
+        protected override void DrawItems(ref OdinGUIScrollView.VisibleItems visibleItems)
+        {
+            this.MeasureVisibleEntries(ref visibleItems);
 
-			float scrollSpeed = OdinLocalizationConfig.Instance.scrollSpeed;
+            float scrollSpeed = OdinLocalizationConfig.Instance.scrollSpeed;
 
-			this.EntryScrollView.BeginScrollView(offset: new Vector2(this.PinnedWidth, OdinLocalizationConstants.COLUMN_HEIGHT),
-															 addViewSize: new Vector2(-this.PinnedWidth, 0),
-															 scrollSpeed: scrollSpeed);
-			{
-				this.DrawEntries(ref visibleItems, false);
-			}
-			this.EntryScrollView.EndScrollView();
+            this.EntryScrollView.BeginScrollView(
+                offset: new Vector2(this.PinnedWidth, OdinLocalizationConstants.COLUMN_HEIGHT),
+                addViewSize: new Vector2(-this.PinnedWidth, 0),
+                scrollSpeed: scrollSpeed
+            );
+            {
+                this.DrawEntries(ref visibleItems, false);
+            }
+            this.EntryScrollView.EndScrollView();
 
-			this.EntryScrollView.BeginClip(offset: new Vector2(0.0f, OdinLocalizationConstants.COLUMN_HEIGHT), ignoreScrollX: true);
-			{
-				this.DrawEntries(ref visibleItems, true);
-			}
-			this.EntryScrollView.EndClip();
-		}
+            this.EntryScrollView.BeginClip(
+                offset: new Vector2(0.0f, OdinLocalizationConstants.COLUMN_HEIGHT),
+                ignoreScrollX: true
+            );
+            {
+                this.DrawEntries(ref visibleItems, true);
+            }
+            this.EntryScrollView.EndClip();
+        }
 
-		private void DrawEntries(ref OdinGUIScrollView.VisibleItems visibleItems, bool pinned)
-		{
-			for (var i = 0; i < visibleItems.Length; i++)
-			{
-				if (!visibleItems.HasAssociatedData(i))
-				{
-					continue;
-				}
+        private void DrawEntries(ref OdinGUIScrollView.VisibleItems visibleItems, bool pinned)
+        {
+            for (var i = 0; i < visibleItems.Length; i++)
+            {
+                if (!visibleItems.HasAssociatedData(i))
+                {
+                    continue;
+                }
 
-				int hint = visibleItems.Offset + i + this.ControlIdHint;
-				
-				Rect position = visibleItems.GetRect(i);
+                int hint = visibleItems.Offset + i + this.ControlIdHint;
 
-				var sharedEntry = visibleItems.GetAssociatedData<SharedTableData.SharedTableEntry>(i);
+                Rect position = visibleItems.GetRect(i);
 
-				bool isEven = (visibleItems.Offset + i) % 2 == 0;
+                var sharedEntry = visibleItems.GetAssociatedData<SharedTableData.SharedTableEntry>(
+                    i
+                );
 
-				for (var j = 0; j < this.GUITables.Count; j++)
-				{
-					OdinGUITable<StringTable> table = this.GUITables[j];
+                bool isEven = (visibleItems.Offset + i) % 2 == 0;
 
-					if (!table.IsVisible)
-					{
-						continue;
-					}
+                for (var j = 0; j < this.GUITables.Count; j++)
+                {
+                    OdinGUITable<StringTable> table = this.GUITables[j];
 
-					if (table.IsPinned != pinned)
-					{
-						continue;
-					}
+                    if (!table.IsVisible)
+                    {
+                        continue;
+                    }
 
-					if (!this.GUITables.TablesWithinVisibleBounds.Contains(table))
-					{
-						GUIUtility.GetControlID(hint, FocusType.Keyboard);
-						position.TakeFromLeft(table.Width).Padding(OdinLocalizationConstants.ENTRY_PADDING);
-						continue;
-					}
-					
+                    if (table.IsPinned != pinned)
+                    {
+                        continue;
+                    }
+
+                    if (!this.GUITables.TablesWithinVisibleBounds.Contains(table))
+                    {
+                        GUIUtility.GetControlID(hint, FocusType.Keyboard);
+                        position
+                            .TakeFromLeft(table.Width)
+                            .Padding(OdinLocalizationConstants.ENTRY_PADDING);
+                        continue;
+                    }
 
 #if USING_WIDTH_NON_PERCENT
-					Rect entryRect = position.TakeFromLeft(table.Width).Padding(OdinLocalizationConstants.ENTRY_PADDING);
+                    Rect entryRect = position
+                        .TakeFromLeft(table.Width)
+                        .Padding(OdinLocalizationConstants.ENTRY_PADDING);
 #else
 					Rect entryRect = position.TakeFromLeft(table.Width).Padding(OdinLocalizationConstants.ENTRY_PADDING);
 #endif
 
-					bool isCellPressed, isSelected;
+                    bool isCellPressed,
+                        isSelected;
 
-					switch (table.Type)
-					{
-						case OdinGUITable<StringTable>.GUITableType.Key:
-							isSelected = this.IsSharedEntrySelected(sharedEntry);
+                    switch (table.Type)
+                    {
+                        case OdinGUITable<StringTable>.GUITableType.Key:
+                            isSelected = this.IsSharedEntrySelected(sharedEntry);
 
-							if (isSelected)
-							{
-								this.SelectionAnimFloat.Move(1 / 0.18f, Easing.InSine);
+                            if (isSelected)
+                            {
+                                this.SelectionAnimFloat.Move(1 / 0.18f, Easing.InSine);
 
-								FancyColor start = FancyColor.Gray;
+                                FancyColor start = FancyColor.Gray;
 
-								var end = OdinLocalizationGUI.Selected;
+                                var end = OdinLocalizationGUI.Selected;
 
-								FancyColor.PushBlend(start.Lerp(end, this.SelectionAnimFloat), FancyColor.BlendMode.Overlay);
-							}
+                                FancyColor.PushBlend(
+                                    start.Lerp(end, this.SelectionAnimFloat),
+                                    FancyColor.BlendMode.Overlay
+                                );
+                            }
 
-							isCellPressed = DrawCell(entryRect, isEven);
+                            isCellPressed = DrawCell(entryRect, isEven);
 
-							this.DrawKey(entryRect, sharedEntry, GUIUtility.GetControlID(hint, FocusType.Keyboard));
+                            this.DrawKey(
+                                entryRect,
+                                sharedEntry,
+                                GUIUtility.GetControlID(hint, FocusType.Keyboard)
+                            );
 
-							if (isSelected)
-							{
-								FancyColor.PopBlend();
-							}
+                            if (isSelected)
+                            {
+                                FancyColor.PopBlend();
+                            }
 
-							if (isCellPressed)
-							{
-								this.SelectSharedEntry(sharedEntry);
-							}
+                            if (isCellPressed)
+                            {
+                                this.SelectSharedEntry(sharedEntry);
+                            }
 
-							break;
+                            break;
 
-						case OdinGUITable<StringTable>.GUITableType.Default:
-							StringTableEntry entry = table.Asset.GetEntry(sharedEntry.Id);
+                        case OdinGUITable<StringTable>.GUITableType.Default:
+                            StringTableEntry entry = table.Asset.GetEntry(sharedEntry.Id);
 
-							isSelected = this.IsEntrySelected(entry);
+                            isSelected = this.IsEntrySelected(entry);
 
-							if (isSelected)
-							{
-								this.SelectionAnimFloat.Move(1 / 0.18f, Easing.InSine);
+                            if (isSelected)
+                            {
+                                this.SelectionAnimFloat.Move(1 / 0.18f, Easing.InSine);
 
-								FancyColor start = FancyColor.Gray;
+                                FancyColor start = FancyColor.Gray;
 
-								FancyColor end = OdinLocalizationGUI.Selected;
+                                FancyColor end = OdinLocalizationGUI.Selected;
 
-								if (entry.IsSmart && OdinLocalizationConfig.Instance.useSyntaxHighlighter)
-								{
-									if (this.currentSyntaxSource != entry.Value)
-									{
-										this.currentSyntaxHighlightedText = OdinLocalizationSyntaxHighlighter.HighlightAsRichText(entry.Value);
-										this.currentSyntaxErrorMessage = OdinLocalizationSyntaxHighlighter.GetErrorMessage(entry.Value, out bool foundError, out Exception exception);
-										this.currentSyntaxHasErrors = foundError;
-										this.currentSyntaxException = exception;
-										this.currentSyntaxSource = entry.Value;
-									}
+                                if (
+                                    entry.IsSmart
+                                    && OdinLocalizationConfig.Instance.useSyntaxHighlighter
+                                )
+                                {
+                                    if (this.currentSyntaxSource != entry.Value)
+                                    {
+                                        this.currentSyntaxHighlightedText =
+                                            OdinLocalizationSyntaxHighlighter.HighlightAsRichText(
+                                                entry.Value
+                                            );
+                                        this.currentSyntaxErrorMessage =
+                                            OdinLocalizationSyntaxHighlighter.GetErrorMessage(
+                                                entry.Value,
+                                                out bool foundError,
+                                                out Exception exception
+                                            );
+                                        this.currentSyntaxHasErrors = foundError;
+                                        this.currentSyntaxException = exception;
+                                        this.currentSyntaxSource = entry.Value;
+                                    }
 
-									if (this.currentSyntaxHasErrors)
-									{
-										FancyColor.PushBlend(start.Lerp(new FancyColor(0.68f, 0.2f, 0.2f), this.SelectionAnimFloat), FancyColor.BlendMode.Overlay);
-									}
-									else
-									{
-										FancyColor.PushBlend(start.Lerp(end, this.SelectionAnimFloat), FancyColor.BlendMode.Overlay);
-									}
-								}
-								else
-								{
-									FancyColor.PushBlend(start.Lerp(end, this.SelectionAnimFloat), FancyColor.BlendMode.Overlay);
-								}
-							}
+                                    if (this.currentSyntaxHasErrors)
+                                    {
+                                        FancyColor.PushBlend(
+                                            start.Lerp(
+                                                new FancyColor(0.68f, 0.2f, 0.2f),
+                                                this.SelectionAnimFloat
+                                            ),
+                                            FancyColor.BlendMode.Overlay
+                                        );
+                                    }
+                                    else
+                                    {
+                                        FancyColor.PushBlend(
+                                            start.Lerp(end, this.SelectionAnimFloat),
+                                            FancyColor.BlendMode.Overlay
+                                        );
+                                    }
+                                }
+                                else
+                                {
+                                    FancyColor.PushBlend(
+                                        start.Lerp(end, this.SelectionAnimFloat),
+                                        FancyColor.BlendMode.Overlay
+                                    );
+                                }
+                            }
 
-							isCellPressed = DrawCell(entryRect, isEven);
+                            isCellPressed = DrawCell(entryRect, isEven);
 
-							this.DrawEntry(entryRect, entry, GUIUtility.GetControlID(hint, FocusType.Keyboard), table, sharedEntry);
+                            this.DrawEntry(
+                                entryRect,
+                                entry,
+                                GUIUtility.GetControlID(hint, FocusType.Keyboard),
+                                table,
+                                sharedEntry
+                            );
 
-							if (isSelected)
-							{
-								if (OdinLocalizationConfig.Instance.useSyntaxHighlighter && entry.IsSmart && this.currentSyntaxHasErrors)
-								{
-									Rect errorRect = entryRect.AlignLeft(OdinLocalizationConstants.ROW_MENU_WIDTH).AlignMiddle(16);
+                            if (isSelected)
+                            {
+                                if (
+                                    OdinLocalizationConfig.Instance.useSyntaxHighlighter
+                                    && entry.IsSmart
+                                    && this.currentSyntaxHasErrors
+                                )
+                                {
+                                    Rect errorRect = entryRect
+                                        .AlignLeft(OdinLocalizationConstants.ROW_MENU_WIDTH)
+                                        .AlignMiddle(16);
 
-									SdfIcons.DrawIcon(errorRect, SdfIconType.ExclamationOctagonFill,
-															Event.current.IsMouseOver(errorRect) ? new Color(1, 1, 1, 1f) : new Color(1, 1, 1, 0.6f));
+                                    SdfIcons.DrawIcon(
+                                        errorRect,
+                                        SdfIconType.ExclamationOctagonFill,
+                                        Event.current.IsMouseOver(errorRect)
+                                            ? new Color(1, 1, 1, 1f)
+                                            : new Color(1, 1, 1, 0.6f)
+                                    );
 
-									if (Event.current.OnMouseDown(errorRect, 0))
-									{
-										this.RelatedWindow.ShowToast(ToastPosition.BottomLeft,
-																			  SdfIconType.ExclamationOctagonFill,
-																			  this.currentSyntaxErrorMessage,
-																			  new Color(0.68f, 0.2f, 0.2f),
-																			  20.0f);
+                                    if (Event.current.OnMouseDown(errorRect, 0))
+                                    {
+                                        this.RelatedWindow.ShowToast(
+                                            ToastPosition.BottomLeft,
+                                            SdfIconType.ExclamationOctagonFill,
+                                            this.currentSyntaxErrorMessage,
+                                            new Color(0.68f, 0.2f, 0.2f),
+                                            20.0f
+                                        );
 
-										if (this.currentSyntaxException != null)
-										{
-											Debug.LogException(this.currentSyntaxException);
-										}
-									}
-								}
+                                        if (this.currentSyntaxException != null)
+                                        {
+                                            Debug.LogException(this.currentSyntaxException);
+                                        }
+                                    }
+                                }
 
-								FancyColor.PopBlend();
-							}
+                                FancyColor.PopBlend();
+                            }
 
-							if (isCellPressed)
-							{
-								if (entry is null)
-								{
-									entry = table.Asset.AddEntry(sharedEntry.Id, string.Empty);
-								}
+                            if (isCellPressed)
+                            {
+                                if (entry is null)
+                                {
+                                    entry = table.Asset.AddEntry(sharedEntry.Id, string.Empty);
+                                }
 
-								this.SelectEntry(entry);
-							}
+                                this.SelectEntry(entry);
+                            }
 
-							break;
-					}
-				}
-			}
-		}
+                            break;
+                    }
+                }
+            }
+        }
 
-		private void DrawEntry(Rect position, StringTableEntry entry, int id, OdinGUITable<StringTable> table, SharedTableData.SharedTableEntry sharedEntry)
-		{
-			bool changed;
-			string value;
+        private void DrawEntry(
+            Rect position,
+            StringTableEntry entry,
+            int id,
+            OdinGUITable<StringTable> table,
+            SharedTableData.SharedTableEntry sharedEntry
+        )
+        {
+            bool changed;
+            string value;
 
-			Rect smartToggleRect = position.TakeFromRight(OdinLocalizationConstants.ROW_MENU_WIDTH);
-			position.TakeFromLeft(OdinLocalizationConstants.ROW_MENU_WIDTH);
+            Rect smartToggleRect = position.TakeFromRight(OdinLocalizationConstants.ROW_MENU_WIDTH);
+            position.TakeFromLeft(OdinLocalizationConstants.ROW_MENU_WIDTH);
 
-			if (entry?.Value is null)
-			{
-				value = OdinLocalizationGUI.TextField(position, string.Empty, out changed, id);
-			}
-			else if (OdinLocalizationConfig.Instance.useSyntaxHighlighter && entry.IsSmart && entry == this.CurrentSelectedEntry)
-			{
-				value = OdinLocalizationGUI.TextFieldSyntaxHighlighted(position, entry.Value, this.currentSyntaxHighlightedText, out changed, id);
+            if (entry?.Value is null)
+            {
+                value = OdinLocalizationGUI.TextField(position, string.Empty, out changed, id);
+            }
+            else if (
+                OdinLocalizationConfig.Instance.useSyntaxHighlighter
+                && entry.IsSmart
+                && entry == this.CurrentSelectedEntry
+            )
+            {
+                value = OdinLocalizationGUI.TextFieldSyntaxHighlighted(
+                    position,
+                    entry.Value,
+                    this.currentSyntaxHighlightedText,
+                    out changed,
+                    id
+                );
 
-				if (changed)
-				{
-					this.currentSyntaxHighlightedText = OdinLocalizationSyntaxHighlighter.HighlightAsRichText(value);
-					this.currentSyntaxErrorMessage = OdinLocalizationSyntaxHighlighter.GetErrorMessage(value, out bool foundError, out Exception exception);
-					this.currentSyntaxHasErrors = foundError;
-					this.currentSyntaxException = exception;
-					this.currentSyntaxSource = value;
-				}
-			}
-			else
-			{
-				value = OdinLocalizationGUI.TextField(position, entry.Value, out changed, id);
-			}
+                if (changed)
+                {
+                    this.currentSyntaxHighlightedText =
+                        OdinLocalizationSyntaxHighlighter.HighlightAsRichText(value);
+                    this.currentSyntaxErrorMessage =
+                        OdinLocalizationSyntaxHighlighter.GetErrorMessage(
+                            value,
+                            out bool foundError,
+                            out Exception exception
+                        );
+                    this.currentSyntaxHasErrors = foundError;
+                    this.currentSyntaxException = exception;
+                    this.currentSyntaxSource = value;
+                }
+            }
+            else
+            {
+                value = OdinLocalizationGUI.TextField(position, entry.Value, out changed, id);
+            }
 
-			if (changed)
-			{
-				if (entry == null)
-				{
-					entry = table.Asset.AddEntry(sharedEntry.Id, value);
-				}
+            if (changed)
+            {
+                if (entry == null)
+                {
+                    entry = table.Asset.AddEntry(sharedEntry.Id, value);
+                }
 
-				Undo.RecordObject(entry.Table, "Modified String Table Entry Text");
-				entry.Value = value;
-				OdinLocalizationEvents.RaiseTableEntryModified(entry.SharedEntry);
-				EditorUtility.SetDirty(entry.Table);
-			}
+                Undo.RecordObject(entry.Table, "Modified String Table Entry Text");
+                entry.Value = value;
+                OdinLocalizationEvents.RaiseTableEntryModified(entry.SharedEntry);
+                EditorUtility.SetDirty(entry.Table);
+            }
 
-			smartToggleRect = smartToggleRect.AlignMiddle(16);
+            smartToggleRect = smartToggleRect.AlignMiddle(16);
 
-			if (entry == null)
-			{
-				SdfIcons.DrawIcon(smartToggleRect, SdfIconType.Lightbulb, new Color(1, 1, 1, Event.current.IsMouseOver(smartToggleRect) ? 0.8f : 0.3f));
+            if (entry == null)
+            {
+                SdfIcons.DrawIcon(
+                    smartToggleRect,
+                    SdfIconType.Lightbulb,
+                    new Color(1, 1, 1, Event.current.IsMouseOver(smartToggleRect) ? 0.8f : 0.3f)
+                );
 
-				if (Event.current.OnMouseDown(smartToggleRect, 0))
-				{
-					Undo.RecordObject(table.Asset, "Added String Table Entry By Smart Toggle");
-					entry = table.Asset.AddEntry(sharedEntry.Id, string.Empty);
+                if (Event.current.OnMouseDown(smartToggleRect, 0))
+                {
+                    Undo.RecordObject(table.Asset, "Added String Table Entry By Smart Toggle");
+                    entry = table.Asset.AddEntry(sharedEntry.Id, string.Empty);
 
-					entry.IsSmart = !entry.IsSmart;
-					EditorUtility.SetDirty(table.Asset);
-				}
-			}
-			else
-			{
-				SdfIcons.DrawIcon(smartToggleRect,
-										entry.IsSmart ? SdfIconType.LightbulbFill : SdfIconType.Lightbulb,
-										new Color(1, 1, 1, Event.current.IsMouseOver(smartToggleRect) ? 0.8f : 0.3f));
+                    entry.IsSmart = !entry.IsSmart;
+                    EditorUtility.SetDirty(table.Asset);
+                }
+            }
+            else
+            {
+                SdfIcons.DrawIcon(
+                    smartToggleRect,
+                    entry.IsSmart ? SdfIconType.LightbulbFill : SdfIconType.Lightbulb,
+                    new Color(1, 1, 1, Event.current.IsMouseOver(smartToggleRect) ? 0.8f : 0.3f)
+                );
 
-				if (Event.current.OnMouseDown(smartToggleRect, 0))
-				{
-					Undo.RecordObject(entry.Table, "Toggled Smart Flag On String Entry");
-					entry.IsSmart = !entry.IsSmart;
-					EditorUtility.SetDirty(entry.Table);
-				}
-			}
+                if (Event.current.OnMouseDown(smartToggleRect, 0))
+                {
+                    Undo.RecordObject(entry.Table, "Toggled Smart Flag On String Entry");
+                    entry.IsSmart = !entry.IsSmart;
+                    EditorUtility.SetDirty(entry.Table);
+                }
+            }
 
-			GUI.Label(smartToggleRect, GUIHelper.TempContent(string.Empty, "Toggle Smart String"));
-		}
+            GUI.Label(smartToggleRect, GUIHelper.TempContent(string.Empty, "Toggle Smart String"));
+        }
 
-		protected override void MeasureAllEntries()
-		{
-			for (var i = 0; i < this.SharedEntries.Length; i++)
-			{
-				this.MeasureEntry(this.SharedEntries[i]);
-			}
+        protected override void MeasureAllEntries()
+        {
+            for (var i = 0; i < this.SharedEntries.Length; i++)
+            {
+                this.MeasureEntry(this.SharedEntries[i]);
+            }
 
-			this.HasGUIChanged = true;
-		}
+            this.HasGUIChanged = true;
+        }
 
-		protected override void MeasureVisibleEntries(ref OdinGUIScrollView.VisibleItems visibleItems)
-		{
-			int dataOffset = visibleItems.Offset;
-			
-			for (var i = 0; i < visibleItems.Length; i++)
-			{
-				if (!visibleItems.HasAssociatedData(i))
-				{
-					continue;
-				}
+        protected override void MeasureVisibleEntries(
+            ref OdinGUIScrollView.VisibleItems visibleItems
+        )
+        {
+            int dataOffset = visibleItems.Offset;
 
-				var sharedEntry = visibleItems.GetAssociatedData<SharedTableData.SharedTableEntry>(i);
+            for (var i = 0; i < visibleItems.Length; i++)
+            {
+                if (!visibleItems.HasAssociatedData(i))
+                {
+                    continue;
+                }
 
-				this.MeasureEntry(sharedEntry);
+                var sharedEntry = visibleItems.GetAssociatedData<SharedTableData.SharedTableEntry>(
+                    i
+                );
 
-				this.EntryScrollView.ReallocateRect(dataOffset + i, this.SharedEntryHeights[sharedEntry.Id], sharedEntry);
-			}
-		}
+                this.MeasureEntry(sharedEntry);
 
-		private void MeasureEntry(SharedTableData.SharedTableEntry sharedEntry)
-		{
-			float height = OdinLocalizationConstants.ROW_HEIGHT;
+                this.EntryScrollView.ReallocateRect(
+                    dataOffset + i,
+                    this.SharedEntryHeights[sharedEntry.Id],
+                    sharedEntry
+                );
+            }
+        }
 
-			for (var i = 0; i < this.GUITables.Count; i++)
-			{
-				OdinGUITable<StringTable> currentTable = this.GUITables[i];
+        private void MeasureEntry(SharedTableData.SharedTableEntry sharedEntry)
+        {
+            float height = OdinLocalizationConstants.ROW_HEIGHT;
 
-				switch (currentTable.Type)
-				{
-					case OdinGUITable<StringTable>.GUITableType.Default:
-						StringTableEntry strEntry = currentTable.Asset.GetEntry(sharedEntry.Id);
+            for (var i = 0; i < this.GUITables.Count; i++)
+            {
+                OdinGUITable<StringTable> currentTable = this.GUITables[i];
 
-						if (strEntry is null)
-						{
-							continue;
-						}
+                switch (currentTable.Type)
+                {
+                    case OdinGUITable<StringTable>.GUITableType.Default:
+                        StringTableEntry strEntry = currentTable.Asset.GetEntry(sharedEntry.Id);
+
+                        if (strEntry is null)
+                        {
+                            continue;
+                        }
 
 #if USING_WIDTH_NON_PERCENT
-						float strEntryHeight = MeasureText(strEntry.Value, currentTable.Width);
+                        float strEntryHeight = MeasureText(strEntry.Value, currentTable.Width);
 #else
 						float strEntryHeight = MeasureText(strEntry.Value, currentTable.Width);
 #endif
 
-						if (strEntryHeight > height)
-						{
-							height = strEntryHeight;
-						}
+                        if (strEntryHeight > height)
+                        {
+                            height = strEntryHeight;
+                        }
 
-						break;
+                        break;
 
-					case OdinGUITable<StringTable>.GUITableType.Key:
+                    case OdinGUITable<StringTable>.GUITableType.Key:
 #if USING_WIDTH_NON_PERCENT
-						float keyHeight = MeasureText(sharedEntry.Key, currentTable.Width);
+                        float keyHeight = MeasureText(sharedEntry.Key, currentTable.Width);
 #else
 						float keyHeight = MeasureText(sharedEntry.Key, currentTable.Width);
 #endif
 
-						if (keyHeight > height)
-						{
-							height = keyHeight;
-						}
+                        if (keyHeight > height)
+                        {
+                            height = keyHeight;
+                        }
 
-						break;
-				}
-			}
+                        break;
+                }
+            }
 
-			this.SharedEntryHeights[sharedEntry.Id] = height;
-		}
-
-	}
+            this.SharedEntryHeights[sharedEntry.Id] = height;
+        }
+    }
 }

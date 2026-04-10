@@ -17,7 +17,8 @@ namespace Zenject.MemoryPoolMonitor
 
         static int Lower(List<T> list, Comparison<T> comparer, int from, int to, int val)
         {
-            int len = to - from, half;
+            int len = to - from,
+                half;
             while (len > 0)
             {
                 half = len / 2;
@@ -37,7 +38,8 @@ namespace Zenject.MemoryPoolMonitor
 
         static int Upper(List<T> list, Comparison<T> comparer, int from, int to, int val)
         {
-            int len = to - from, half;
+            int len = to - from,
+                half;
             while (len > 0)
             {
                 half = len / 2;
@@ -111,7 +113,8 @@ namespace Zenject.MemoryPoolMonitor
             {
                 T val = list[from + n];
                 int shift = mid - from;
-                int p1 = from + n, p2 = from + n + shift;
+                int p1 = from + n,
+                    p2 = from + n + shift;
                 while (p2 != from + n)
                 {
                     list[p1] = list[p2];
@@ -129,7 +132,15 @@ namespace Zenject.MemoryPoolMonitor
             }
         }
 
-        static void Merge(List<T> list, Comparison<T> comparer, int from, int pivot, int to, int len1, int len2)
+        static void Merge(
+            List<T> list,
+            Comparison<T> comparer,
+            int from,
+            int pivot,
+            int to,
+            int len1,
+            int len2
+        )
         {
             if (len1 == 0 || len2 == 0)
             {
@@ -146,8 +157,10 @@ namespace Zenject.MemoryPoolMonitor
                 return;
             }
 
-            int first_cut, second_cut;
-            int len11, len22;
+            int first_cut,
+                second_cut;
+            int len11,
+                len22;
 
             if (len1 > len2)
             {

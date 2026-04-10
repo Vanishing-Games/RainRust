@@ -21,15 +21,15 @@ namespace LDtkUnity.Editor
         public bool UseParallax;
         public LDtkAssetIntGridValue[] IntGridValues;
         public LDtkAssetEntity[] Entities;
-        
+
         internal string WriteJson(string projectAssetPath)
         {
             string writePath = GetPath(projectAssetPath);
             string json = EditorJsonUtility.ToJson(this, true);
             byte[] byteArray = Encoding.UTF8.GetBytes(json);
-            
+
             LDtkPathUtility.TryCreateDirectoryForFile(writePath);
-            
+
             //Only write if the contents are actually changed! Otherwise, it's been observed to pollute source control
             //It's not good practice to write files to disk during a scripted importer, but it works for now.
             if (File.Exists(writePath))
@@ -40,11 +40,11 @@ namespace LDtkUnity.Editor
                     return writePath;
                 }
             }
-            
+
             File.WriteAllBytes(writePath, byteArray);
             return writePath;
         }
-        
+
         internal static LDtkConfigData ReadJson(string assetPath)
         {
             if (!File.Exists(assetPath))
@@ -59,12 +59,16 @@ namespace LDtkUnity.Editor
             EditorJsonUtility.FromJsonOverwrite(json, data);
             return data;
         }
-        
+
         internal static string GetPath(string projectAssetPath)
         {
             string dir = Path.GetDirectoryName(projectAssetPath);
             string importerAssetName = Path.GetFileNameWithoutExtension(projectAssetPath);
-            return Path.Combine(dir, importerAssetName, $"{importerAssetName}_Config.{LDtkImporterConsts.CONFIG_EXT}");
+            return Path.Combine(
+                dir,
+                importerAssetName,
+                $"{importerAssetName}_Config.{LDtkImporterConsts.CONFIG_EXT}"
+            );
         }
     }
 }

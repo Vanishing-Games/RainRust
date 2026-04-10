@@ -10,9 +10,7 @@ namespace Zenject
         readonly DiContainer _container;
         readonly Func<InjectContext, object> _method;
 
-        public MethodProviderUntyped(
-            Func<InjectContext, object> method,
-            DiContainer container)
+        public MethodProviderUntyped(Func<InjectContext, object> method, DiContainer container)
         {
             _container = container;
             _method = method;
@@ -34,13 +32,20 @@ namespace Zenject
         }
 
         public void GetAllInstancesWithInjectSplit(
-            InjectContext context, List<TypeValuePair> args, out Action injectAction, List<object> buffer)
+            InjectContext context,
+            List<TypeValuePair> args,
+            out Action injectAction,
+            List<object> buffer
+        )
         {
             Assert.IsEmpty(args);
             Assert.IsNotNull(context);
 
             injectAction = null;
-            if (_container.IsValidating && !TypeAnalyzer.ShouldAllowDuringValidation(context.MemberType))
+            if (
+                _container.IsValidating
+                && !TypeAnalyzer.ShouldAllowDuringValidation(context.MemberType)
+            )
             {
                 buffer.Add(new ValidationMarker(context.MemberType));
             }
@@ -50,8 +55,10 @@ namespace Zenject
 
                 if (result == null)
                 {
-                    Assert.That(!context.MemberType.IsPrimitive(),
-                        "Invalid value returned from FromMethod.  Expected non-null.");
+                    Assert.That(
+                        !context.MemberType.IsPrimitive(),
+                        "Invalid value returned from FromMethod.  Expected non-null."
+                    );
                 }
                 else
                 {
@@ -63,4 +70,3 @@ namespace Zenject
         }
     }
 }
-

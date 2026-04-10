@@ -23,7 +23,8 @@ namespace Zenject
             if (!_hasInjected)
             {
                 throw Assert.CreateException(
-                    "ZenAutoInjecter was injected!  Do not use ZenAutoInjecter for objects that are instantiated through zenject or which exist in the initial scene hierarchy");
+                    "ZenAutoInjecter was injected!  Do not use ZenAutoInjecter for objects that are instantiated through zenject or which exist in the initial scene hierarchy"
+                );
             }
         }
 
@@ -59,7 +60,8 @@ namespace Zenject
 
         DiContainer GetContainerForCurrentScene()
         {
-            return ProjectContext.Instance.Container.Resolve<SceneContextRegistry>()
+            return ProjectContext
+                .Instance.Container.Resolve<SceneContextRegistry>()
                 .GetContainerForScene(gameObject.scene);
         }
 
@@ -67,7 +69,7 @@ namespace Zenject
         {
             SceneContext,
             ProjectContext,
-            SearchHierarchy
+            SearchHierarchy,
         }
     }
 }

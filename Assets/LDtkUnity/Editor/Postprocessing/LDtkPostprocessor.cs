@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-
 #if UNITY_2020_2_OR_NEWER
 using UnityEditor.AssetImporters;
 #else
@@ -23,17 +22,17 @@ namespace LDtkUnity.Editor
         /// The AssetImportContext of the current importing project file or level file.
         /// </summary>
         public AssetImportContext ImportContext => _importContext;
-        
+
         /// <summary>
         /// Use to perform operations after a project is created.<br/>
-        /// This would primarily be used with a project that does **not** use separate level files. 
+        /// This would primarily be used with a project that does **not** use separate level files.
         /// </summary>
         /// <param name="root">
         /// The root GameObject of the imported LDtk project.
         /// This GameObject has a <see cref="LDtkComponentProject"/> component to get the project's json data with GetComponent.
         /// </param>
         protected virtual void OnPostprocessProject(GameObject root) { }
-        
+
         /// <summary>
         /// Use to perform operations after a level is created. <br/>
         /// This is called when importing a separate level file, or called on every level gameobject in a project that doesn't use separate level files.

@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
-using ModestTree;
 using System.Linq;
-
+using ModestTree;
 #if !NOT_UNITY3D
 using UnityEngine;
 #endif
@@ -15,7 +14,8 @@ namespace Zenject
         public FromBinderGeneric(
             DiContainer bindContainer,
             BindInfo bindInfo,
-            BindStatement bindStatement)
+            BindStatement bindStatement
+        )
             : base(bindContainer, bindInfo, bindStatement)
         {
             BindingUtil.AssertIsDerivedFromTypes(typeof(TContract), BindInfo.ContractTypes);
@@ -29,7 +29,8 @@ namespace Zenject
         }
 
         public ScopeConcreteIdArgConditionCopyNonLazyBinder FromIFactory(
-            Action<ConcreteBinderGeneric<IFactory<TContract>>> factoryBindGenerator)
+            Action<ConcreteBinderGeneric<IFactory<TContract>>> factoryBindGenerator
+        )
         {
             return FromIFactoryBase<TContract>(factoryBindGenerator);
         }
@@ -39,43 +40,65 @@ namespace Zenject
             return FromMethodBase<TContract>(ctx => method());
         }
 
-        public ScopeConcreteIdArgConditionCopyNonLazyBinder FromMethod(Func<InjectContext, TContract> method)
+        public ScopeConcreteIdArgConditionCopyNonLazyBinder FromMethod(
+            Func<InjectContext, TContract> method
+        )
         {
             return FromMethodBase<TContract>(method);
         }
 
-        public ScopeConcreteIdArgConditionCopyNonLazyBinder FromMethodMultiple(Func<InjectContext, IEnumerable<TContract>> method)
+        public ScopeConcreteIdArgConditionCopyNonLazyBinder FromMethodMultiple(
+            Func<InjectContext, IEnumerable<TContract>> method
+        )
         {
             BindingUtil.AssertIsDerivedFromTypes(typeof(TContract), AllParentTypes);
             return FromMethodMultipleBase<TContract>(method);
         }
 
-        public ScopeConcreteIdArgConditionCopyNonLazyBinder FromResolveGetter<TObj>(Func<TObj, TContract> method)
+        public ScopeConcreteIdArgConditionCopyNonLazyBinder FromResolveGetter<TObj>(
+            Func<TObj, TContract> method
+        )
         {
             return FromResolveGetter<TObj>(null, method);
         }
 
-        public ScopeConcreteIdArgConditionCopyNonLazyBinder FromResolveGetter<TObj>(object identifier, Func<TObj, TContract> method)
+        public ScopeConcreteIdArgConditionCopyNonLazyBinder FromResolveGetter<TObj>(
+            object identifier,
+            Func<TObj, TContract> method
+        )
         {
             return FromResolveGetter<TObj>(identifier, method, InjectSources.Any);
         }
 
-        public ScopeConcreteIdArgConditionCopyNonLazyBinder FromResolveGetter<TObj>(object identifier, Func<TObj, TContract> method, InjectSources source)
+        public ScopeConcreteIdArgConditionCopyNonLazyBinder FromResolveGetter<TObj>(
+            object identifier,
+            Func<TObj, TContract> method,
+            InjectSources source
+        )
         {
             return FromResolveGetterBase<TObj, TContract>(identifier, method, source, false);
         }
 
-        public ScopeConcreteIdArgConditionCopyNonLazyBinder FromResolveAllGetter<TObj>(Func<TObj, TContract> method)
+        public ScopeConcreteIdArgConditionCopyNonLazyBinder FromResolveAllGetter<TObj>(
+            Func<TObj, TContract> method
+        )
         {
             return FromResolveAllGetter<TObj>(null, method);
         }
 
-        public ScopeConcreteIdArgConditionCopyNonLazyBinder FromResolveAllGetter<TObj>(object identifier, Func<TObj, TContract> method)
+        public ScopeConcreteIdArgConditionCopyNonLazyBinder FromResolveAllGetter<TObj>(
+            object identifier,
+            Func<TObj, TContract> method
+        )
         {
             return FromResolveAllGetter<TObj>(identifier, method, InjectSources.Any);
         }
 
-        public ScopeConcreteIdArgConditionCopyNonLazyBinder FromResolveAllGetter<TObj>(object identifier, Func<TObj, TContract> method, InjectSources source)
+        public ScopeConcreteIdArgConditionCopyNonLazyBinder FromResolveAllGetter<TObj>(
+            object identifier,
+            Func<TObj, TContract> method,
+            InjectSources source
+        )
         {
             return FromResolveGetterBase<TObj, TContract>(identifier, method, source, true);
         }
@@ -88,13 +111,18 @@ namespace Zenject
 #if !NOT_UNITY3D
 
         public ScopeConcreteIdArgConditionCopyNonLazyBinder FromComponentsInChildren(
-            Func<TContract, bool> predicate, bool includeInactive = true)
+            Func<TContract, bool> predicate,
+            bool includeInactive = true
+        )
         {
             return FromComponentsInChildren(false, predicate, includeInactive);
         }
 
         public ScopeConcreteIdArgConditionCopyNonLazyBinder FromComponentsInChildren(
-            bool excludeSelf = false, Func<TContract, bool> predicate = null, bool includeInactive = true)
+            bool excludeSelf = false,
+            Func<TContract, bool> predicate = null,
+            bool includeInactive = true
+        )
         {
             Func<Component, bool> subPredicate;
 
@@ -107,12 +135,13 @@ namespace Zenject
                 subPredicate = null;
             }
 
-            return FromComponentsInChildrenBase(
-                excludeSelf, subPredicate, includeInactive);
+            return FromComponentsInChildrenBase(excludeSelf, subPredicate, includeInactive);
         }
 
         public ScopeConcreteIdArgConditionCopyNonLazyBinder FromComponentsInHierarchy(
-            Func<TContract, bool> predicate = null, bool includeInactive = true)
+            Func<TContract, bool> predicate = null,
+            bool includeInactive = true
+        )
         {
             Func<Component, bool> subPredicate;
 

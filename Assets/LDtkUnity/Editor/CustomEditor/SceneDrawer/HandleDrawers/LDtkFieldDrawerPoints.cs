@@ -13,7 +13,13 @@ namespace LDtkUnity.Editor
         private readonly Vector3 _middleCenter;
         private readonly float _pixelsPerUnit;
 
-        public LDtkFieldDrawerPoints(LDtkFields fields, string identifier, EditorDisplayMode mode, Vector3 middleCenter, int pixelsPerUnit)
+        public LDtkFieldDrawerPoints(
+            LDtkFields fields,
+            string identifier,
+            EditorDisplayMode mode,
+            Vector3 middleCenter,
+            int pixelsPerUnit
+        )
         {
             _fields = fields;
             _identifier = identifier;
@@ -21,14 +27,14 @@ namespace LDtkUnity.Editor
             _middleCenter = middleCenter;
             _pixelsPerUnit = pixelsPerUnit;
         }
-        
+
         public void OnDrawHandles()
         {
             if (!LDtkPrefs.ShowFieldPoints)
             {
                 return;
             }
-            
+
             List<Vector2> points = GetConvertedPoints();
             if (points.IsNullOrEmpty())
             {
@@ -40,23 +46,23 @@ namespace LDtkUnity.Editor
                 case EditorDisplayMode.PointPath:
                     DrawPath(points);
                     break;
-                
+
                 case EditorDisplayMode.PointPathLoop:
                     DrawPathLoop(points);
                     break;
-                
+
                 case EditorDisplayMode.PointStar:
                     DrawStar(points);
                     break;
-                
+
                 case EditorDisplayMode.Points:
                     //already drawn below
                     break;
-                
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            
+
             DrawIsolatedPoints(points);
         }
 
@@ -64,10 +70,13 @@ namespace LDtkUnity.Editor
         {
             if (!_fields.ContainsField(_identifier))
             {
-                LDtkDebug.LogWarning($"Fields component doesn't contain a field called {_identifier}, this should never happen. Try reverting prefab changes", _fields.gameObject);
+                LDtkDebug.LogWarning(
+                    $"Fields component doesn't contain a field called {_identifier}, this should never happen. Try reverting prefab changes",
+                    _fields.gameObject
+                );
                 return Array.Empty<Vector2>();
             }
-            
+
             if (_fields.IsFieldArray(_identifier))
             {
                 _fields.TryGetPointArray(_identifier, out Vector2[] objs);
@@ -81,7 +90,7 @@ namespace LDtkUnity.Editor
                         points.Add(objs[i]);
                     }
                 }
-                
+
                 return points.ToArray();
             }
 
@@ -101,11 +110,12 @@ namespace LDtkUnity.Editor
             {
                 return null;
             }
-            
-            List<Vector2> convertedRoute = Array.ConvertAll(points, input => new Vector2(input.x, input.y)).ToList();
 
+            List<Vector2> convertedRoute = Array
+                .ConvertAll(points, input => new Vector2(input.x, input.y))
+                .ToList();
 
-            //if the parsed point was nullable null, then it's going to be negative infinity. Don't draw these null values 
+            //if the parsed point was nullable null, then it's going to be negative infinity. Don't draw these null values
             convertedRoute.RemoveAll(HandleAAUtil.IsIllegalPoint);
 
             //round the starting position to the bottom left of the current tile
@@ -135,46 +145,45 @@ namespace LDtkUnity.Editor
             {
                 pathPoints[i] = points[i];
             }
-            
-            
-            for (int i = 0; i < points.Count-1; i++)
+
+            for (int i = 0; i < points.Count - 1; i++)
             {
                 Vector2 pointPos = pathPoints[i];
-                Vector2 nextPointPos = pathPoints[i+1];
+                Vector2 nextPointPos = pathPoints[i + 1];
                 DrawLine(pointPos, nextPointPos);
             }
         }
-        
+
         private void DrawPathLoop(List<Vector2> points)
         {
             DrawPath(points);
             DrawLine(points.First(), points.Last());
         }
-        
+
         private void DrawStar(List<Vector2> points)
         {
             Vector2 pointPos = points[0];
-            
+
             for (int i = 1; i < points.Count; i++)
             {
                 Vector2 nextPointPos = points[i];
                 DrawLine(pointPos, nextPointPos);
             }
         }
-        
+
         private void DrawIsolatedPoints(List<Vector2> points)
         {
             float boxUnitSize = 8f / _pixelsPerUnit;
             float thickness = LDtkPrefs.FieldPointsThickness;
-            float extraThickness = 0;//(thickness - 1) * (boxUnitSize/3);
+            float extraThickness = 0; //(thickness - 1) * (boxUnitSize/3);
             Vector3 size = Vector2.one * (boxUnitSize + extraThickness);
-            
+
             foreach (Vector2 point in points)
             {
                 HandleAAUtil.DrawAADiamond(point, size, fillAlpha: 0, thickness: thickness);
             }
         }
-        
+
         //there was an idea co concat all these crooked paths together, but that can be saved for another day
         private void DrawLine(Vector3 from, Vector3 to)
         {
