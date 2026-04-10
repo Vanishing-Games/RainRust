@@ -1,0 +1,38 @@
+.menu-container {
+    flex-grow: 1;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.title {
+    font-size: 60px;
+    -unity-font-style: bold;
+    color: white;
+    margin-bottom: 50px;
+}
+
+.button-list {
+    width: 300px;
+    justify-content: space-around;
+}
+
+.menu-button {
+    height: 50px;
+    margin-bottom: 10px;
+    font-size: 20px;
+    background-color: #444;
+    color: white;
+    border-width: 2px;
+    border-color: #666;
+    border-radius: 5px;
+}
+
+.menu-button:hover {
+    background-color: #666;
+    border-color: #888;
+}
+
+.menu-button:active {
+    background-color: #222;
+}
