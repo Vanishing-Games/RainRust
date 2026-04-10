@@ -28,6 +28,14 @@ ScriptedImporter:
   _entities:
   - _key: LevelTransition
     _asset: {instanceID: 0}
+  - _key: SavePoint
+    _asset: {instanceID: 0}
+  - _key: EntityPlaceHolder0
+    _asset: {instanceID: 0}
+  - _key: MovePlatformer
+    _asset: {instanceID: 0}
+  - _key: MovePlatformerPathPoint
+    _asset: {instanceID: 0}
   _enumGenerate: 1
   _enumPath: gm_ldtk_project/GmLDtkEnums.cs
   _enumNamespace: GameMain.LDtk
