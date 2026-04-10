@@ -73,6 +73,10 @@ namespace GameMain.RunTime
         [SerializeField]
         public LevelTransition Target;
 
+        [LabelText("目标IID")]
+        [SerializeField]
+        public string TargetIid;
+
         [LabelText("索引 (Index)")]
         public int Index;
     }

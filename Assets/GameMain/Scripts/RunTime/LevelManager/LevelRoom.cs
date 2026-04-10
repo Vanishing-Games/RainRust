@@ -9,7 +9,11 @@ namespace GameMain.RunTime
 {
     public class LevelRoom : MonoBehaviour
     {
-        public void DeActivate() { }
+        public void DeActivate()
+        {
+            if (VirtualCamera != null)
+                VirtualCamera.Priority.Enabled = false;
+        }
 
         public void Activate()
         {
