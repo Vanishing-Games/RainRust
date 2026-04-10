@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "com.coplaydev.unity-mcp": "https://github.com/CoplayDev/unity-mcp.git?path=/MCPForUnity#main",
     "com.cysharp.r3": "https://github.com/Cysharp/R3.git?path=src/R3.Unity/Assets/R3.Unity",
     "com.github-glitchenzo.nugetforunity": "https://github.com/GlitchEnzo/NuGetForUnity.git?path=/src/NuGetForUnity",
     "com.unity.2d.sprite": "1.0.0",
@@ -12,11 +13,13 @@
     "com.unity.inputsystem": "1.17.0",
     "com.unity.localization": "1.5.8",
     "com.unity.multiplayer.center": "1.0.1",
+    "com.unity.probuilder": "6.0.9",
     "com.unity.project-auditor": "1.0.2",
     "com.unity.render-pipelines.universal": "17.3.0",
     "com.unity.test-framework": "1.6.0",
     "com.unity.timeline": "1.8.9",
     "com.unity.ugui": "2.0.0",
+    "com.unity.visualeffectgraph": "17.3.0",
     "com.wooshii.hierarchydecorator": "https://github.com/WooshiiDev/HierarchyDecorator.git",
     "com.unity.modules.accessibility": "1.0.0",
     "com.unity.modules.animation": "1.0.0",
