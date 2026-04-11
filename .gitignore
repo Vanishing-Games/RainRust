@@ -129,3 +129,6 @@ fmod_editor.log
 
 # Save Data
 /SaveData_Editor/
+
+# Log
+/Log/
