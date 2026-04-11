@@ -347,19 +347,21 @@ namespace Core
         public async UniTask<bool> RenameSlotAsync(string slotName, string newDisplayName)
         {
             string fullPath = GetSavePath(slotName);
-            if (!File.Exists(fullPath)) return false;
+            if (!File.Exists(fullPath))
+                return false;
 
             try
             {
                 string json = await File.ReadAllTextAsync(fullPath);
                 var container = JsonConvert.DeserializeObject<SaveContainer>(json);
-                if (container == null) return false;
+                if (container == null)
+                    return false;
 
                 container.Meta.DisplayName = newDisplayName;
-                
+
                 string newJson = JsonConvert.SerializeObject(container, Formatting.Indented);
                 await File.WriteAllTextAsync(fullPath, newJson);
-                
+
                 RefreshSaveSlots();
                 return true;
             }
