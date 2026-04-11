@@ -5,7 +5,7 @@ namespace Core
 {
     public static class BuildVersionInfo
     {
-        public const string Version = "v0.0.1-test-3-g870d5048-dirty";
-        public const string BuildTime = "2026-04-12 04:01:13";
+        public const string Version = "v0.0.1-test-4-g2872b650-dirty";
+        public const string BuildTime = "2026-04-12 04:21:15";
     }
 }
