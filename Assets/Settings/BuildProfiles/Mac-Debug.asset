@@ -23,7 +23,7 @@ MonoBehaviour:
   - m_enabled: 1
     m_path: Assets/GameMain/Scenes/Build/GameEntry.unity
   - m_enabled: 1
-    m_path: Assets/GameMain/Scenes/Build/GameStartScene.unity
+    m_path: Assets/GameMain/Scenes/Build/GameMenu.unity
   - m_enabled: 1
     m_path: Assets/GameMain/Scenes/Build/GameLevel.unity
   m_HasScriptingDefines: 1
@@ -47,8 +47,8 @@ MonoBehaviour:
       type: {class: OSXStandaloneBuildProfile, ns: UnityEditor.OSXStandalone, asm: UnityEditor.OSXStandalone.Extensions}
       data:
         m_Development: 1
-        m_ConnectProfiler: 1
-        m_BuildWithDeepProfilingSupport: 0
+        m_ConnectProfiler: 0
+        m_BuildWithDeepProfilingSupport: 1
         m_AllowDebugging: 1
         m_WaitForManagedDebugger: 0
         m_ManagedDebuggerFixedPort: 0
