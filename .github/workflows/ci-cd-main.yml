@@ -896,7 +896,7 @@ jobs:
             targetPlatform: ${{ matrix.buildTarget }}
             buildName: ${{ steps.load-build-config.outputs.project_name }}
             versioning: Tag
-            customParameters: -buildProfile "Assets/Settings/Build Profiles/${{ matrix.profile }}.asset"
+            customParameters: -buildProfile Assets/Settings/BuildProfiles/${{ matrix.profile }}.asset
         env:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}

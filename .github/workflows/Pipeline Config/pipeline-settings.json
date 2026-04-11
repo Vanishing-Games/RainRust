@@ -1,6 +1,6 @@
 {
   "project": {
-    "name": "Rain Rust",
+    "name": "RainRust",
     "displayName": "Rain Rust 项目",
     "unityVersion": "6000.3.1f1",
     "description": "Rain Rust 项目的CI/CD配置"
