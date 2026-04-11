@@ -64,6 +64,7 @@ namespace LDtkUnity.Editor
             EditorApplication.delayCall += CacheAllIcons;
         }
 #endif
+
         private static void CacheAllIcons()
         {
             CacheIcon(AUTO_LAYER, true);

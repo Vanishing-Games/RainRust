@@ -37,10 +37,7 @@ namespace GameMain.RunTime
 
             if (m_RootContainer == null)
             {
-                CLogger.LogError(
-                    "Failed to find root-container in UIDocument.",
-                    LogTag.Game
-                );
+                CLogger.LogError("Failed to find root-container in UIDocument.", LogTag.Game);
                 return;
             }
 
@@ -180,14 +177,13 @@ namespace GameMain.RunTime
                 actions.Add(renameBtn);
                 slotBtn.Add(actions);
 
-                slotBtn.RegisterCallback<ClickEvent>(evt =>
-                    OnSlotSelected(meta.SlotName).Forget()
-                );
+                slotBtn.RegisterCallback<ClickEvent>(evt => OnSlotSelected(meta.SlotName).Forget());
                 m_SlotContainer.Add(slotBtn);
             }
 
-            m_CreateNewSlotButton.style.display =
-                m_IsSaveMode ? DisplayStyle.Flex : DisplayStyle.None;
+            m_CreateNewSlotButton.style.display = m_IsSaveMode
+                ? DisplayStyle.Flex
+                : DisplayStyle.None;
         }
 
         private async UniTaskVoid OnSlotSelected(string slotName)
@@ -238,10 +234,7 @@ namespace GameMain.RunTime
             string newName = m_RenameTextField.value;
             if (!string.IsNullOrEmpty(newName))
             {
-                bool success = await VgSaveSystem.Instance.RenameSlotAsync(
-                    m_SlotToRename,
-                    newName
-                );
+                bool success = await VgSaveSystem.Instance.RenameSlotAsync(m_SlotToRename, newName);
                 if (success)
                 {
                     RefreshSlotsUI();

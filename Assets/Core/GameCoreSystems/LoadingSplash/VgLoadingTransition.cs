@@ -1,9 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine;
-using Cysharp.Threading.Tasks;
 
 namespace Core
 {
@@ -49,7 +49,7 @@ namespace Core
             CLogger.LogInfo($"Show called on {gameObject.name}", LogTag.Loading);
             if (activeShowTransitions == 0 && completedShowTransitions == 0)
                 ResetCounters();
-            
+
             animationQueue.Enqueue(() => ExecuteShow());
             ProcessQueue();
         }
@@ -96,25 +96,40 @@ namespace Core
             Sequence seq = DOTween.Sequence();
             seq.Join(transform.DOScale(showScale, animationDuration).SetEase(easeType));
             if (canvasGroup != null && useFade)
-                seq.Join(DOTween.To(() => canvasGroup.alpha, x => canvasGroup.alpha = x, 1f, animationDuration).SetEase(easeType));
+                seq.Join(
+                    DOTween
+                        .To(
+                            () => canvasGroup.alpha,
+                            x => canvasGroup.alpha = x,
+                            1f,
+                            animationDuration
+                        )
+                        .SetEase(easeType)
+                );
 
             bool completed = false;
             currentTween = seq.OnComplete(() =>
             {
-                if (completed) return;
+                if (completed)
+                    return;
                 completed = true;
                 FinishShow();
             });
 
             // Fallback for DOTween errors
-            UniTask.Delay(TimeSpan.FromSeconds(animationDuration + 0.1f)).ContinueWith(() => {
-                if (!completed)
+            UniTask
+                .Delay(TimeSpan.FromSeconds(animationDuration + 0.1f))
+                .ContinueWith(() =>
                 {
-                    completed = true;
-                    if (currentTween != null && currentTween.IsActive()) currentTween.Kill();
-                    FinishShow();
-                }
-            }).Forget();
+                    if (!completed)
+                    {
+                        completed = true;
+                        if (currentTween != null && currentTween.IsActive())
+                            currentTween.Kill();
+                        FinishShow();
+                    }
+                })
+                .Forget();
         }
 
         private void FinishShow()
@@ -143,26 +158,41 @@ namespace Core
             Sequence seq = DOTween.Sequence();
             seq.Join(transform.DOScale(hideScale, animationDuration).SetEase(easeType));
             if (canvasGroup != null && useFade)
-                seq.Join(DOTween.To(() => canvasGroup.alpha, x => canvasGroup.alpha = x, 0f, animationDuration).SetEase(easeType));
+                seq.Join(
+                    DOTween
+                        .To(
+                            () => canvasGroup.alpha,
+                            x => canvasGroup.alpha = x,
+                            0f,
+                            animationDuration
+                        )
+                        .SetEase(easeType)
+                );
 
             bool completed = false;
             currentTween = seq.OnComplete(() =>
             {
-                if (completed) return;
+                if (completed)
+                    return;
                 completed = true;
                 FinishHide();
             });
 
-            // Fallback: If DOTween fails to start or complete (e.g. module error), 
+            // Fallback: If DOTween fails to start or complete (e.g. module error),
             // force completion after a safety margin.
-            UniTask.Delay(TimeSpan.FromSeconds(animationDuration + 0.1f)).ContinueWith(() => {
-                if (!completed)
+            UniTask
+                .Delay(TimeSpan.FromSeconds(animationDuration + 0.1f))
+                .ContinueWith(() =>
                 {
-                    completed = true;
-                    if (currentTween != null && currentTween.IsActive()) currentTween.Kill();
-                    FinishHide();
-                }
-            }).Forget();
+                    if (!completed)
+                    {
+                        completed = true;
+                        if (currentTween != null && currentTween.IsActive())
+                            currentTween.Kill();
+                        FinishHide();
+                    }
+                })
+                .Forget();
         }
 
         private void FinishHide()

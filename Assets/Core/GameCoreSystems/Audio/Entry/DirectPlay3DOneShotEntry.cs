@@ -17,7 +17,10 @@ namespace Core
                 return;
             }
 
-            CLogger.LogInfo($"DirectPlay3DOneShotEntry: Playing 3D OneShot — ListenEvent={ListenEventType?.Name}, FmodEvent={posEvent.FmodEvent}, Pos={posEvent.Position}", LogTag.AudioEntry);
+            CLogger.LogInfo(
+                $"DirectPlay3DOneShotEntry: Playing 3D OneShot — ListenEvent={ListenEventType?.Name}, FmodEvent={posEvent.FmodEvent}, Pos={posEvent.Position}",
+                LogTag.AudioEntry
+            );
             RuntimeManager.PlayOneShot(posEvent.FmodEvent, posEvent.Position);
         }
     }

@@ -20,7 +20,10 @@ namespace Core
                 return;
             }
 
-            CLogger.LogInfo($"DirectPlayManagedEntry: Playing Managed — ListenEvent={ListenEventType?.Name}, FmodEvent={oneShotEvent.FmodEvent}", LogTag.AudioEntry);
+            CLogger.LogInfo(
+                $"DirectPlayManagedEntry: Playing Managed — ListenEvent={ListenEventType?.Name}, FmodEvent={oneShotEvent.FmodEvent}",
+                LogTag.AudioEntry
+            );
             manager.PlayManaged(oneShotEvent.FmodEvent, Managed);
         }
     }
