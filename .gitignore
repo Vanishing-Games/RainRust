@@ -136,3 +136,9 @@ fmod_editor.log
 
 # IDEA
 /.idea/
+
+# GitHub Pages / VitePress
+/GithubPages/node_modules/
+/GithubPages/.vitepress/dist/
+/GithubPages/.vitepress/cache/
+/GithubPages/index.md
