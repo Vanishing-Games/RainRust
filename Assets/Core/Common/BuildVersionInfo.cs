@@ -27,7 +27,7 @@ namespace Core
                     _cachedData = new BuildVersionData
                     {
                         Version = "v0.0.0-unknown",
-                        BuildTime = "Unknown"
+                        BuildTime = "Unknown",
                     };
                 }
             }
