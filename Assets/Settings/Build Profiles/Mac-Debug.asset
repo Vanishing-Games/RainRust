@@ -10,30 +10,46 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 15003, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: macOS
+  m_Name: Mac-Debug
   m_EditorClassIdentifier: UnityEditor.dll::UnityEditor.Build.Profile.BuildProfile
   m_AssetVersion: 1
   m_BuildTarget: 2
   m_Subtarget: 2
   m_PlatformId: 0d2129357eac403d8b359c2dcbf82502
   m_PlatformBuildProfile:
-    rid: 3057324606480973894
-  m_OverrideGlobalSceneList: 0
-  m_Scenes: []
-  m_HasScriptingDefines: 0
-  m_ScriptingDefines: []
+    rid: 2912364668616441988
+  m_OverrideGlobalSceneList: 1
+  m_Scenes:
+  - m_enabled: 1
+    m_path: Assets/GameMain/Scenes/Build/GameEntry.unity
+  - m_enabled: 1
+    m_path: Assets/GameMain/Scenes/Build/GameStartScene.unity
+  - m_enabled: 1
+    m_path: Assets/GameMain/Scenes/Build/GameLevel.unity
+  m_HasScriptingDefines: 1
+  m_ScriptingDefines:
+  - ODIN_INSPECTOR
+  - ODIN_INSPECTOR_3
+  - ODIN_INSPECTOR_3_1
+  - ODIN_INSPECTOR_3_2
+  - ODIN_INSPECTOR_3_3
+  - DOTWEEN
+  - AMPLIFY_SHADER_EDITOR
+  - ES3_TMPRO
+  - ES3_UGUI
+  - BUILD_MODE_DEBUG
   m_PlayerSettingsYaml:
     m_Settings: []
   references:
     version: 2
     RefIds:
-    - rid: 3057324606480973894
+    - rid: 2912364668616441988
       type: {class: OSXStandaloneBuildProfile, ns: UnityEditor.OSXStandalone, asm: UnityEditor.OSXStandalone.Extensions}
       data:
-        m_Development: 0
+        m_Development: 1
         m_ConnectProfiler: 0
         m_BuildWithDeepProfilingSupport: 0
-        m_AllowDebugging: 0
+        m_AllowDebugging: 1
         m_WaitForManagedDebugger: 0
         m_ManagedDebuggerFixedPort: 0
         m_ExplicitNullChecks: 0
