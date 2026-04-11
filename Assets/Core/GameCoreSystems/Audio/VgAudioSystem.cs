@@ -178,6 +178,7 @@ namespace Core
 
         private void RegisterAllEntries()
         {
+            CLogger.LogInfo($"[VgAudioSystem] RegisterAllEntries() start — m_Sheets count: {(m_Sheets == null ? "NULL" : m_Sheets.Length.ToString())}", LogTag.Audio);
             CLogger.LogVerbose("=== Starting Audio Event Registration ===", LogTag.Audio);
 
             var sb = new StringBuilder();
@@ -234,6 +235,7 @@ namespace Core
 
         private void SubscribeEntry(AudioEntry entry)
         {
+            CLogger.LogInfo($"[VgAudioSystem] Subscribing entry: [{entry.GetType().Name}] ListenEvent={entry.ListenEventType?.Name ?? "NULL"}", LogTag.Audio);
             var method = typeof(VgAudioSystem)
                 .GetMethod(
                     nameof(SubscribeEntryGeneric),
@@ -242,6 +244,7 @@ namespace Core
                 .MakeGenericMethod(entry.ListenEventType);
             var disposable = (IDisposable)method.Invoke(this, new object[] { entry });
             m_Subscriptions.Add((entry.ListenEventType.Name, disposable));
+            CLogger.LogInfo($"[VgAudioSystem] Subscribed OK: [{entry.GetType().Name}] → {entry.ListenEventType.Name}", LogTag.Audio);
         }
 
         private IDisposable SubscribeEntryGeneric<TEvent>(AudioEntry entry)

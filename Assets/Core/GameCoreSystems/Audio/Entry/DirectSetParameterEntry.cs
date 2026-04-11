@@ -16,6 +16,7 @@ namespace Core
                 return;
             }
 
+            CLogger.LogInfo($"DirectSetParameterEntry: Setting param — ListenEvent={ListenEventType?.Name}, ManagedId={paramEvent.ManagedId}, Param={paramEvent.ParameterName}={paramEvent.Value}", LogTag.AudioEntry);
             manager.SetManagedParameter(
                 paramEvent.ManagedId,
                 new[]
