@@ -1,9 +1,9 @@
 {
   "project": {
-    "name": "Unity-Template",
-    "displayName": "Unity Template 项目",
+    "name": "Rain Rust",
+    "displayName": "Rain Rust 项目",
     "unityVersion": "6000.3.1f1",
-    "description": "Unity 项目模板的CI/CD配置"
+    "description": "Rain Rust 项目的CI/CD配置"
   },
   "triggers": {
     "description": "定义CI/CD流水线的触发条件和分支规则",
