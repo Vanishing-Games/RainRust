@@ -15,13 +15,6 @@ namespace Core
         public string SystemName => "VgAudioSystem";
         public Type[] Dependencies => Array.Empty<Type>();
 
-        protected override void Awake()
-        {
-            CLogger.LogInfo("[VgAudioSystem] Awake() called", LogTag.Audio);
-            base.Awake();
-            CLogger.LogInfo("[VgAudioSystem] Awake() done", LogTag.Audio);
-        }
-
         public void RegisterHooks(IGameCoreHookRegistry registry)
         {
             CLogger.LogInfo("[VgAudioSystem] RegisterHooks() called", LogTag.Audio);
