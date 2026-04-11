@@ -24,11 +24,21 @@ namespace Core
                 await UniTask.CompletedTask;
             });
 
-            registry.OnMainMenuEnter(async () => await PlayMenuBgm());
-            registry.OnMainMenuExit(async () => await FadeOutBgm());
-            registry.OnInLevelEnter(async ctx => await PlayLevelBgm(ctx.ChapterId));
-            registry.OnInLevelExit(async () => await FadeOutBgm());
-            registry.OnLoadStart(async _ => await FadeOutBgm());
+            // registry.OnMainMenuEnter(async () =>
+            //     new AudioManagerHelperCommands.PlayBgmCommand("MainMenu_BGM").Execute()
+            // );
+            // registry.OnMainMenuExit(async () =>
+            //     new AudioManagerHelperCommands.StopBgmCommand().Execute()
+            // );
+            // registry.OnInLevelEnter(async _ =>
+            //     new AudioManagerHelperCommands.PlayBgmCommand("InLevel_BGM").Execute()
+            // );
+            // registry.OnInLevelExit(async () =>
+            //     new AudioManagerHelperCommands.StopBgmCommand().Execute()
+            // );
+            // registry.OnLoadStart(async _ =>
+            //     new AudioManagerHelperCommands.PlayBgmCommand("Loading_BGM").Execute()
+            // );
 
             registry.OnGameQuit(async () =>
             {
@@ -36,25 +46,6 @@ namespace Core
                 StopAllManaged();
                 await UniTask.CompletedTask;
             });
-        }
-
-        public async UniTask PlayMenuBgm()
-        {
-            CLogger.LogInfo("Playing Menu BGM", LogTag.Audio);
-            await UniTask.CompletedTask;
-        }
-
-        public async UniTask PlayLevelBgm(string chapterId)
-        {
-            CLogger.LogInfo($"Playing Level BGM for chapter: {chapterId}", LogTag.Audio);
-            await UniTask.CompletedTask;
-        }
-
-        public async UniTask FadeOutBgm()
-        {
-            CLogger.LogInfo("Fading out BGM", LogTag.Audio);
-            StopAllManaged();
-            await UniTask.CompletedTask;
         }
 
         internal void PlayManaged(EventReference fmodEvent, ManagedConfig config)
