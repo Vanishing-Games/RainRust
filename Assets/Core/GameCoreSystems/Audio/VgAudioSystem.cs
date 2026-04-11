@@ -164,11 +164,17 @@ namespace Core
             {
                 if (!RuntimeManager.HaveAllBanksLoaded)
                 {
-                    CLogger.LogWarn("FMOD Banks not fully loaded yet, waiting for RuntimeManager...", LogTag.Audio);
+                    CLogger.LogWarn(
+                        "FMOD Banks not fully loaded yet, waiting for RuntimeManager...",
+                        LogTag.Audio
+                    );
                 }
                 else
                 {
-                    CLogger.LogInfo("All FMOD Banks confirmed loaded by RuntimeManager.", LogTag.Audio);
+                    CLogger.LogInfo(
+                        "All FMOD Banks confirmed loaded by RuntimeManager.",
+                        LogTag.Audio
+                    );
                 }
             }
             catch (Exception e)
@@ -276,7 +282,10 @@ namespace Core
                 )
                 .MakeGenericMethod(entry.Managed.StopEventType);
             var disposable = (IDisposable)
-                method.Invoke(this, new object[] { entry.FmodEvent.Guid.ToString(), entry.Managed.StopMode });
+                method.Invoke(
+                    this,
+                    new object[] { entry.FmodEvent.Guid.ToString(), entry.Managed.StopMode }
+                );
             m_Subscriptions.Add((entry.FmodEvent.Guid.ToString(), disposable));
         }
 

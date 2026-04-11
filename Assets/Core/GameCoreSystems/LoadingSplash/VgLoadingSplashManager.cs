@@ -34,9 +34,24 @@ namespace Core
 
         public void RegisterHooks(IGameCoreHookRegistry registry)
         {
-            registry.OnLoadStart(_ => { Show(); return UniTask.CompletedTask; });
-            registry.OnLoadComplete(_ => { Hide(); return UniTask.CompletedTask; });
-            registry.OnBootStart(() => { Show(); return UniTask.CompletedTask; }, order: 0);
+            registry.OnLoadStart(_ =>
+            {
+                Show();
+                return UniTask.CompletedTask;
+            });
+            registry.OnLoadComplete(_ =>
+            {
+                Hide();
+                return UniTask.CompletedTask;
+            });
+            registry.OnBootStart(
+                () =>
+                {
+                    Show();
+                    return UniTask.CompletedTask;
+                },
+                order: 0
+            );
         }
 
         public void Init()

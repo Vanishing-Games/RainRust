@@ -16,7 +16,7 @@ namespace Editor.BuildScripts
         {
             string version = GetGitVersion();
             PlayerSettings.bundleVersion = version;
-            
+
             // For Android/iOS
             string buildNumberStr = GetBuildNumber();
             if (int.TryParse(buildNumberStr, out int buildNumber))
@@ -33,15 +33,19 @@ namespace Editor.BuildScripts
         {
             // Check CI/CD environment variables first (e.g., from GitHub Actions)
             string ciVersion = Environment.GetEnvironmentVariable("BUILD_VERSION");
-            if (!string.IsNullOrEmpty(ciVersion)) return ciVersion;
+            if (!string.IsNullOrEmpty(ciVersion))
+                return ciVersion;
 
             try
             {
-                ProcessStartInfo info = new ProcessStartInfo("git", "describe --tags --always --dirty")
+                ProcessStartInfo info = new ProcessStartInfo(
+                    "git",
+                    "describe --tags --always --dirty"
+                )
                 {
                     RedirectStandardOutput = true,
                     UseShellExecute = false,
-                    CreateNoWindow = true
+                    CreateNoWindow = true,
                 };
                 using (Process process = Process.Start(info))
                 {
@@ -60,7 +64,8 @@ namespace Editor.BuildScripts
         {
             // GitHub Actions provides GITHUB_RUN_NUMBER
             string ciBuildNumber = Environment.GetEnvironmentVariable("GITHUB_RUN_NUMBER");
-            if (!string.IsNullOrEmpty(ciBuildNumber)) return ciBuildNumber;
+            if (!string.IsNullOrEmpty(ciBuildNumber))
+                return ciBuildNumber;
 
             // Fallback: Date-based build number (integer for store compatibility)
             return DateTime.Now.ToString("yyyyMMdd");
@@ -69,7 +74,8 @@ namespace Editor.BuildScripts
         private void GenerateVersionInfoFile(string version)
         {
             string filePath = "Assets/Core/Common/BuildVersionInfo.cs";
-            string content = $@"/*
+            string content =
+                $@"/*
  * AUTO-GENERATED FILE - DO NOT MODIFY
  */
 namespace Core

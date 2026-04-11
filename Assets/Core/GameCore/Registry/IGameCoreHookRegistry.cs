@@ -5,7 +5,6 @@ namespace Core
 {
     public interface IGameCoreHookRegistry
     {
-
         void OnBootStart(Func<UniTask> handler, int order = 0);
 
         void OnLoadStart(Func<LoadContext, UniTask> handler);

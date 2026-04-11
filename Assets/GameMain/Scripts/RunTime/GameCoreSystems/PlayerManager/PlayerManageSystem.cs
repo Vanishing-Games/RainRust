@@ -13,7 +13,11 @@ namespace GameMain.RunTime
         public void RegisterHooks(IGameCoreHookRegistry registry)
         {
             registry.OnInLevelEnter(async ctx => await SpawnPlayer(ctx));
-            registry.OnInLevelExit(() => { DespawnPlayer(); return UniTask.CompletedTask; });
+            registry.OnInLevelExit(() =>
+            {
+                DespawnPlayer();
+                return UniTask.CompletedTask;
+            });
         }
 
         public async UniTask SpawnPlayer(LoadContext ctx)

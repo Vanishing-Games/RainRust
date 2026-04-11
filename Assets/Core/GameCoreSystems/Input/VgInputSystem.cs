@@ -172,8 +172,6 @@ namespace Core
             public bool isReleased;
         }
 
-
-
         [BoxGroup("Debug Display")]
         [LabelText("Show Real-Time Input")]
         [ToggleLeft]
