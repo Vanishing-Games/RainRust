@@ -12,7 +12,7 @@ namespace Core
 
         public void RegisterHooks(IGameCoreHookRegistry registry)
         {
-            registry.OnSystemInit(async () =>
+            registry.OnBootStart(async () =>
             {
                 if (m_MainCamera == null)
                 {

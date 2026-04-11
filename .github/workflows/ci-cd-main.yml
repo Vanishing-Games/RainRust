@@ -21,6 +21,8 @@ on:
     branches: 
       - develop
       - 'release/**'
+    tags:
+      - 'v*.*.*'
     # 排除.github目录的更改，避免工作流更新时的无意义触发
     paths-ignore:
       - '.github/workflows/**'
@@ -214,6 +216,18 @@ jobs:
             SHOULD_RUN_DEPLOY=false
             PIPELINE_DESC="❌ 跳过所有CI/CD流程"
             
+          elif [[ "$EVENT_NAME" == "push" && "$GITHUB_REF_TYPE" == "tag" && "$REF_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+ ]]; then
+            # Git Tag 触发 - 正式版本发布流程
+            SHOULD_RUN_TESTS=true
+            SHOULD_RUN_BUILD=true
+            SHOULD_RUN_STYLE=true
+            SHOULD_RUN_DEPLOY=true
+            BUILD_TYPE="release"
+            # 提取纯版本号 (v1.2.3 -> 1.2.3)
+            RELEASE_VERSION="${REF_NAME#v}"
+            PIPELINE_DESC="🚀 Release正式发布流程 (版本: $RELEASE_VERSION) (代码检测 → 单元测试 → 构建测试 → 发布Release)"
+            echo "release_version=$RELEASE_VERSION" >> $GITHUB_OUTPUT
+
           elif [[ "$BRANCH_NAME" =~ ^release/ ]]; then
             # Release分支 - 完整CI/CD流程
             SHOULD_RUN_TESTS=true
@@ -795,10 +809,20 @@ jobs:
         include:
           - os: ubuntu-latest
             buildTarget: StandaloneWindows64
-            displayName: Windows 64位
+            profile: Windows-Debug
+            displayName: Windows (Debug)
+          - os: ubuntu-latest
+            buildTarget: StandaloneWindows64
+            profile: Windows-Release
+            displayName: Windows (Release)
           - os: macos-latest  
             buildTarget: StandaloneOSX
-            displayName: macOS (ARM)
+            profile: Mac-Debug
+            displayName: macOS (Debug)
+          - os: macos-latest  
+            buildTarget: StandaloneOSX
+            profile: Mac-Release
+            displayName: macOS (Release)
     
     runs-on: ${{ matrix.os }}
     
@@ -831,25 +855,30 @@ jobs:
           PROJECT_NAME=$(jq -r '.project.name' "$CONFIG_FILE")
           BUILD_TYPE="${{ needs.flow-prediction.outputs.build_type }}"
           RETENTION_DAYS=$(jq -r '.jobs.build_tests.settings.retentionDays' "$CONFIG_FILE")
+          RELEASE_VERSION="${{ needs.flow-prediction.outputs.release_version }}"
           
           echo "Unity版本: $UNITY_VERSION"
           echo "项目名称: $PROJECT_NAME"  
           echo "构建类型: $BUILD_TYPE"
+          echo "发布版本: $RELEASE_VERSION"
           echo "保留天数: $RETENTION_DAYS"
           echo "构建目标: ${{ matrix.buildTarget }}"
           echo "显示名称: ${{ matrix.displayName }}"
+          echo "Build Profile: ${{ matrix.profile }}"
           
           echo "unity_version=$UNITY_VERSION" >> $GITHUB_OUTPUT
           echo "project_name=$PROJECT_NAME" >> $GITHUB_OUTPUT
           echo "build_type=$BUILD_TYPE" >> $GITHUB_OUTPUT
           echo "retention_days=$RETENTION_DAYS" >> $GITHUB_OUTPUT
+          echo "release_version=$RELEASE_VERSION" >> $GITHUB_OUTPUT
 
       - name: 💾 缓存Unity Library  
         uses: actions/cache@v4
         with:
           path: Library
-          key: Library-${{ matrix.buildTarget }}-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          key: Library-${{ matrix.buildTarget }}-${{ matrix.profile }}-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
           restore-keys: |
+            Library-${{ matrix.buildTarget }}-${{ matrix.profile }}-
             Library-${{ matrix.buildTarget }}-
             Library-
 
@@ -864,20 +893,20 @@ jobs:
           unityVersion: ${{ steps.load-build-config.outputs.unity_version }}
           targetPlatform: ${{ matrix.buildTarget }}
           buildName: ${{ steps.load-build-config.outputs.project_name }}
+          versioning: Tag
+          customParameters: -buildProfile "Assets/Settings/Build Profiles/${{ matrix.profile }}.asset"
           
       - name: 📦 确定产物名称并上传
         id: determine-artifact-name
         run: |
           # 确定产物名称
-          if [[ "${{ github.event.pull_request.title }}" == *"[ADD DEPLOY]"* ]] || [[ "${{ github.event.head_commit.message }}" == *"[ADD DEPLOY]"* ]]; then
-            # 使用特殊命名（用于部署）
-            ARTIFACT_NAME="${{ steps.load-build-config.outputs.project_name }}_${{ matrix.buildTarget }}_${{ github.event.pull_request.title || github.ref_name }}"
-            echo "使用部署专用命名: $ARTIFACT_NAME"
-          else
-            # 使用常规命名
-            ARTIFACT_NAME="${{ steps.load-build-config.outputs.project_name }}_${{ matrix.buildTarget }}_v${{ github.run_number }}"
-            echo "使用常规命名: $ARTIFACT_NAME"
+          VERSION_SUFFIX="v${{ github.run_number }}"
+          if [[ -n "${{ steps.load-build-config.outputs.release_version }}" ]]; then
+            VERSION_SUFFIX="v${{ steps.load-build-config.outputs.release_version }}"
           fi
+
+          ARTIFACT_NAME="${{ steps.load-build-config.outputs.project_name }}_${{ matrix.profile }}_${VERSION_SUFFIX}"
+          echo "产物名称: $ARTIFACT_NAME"
           
           echo "artifact_name=$ARTIFACT_NAME" >> $GITHUB_OUTPUT
 
@@ -917,16 +946,21 @@ jobs:
           fi
 
   # =============================================================================
-  # 阶段4: 部署到GitHub Pages - 将构建产物部署到GitHub Pages
+  # 阶段4: 部署到GitHub Release - 将构建产物作为附件发布
   # =============================================================================
-  deploy-pages:
-    name: 🚀 部署GitHub Pages
+  deploy-release:
+    name: 🚀 发布 GitHub Release
     runs-on: ubuntu-latest
     needs: [flow-prediction, build-tests]
+    # 仅在 Tag 触发且预测需要部署时运行
     if: |
       always() &&
+      github.event_name == 'push' && github.ref_type == 'tag' &&
       needs.flow-prediction.outputs.should_run_deploy == 'true' &&
-      (needs.build-tests.result == 'success' || needs.build-tests.result == 'failure')
+      needs.build-tests.result == 'success'
+    
+    permissions:
+      contents: write
     
     steps:
       - name: 检出代码
@@ -936,179 +970,44 @@ jobs:
         id: load-deploy-config
         run: |
           echo "🔧 加载部署配置..."
-          
           CONFIG_FILE=".github/workflows/Pipeline Config/pipeline-settings.json"
-          
           PROJECT_NAME=$(jq -r '.project.name' "$CONFIG_FILE")
-          ARTIFACT_PATTERN=$(jq -r '.jobs.deploy_pages.settings.artifactNamePattern' "$CONFIG_FILE")
-          BRANCH_REQUIREMENT=$(jq -r '.jobs.deploy_pages.settings.branchRequirement' "$CONFIG_FILE")
-          
-          echo "项目名称: $PROJECT_NAME"
-          echo "产物命名模式: $ARTIFACT_PATTERN"
-          echo "分支要求: $BRANCH_REQUIREMENT"
-          
-          # 检查当前分支是否符合要求
-          CURRENT_BRANCH="${{ github.ref_name }}"
-          
-          # 检查是否有强制部署关键字
-          if [[ "${{ github.event.pull_request.title }}" == *"[ADD DEPLOY]"* ]] || [[ "${{ github.event.head_commit.message }}" == *"[ADD DEPLOY]"* ]]; then
-            echo "🔥 检测到 [ADD DEPLOY] 关键字，跳过分支限制"
-            echo "✅ 强制部署：忽略分支要求 ($BRANCH_REQUIREMENT)"
-            echo "branch_check=pass" >> $GITHUB_OUTPUT
-          elif [[ "$CURRENT_BRANCH" =~ $BRANCH_REQUIREMENT ]]; then
-            echo "✅ 当前分支 ($CURRENT_BRANCH) 符合部署要求"
-            echo "branch_check=pass" >> $GITHUB_OUTPUT
-          else
-            echo "❌ 当前分支 ($CURRENT_BRANCH) 不符合部署要求 ($BRANCH_REQUIREMENT)"
-            echo "❓ 提示：使用 [ADD DEPLOY] 关键字可强制部署"
-            echo "branch_check=fail" >> $GITHUB_OUTPUT
-          fi
-          
           echo "project_name=$PROJECT_NAME" >> $GITHUB_OUTPUT
-          echo "current_branch=$CURRENT_BRANCH" >> $GITHUB_OUTPUT
 
-      - name: 📥 下载构建产物
-        id: download-artifacts
-        if: steps.load-deploy-config.outputs.branch_check == 'pass'
+      - name: 📥 下载所有构建产物
         uses: actions/download-artifact@v4
-        continue-on-error: true
         with:
-          pattern: ${{ steps.load-deploy-config.outputs.project_name }}_*_v${{ github.run_number }}
           path: ./artifacts
-          merge-multiple: true
+          pattern: ${{ steps.load-deploy-config.outputs.project_name }}_*
 
-      - name: 📄 准备Pages内容
-        id: prepare-pages
-        if: steps.load-deploy-config.outputs.branch_check == 'pass'
+      - name: 📦 准备发布附件 (Zip)
+        id: prepare-assets
         run: |
-          echo "📄 准备GitHub Pages部署内容..."
-          
-          mkdir -p ./pages
-          
-          # 创建简单的索引页面
-          cat > ./pages/index.html << 'EOF'
-          <!DOCTYPE html>
-          <html>
-          <head>
-              <title>${{ steps.load-deploy-config.outputs.project_name }} - 构建产物</title>
-              <meta charset="utf-8">
-              <style>
-                  body { font-family: Arial, sans-serif; margin: 40px; }
-                  .header { border-bottom: 1px solid #ccc; padding-bottom: 20px; }
-                  .artifact { margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 5px; }
-                  .download-link { color: #0366d6; text-decoration: none; }
-                  .download-link:hover { text-decoration: underline; }
-              </style>
-          </head>
-          <body>
-              <div class="header">
-                  <h1>${{ steps.load-deploy-config.outputs.project_name }}</h1>
-                  <p>构建版本: v${{ github.run_number }}</p>
-                  <p>构建分支: ${{ steps.load-deploy-config.outputs.current_branch }}</p>
-                  <p>构建时间: $(date)</p>
-              </div>
-              
-              <h2>📦 可用的构建产物</h2>
-          EOF
-          
-          # 列出所有构建产物
-          if [[ -d "./artifacts" ]]; then
-            for artifact in ./artifacts/*/; do
-              if [[ -d "$artifact" ]]; then
-                artifact_name=$(basename "$artifact")
-                echo "              <div class=\"artifact\">" >> ./pages/index.html
-                echo "                  <h3>🎯 $artifact_name</h3>" >> ./pages/index.html
-                echo "                  <p><a href=\"$artifact_name/\" class=\"download-link\">📥 查看内容</a></p>" >> ./pages/index.html
-                echo "              </div>" >> ./pages/index.html
-              fi
-            done
-            
-            # 复制构建产物到pages目录
-            cp -r ./artifacts/* ./pages/
-          else
-            echo "              <p>❌ 没有找到构建产物</p>" >> ./pages/index.html
-          fi
-          
-          echo "          </body>" >> ./pages/index.html
-          echo "          </html>" >> ./pages/index.html
-          
-          echo "✅ Pages内容准备完成"
+          echo "📦 压缩构建产物..."
+          mkdir -p ./release-assets
+          cd ./artifacts
+          for dir in */; do
+            if [ -d "$dir" ]; then
+              zip_name="${dir%/}.zip"
+              echo "正在压缩 $dir -> $zip_name"
+              zip -r "../release-assets/$zip_name" "$dir"
+            fi
+          done
+          cd ..
+          echo "✅ 附件准备完成"
+          ls -lh ./release-assets
 
-      - name: 🔧 配置Pages
-        if: steps.load-deploy-config.outputs.branch_check == 'pass'
-        uses: actions/configure-pages@v4
-
-      - name: 📤 上传Pages内容
-        if: steps.load-deploy-config.outputs.branch_check == 'pass'
-        uses: actions/upload-pages-artifact@v3
+      - name: 🚀 创建 GitHub Release
+        uses: softprops/action-gh-release@v2
         with:
-          path: ./pages
-
-      - name: 🚀 部署到Pages
-        if: steps.load-deploy-config.outputs.branch_check == 'pass'
-        id: deployment
-        uses: actions/deploy-pages@v4
-
-      - name: 📋 部署结果摘要
-        if: always()
-        run: |
-          echo "## 🚀 GitHub Pages部署结果" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          
-          # 检查各个步骤的状态
-          BRANCH_CHECK="${{ steps.load-deploy-config.outputs.branch_check }}"
-          DOWNLOAD_STATUS="${{ steps.download-artifacts.conclusion || 'unknown' }}"
-          PREPARE_STATUS="${{ steps.prepare-pages.conclusion || 'unknown' }}"
-          DEPLOY_STATUS="${{ steps.deployment.conclusion || 'unknown' }}"
-          
-          echo "🔍 调试信息:"
-          echo "- 分支检查: $BRANCH_CHECK"
-          echo "- 下载产物: $DOWNLOAD_STATUS"
-          echo "- 准备内容: $PREPARE_STATUS"
-          echo "- 部署状态: $DEPLOY_STATUS"
-          echo ""
-          
-          if [[ "$BRANCH_CHECK" == "pass" ]]; then
-            # 分支检查通过，检查部署结果
-            if [[ "$DEPLOY_STATUS" == "success" ]]; then
-              echo "✅ **部署状态:** 成功" >> $GITHUB_STEP_SUMMARY
-            elif [[ "$DEPLOY_STATUS" == "failure" ]]; then
-              echo "❌ **部署状态:** 失败" >> $GITHUB_STEP_SUMMARY
-            elif [[ "$DEPLOY_STATUS" == "skipped" ]]; then
-              echo "⏭️ **部署状态:** 跳过" >> $GITHUB_STEP_SUMMARY
-            else
-              echo "⚠️ **部署状态:** $DEPLOY_STATUS" >> $GITHUB_STEP_SUMMARY
-            fi
-            
-            echo "" >> $GITHUB_STEP_SUMMARY
-            echo "**部署信息:**" >> $GITHUB_STEP_SUMMARY
-            echo "- 项目名称: \`${{ steps.load-deploy-config.outputs.project_name }}\`" >> $GITHUB_STEP_SUMMARY
-            echo "- 构建版本: \`v${{ github.run_number }}\`" >> $GITHUB_STEP_SUMMARY
-            echo "- 源分支: \`${{ steps.load-deploy-config.outputs.current_branch }}\`" >> $GITHUB_STEP_SUMMARY
-            
-            # 检查是否是强制部署
-            if [[ "${{ github.event.pull_request.title }}" == *"[ADD DEPLOY]"* ]] || [[ "${{ github.event.head_commit.message }}" == *"[ADD DEPLOY]"* ]]; then
-              echo "- 部署类型: \`强制部署 (通过 [ADD DEPLOY] 关键字)\`" >> $GITHUB_STEP_SUMMARY
-            else
-              echo "- 部署类型: \`标准部署 (符合分支要求)\`" >> $GITHUB_STEP_SUMMARY
-            fi
-            
-            if [[ -n "${{ steps.deployment.outputs.page_url }}" ]]; then
-              echo "- 访问链接: [${{ steps.deployment.outputs.page_url }}](${{ steps.deployment.outputs.page_url }})" >> $GITHUB_STEP_SUMMARY
-            fi
-            
-            # 显示错误信息（如果有）
-            if [[ "$DEPLOY_STATUS" == "failure" ]]; then
-              echo "- 失败原因: 请查看部署日志了解详细错误信息" >> $GITHUB_STEP_SUMMARY
-            fi
-            
-          else
-            echo "⏭️ **部署状态:** 跳过" >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
-            echo "**跳过原因:** 当前分支 (\`${{ steps.load-deploy-config.outputs.current_branch }}\`) 不符合部署要求" >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
-            echo "💡 **提示:** 在PR标题中添加 \`[ADD DEPLOY]\` 关键字可强制启用部署" >> $GITHUB_STEP_SUMMARY
-          fi
+          files: ./release-assets/*.zip
+          name: Release ${{ github.ref_name }}
+          tag_name: ${{ github.ref }}
+          draft: true
+          prerelease: false
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   # =============================================================================
   # 阶段5: 执行详情汇总 - 汇总整个流水线的执行情况
@@ -1116,7 +1015,7 @@ jobs:
   execution-summary:
     name: 📊 执行详情汇总
     runs-on: ubuntu-latest
-    needs: [flow-prediction, code-style-check, unity-tests, build-tests, deploy-pages]
+    needs: [flow-prediction, code-style-check, unity-tests, build-tests, deploy-release]
     if: always()
     
     steps:
@@ -1129,13 +1028,13 @@ jobs:
           STYLE_STATUS="${{ needs.code-style-check.result }}"
           TEST_STATUS="${{ needs.unity-tests.result }}" 
           BUILD_STATUS="${{ needs.build-tests.result }}"
-          DEPLOY_STATUS="${{ needs.deploy-pages.result }}"
+          DEPLOY_STATUS="${{ needs.deploy-release.result }}"
           
           echo "流程预测: $FLOW_STATUS"
           echo "代码检查: $STYLE_STATUS"
           echo "单元测试: $TEST_STATUS"
           echo "构建测试: $BUILD_STATUS"  
-          echo "Pages部署: $DEPLOY_STATUS"
+          echo "Release发布: $DEPLOY_STATUS"
           
           # 生成详细的执行摘要
           echo "# 🚀 CI/CD流水线执行详情" >> $GITHUB_STEP_SUMMARY
@@ -1186,7 +1085,7 @@ jobs:
           # 构建测试  
           if [[ "${{ needs.flow-prediction.outputs.should_run_build }}" == "true" ]]; then
             if [[ "$BUILD_STATUS" == "success" ]]; then
-              echo "| 🔨 构建测试 | ✅ 成功 | 已完成 | Windows和macOS构建成功 |" >> $GITHUB_STEP_SUMMARY
+              echo "| 🔨 构建测试 | ✅ 成功 | 已完成 | 4个Profile版本构建成功 |" >> $GITHUB_STEP_SUMMARY
             elif [[ "$BUILD_STATUS" == "failure" ]]; then
               echo "| 🔨 构建测试 | ⚠️ 警告 | 已完成 | 构建失败但不影响流程 |" >> $GITHUB_STEP_SUMMARY
             else
@@ -1196,17 +1095,19 @@ jobs:
             echo "| 🔨 构建测试 | ⏭️ 跳过 | - | 根据触发条件跳过 |" >> $GITHUB_STEP_SUMMARY
           fi
           
-          # Pages部署
+          # Release发布
           if [[ "${{ needs.flow-prediction.outputs.should_run_deploy }}" == "true" ]]; then
             if [[ "$DEPLOY_STATUS" == "success" ]]; then
-              echo "| 🚀 Pages部署 | ✅ 成功 | 已完成 | 构建产物已部署到GitHub Pages |" >> $GITHUB_STEP_SUMMARY
+              echo "| 🚀 Release发布 | ✅ 成功 | 已完成 | 构建产物已发布到 GitHub Release |" >> $GITHUB_STEP_SUMMARY
             elif [[ "$DEPLOY_STATUS" == "failure" ]]; then  
-              echo "| 🚀 Pages部署 | ⚠️ 警告 | 已完成 | 部署失败但不影响流程 |" >> $GITHUB_STEP_SUMMARY
+              echo "| 🚀 Release发布 | ⚠️ 警告 | 已完成 | 发布失败但不影响流程 |" >> $GITHUB_STEP_SUMMARY
+            elif [[ "$DEPLOY_STATUS" == "skipped" ]]; then
+              echo "| 🚀 Release发布 | ⏭️ 跳过 | - | 非Tag推送或跳过部署 |" >> $GITHUB_STEP_SUMMARY
             else
-              echo "| 🚀 Pages部署 | ⚠️ 异常 | 已完成 | 状态: $DEPLOY_STATUS |" >> $GITHUB_STEP_SUMMARY
+              echo "| 🚀 Release发布 | ⚠️ 异常 | 已完成 | 状态: $DEPLOY_STATUS |" >> $GITHUB_STEP_SUMMARY
             fi
           else
-            echo "| 🚀 Pages部署 | ⏭️ 跳过 | - | 根据触发条件跳过 |" >> $GITHUB_STEP_SUMMARY
+            echo "| 🚀 Release发布 | ⏭️ 跳过 | - | 根据触发条件跳过 |" >> $GITHUB_STEP_SUMMARY
           fi
           
           echo "" >> $GITHUB_STEP_SUMMARY

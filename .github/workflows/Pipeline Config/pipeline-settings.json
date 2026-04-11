@@ -8,10 +8,16 @@
   "triggers": {
     "description": "定义CI/CD流水线的触发条件和分支规则",
     "branches": {
-      "release": {
+      "release_tag": {
+        "pattern": "v*.*.*",
+        "description": "Git Tag 触发正式版本发布",
+        "triggers": ["unit_tests", "build_tests", "code_style", "deploy_release"],
+        "buildType": "release"
+      },
+      "release_branch": {
         "pattern": "release/**",
         "description": "发布分支，触发完整CI/CD流程",
-        "triggers": ["unit_tests", "build_tests", "code_style", "deploy_pages"],
+        "triggers": ["unit_tests", "build_tests", "code_style"],
         "buildType": "release"
       },
       "develop": {
@@ -70,7 +76,7 @@
         {
           "keyword": "[ADD DEPLOY]",
           "action": "add_deploy",
-          "description": "增加部署步骤(如果没有),构建产物命名为{项目名称}_{PR名称}"
+          "description": "增加部署步骤(如果没有)"
         }
       ]
     }
@@ -93,21 +99,15 @@
     },
     "build_tests": {
       "name": "构建测试",
-      "description": "构建Windows和macOS(ARM)版本",
+      "description": "构建项目的4个Build Profile版本",
       "timeout": 60,
       "failureAction": "warn_only",
       "settings": {
-        "platforms": [
-          {
-            "name": "Windows 64位",
-            "buildTarget": "StandaloneWindows64",
-            "os": "ubuntu-latest"
-          },
-          {
-            "name": "macOS (ARM)",
-            "buildTarget": "StandaloneOSX",
-            "os": "macos-latest"
-          }
+        "profiles": [
+          "Windows-Debug",
+          "Windows-Release",
+          "Mac-Debug",
+          "Mac-Release"
         ],
         "retentionDays": 7
       }
@@ -122,14 +122,14 @@
         "checkPaths": ["Assets/Core","Assets/GameMain","Assets/Demos"]
       }
     },
-    "deploy_pages": {
-      "name": "部署到GitHub Pages",
-      "description": "将构建产物部署到GitHub Pages",
-      "timeout": 10,
+    "deploy_release": {
+      "name": "发布 GitHub Release",
+      "description": "将构建产物作为附件发布到 GitHub Release",
+      "timeout": 15,
       "failureAction": "warn_only",
       "settings": {
-        "artifactNamePattern": "{项目名称}_{构建平台}_v{版本}",
-        "branchRequirement": "release/**"
+        "artifactNamePattern": "{项目名称}_{Profile}_v{版本}.zip",
+        "tagRequirement": "v*.*.*"
       }
     }
   },
@@ -153,7 +153,7 @@
       "optional": [
         {
           "name": "GITHUB_TOKEN",
-          "description": "GitHub Pages 部署令牌（通常自动提供）"
+          "description": "GitHub 访问令牌"
         }
       ]
     }

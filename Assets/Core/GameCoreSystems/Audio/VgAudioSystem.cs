@@ -17,7 +17,7 @@ namespace Core
 
         public void RegisterHooks(IGameCoreHookRegistry registry)
         {
-            registry.OnSystemInit(async () =>
+            registry.OnBootStart(async () =>
             {
                 LoadAllBanks();
                 RegisterAllEntries();
@@ -160,7 +160,21 @@ namespace Core
 
         private void LoadAllBanks()
         {
-            CLogger.LogInfo("All FMOD Banks loaded", LogTag.Audio);
+            try
+            {
+                if (!RuntimeManager.HaveAllBanksLoaded)
+                {
+                    CLogger.LogWarn("FMOD Banks not fully loaded yet, waiting for RuntimeManager...", LogTag.Audio);
+                }
+                else
+                {
+                    CLogger.LogInfo("All FMOD Banks confirmed loaded by RuntimeManager.", LogTag.Audio);
+                }
+            }
+            catch (Exception e)
+            {
+                CLogger.LogError($"Failed to load FMOD Banks: {e.Message}", LogTag.Audio);
+            }
         }
 
         private void RegisterAllEntries()

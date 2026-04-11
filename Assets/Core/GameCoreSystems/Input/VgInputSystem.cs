@@ -17,7 +17,7 @@ namespace Core
 
         public void RegisterHooks(IGameCoreHookRegistry registry)
         {
-            registry.OnSystemInit(async () =>
+            registry.OnBootStart(async () =>
             {
                 InputSystem.onDeviceChange += OnDeviceChange;
 #if UNITY_EDITOR

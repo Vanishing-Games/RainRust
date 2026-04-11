@@ -29,7 +29,7 @@ namespace Core
 
         public void RegisterHooks(IGameCoreHookRegistry registry)
         {
-            registry.OnSystemInit(async () =>
+            registry.OnBootStart(async () =>
             {
                 InitializeDirectory();
                 RefreshSaveSlots();

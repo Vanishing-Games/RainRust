@@ -97,8 +97,6 @@ namespace Core
             }
         }
 
-        public void OnSystemInit(Func<UniTask> handler) => GetOrCreate(m_InitHandlers).Add(handler);
-
         public void OnBootStart(Func<UniTask> handler, int order = 0) =>
             m_BootHandlers.Add((order, handler));
 
