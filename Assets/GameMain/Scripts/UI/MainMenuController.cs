@@ -2,14 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Core;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UIElements;
-using Cysharp.Threading.Tasks;
 
 public class MainMenuController : MonoBehaviour
 {
     private UIDocument _document;
-    
+
     // Screens
     private VisualElement _mainMenuScreen;
     private VisualElement _saveSlotScreen;
@@ -38,7 +38,8 @@ public class MainMenuController : MonoBehaviour
     private void OnEnable()
     {
         _document = GetComponent<UIDocument>();
-        if (_document == null) return;
+        if (_document == null)
+            return;
 
         var root = _document.rootVisualElement;
 
@@ -72,11 +73,16 @@ public class MainMenuController : MonoBehaviour
         _renameConfirmButton = root.Q<Button>("rename-confirm-button");
         _renameCancelButton = root.Q<Button>("rename-cancel-button");
 
-        _renameConfirmButton?.RegisterCallback<ClickEvent>(evt => OnRenameConfirmClicked().Forget());
-        _renameCancelButton?.RegisterCallback<ClickEvent>(evt => _renameOverlay.style.display = DisplayStyle.None);
+        _renameConfirmButton?.RegisterCallback<ClickEvent>(evt =>
+            OnRenameConfirmClicked().Forget()
+        );
+        _renameCancelButton?.RegisterCallback<ClickEvent>(evt =>
+            _renameOverlay.style.display = DisplayStyle.None
+        );
 
         // Settings Elements
-        root.Q<Button>("back-to-menu-from-settings")?.RegisterCallback<ClickEvent>(evt => ShowScreen(_mainMenuScreen));
+        root.Q<Button>("back-to-menu-from-settings")
+            ?.RegisterCallback<ClickEvent>(evt => ShowScreen(_mainMenuScreen));
     }
 
     private void ShowScreen(VisualElement screenToShow)
@@ -102,15 +108,17 @@ public class MainMenuController : MonoBehaviour
         {
             var slotBtn = new Button { name = meta.SlotName };
             slotBtn.AddToClassList("slot-button");
-            
+
             // Content
             var content = new VisualElement();
             content.AddToClassList("slot-content");
 
             var nameLabel = new Label(meta.DisplayName ?? meta.SlotName);
             nameLabel.AddToClassList("slot-name-label");
-            
-            var infoLabel = new Label($"Last Saved: {meta.LastSavedTime:yyyy-MM-dd HH:mm} | Time: {TimeSpan.FromSeconds(meta.PlayTimeInSeconds):hh\\:mm\\:ss}");
+
+            var infoLabel = new Label(
+                $"Last Saved: {meta.LastSavedTime:yyyy-MM-dd HH:mm} | Time: {TimeSpan.FromSeconds(meta.PlayTimeInSeconds):hh\\:mm\\:ss}"
+            );
             infoLabel.AddToClassList("slot-info-label");
 
             content.Add(nameLabel);
@@ -123,7 +131,8 @@ public class MainMenuController : MonoBehaviour
 
             var renameBtn = new Button { text = "Rename" };
             renameBtn.AddToClassList("rename-button");
-            renameBtn.RegisterCallback<ClickEvent>(evt => {
+            renameBtn.RegisterCallback<ClickEvent>(evt =>
+            {
                 evt.StopPropagation(); // Prevent slot selection
                 OpenRenamePopup(meta.SlotName, meta.DisplayName);
             });
@@ -162,7 +171,7 @@ public class MainMenuController : MonoBehaviour
         string newSlotName = $"slot_{DateTime.Now:yyyyMMdd_HHmmss}";
         Debug.Log($"Creating new save: {newSlotName}");
         VgSaveSystem.Instance.SetCurrentSlot(newSlotName);
-        
+
         var command = new GameMain.RunTime.GameFlowCommands.StartGameCommand("Chapter1", "level0");
         command.Execute().Forget();
     }
@@ -173,7 +182,10 @@ public class MainMenuController : MonoBehaviour
         bool success = await VgSaveSystem.Instance.LoadSlotAsync(slotName);
         if (success)
         {
-            var command = new GameMain.RunTime.GameFlowCommands.StartGameCommand("Chapter1", "level0");
+            var command = new GameMain.RunTime.GameFlowCommands.StartGameCommand(
+                "Chapter1",
+                "level0"
+            );
             command.Execute().Forget();
         }
     }
