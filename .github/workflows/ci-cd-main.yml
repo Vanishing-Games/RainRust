@@ -690,6 +690,18 @@ jobs:
           echo "generate_coverage=$GENERATE_COVERAGE" >> $GITHUB_OUTPUT
           echo "quiet_mode=$QUIET_MODE" >> $GITHUB_OUTPUT
 
+          # 确定重试次数和延迟
+          RETRY_COUNT=3
+          RETRY_DELAY=30000
+          BUILD_TYPE="${{ needs.flow-prediction.outputs.build_type }}"
+          if [[ "$BUILD_TYPE" == "release" ]]; then
+            RETRY_COUNT=10
+            RETRY_DELAY=120000
+            echo "🚀 检测到正式发布流程，增加测试重试次数至 $RETRY_COUNT，延迟至 $RETRY_DELAY ms"
+          fi
+          echo "retry_count=$RETRY_COUNT" >> $GITHUB_OUTPUT
+          echo "retry_delay=$RETRY_DELAY" >> $GITHUB_OUTPUT
+
       - name: 💾 缓存Unity Library
         uses: actions/cache@v4
         with:
@@ -703,8 +715,8 @@ jobs:
         id: edit-tests
         with:
           action: game-ci/unity-test-runner@v4
-          attempt_limit: 3
-          attempt_delay: 30000
+          attempt_limit: ${{ steps.load-test-config.outputs.retry_count }}
+          attempt_delay: ${{ steps.load-test-config.outputs.retry_delay }}
           with: |
             unityVersion: ${{ steps.load-test-config.outputs.unity_version }}
             testMode: EditMode
@@ -719,8 +731,8 @@ jobs:
         id: play-tests
         with:
           action: game-ci/unity-test-runner@v4
-          attempt_limit: 3
-          attempt_delay: 30000
+          attempt_limit: ${{ steps.load-test-config.outputs.retry_count }}
+          attempt_delay: ${{ steps.load-test-config.outputs.retry_delay }}
           with: |
             unityVersion: ${{ steps.load-test-config.outputs.unity_version }}
             testMode: PlayMode
@@ -874,6 +886,17 @@ jobs:
           echo "retention_days=$RETENTION_DAYS" >> $GITHUB_OUTPUT
           echo "release_version=$RELEASE_VERSION" >> $GITHUB_OUTPUT
 
+          # 确定重试次数和延迟
+          RETRY_COUNT=3
+          RETRY_DELAY=30000
+          if [[ "$BUILD_TYPE" == "release" ]]; then
+            RETRY_COUNT=10
+            RETRY_DELAY=120000
+            echo "🚀 检测到正式发布流程，增加构建重试次数至 $RETRY_COUNT，延迟至 $RETRY_DELAY ms"
+          fi
+          echo "retry_count=$RETRY_COUNT" >> $GITHUB_OUTPUT
+          echo "retry_delay=$RETRY_DELAY" >> $GITHUB_OUTPUT
+
       - name: 💾 缓存Unity Library  
         uses: actions/cache@v4
         with:
@@ -889,8 +912,8 @@ jobs:
         id: unity-build
         with:
           action: game-ci/unity-builder@v4
-          attempt_limit: 3
-          attempt_delay: 30000
+          attempt_limit: ${{ steps.load-build-config.outputs.retry_count }}
+          attempt_delay: ${{ steps.load-build-config.outputs.retry_delay }}
           with: |
             unityVersion: ${{ steps.load-build-config.outputs.unity_version }}
             targetPlatform: ${{ matrix.buildTarget }}
