@@ -257,10 +257,10 @@ jobs:
           elif [[ "$BRANCH_NAME" == "develop" && "$EVENT_NAME" == "push" ]]; then
             # Develop分支推送 - CI流程
             SHOULD_RUN_TESTS=true
-            SHOULD_RUN_BUILD=false  
+            SHOULD_RUN_BUILD=true  
             SHOULD_RUN_STYLE=true
             BUILD_TYPE="preview"
-            PIPELINE_DESC="🔄 Develop分支状态验证 (代码检测 → 单元测试)"
+            PIPELINE_DESC="🔄 Develop分支状态验证 (代码检测 → 单元测试 → 构建测试)"
             
           elif [[ "$EVENT_NAME" == "schedule" ]]; then
             # 定时构建 - 仅构建测试
