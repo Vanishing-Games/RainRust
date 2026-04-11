@@ -6,8 +6,10 @@ namespace Core
     {
         protected override void Awake()
         {
+            CLogger.LogInfo("[GameCore] Awake() called", LogTag.GameCoreStart);
             base.Awake();
             InitFlow();
+            CLogger.LogInfo("[GameCore] Awake() done (InitFlow completed)", LogTag.GameCoreStart);
         }
 
         protected async void Start()

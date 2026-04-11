@@ -9,10 +9,12 @@ namespace Core
     {
         public void Register(ICoreModuleSystem system)
         {
+            CLogger.LogInfo($"[CoreSystemRegistry] Register: {system.SystemName} (BootHandlers before: {m_BootHandlers.Count})", LogTag.GameCoreStart);
             m_Systems[system.GetType()] = system;
             m_CurrentRegisteringSystemType = system.GetType();
             system.RegisterHooks(this);
             m_CurrentRegisteringSystemType = null;
+            CLogger.LogInfo($"[CoreSystemRegistry] Register done: {system.SystemName} (BootHandlers after: {m_BootHandlers.Count})", LogTag.GameCoreStart);
         }
 
         public async UniTask InitializeAllAsync()
@@ -33,9 +35,10 @@ namespace Core
 
         public async UniTask FireOnBootStart()
         {
-            var sortedBootHandlers = m_BootHandlers.OrderBy(x => x.Order).Select(x => x.Handler);
-            foreach (var handler in sortedBootHandlers)
-                await handler();
+            var sortedBootHandlers = m_BootHandlers.OrderBy(x => x.Order).ToList();
+            CLogger.LogInfo($"[CoreSystemRegistry] FireOnBootStart: {sortedBootHandlers.Count} handlers — [{string.Join(", ", sortedBootHandlers.Select(h => $"order={h.Order}"))}]", LogTag.GameCoreStart);
+            foreach (var entry in sortedBootHandlers)
+                await entry.Handler();
         }
 
         public async UniTask FireOnLoadStart(LoadContext ctx) =>

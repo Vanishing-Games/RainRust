@@ -10,6 +10,7 @@ namespace Core
             base.Awake();
             if (this is ICoreModuleSystem system)
             {
+                CLogger.LogInfo($"[CoreModuleManagerBase] Awake registering: {system.SystemName}", LogTag.GameCoreStart);
                 GameCore.Instance.RegisterSystem(system);
             }
         }
