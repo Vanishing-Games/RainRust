@@ -125,10 +125,14 @@ fmod_editor.log
 
 # Claude
 /CLAUDE.md
-.claude
+/.claude/
+/.remember/
 
 # Save Data
 /SaveData_Editor/
 
 # Log
 /Log/
+
+# IDEA
+/.idea/
