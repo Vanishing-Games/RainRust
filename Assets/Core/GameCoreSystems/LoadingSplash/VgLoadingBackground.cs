@@ -28,7 +28,7 @@ namespace Core
 
             try
             {
-                await WaitForAllTransitionsShown(_cancellationTokenSource.Token);
+                await WaitForAllTransitionsHidden(_cancellationTokenSource.Token);
                 gameObject.SetActive(false);
             }
             catch (OperationCanceledException) { }
@@ -39,7 +39,7 @@ namespace Core
             }
         }
 
-        private async UniTask WaitForAllTransitionsShown(CancellationToken cancellationToken)
+        private async UniTask WaitForAllTransitionsHidden(CancellationToken cancellationToken)
         {
             if (!HasActiveTransitions())
                 return;
@@ -47,17 +47,17 @@ namespace Core
             var tcs = new UniTaskCompletionSource();
             var isCompleted = false;
 
-            void OnTransitionsShown()
+            void OnTransitionsHidden()
             {
                 if (!isCompleted)
                 {
                     isCompleted = true;
-                    VgLoadingTransition.OnAllTransitionsShown -= OnTransitionsShown;
+                    VgLoadingTransition.OnAllTransitionsHidden -= OnTransitionsHidden;
                     tcs.TrySetResult();
                 }
             }
 
-            VgLoadingTransition.OnAllTransitionsShown += OnTransitionsShown;
+            VgLoadingTransition.OnAllTransitionsHidden += OnTransitionsHidden;
 
             try
             {
@@ -67,7 +67,7 @@ namespace Core
             {
                 if (!isCompleted)
                 {
-                    VgLoadingTransition.OnAllTransitionsShown -= OnTransitionsShown;
+                    VgLoadingTransition.OnAllTransitionsHidden -= OnTransitionsHidden;
                 }
                 throw;
             }
@@ -76,6 +76,7 @@ namespace Core
         private bool HasActiveTransitions()
         {
             VgLoadingTransition[] transitions = FindObjectsByType<VgLoadingTransition>(
+                FindObjectsInactive.Include,
                 FindObjectsSortMode.None
             );
             return transitions.Length > 0;

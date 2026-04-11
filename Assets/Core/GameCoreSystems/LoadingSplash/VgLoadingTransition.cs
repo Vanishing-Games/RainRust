@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
+using Cysharp.Threading.Tasks;
 
 namespace Core
 {
@@ -24,6 +25,10 @@ namespace Core
         [SerializeField]
         private Vector3 hideScale = Vector3.zero;
 
+        [SerializeField]
+        private bool useFade = true;
+
+        private CanvasGroup canvasGroup;
         private Tween currentTween;
         private Queue<System.Action> animationQueue = new Queue<System.Action>();
         private bool isProcessingQueue = false;
@@ -32,16 +37,28 @@ namespace Core
         private static int activeShowTransitions = 0;
         private static int completedShowTransitions = 0;
 
+        private void Awake()
+        {
+            canvasGroup = GetComponent<CanvasGroup>();
+            // Ensure DOTween is initialized to avoid "Couldn't load Modules system" errors
+            DOTween.Init();
+        }
+
         public override void Show()
         {
-            ResetCounters();
+            CLogger.LogInfo($"Show called on {gameObject.name}", LogTag.Loading);
+            if (activeShowTransitions == 0 && completedShowTransitions == 0)
+                ResetCounters();
+            
             animationQueue.Enqueue(() => ExecuteShow());
             ProcessQueue();
         }
 
         public override void Hide()
         {
-            ResetCounters();
+            if (activeHideTransitions == 0 && completedHideTransitions == 0)
+                ResetCounters();
+
             animationQueue.Enqueue(() => ExecuteHide());
             ProcessQueue();
         }
@@ -67,6 +84,8 @@ namespace Core
         private void ExecuteShow()
         {
             transform.localScale = hideScale;
+            if (canvasGroup != null)
+                canvasGroup.alpha = 0f;
 
             if (currentTween != null && currentTween.IsActive())
                 currentTween.Kill();
@@ -74,24 +93,44 @@ namespace Core
             gameObject.SetActive(true);
             activeShowTransitions++;
 
-            currentTween = transform
-                .DOScale(showScale, animationDuration)
-                .SetEase(easeType)
-                .OnComplete(() =>
+            Sequence seq = DOTween.Sequence();
+            seq.Join(transform.DOScale(showScale, animationDuration).SetEase(easeType));
+            if (canvasGroup != null && useFade)
+                seq.Join(DOTween.To(() => canvasGroup.alpha, x => canvasGroup.alpha = x, 1f, animationDuration).SetEase(easeType));
+
+            bool completed = false;
+            currentTween = seq.OnComplete(() =>
+            {
+                if (completed) return;
+                completed = true;
+                FinishShow();
+            });
+
+            // Fallback for DOTween errors
+            UniTask.Delay(TimeSpan.FromSeconds(animationDuration + 0.1f)).ContinueWith(() => {
+                if (!completed)
                 {
-                    currentTween = null;
-                    isProcessingQueue = false;
-                    completedShowTransitions++;
+                    completed = true;
+                    if (currentTween != null && currentTween.IsActive()) currentTween.Kill();
+                    FinishShow();
+                }
+            }).Forget();
+        }
 
-                    if (completedShowTransitions >= activeShowTransitions)
-                    {
-                        OnAllTransitionsShown?.Invoke();
-                        completedShowTransitions = 0;
-                        activeShowTransitions = 0;
-                    }
+        private void FinishShow()
+        {
+            currentTween = null;
+            isProcessingQueue = false;
+            completedShowTransitions++;
 
-                    ProcessQueue();
-                });
+            if (completedShowTransitions >= activeShowTransitions)
+            {
+                OnAllTransitionsShown?.Invoke();
+                completedShowTransitions = 0;
+                activeShowTransitions = 0;
+            }
+
+            ProcessQueue();
         }
 
         private void ExecuteHide()
@@ -101,25 +140,47 @@ namespace Core
 
             activeHideTransitions++;
 
-            currentTween = transform
-                .DOScale(hideScale, animationDuration)
-                .SetEase(easeType)
-                .OnComplete(() =>
+            Sequence seq = DOTween.Sequence();
+            seq.Join(transform.DOScale(hideScale, animationDuration).SetEase(easeType));
+            if (canvasGroup != null && useFade)
+                seq.Join(DOTween.To(() => canvasGroup.alpha, x => canvasGroup.alpha = x, 0f, animationDuration).SetEase(easeType));
+
+            bool completed = false;
+            currentTween = seq.OnComplete(() =>
+            {
+                if (completed) return;
+                completed = true;
+                FinishHide();
+            });
+
+            // Fallback: If DOTween fails to start or complete (e.g. module error), 
+            // force completion after a safety margin.
+            UniTask.Delay(TimeSpan.FromSeconds(animationDuration + 0.1f)).ContinueWith(() => {
+                if (!completed)
                 {
-                    gameObject.SetActive(false);
-                    currentTween = null;
-                    isProcessingQueue = false;
-                    completedHideTransitions++;
+                    completed = true;
+                    if (currentTween != null && currentTween.IsActive()) currentTween.Kill();
+                    FinishHide();
+                }
+            }).Forget();
+        }
 
-                    if (completedHideTransitions >= activeHideTransitions)
-                    {
-                        OnAllTransitionsHidden?.Invoke();
-                        completedHideTransitions = 0;
-                        activeHideTransitions = 0;
-                    }
+        private void FinishHide()
+        {
+            CLogger.LogInfo($"FinishHide called on {gameObject.name}", LogTag.Loading);
+            gameObject.SetActive(false);
+            currentTween = null;
+            isProcessingQueue = false;
+            completedHideTransitions++;
 
-                    ProcessQueue();
-                });
+            if (completedHideTransitions >= activeHideTransitions)
+            {
+                OnAllTransitionsHidden?.Invoke();
+                completedHideTransitions = 0;
+                activeHideTransitions = 0;
+            }
+
+            ProcessQueue();
         }
 
         public override void UpdateProgress(float progress) { }
