@@ -5,6 +5,7 @@ using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
+using System.IO;
 
 namespace Editor.BuildScripts
 {
@@ -15,14 +16,25 @@ namespace Editor.BuildScripts
         public void OnPreprocessBuild(BuildReport report)
         {
             string version = GetGitVersion();
-            PlayerSettings.bundleVersion = version;
+            
+            // Only update PlayerSettings if different to avoid dirtying BuildProfile unnecessarily
+            if (PlayerSettings.bundleVersion != version)
+            {
+                PlayerSettings.bundleVersion = version;
+            }
 
             // For Android/iOS
             string buildNumberStr = GetBuildNumber();
             if (int.TryParse(buildNumberStr, out int buildNumber))
             {
-                PlayerSettings.Android.bundleVersionCode = buildNumber;
-                PlayerSettings.iOS.buildNumber = buildNumberStr;
+                if (PlayerSettings.Android.bundleVersionCode != buildNumber)
+                {
+                    PlayerSettings.Android.bundleVersionCode = buildNumber;
+                }
+                if (PlayerSettings.iOS.buildNumber != buildNumberStr)
+                {
+                    PlayerSettings.iOS.buildNumber = buildNumberStr;
+                }
             }
 
             Debug.Log($"[BuildVersion] Current version: {version}");
@@ -73,22 +85,29 @@ namespace Editor.BuildScripts
 
         private void GenerateVersionInfoFile(string version)
         {
-            string filePath = "Assets/Core/Common/BuildVersionInfo.cs";
-            string content =
-                $@"/*
- * AUTO-GENERATED FILE - DO NOT MODIFY
- */
-namespace Core
-{{
-    public static class BuildVersionInfo
-    {{
-        public const string Version = ""{version}"";
-        public const string BuildTime = ""{DateTime.Now:yyyy-MM-dd HH:mm:ss}"";
-    }}
+            string folderPath = "Assets/Resources";
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+            
+            string filePath = Path.Combine(folderPath, "BuildVersionInfo.json");
+            string buildTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+            
+            // Use JSON structure to match the data class in BuildVersionInfo.cs
+            string content = $@"{{
+    ""Version"": ""{version}"",
+    ""BuildTime"": ""{buildTime}""
 }}";
+
             try
             {
-                System.IO.File.WriteAllText(filePath, content);
+                // To avoid triggering recompile, we ONLY update the file if it's different.
+                // But buildTime always changes, so we write it anyway.
+                // Writing to a .json file is safe as it doesn't trigger a domain reload.
+                File.WriteAllText(filePath, content);
+                
+                // AssetDatabase.ImportAsset on non-scripts is generally safe during pre-build.
                 AssetDatabase.ImportAsset(filePath);
             }
             catch (Exception ex)

@@ -1,11 +1,44 @@
-/*
- * AUTO-GENERATED FILE - DO NOT MODIFY
- */
+using UnityEngine;
+
 namespace Core
 {
+    /// <summary>
+    /// Provides access to build version information.
+    /// This data is automatically generated during the build process.
+    /// </summary>
     public static class BuildVersionInfo
     {
-        public const string Version = "v0.0.1-test6-6-gccabc674-dirty";
-        public const string BuildTime = "2026-04-12 06:55:48";
+        private static BuildVersionData _cachedData;
+
+        public static string Version => GetData().Version;
+        public static string BuildTime => GetData().BuildTime;
+
+        private static BuildVersionData GetData()
+        {
+            if (_cachedData == null)
+            {
+                var jsonAsset = Resources.Load<TextAsset>("BuildVersionInfo");
+                if (jsonAsset != null)
+                {
+                    _cachedData = JsonUtility.FromJson<BuildVersionData>(jsonAsset.text);
+                }
+                else
+                {
+                    _cachedData = new BuildVersionData
+                    {
+                        Version = "v0.0.0-unknown",
+                        BuildTime = "Unknown"
+                    };
+                }
+            }
+            return _cachedData;
+        }
+
+        [System.Serializable]
+        private class BuildVersionData
+        {
+            public string Version;
+            public string BuildTime;
+        }
     }
 }
