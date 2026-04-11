@@ -953,7 +953,7 @@ jobs:
 
       - name: 🔓 释放 Unity 许可证
         if: always()
-        uses: game-ci/unity-return-license@v4
+        uses: game-ci/unity-return-license@v2
         env:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
