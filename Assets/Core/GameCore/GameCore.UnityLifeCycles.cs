@@ -21,8 +21,6 @@ namespace Core
             }
         }
 
-        private void FixedUpdate() { }
-
         private void Update()
         {
             OnFlowUpdate();

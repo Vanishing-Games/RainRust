@@ -27,7 +27,7 @@ namespace GameMain.RunTime
 
             public UniTask Execute()
             {
-                GameCore.Instance.RequestLoadLevel(m_ChapterId, m_LevelId, m_SpawnPointIndex);
+                GameCore.Instance.RequestLoadLevelFromSavePoint("Chapter1_SavePoint_01");
                 return UniTask.CompletedTask;
             }
 

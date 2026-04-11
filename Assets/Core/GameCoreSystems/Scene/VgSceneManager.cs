@@ -18,10 +18,7 @@ namespace Core
                 }
                 else if (ctx.Destination == GameFlowState.InLevel && !ctx.IsStandalone)
                 {
-                    if (!string.IsNullOrEmpty(ctx.ChapterId))
-                    {
-                        await m_Loader.LoadScene(new SceneLoadInfo("GameLevel"));
-                    }
+                    await m_Loader.LoadScene(new SceneLoadInfo("GameLevel"));
                 }
             });
         }
