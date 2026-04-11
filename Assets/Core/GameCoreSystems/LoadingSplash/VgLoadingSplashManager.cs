@@ -34,9 +34,46 @@ namespace Core
 
         public void RegisterHooks(IGameCoreHookRegistry registry)
         {
-            registry.OnLoadStart(async _ => Show());
-            registry.OnLoadComplete(async _ => Hide());
-            registry.OnBootStart(async () => Show(), order: 0);
+            registry.OnLoadStart(_ =>
+            {
+                Show();
+                return UniTask.CompletedTask;
+            });
+            registry.OnLoadComplete(_ =>
+            {
+                Hide();
+                return UniTask.CompletedTask;
+            });
+            registry.OnBootStart(
+                () =>
+                {
+                    Init();
+                    Show();
+                    return UniTask.CompletedTask;
+                },
+                order: 0
+            );
+            registry.OnBootStart(
+                () =>
+                {
+                    CLogger.LogInfo(
+                        "VgLoadingSplashManager: Booting complete, hiding splash...",
+                        LogTag.Loading
+                    );
+                    Hide();
+                    return UniTask.CompletedTask;
+                },
+                order: 999
+            );
+            registry.OnMainMenuEnter(() =>
+            {
+                CLogger.LogInfo(
+                    "VgLoadingSplashManager: OnMainMenuEnter triggered, hiding...",
+                    LogTag.Loading
+                );
+                Hide();
+                return UniTask.CompletedTask;
+            });
         }
 
         public void Init()
@@ -44,26 +81,35 @@ namespace Core
             if (m_Inited)
                 return;
 
-            var progressables = FindObjectsByType<MonoProgressable>(
-                FindObjectsInactive.Include,
-                FindObjectsSortMode.None
-            );
+            m_Progressables.Clear();
+            var progressables = GetComponentsInChildren<IProgressable>(true);
             foreach (var progressable in progressables)
+            {
+                if (progressable is VgLoadingSplashManager)
+                    continue;
                 m_Progressables.Add(progressable);
+            }
 
-            StringBuilder sb = new();
-            sb.AppendLine("VgLoadingSplashManager Init with Progressables:");
-            foreach (var progressable in m_Progressables)
-                sb.AppendLine($" - {progressable.GetType()}");
-            CLogger.LogInfo(sb.ToString(), LogTag.Loading);
+            if (m_Progressables.Count > 0)
+            {
+                StringBuilder sb = new();
+                sb.AppendLine(
+                    $"VgLoadingSplashManager Init with {m_Progressables.Count} Progressables on {gameObject.name}:"
+                );
+                foreach (var progressable in m_Progressables)
+                    sb.AppendLine(
+                        $" - {progressable.GetType().Name} on {((MonoBehaviour)progressable).gameObject.name}"
+                    );
 
-            m_Inited = true;
+                CLogger.LogInfo(sb.ToString(), LogTag.Loading);
+                m_Inited = true;
+            }
         }
 
         public void Show()
         {
-            if (!m_Inited)
-                Init();
+            CLogger.LogInfo("VgLoadingSplashManager: Show() called", LogTag.Loading);
+            Init();
 
             foreach (var progressable in m_Progressables)
                 progressable.Show();

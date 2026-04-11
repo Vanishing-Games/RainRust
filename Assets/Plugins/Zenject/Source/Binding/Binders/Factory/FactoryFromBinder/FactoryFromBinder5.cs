@@ -5,7 +5,6 @@ using ModestTree;
 using UnityEngine;
 #endif
 
-
 namespace Zenject
 {
     [NoReflectionBaking]

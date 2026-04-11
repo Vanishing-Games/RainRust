@@ -48,9 +48,9 @@ namespace Core
             {
                 try
                 {
-                    var eventRef = EventReference.Find(eventName);
+                    var eventRef = RuntimeManager.PathToEventReference(eventName);
                     manager.PlayManaged(eventRef, managed);
-                    manager.RegisterStopSubscription(eventName, StopEventType);
+                    manager.RegisterStopSubscription(eventRef.Guid.ToString(), StopEventType);
                     return;
                 }
                 catch (InvalidOperationException)

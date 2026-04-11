@@ -29,7 +29,7 @@ namespace Core
 
         public void RegisterHooks(IGameCoreHookRegistry registry)
         {
-            registry.OnSystemInit(async () =>
+            registry.OnBootStart(async () =>
             {
                 InitializeDirectory();
                 RefreshSaveSlots();
@@ -335,6 +335,43 @@ namespace Core
         public bool IsSlotDirty => m_IsSlotDirty;
         public bool IsGlobalDirty => m_IsGlobalDirty;
 
+        public void SetCurrentSlot(string slotName)
+        {
+            m_CurrentSlot = slotName;
+            m_CurrentSlotContainer = new SaveContainer();
+            m_CurrentSlotContainer.Meta = new SaveMeta(slotName);
+            m_CurrentSlotContainer.Meta.DisplayName = slotName;
+            m_IsSlotDirty = true;
+        }
+
+        public async UniTask<bool> RenameSlotAsync(string slotName, string newDisplayName)
+        {
+            string fullPath = GetSavePath(slotName);
+            if (!File.Exists(fullPath))
+                return false;
+
+            try
+            {
+                string json = await File.ReadAllTextAsync(fullPath);
+                var container = JsonConvert.DeserializeObject<SaveContainer>(json);
+                if (container == null)
+                    return false;
+
+                container.Meta.DisplayName = newDisplayName;
+
+                string newJson = JsonConvert.SerializeObject(container, Formatting.Indented);
+                await File.WriteAllTextAsync(fullPath, newJson);
+
+                RefreshSaveSlots();
+                return true;
+            }
+            catch (Exception e)
+            {
+                CLogger.LogError($"Rename failed: {e.Message}", LogTag.Game);
+                return false;
+            }
+        }
+
         [BoxGroup("Status")]
         [ShowInInspector, ReadOnly]
         public string SaveDirectory
@@ -383,12 +420,24 @@ namespace Core
         [SerializeField, BoxGroup("Settings")]
         private string m_Extension = ".json";
 
+        public IReadOnlyList<SaveMeta> AvailableSlots => m_AvailableSlots;
+
         [SerializeField, ReadOnly, BoxGroup("Status")]
         private string m_CurrentSlot = "default";
 
         [SerializeField, ReadOnly, BoxGroup("Slot Management")]
         [TableList]
         private List<SaveMeta> m_AvailableSlots = new();
+
+        public async UniTask<bool> LoadSlotAsync(string slotName)
+        {
+            return await LoadSaveFileAsync(slotName, false);
+        }
+
+        public async UniTask<bool> SaveSlotAsync(string slotName)
+        {
+            return await WriteSaveFileAsync(slotName, false);
+        }
 
         [SerializeField]
         [BoxGroup("Actions")]

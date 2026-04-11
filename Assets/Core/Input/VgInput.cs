@@ -13,39 +13,39 @@ namespace Core
         {
             get
             {
-                if (!initialized)
+                if (!m_Initialized)
                     Initialize();
-                return settings;
+                return m_Settings;
             }
         }
 
         public static InputBuffer Buffer
         {
-            get { return inputBuffer ??= new InputBuffer(); }
+            get { return m_InputBuffer ??= new InputBuffer(); }
         }
 
         public static void Initialize()
         {
-            if (initialized)
+            if (m_Initialized)
                 return;
 
-            settings = InputSettings.Load();
+            m_Settings = InputSettings.Load();
 
-            inputActions = new VgInputActions();
-            inputActions.Enable();
+            m_InputActions = new VgInputActions();
+            m_InputActions.Enable();
 
-            keyboard = Keyboard.current;
-            mouse = Mouse.current;
-            gamepad = Gamepad.current;
+            m_Keyboard = Keyboard.current;
+            m_Mouse = Mouse.current;
+            m_Gamepad = Gamepad.current;
 
-            initialized = true;
+            m_Initialized = true;
 
             CLogger.LogInfo("VgInput system initialized with New Input System.", LogTag.Input);
         }
 
         public static void Update()
         {
-            if (!initialized)
+            if (!m_Initialized)
                 Initialize();
 
             RefreshDevices();
@@ -55,24 +55,24 @@ namespace Core
 
         private static void RefreshDevices()
         {
-            keyboard ??= Keyboard.current;
-            mouse ??= Mouse.current;
-            gamepad ??= Gamepad.current;
+            m_Keyboard ??= Keyboard.current;
+            m_Mouse ??= Mouse.current;
+            m_Gamepad ??= Gamepad.current;
         }
 
         public static bool GetButtonDownBuffered(InputAction action) =>
-            GetButtonDown(action) || inputBuffer.HasRecentInput(action);
+            GetButtonDown(action) || m_InputBuffer.HasRecentInput(action);
 
         public static bool GetButtonDown(InputAction action)
         {
-            if (!initialized)
+            if (!m_Initialized)
                 Initialize();
 
             var unityAction = GetUnityInputAction(action);
             if (unityAction?.WasPressedThisFrame() == true)
             {
                 InputEvents.TriggerButtonPressed(action);
-                inputBuffer.AddInput(action);
+                m_InputBuffer.AddInput(action);
                 return true;
             }
             return false;
@@ -80,7 +80,7 @@ namespace Core
 
         public static bool GetButton(InputAction action)
         {
-            if (!initialized)
+            if (!m_Initialized)
                 Initialize();
 
             var unityAction = GetUnityInputAction(action);
@@ -89,7 +89,7 @@ namespace Core
 
         public static bool GetButtonUp(InputAction action)
         {
-            if (!initialized)
+            if (!m_Initialized)
                 Initialize();
 
             var unityAction = GetUnityInputAction(action);
@@ -103,7 +103,7 @@ namespace Core
 
         public static float GetAxis(InputAxis axis)
         {
-            if (!initialized)
+            if (!m_Initialized)
                 Initialize();
 
             float value = GetAxisRaw(axis);
@@ -112,32 +112,34 @@ namespace Core
 
         public static float GetAxisRaw(InputAxis axis)
         {
-            if (!initialized)
+            if (!m_Initialized)
                 Initialize();
 
             return axis switch
             {
-                InputAxis.LeftStickHorizontal => GetVector2Value(inputActions.Gameplay.Move).x,
-                InputAxis.LeftStickVertical => GetVector2Value(inputActions.Gameplay.Move).y,
+                InputAxis.LeftStickHorizontal => GetVector2Value(m_InputActions.Gameplay.Move).x,
+                InputAxis.LeftStickVertical => GetVector2Value(m_InputActions.Gameplay.Move).y,
                 InputAxis.RightStickHorizontal => GetVector2Value(
-                    inputActions.Gameplay.RightStick
+                    m_InputActions.Gameplay.RightStick
                 ).x,
-                InputAxis.RightStickVertical => GetVector2Value(inputActions.Gameplay.RightStick).y,
-                InputAxis.LeftTrigger => GetFloatValue(inputActions.Gameplay.LeftTrigger),
-                InputAxis.RightTrigger => GetFloatValue(inputActions.Gameplay.RightTrigger),
-                InputAxis.MouseX => GetVector2Value(inputActions.Gameplay.Look).x,
-                InputAxis.MouseY => GetVector2Value(inputActions.Gameplay.Look).y,
-                InputAxis.MouseScrollWheel => GetFloatValue(inputActions.Gameplay.ScrollWheel),
+                InputAxis.RightStickVertical => GetVector2Value(
+                    m_InputActions.Gameplay.RightStick
+                ).y,
+                InputAxis.LeftTrigger => GetFloatValue(m_InputActions.Gameplay.LeftTrigger),
+                InputAxis.RightTrigger => GetFloatValue(m_InputActions.Gameplay.RightTrigger),
+                InputAxis.MouseX => GetVector2Value(m_InputActions.Gameplay.Look).x,
+                InputAxis.MouseY => GetVector2Value(m_InputActions.Gameplay.Look).y,
+                InputAxis.MouseScrollWheel => GetFloatValue(m_InputActions.Gameplay.ScrollWheel),
                 _ => 0f,
             };
         }
 
         public static Vector2 GetMovementVector()
         {
-            if (!initialized)
+            if (!m_Initialized)
                 Initialize();
 
-            return GetVector2Value(inputActions.Gameplay.Move);
+            return GetVector2Value(m_InputActions.Gameplay.Move);
         }
 
         public static Vector2 GetMovementVectorNormalized()
@@ -153,10 +155,10 @@ namespace Core
             float mouseX = GetAxis(InputAxis.MouseX);
             float mouseY = GetAxis(InputAxis.MouseY);
 
-            mouseX *= settings.mouseSensitivity;
-            mouseY *= settings.mouseSensitivity;
+            mouseX *= m_Settings.mouseSensitivity;
+            mouseY *= m_Settings.mouseSensitivity;
 
-            if (settings.invertMouseY)
+            if (m_Settings.invertMouseY)
                 mouseY = -mouseY;
 
             return new Vector2(mouseX, mouseY);
@@ -167,10 +169,10 @@ namespace Core
             float horizontal = GetAxis(InputAxis.RightStickHorizontal);
             float vertical = GetAxis(InputAxis.RightStickVertical);
 
-            horizontal *= settings.gamepadSensitivity;
-            vertical *= settings.gamepadSensitivity;
+            horizontal *= m_Settings.gamepadSensitivity;
+            vertical *= m_Settings.gamepadSensitivity;
 
-            if (settings.invertGamepadY)
+            if (m_Settings.invertGamepadY)
                 vertical = -vertical;
 
             return new Vector2(horizontal, vertical);
@@ -183,10 +185,10 @@ namespace Core
 
         public static Vector3 GetMousePosition()
         {
-            if (!initialized)
+            if (!m_Initialized)
                 Initialize();
 
-            return GetVector2Value(inputActions.Gameplay.MousePosition);
+            return GetVector2Value(m_InputActions.Gameplay.MousePosition);
         }
 
         public static Vector3 GetMouseWorldPosition(Camera camera = null)
@@ -202,20 +204,20 @@ namespace Core
 
         public static bool AnyKeyDown()
         {
-            if (keyboard?.anyKey.wasPressedThisFrame == true)
+            if (m_Keyboard?.anyKey.wasPressedThisFrame == true)
                 return true;
             if (
-                mouse != null
+                m_Mouse != null
                 && (
-                    mouse.leftButton.wasPressedThisFrame
-                    || mouse.rightButton.wasPressedThisFrame
-                    || mouse.middleButton.wasPressedThisFrame
+                    m_Mouse.leftButton.wasPressedThisFrame
+                    || m_Mouse.rightButton.wasPressedThisFrame
+                    || m_Mouse.middleButton.wasPressedThisFrame
                 )
             )
                 return true;
-            if (gamepad != null)
+            if (m_Gamepad != null)
             {
-                foreach (var button in gamepad.allControls)
+                foreach (var button in m_Gamepad.allControls)
                 {
                     if (button is ButtonControl btnCtrl && btnCtrl.wasPressedThisFrame)
                         return true;
@@ -226,37 +228,37 @@ namespace Core
 
         public static void SetMouseSensitivity(float sensitivity)
         {
-            if (!initialized)
+            if (!m_Initialized)
                 Initialize();
 
-            settings.mouseSensitivity = Mathf.Clamp(sensitivity, 0.1f, 10f);
+            m_Settings.mouseSensitivity = Mathf.Clamp(sensitivity, 0.1f, 10f);
         }
 
         public static void SetGamepadSensitivity(float sensitivity)
         {
-            if (!initialized)
+            if (!m_Initialized)
                 Initialize();
 
-            settings.gamepadSensitivity = Mathf.Clamp(sensitivity, 0.1f, 10f);
+            m_Settings.gamepadSensitivity = Mathf.Clamp(sensitivity, 0.1f, 10f);
         }
 
         public static void ToggleInvertMouseY()
         {
-            if (!initialized)
+            if (!m_Initialized)
                 Initialize();
 
-            settings.invertMouseY = !settings.invertMouseY;
+            m_Settings.invertMouseY = !m_Settings.invertMouseY;
         }
 
         private static UnityEngine.InputSystem.InputAction GetUnityInputAction(InputAction action)
         {
-            if (inputActions == null)
+            if (m_InputActions == null)
                 return null;
 
-            if (!actionCache.TryGetValue(action, out var unityAction))
+            if (!m_ActionCache.TryGetValue(action, out var unityAction))
             {
                 var actionName = action.ToString();
-                var gameplayActions = inputActions.Gameplay;
+                var gameplayActions = m_InputActions.Gameplay;
                 var actionProperty = gameplayActions
                     .GetType()
                     .GetProperty(
@@ -273,7 +275,7 @@ namespace Core
                     unityAction =
                         actionProperty.GetValue(gameplayActions)
                         as UnityEngine.InputSystem.InputAction;
-                    actionCache[action] = unityAction;
+                    m_ActionCache[action] = unityAction;
                 }
             }
 
@@ -302,17 +304,17 @@ namespace Core
             {
                 bool isHeld = GetButton(action);
 
-                if (isHeld && heldActions.Contains(action))
+                if (isHeld && m_HeldActions.Contains(action))
                 {
                     InputEvents.TriggerButtonHeld(action);
                 }
                 else if (isHeld)
                 {
-                    heldActions.Add(action);
+                    m_HeldActions.Add(action);
                 }
-                else if (!isHeld && heldActions.Contains(action))
+                else if (!isHeld && m_HeldActions.Contains(action))
                 {
-                    heldActions.Remove(action);
+                    m_HeldActions.Remove(action);
                 }
             }
         }
@@ -323,30 +325,30 @@ namespace Core
             {
                 float currentValue = GetAxis(axis);
 
-                if (!previousAxisValues.ContainsKey(axis))
+                if (!m_PreviousAxisValues.ContainsKey(axis))
                 {
-                    previousAxisValues[axis] = currentValue;
+                    m_PreviousAxisValues[axis] = currentValue;
                 }
 
-                if (Mathf.Abs(currentValue - previousAxisValues[axis]) > 0.01f)
+                if (Mathf.Abs(currentValue - m_PreviousAxisValues[axis]) > 0.01f)
                 {
                     InputEvents.TriggerAxisChanged(axis, currentValue);
-                    previousAxisValues[axis] = currentValue;
+                    m_PreviousAxisValues[axis] = currentValue;
                 }
             }
         }
 
         // csharpier-ignore-start
-        private static VgInputActions                                                     inputActions       ;
-        private static InputSettings                                                      settings           ;
-        private static bool                                                               initialized        = false!;
-        private static InputBuffer                                                        inputBuffer        = new();
-        private static Dictionary<InputAxis, float>                                       previousAxisValues = new();
-        private static HashSet<InputAction>                                               heldActions        = new();
-        private static Dictionary<InputAction, UnityEngine.InputSystem.InputAction>       actionCache        = new();
-        private static Keyboard                                                           keyboard           ;
-        private static Mouse                                                              mouse              ;
-        private static Gamepad                                                            gamepad            ;
+        private static VgInputActions                                                     m_InputActions       ;
+        private static InputSettings                                                      m_Settings           ;
+        private static bool                                                               m_Initialized        = false!;
+        private static InputBuffer                                                        m_InputBuffer        = new();
+        private static Dictionary<InputAxis, float>                                       m_PreviousAxisValues = new();
+        private static HashSet<InputAction>                                               m_HeldActions        = new();
+        private static Dictionary<InputAction, UnityEngine.InputSystem.InputAction>       m_ActionCache        = new();
+        private static Keyboard                                                           m_Keyboard           ;
+        private static Mouse                                                              m_Mouse              ;
+        private static Gamepad                                                            m_Gamepad            ;
         // csharpier-ignore-end
     }
 }

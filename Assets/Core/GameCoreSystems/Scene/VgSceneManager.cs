@@ -14,7 +14,7 @@ namespace Core
             {
                 if (ctx.Destination == GameFlowState.MainMenu)
                 {
-                    await m_Loader.LoadScene(new SceneLoadInfo("MainMenu"));
+                    await m_Loader.LoadScene(new SceneLoadInfo("GameMenu"));
                 }
                 else if (ctx.Destination == GameFlowState.InLevel && !ctx.IsStandalone)
                 {

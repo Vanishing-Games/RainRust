@@ -185,13 +185,13 @@ namespace GameMain.RunTime
         private void NormalGrabCheck(Vector2 PlayerPosition, LayerMask noSafeLayer)
         {
             Vector2 BoxRange = new Vector2(mPCComponent.GrabRangeX, mPCComponent.GrabRangeY);
-            int count = Physics2D.OverlapBoxNonAlloc(
+            int count = Physics2D.OverlapBox(
                 PlayerPosition
                     + mPCComponent.GrabRangeOffset * new Vector2(mPCComponent.FacingDir, 1),
                 BoxRange,
                 0f,
-                ColliderHitResults,
-                noSafeLayer
+                new ContactFilter2D { layerMask = noSafeLayer, useLayerMask = true },
+                ColliderHitResults
             );
 
             Collider2D hitCollider = ColliderHitResults[0];
@@ -222,13 +222,13 @@ namespace GameMain.RunTime
         private void NormalSafeGrabCheck(Vector2 PlayerPosition, LayerMask SafeLayer)
         {
             Vector2 BoxRange = new Vector2(mPCComponent.GrabRangeX, mPCComponent.GrabRangeY);
-            int count = Physics2D.OverlapBoxNonAlloc(
+            int count = Physics2D.OverlapBox(
                 PlayerPosition
                     + mPCComponent.GrabRangeOffset * new Vector2(mPCComponent.FacingDir, 1),
                 BoxRange,
                 0f,
-                ColliderHitResults,
-                SafeLayer
+                new ContactFilter2D { layerMask = SafeLayer, useLayerMask = true },
+                ColliderHitResults
             );
 
             Collider2D hitCollider = ColliderHitResults[0];

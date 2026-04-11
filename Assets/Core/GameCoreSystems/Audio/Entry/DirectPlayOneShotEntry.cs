@@ -17,6 +17,10 @@ namespace Core
                 return;
             }
 
+            CLogger.LogInfo(
+                $"DirectPlayOneShotEntry: Playing OneShot — ListenEvent={ListenEventType?.Name}, FmodEvent={oneShotEvent.FmodEvent}",
+                LogTag.AudioEntry
+            );
             RuntimeManager.PlayOneShot(oneShotEvent.FmodEvent);
         }
     }

@@ -27,7 +27,11 @@ namespace Core
             try
             {
                 await WaitForTransitionsToComplete(m_CancellationTokenSource.Token);
-                VgCameraManager.Instance.SetLoadingCameraActive(false);
+                // Even if we use UI Canvas, VgCameraManager might handle state changes
+                if (VgCameraManager.Instance != null)
+                {
+                    VgCameraManager.Instance.SetLoadingCameraActive(false);
+                }
             }
             catch (OperationCanceledException) { }
             finally
@@ -45,7 +49,10 @@ namespace Core
             try
             {
                 await WaitForTransitionsToComplete(m_CancellationTokenSource.Token);
-                VgCameraManager.Instance.SetLoadingCameraActive(true);
+                if (VgCameraManager.Instance != null)
+                {
+                    VgCameraManager.Instance.SetLoadingCameraActive(true);
+                }
             }
             catch (OperationCanceledException) { }
             finally
@@ -96,7 +103,9 @@ namespace Core
 
         private bool HasActiveTransitions()
         {
+            // Find both active and inactive as they might be toggled by the system
             VgLoadingTransition[] transitions = FindObjectsByType<VgLoadingTransition>(
+                FindObjectsInactive.Include,
                 FindObjectsSortMode.None
             );
             return transitions.Length > 0;

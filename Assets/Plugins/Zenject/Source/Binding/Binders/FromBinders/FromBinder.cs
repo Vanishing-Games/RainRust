@@ -7,8 +7,6 @@ using Zenject.Internal;
 using UnityEngine;
 #endif
 
-
-
 namespace Zenject
 {
     public abstract class FromBinder : ScopeConcreteIdArgConditionCopyNonLazyBinder

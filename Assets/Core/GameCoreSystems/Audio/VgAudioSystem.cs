@@ -17,18 +17,30 @@ namespace Core
 
         public void RegisterHooks(IGameCoreHookRegistry registry)
         {
-            registry.OnSystemInit(async () =>
+            CLogger.LogInfo("[VgAudioSystem] RegisterHooks() called", LogTag.Audio);
+            registry.OnBootStart(async () =>
             {
+                CLogger.LogInfo("[VgAudioSystem] OnBootStart handler executing", LogTag.Audio);
                 LoadAllBanks();
                 RegisterAllEntries();
                 await UniTask.CompletedTask;
             });
 
-            registry.OnMainMenuEnter(async () => await PlayMenuBgm());
-            registry.OnMainMenuExit(async () => await FadeOutBgm());
-            registry.OnInLevelEnter(async ctx => await PlayLevelBgm(ctx.ChapterId));
-            registry.OnInLevelExit(async () => await FadeOutBgm());
-            registry.OnLoadStart(async _ => await FadeOutBgm());
+            // registry.OnMainMenuEnter(async () =>
+            //     new AudioManagerHelperCommands.PlayBgmCommand("MainMenu_BGM").Execute()
+            // );
+            // registry.OnMainMenuExit(async () =>
+            //     new AudioManagerHelperCommands.StopBgmCommand().Execute()
+            // );
+            // registry.OnInLevelEnter(async _ =>
+            //     new AudioManagerHelperCommands.PlayBgmCommand("InLevel_BGM").Execute()
+            // );
+            // registry.OnInLevelExit(async () =>
+            //     new AudioManagerHelperCommands.StopBgmCommand().Execute()
+            // );
+            // registry.OnLoadStart(async _ =>
+            //     new AudioManagerHelperCommands.PlayBgmCommand("Loading_BGM").Execute()
+            // );
 
             registry.OnGameQuit(async () =>
             {
@@ -38,38 +50,19 @@ namespace Core
             });
         }
 
-        public async UniTask PlayMenuBgm()
-        {
-            CLogger.LogInfo("Playing Menu BGM", LogTag.Audio);
-            await UniTask.CompletedTask;
-        }
-
-        public async UniTask PlayLevelBgm(string chapterId)
-        {
-            CLogger.LogInfo($"Playing Level BGM for chapter: {chapterId}", LogTag.Audio);
-            await UniTask.CompletedTask;
-        }
-
-        public async UniTask FadeOutBgm()
-        {
-            CLogger.LogInfo("Fading out BGM", LogTag.Audio);
-            StopAllManaged();
-            await UniTask.CompletedTask;
-        }
-
         internal void PlayManaged(EventReference fmodEvent, ManagedConfig config)
         {
-            if (m_ManagedInstances.ContainsKey(fmodEvent.Path))
+            if (m_ManagedInstances.ContainsKey(fmodEvent.Guid.ToString()))
             {
                 if (!config.RestartIfPlaying)
                     return;
-                StopManaged(fmodEvent.Path, config.StopMode);
+                StopManaged(fmodEvent.Guid.ToString(), config.StopMode);
             }
 
             var instance = RuntimeManager.CreateInstance(fmodEvent);
             instance.start();
-            m_ManagedInstances[fmodEvent.Path] = instance;
-            CLogger.LogInfo($"PlayManaged: {fmodEvent.Path}", LogTag.Audio);
+            m_ManagedInstances[fmodEvent.Guid.ToString()] = instance;
+            CLogger.LogInfo($"PlayManaged: {fmodEvent}", LogTag.Audio);
         }
 
         internal void PlayManaged3D(
@@ -78,18 +71,18 @@ namespace Core
             ManagedConfig config
         )
         {
-            if (m_ManagedInstances.ContainsKey(fmodEvent.Path))
+            if (m_ManagedInstances.ContainsKey(fmodEvent.Guid.ToString()))
             {
                 if (!config.RestartIfPlaying)
                     return;
-                StopManaged(fmodEvent.Path, config.StopMode);
+                StopManaged(fmodEvent.Guid.ToString(), config.StopMode);
             }
 
             var instance = RuntimeManager.CreateInstance(fmodEvent);
             instance.set3DAttributes(RuntimeUtils.To3DAttributes(position));
             instance.start();
-            m_ManagedInstances[fmodEvent.Path] = instance;
-            CLogger.LogInfo($"PlayManaged3D: {fmodEvent.Path}", LogTag.Audio);
+            m_ManagedInstances[fmodEvent.Guid.ToString()] = instance;
+            CLogger.LogInfo($"PlayManaged3D: {fmodEvent}", LogTag.Audio);
         }
 
         internal void PlayManagedCustom(
@@ -99,11 +92,11 @@ namespace Core
             ManagedConfig config
         )
         {
-            if (m_ManagedInstances.ContainsKey(fmodEvent.Path))
+            if (m_ManagedInstances.ContainsKey(fmodEvent.Guid.ToString()))
             {
                 if (!config.RestartIfPlaying)
                     return;
-                StopManaged(fmodEvent.Path, config.StopMode);
+                StopManaged(fmodEvent.Guid.ToString(), config.StopMode);
             }
 
             var instance = RuntimeManager.CreateInstance(fmodEvent);
@@ -116,8 +109,8 @@ namespace Core
                 instance.set3DAttributes(RuntimeUtils.To3DAttributes(position.Value));
 
             instance.start();
-            m_ManagedInstances[fmodEvent.Path] = instance;
-            CLogger.LogInfo($"PlayManagedCustom: {fmodEvent.Path}", LogTag.Audio);
+            m_ManagedInstances[fmodEvent.Guid.ToString()] = instance;
+            CLogger.LogInfo($"PlayManagedCustom: {fmodEvent}", LogTag.Audio);
         }
 
         internal void SetManagedParameter(string id, FmodParameterPair[] parameters)
@@ -160,11 +153,35 @@ namespace Core
 
         private void LoadAllBanks()
         {
-            CLogger.LogInfo("All FMOD Banks loaded", LogTag.Audio);
+            try
+            {
+                if (!RuntimeManager.HaveAllBanksLoaded)
+                {
+                    CLogger.LogWarn(
+                        "FMOD Banks not fully loaded yet, waiting for RuntimeManager...",
+                        LogTag.Audio
+                    );
+                }
+                else
+                {
+                    CLogger.LogInfo(
+                        "All FMOD Banks confirmed loaded by RuntimeManager.",
+                        LogTag.Audio
+                    );
+                }
+            }
+            catch (Exception e)
+            {
+                CLogger.LogError($"Failed to load FMOD Banks: {e.Message}", LogTag.Audio);
+            }
         }
 
         private void RegisterAllEntries()
         {
+            CLogger.LogInfo(
+                $"[VgAudioSystem] RegisterAllEntries() start — m_Sheets count: {(m_Sheets == null ? "NULL" : m_Sheets.Length.ToString())}",
+                LogTag.Audio
+            );
             CLogger.LogVerbose("=== Starting Audio Event Registration ===", LogTag.Audio);
 
             var sb = new StringBuilder();
@@ -221,6 +238,10 @@ namespace Core
 
         private void SubscribeEntry(AudioEntry entry)
         {
+            CLogger.LogInfo(
+                $"[VgAudioSystem] Subscribing entry: [{entry.GetType().Name}] ListenEvent={entry.ListenEventType?.Name ?? "NULL"}",
+                LogTag.Audio
+            );
             var method = typeof(VgAudioSystem)
                 .GetMethod(
                     nameof(SubscribeEntryGeneric),
@@ -229,6 +250,10 @@ namespace Core
                 .MakeGenericMethod(entry.ListenEventType);
             var disposable = (IDisposable)method.Invoke(this, new object[] { entry });
             m_Subscriptions.Add((entry.ListenEventType.Name, disposable));
+            CLogger.LogInfo(
+                $"[VgAudioSystem] Subscribed OK: [{entry.GetType().Name}] → {entry.ListenEventType.Name}",
+                LogTag.Audio
+            );
         }
 
         private IDisposable SubscribeEntryGeneric<TEvent>(AudioEntry entry)
@@ -262,8 +287,11 @@ namespace Core
                 )
                 .MakeGenericMethod(entry.Managed.StopEventType);
             var disposable = (IDisposable)
-                method.Invoke(this, new object[] { entry.FmodEvent.Path, entry.Managed.StopMode });
-            m_Subscriptions.Add((entry.FmodEvent.Path, disposable));
+                method.Invoke(
+                    this,
+                    new object[] { entry.FmodEvent.Guid.ToString(), entry.Managed.StopMode }
+                );
+            m_Subscriptions.Add((entry.FmodEvent.Guid.ToString(), disposable));
         }
 
         internal void RegisterStopSubscription(
