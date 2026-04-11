@@ -241,10 +241,10 @@ jobs:
             # Develop分支PR - CI验证流程
             echo "🔍 检测到 develop 分支 PR，应用默认配置"
             SHOULD_RUN_TESTS=true
-            SHOULD_RUN_BUILD=false
+            SHOULD_RUN_BUILD=true
             SHOULD_RUN_STYLE=true
             BUILD_TYPE="preview"
-            PIPELINE_DESC="📝 Develop PR验证流程 (代码检测 → 单元测试)"
+            PIPELINE_DESC="📝 Develop PR验证流程 (代码检测 → 单元测试 → 构建测试)"
             
           elif [[ "$BRANCH_NAME" == "main" && "$EVENT_NAME" == "pull_request" ]]; then
             # Main分支PR - 完整CI流程  
@@ -938,6 +938,14 @@ jobs:
           if [[ "$BUILD_STATUS" == "failure" ]]; then
             echo "- 失败原因: 请查看构建日志了解详细错误信息" >> $GITHUB_STEP_SUMMARY
           fi
+
+      - name: 🔓 释放 Unity 许可证
+        if: always()
+        uses: game-ci/unity-return-license@v4
+        env:
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
 
   # =============================================================================
   # 阶段4: 部署到GitHub Release - 将构建产物作为附件发布
