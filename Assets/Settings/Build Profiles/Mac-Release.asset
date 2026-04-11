@@ -38,6 +38,7 @@ MonoBehaviour:
   - ES3_TMPRO
   - ES3_UGUI
   - BUILD_MODE_RELEASE
+  - ENABLE_RELEASE_LOG
   m_PlayerSettingsYaml:
     m_Settings: []
   references:
