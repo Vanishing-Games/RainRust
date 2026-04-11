@@ -10,9 +10,7 @@ namespace Zenject.Asteroids
 
         float _theta;
 
-        public ShipStateWaitingToStart(
-            Ship ship,
-            Settings settings)
+        public ShipStateWaitingToStart(Ship ship, Settings settings)
         {
             _settings = settings;
             _ship = ship;
@@ -21,12 +19,15 @@ namespace Zenject.Asteroids
         public override void Start()
         {
             _ship.Position = _settings.StartOffset;
-            _ship.Rotation = Quaternion.AngleAxis(90.0f, Vector3.up) * Quaternion.AngleAxis(90.0f, Vector3.right);
+            _ship.Rotation =
+                Quaternion.AngleAxis(90.0f, Vector3.up)
+                * Quaternion.AngleAxis(90.0f, Vector3.right);
         }
 
         public override void Update()
         {
-            _ship.Position = _settings.StartOffset + Vector3.up * _settings.Amplitude * Mathf.Sin(_theta);
+            _ship.Position =
+                _settings.StartOffset + Vector3.up * _settings.Amplitude * Mathf.Sin(_theta);
             _theta += Time.deltaTime * _settings.Frequency;
         }
 
@@ -38,8 +39,6 @@ namespace Zenject.Asteroids
             public float Frequency;
         }
 
-        public class Factory : PlaceholderFactory<ShipStateWaitingToStart>
-        {
-        }
+        public class Factory : PlaceholderFactory<ShipStateWaitingToStart> { }
     }
 }

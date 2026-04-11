@@ -16,14 +16,17 @@ namespace FMODUnity
 
         [FormerlySerializedAs("PlayEvent")]
         public EmitterGameEvent EventPlayTrigger = EmitterGameEvent.None;
+
         [Obsolete("Use the EventPlayTrigger field instead")]
         public EmitterGameEvent PlayEvent
         {
             get { return EventPlayTrigger; }
             set { EventPlayTrigger = value; }
         }
+
         [FormerlySerializedAs("StopEvent")]
         public EmitterGameEvent EventStopTrigger = EmitterGameEvent.None;
+
         [Obsolete("Use the EventStopTrigger field instead")]
         public EmitterGameEvent StopEvent
         {
@@ -33,6 +36,7 @@ namespace FMODUnity
         public bool AllowFadeout = true;
         public bool TriggerOnce = false;
         public bool Preload = false;
+
         [FormerlySerializedAs("AllowNonRigidbodyDoppler")]
         public bool NonRigidbodyVelocity = false;
         public ParamRef[] Params = new ParamRef[0];
@@ -53,9 +57,15 @@ namespace FMODUnity
 
         private const string SnapshotString = "snapshot";
 
-        public FMOD.Studio.EventDescription EventDescription { get { return eventDescription; } }
+        public FMOD.Studio.EventDescription EventDescription
+        {
+            get { return eventDescription; }
+        }
 
-        public FMOD.Studio.EventInstance EventInstance { get { return instance; } }
+        public FMOD.Studio.EventInstance EventInstance
+        {
+            get { return instance; }
+        }
 
         public bool IsActive { get; private set; }
 
@@ -73,7 +83,8 @@ namespace FMODUnity
                     Lookup();
                 }
 
-                float minDistance, maxDistance;
+                float minDistance,
+                    maxDistance;
                 eventDescription.getMinMaxDistance(out minDistance, out maxDistance);
                 return maxDistance;
             }
@@ -103,7 +114,9 @@ namespace FMODUnity
         private void UpdatePlayingStatus(bool force = false)
         {
             // If at least one listener is within the max distance, ensure an event instance is playing
-            bool playInstance = StudioListener.DistanceSquaredToNearestListener(transform.position) <= (MaxDistance * MaxDistance);
+            bool playInstance =
+                StudioListener.DistanceSquaredToNearestListener(transform.position)
+                <= (MaxDistance * MaxDistance);
 
             if (force || playInstance != IsPlaying())
             {
@@ -133,14 +146,24 @@ namespace FMODUnity
 #if UNITY_PHYSICS_EXIST
             if (NonRigidbodyVelocity && GetComponent<Rigidbody>())
             {
-                Debug.LogWarning(string.Format("[FMOD] Non-Rigidbody Velocity is enabled on Emitter attached to GameObject \"{0}\", which also has a Rigidbody component attached - this will be disabled in favor of velocity from Rigidbody component.", this.name));
+                Debug.LogWarning(
+                    string.Format(
+                        "[FMOD] Non-Rigidbody Velocity is enabled on Emitter attached to GameObject \"{0}\", which also has a Rigidbody component attached - this will be disabled in favor of velocity from Rigidbody component.",
+                        this.name
+                    )
+                );
                 NonRigidbodyVelocity = false;
             }
 #endif
 #if UNITY_PHYSICS2D_EXIST
             if (NonRigidbodyVelocity && GetComponent<Rigidbody2D>())
             {
-                Debug.LogWarning(string.Format("[FMOD] Non-Rigidbody Velocity is enabled on Emitter attached to GameObject \"{0}\", which also has a Rigidbody2D component attached - this will be disabled in favor of velocity from Rigidbody2D component.", this.name));
+                Debug.LogWarning(
+                    string.Format(
+                        "[FMOD] Non-Rigidbody Velocity is enabled on Emitter attached to GameObject \"{0}\", which also has a Rigidbody2D component attached - this will be disabled in favor of velocity from Rigidbody2D component.",
+                        this.name
+                    )
+                );
                 NonRigidbodyVelocity = false;
             }
 #endif
@@ -279,7 +302,9 @@ namespace FMODUnity
                     if (GetComponent<Rigidbody>())
                     {
                         Rigidbody rigidBody = GetComponent<Rigidbody>();
-                        instance.set3DAttributes(RuntimeUtils.To3DAttributes(gameObject, rigidBody));
+                        instance.set3DAttributes(
+                            RuntimeUtils.To3DAttributes(gameObject, rigidBody)
+                        );
                         RuntimeManager.AttachInstanceToGameObject(instance, gameObject, rigidBody);
                     }
                     else
@@ -288,14 +313,24 @@ namespace FMODUnity
                     if (GetComponent<Rigidbody2D>())
                     {
                         var rigidBody2D = GetComponent<Rigidbody2D>();
-                        instance.set3DAttributes(RuntimeUtils.To3DAttributes(gameObject, rigidBody2D));
-                        RuntimeManager.AttachInstanceToGameObject(instance, gameObject, rigidBody2D);
+                        instance.set3DAttributes(
+                            RuntimeUtils.To3DAttributes(gameObject, rigidBody2D)
+                        );
+                        RuntimeManager.AttachInstanceToGameObject(
+                            instance,
+                            gameObject,
+                            rigidBody2D
+                        );
                     }
                     else
 #endif
                     {
                         instance.set3DAttributes(RuntimeUtils.To3DAttributes(gameObject));
-                        RuntimeManager.AttachInstanceToGameObject(instance, gameObject, NonRigidbodyVelocity);
+                        RuntimeManager.AttachInstanceToGameObject(
+                            instance,
+                            gameObject,
+                            NonRigidbodyVelocity
+                        );
                     }
                 }
             }
@@ -312,8 +347,14 @@ namespace FMODUnity
 
             if (is3D && OverrideAttenuation)
             {
-                instance.setProperty(FMOD.Studio.EVENT_PROPERTY.MINIMUM_DISTANCE, OverrideMinDistance);
-                instance.setProperty(FMOD.Studio.EVENT_PROPERTY.MAXIMUM_DISTANCE, OverrideMaxDistance);
+                instance.setProperty(
+                    FMOD.Studio.EVENT_PROPERTY.MINIMUM_DISTANCE,
+                    OverrideMinDistance
+                );
+                instance.setProperty(
+                    FMOD.Studio.EVENT_PROPERTY.MAXIMUM_DISTANCE,
+                    OverrideMaxDistance
+                );
             }
 
             instance.start();
@@ -338,7 +379,11 @@ namespace FMODUnity
 
             if (instance.isValid())
             {
-                instance.stop(AllowFadeout ? FMOD.Studio.STOP_MODE.ALLOWFADEOUT : FMOD.Studio.STOP_MODE.IMMEDIATE);
+                instance.stop(
+                    AllowFadeout
+                        ? FMOD.Studio.STOP_MODE.ALLOWFADEOUT
+                        : FMOD.Studio.STOP_MODE.IMMEDIATE
+                );
                 instance.release();
                 if (!AllowFadeout)
                 {
@@ -374,7 +419,11 @@ namespace FMODUnity
             }
         }
 
-        public void SetParameter(FMOD.Studio.PARAMETER_ID id, float value, bool ignoreseekspeed = false)
+        public void SetParameter(
+            FMOD.Studio.PARAMETER_ID id,
+            float value,
+            bool ignoreseekspeed = false
+        )
         {
             if (Settings.Instance.StopEventsOutsideMaxDistance && IsActive)
             {

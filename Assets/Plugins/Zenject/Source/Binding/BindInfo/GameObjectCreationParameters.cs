@@ -8,43 +8,20 @@ namespace Zenject
     [NoReflectionBaking]
     public class GameObjectCreationParameters
     {
-        public string Name
-        {
-            get;
-            set;
-        }
+        public string Name { get; set; }
 
-        public string GroupName
-        {
-            get;
-            set;
-        }
+        public string GroupName { get; set; }
 
-        public Transform ParentTransform
-        {
-            get;
-            set;
-        }
+        public Transform ParentTransform { get; set; }
 
-        public Func<InjectContext, Transform> ParentTransformGetter
-        {
-            get;
-            set;
-        }
+        public Func<InjectContext, Transform> ParentTransformGetter { get; set; }
 
-        public Vector3? Position
-        {
-            get;
-            set;
-        }
+        public Vector3? Position { get; set; }
 
-        public Quaternion? Rotation
-        {
-            get;
-            set;
-        }
+        public Quaternion? Rotation { get; set; }
 
-        public static readonly GameObjectCreationParameters Default = new GameObjectCreationParameters();
+        public static readonly GameObjectCreationParameters Default =
+            new GameObjectCreationParameters();
 
         public override int GetHashCode()
         {
@@ -54,7 +31,9 @@ namespace Zenject
                 hash = hash * 29 + (Name == null ? 0 : Name.GetHashCode());
                 hash = hash * 29 + (GroupName == null ? 0 : GroupName.GetHashCode());
                 hash = hash * 29 + (ParentTransform == null ? 0 : ParentTransform.GetHashCode());
-                hash = hash * 29 + (ParentTransformGetter == null ? 0 : ParentTransformGetter.GetHashCode());
+                hash =
+                    hash * 29
+                    + (ParentTransformGetter == null ? 0 : ParentTransformGetter.GetHashCode());
                 hash = hash * 29 + (!Position.HasValue ? 0 : Position.Value.GetHashCode());
                 hash = hash * 29 + (!Rotation.HasValue ? 0 : Rotation.Value.GetHashCode());
                 return hash;
@@ -77,13 +56,18 @@ namespace Zenject
             return this == that;
         }
 
-        public static bool operator ==(GameObjectCreationParameters left, GameObjectCreationParameters right)
+        public static bool operator ==(
+            GameObjectCreationParameters left,
+            GameObjectCreationParameters right
+        )
         {
-            return Equals(left.Name, right.Name)
-                && Equals(left.GroupName, right.GroupName);
+            return Equals(left.Name, right.Name) && Equals(left.GroupName, right.GroupName);
         }
 
-        public static bool operator !=(GameObjectCreationParameters left, GameObjectCreationParameters right)
+        public static bool operator !=(
+            GameObjectCreationParameters left,
+            GameObjectCreationParameters right
+        )
         {
             return !left.Equals(right);
         }

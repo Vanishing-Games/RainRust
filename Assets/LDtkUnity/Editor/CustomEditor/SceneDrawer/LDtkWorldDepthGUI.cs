@@ -12,12 +12,13 @@ namespace LDtkUnity.Editor
         private static readonly GUIContent WindowContent = new GUIContent()
         {
             text = "World Depth",
-            tooltip = "In LDtk, You can set world depth.\nUse these buttons to show/hide levels of a certain world depth."
+            tooltip =
+                "In LDtk, You can set world depth.\nUse these buttons to show/hide levels of a certain world depth.",
         };
-        
+
         private List<LDtkComponentLevel> _levels;
         private int[] _depths;
-        
+
         private int _selectedDepthIndex;
         private int _prevSelectedDepthIndex;
 
@@ -40,7 +41,7 @@ namespace LDtkUnity.Editor
             {
                 return false;
             }
-            
+
             _depths = _levels.Select(p => p.WorldDepth).Distinct().OrderBy(p => p).ToArray();
             if (_depths.Length <= 1)
             {
@@ -48,7 +49,7 @@ namespace LDtkUnity.Editor
             }
             return true;
         }
-        
+
         [UsedImplicitly]
         public void Draw()
         {
@@ -62,7 +63,7 @@ namespace LDtkUnity.Editor
             extraY = 0;
 #endif
             const int paddingFromEdge = 5;
-            
+
             Rect rect = new Rect(paddingFromEdge, paddingFromEdge + extraY, 10, 10);
             GUILayout.Window(-1000, rect, DrawWindow, WindowContent);
         }
@@ -71,7 +72,12 @@ namespace LDtkUnity.Editor
         {
             DrawEverythingButtons();
             string[] optionsString = _depths.Select(p => p.ToString()).ToArray();
-            _selectedDepthIndex = GUILayout.SelectionGrid(_selectedDepthIndex, optionsString, 1, EditorStyles.miniButton);
+            _selectedDepthIndex = GUILayout.SelectionGrid(
+                _selectedDepthIndex,
+                optionsString,
+                1,
+                EditorStyles.miniButton
+            );
             TryChange();
         }
 
@@ -87,7 +93,7 @@ namespace LDtkUnity.Editor
             {
                 return;
             }
-            
+
             SetDepthVisibility(p => p.WorldDepth == _depths[_selectedDepthIndex]);
             SaveToPrefs();
         }
@@ -113,9 +119,10 @@ namespace LDtkUnity.Editor
         }
 
         private delegate bool ShouldShow(LDtkComponentLevel level);
+
         private void SetDepthVisibility(ShouldShow decider)
         {
-            List<GameObject> hide = new List<GameObject>(); 
+            List<GameObject> hide = new List<GameObject>();
             List<GameObject> show = new List<GameObject>();
             foreach (LDtkComponentLevel level in _levels)
             {
@@ -126,11 +133,11 @@ namespace LDtkUnity.Editor
                 }
                 hide.Add(level.gameObject);
             }
-            
+
             SceneVisibilityManager visibility = SceneVisibilityManager.instance;
             visibility.Hide(hide.ToArray(), true);
             visibility.DisablePicking(hide.ToArray(), true);
-            
+
             visibility.Show(show.ToArray(), true);
             visibility.EnablePicking(show.ToArray(), true);
         }

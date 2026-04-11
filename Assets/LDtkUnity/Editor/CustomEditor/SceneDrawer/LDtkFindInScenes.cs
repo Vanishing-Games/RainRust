@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-
 #if UNITY_2021_2_OR_NEWER
 using UnityEditor.SceneManagement;
 #else
@@ -31,7 +30,7 @@ namespace LDtkUnity.Editor
                     {
                         continue;
                     }
-                    
+
                     List<T> inScene = FindInScene<T>(scene);
                     foreach (T obj in inScene)
                     {
@@ -48,7 +47,7 @@ namespace LDtkUnity.Editor
         {
             GameObject[] rootGameObjects = scene.GetRootGameObjects();
             List<T> interfaces = new List<T>();
-            foreach(GameObject rootGameObject in rootGameObjects)
+            foreach (GameObject rootGameObject in rootGameObjects)
             {
                 TryAddToList(rootGameObject, interfaces);
             }

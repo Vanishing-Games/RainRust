@@ -2,7 +2,5 @@
 
 namespace FMODUnity
 {
-    public class BankRefAttribute : PropertyAttribute
-    {
-    }
+    public class BankRefAttribute : PropertyAttribute { }
 }

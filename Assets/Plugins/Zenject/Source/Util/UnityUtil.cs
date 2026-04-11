@@ -42,7 +42,10 @@ namespace ModestTree.Util
 
         public static bool WasShiftKeyJustPressed
         {
-            get { return Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift); }
+            get
+            {
+                return Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift);
+            }
         }
 
         public static bool WasAltKeyJustPressed
@@ -62,7 +65,9 @@ namespace ModestTree.Util
 
         public static GameObject GetRootParentOrSelf(GameObject gameObject)
         {
-            return GetParentsAndSelf(gameObject.transform).Select(x => x.gameObject).LastOrDefault();
+            return GetParentsAndSelf(gameObject.transform)
+                .Select(x => x.gameObject)
+                .LastOrDefault();
         }
 
         public static IEnumerable<Transform> GetParents(Transform transform)
@@ -93,18 +98,24 @@ namespace ModestTree.Util
             }
         }
 
-        public static IEnumerable<Component> GetComponentsInChildrenTopDown(GameObject gameObject, bool includeInactive)
+        public static IEnumerable<Component> GetComponentsInChildrenTopDown(
+            GameObject gameObject,
+            bool includeInactive
+        )
         {
-            return gameObject.GetComponentsInChildren<Component>(includeInactive)
-                .OrderBy(x =>
-                    x == null ? int.MinValue : GetDepthLevel(x.transform));
+            return gameObject
+                .GetComponentsInChildren<Component>(includeInactive)
+                .OrderBy(x => x == null ? int.MinValue : GetDepthLevel(x.transform));
         }
 
-        public static IEnumerable<Component> GetComponentsInChildrenBottomUp(GameObject gameObject, bool includeInactive)
+        public static IEnumerable<Component> GetComponentsInChildrenBottomUp(
+            GameObject gameObject,
+            bool includeInactive
+        )
         {
-            return gameObject.GetComponentsInChildren<Component>(includeInactive)
-                .OrderByDescending(x =>
-                    x == null ? int.MinValue : GetDepthLevel(x.transform));
+            return gameObject
+                .GetComponentsInChildren<Component>(includeInactive)
+                .OrderByDescending(x => x == null ? int.MinValue : GetDepthLevel(x.transform));
         }
 
         public static IEnumerable<GameObject> GetDirectChildrenAndSelf(GameObject obj)

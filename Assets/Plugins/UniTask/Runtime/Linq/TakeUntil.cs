@@ -1,19 +1,25 @@
-﻿using Cysharp.Threading.Tasks.Internal;
-using System;
+﻿using System;
 using System.Threading;
+using Cysharp.Threading.Tasks.Internal;
 
 namespace Cysharp.Threading.Tasks.Linq
 {
     public static partial class UniTaskAsyncEnumerable
     {
-        public static IUniTaskAsyncEnumerable<TSource> TakeUntil<TSource>(this IUniTaskAsyncEnumerable<TSource> source, UniTask other)
+        public static IUniTaskAsyncEnumerable<TSource> TakeUntil<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            UniTask other
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
 
             return new TakeUntil<TSource>(source, other, null);
         }
 
-        public static IUniTaskAsyncEnumerable<TSource> TakeUntil<TSource>(this IUniTaskAsyncEnumerable<TSource> source, Func<CancellationToken, UniTask> other)
+        public static IUniTaskAsyncEnumerable<TSource> TakeUntil<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            Func<CancellationToken, UniTask> other
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
             Error.ThrowArgumentNullException(source, nameof(other));
@@ -28,14 +34,20 @@ namespace Cysharp.Threading.Tasks.Linq
         readonly UniTask other;
         readonly Func<CancellationToken, UniTask> other2;
 
-        public TakeUntil(IUniTaskAsyncEnumerable<TSource> source, UniTask other, Func<CancellationToken, UniTask> other2)
+        public TakeUntil(
+            IUniTaskAsyncEnumerable<TSource> source,
+            UniTask other,
+            Func<CancellationToken, UniTask> other2
+        )
         {
             this.source = source;
             this.other = other;
             this.other2 = other2;
         }
 
-        public IUniTaskAsyncEnumerator<TSource> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+        public IUniTaskAsyncEnumerator<TSource> GetAsyncEnumerator(
+            CancellationToken cancellationToken = default
+        )
         {
             if (other2 != null)
             {
@@ -61,14 +73,22 @@ namespace Cysharp.Threading.Tasks.Linq
             IUniTaskAsyncEnumerator<TSource> enumerator;
             UniTask<bool>.Awaiter awaiter;
 
-            public _TakeUntil(IUniTaskAsyncEnumerable<TSource> source, UniTask other, CancellationToken cancellationToken1)
+            public _TakeUntil(
+                IUniTaskAsyncEnumerable<TSource> source,
+                UniTask other,
+                CancellationToken cancellationToken1
+            )
             {
                 this.source = source;
                 this.cancellationToken1 = cancellationToken1;
 
                 if (cancellationToken1.CanBeCanceled)
                 {
-                    this.cancellationTokenRegistration1 = cancellationToken1.RegisterWithoutCaptureExecutionContext(CancelDelegate1, this);
+                    this.cancellationTokenRegistration1 =
+                        cancellationToken1.RegisterWithoutCaptureExecutionContext(
+                            CancelDelegate1,
+                            this
+                        );
                 }
 
                 TaskTracker.TrackActiveTask(this, 3);

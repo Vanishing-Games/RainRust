@@ -3,13 +3,15 @@ using ModestTree;
 namespace Zenject
 {
     [NoReflectionBaking]
-    public class FactoryToChoiceBinder<TParam1, TParam2, TParam3, TContract> : FactoryFromBinder<TParam1, TParam2, TParam3, TContract>
+    public class FactoryToChoiceBinder<TParam1, TParam2, TParam3, TContract>
+        : FactoryFromBinder<TParam1, TParam2, TParam3, TContract>
     {
         public FactoryToChoiceBinder(
-            DiContainer bindContainer, BindInfo bindInfo, FactoryBindInfo factoryBindInfo)
-            : base(bindContainer, bindInfo, factoryBindInfo)
-        {
-        }
+            DiContainer bindContainer,
+            BindInfo bindInfo,
+            FactoryBindInfo factoryBindInfo
+        )
+            : base(bindContainer, bindInfo, factoryBindInfo) { }
 
         // Note that this is the default, so not necessary to call
         public FactoryFromBinder<TParam1, TParam2, TParam3, TContract> ToSelf()
@@ -25,9 +27,11 @@ namespace Zenject
             BindInfo.ToTypes.Clear();
             BindInfo.ToTypes.Add(typeof(TConcrete));
 
-            return new FactoryFromBinder<TParam1, TParam2, TParam3, TConcrete>(BindContainer, BindInfo, FactoryBindInfo);
+            return new FactoryFromBinder<TParam1, TParam2, TParam3, TConcrete>(
+                BindContainer,
+                BindInfo,
+                FactoryBindInfo
+            );
         }
     }
 }
-
-

@@ -9,9 +9,7 @@ namespace Zenject
         Transform _originalParent;
 
         [Inject]
-        public MonoPoolableMemoryPool()
-        {
-        }
+        public MonoPoolableMemoryPool() { }
 
         protected override void OnCreated(TValue item)
         {
@@ -43,16 +41,13 @@ namespace Zenject
     }
 
     // One parameters
-    public class MonoPoolableMemoryPool<TParam1, TValue>
-        : MemoryPool<TParam1, TValue>
+    public class MonoPoolableMemoryPool<TParam1, TValue> : MemoryPool<TParam1, TValue>
         where TValue : Component, IPoolable<TParam1>
     {
         Transform _originalParent;
 
         [Inject]
-        public MonoPoolableMemoryPool()
-        {
-        }
+        public MonoPoolableMemoryPool() { }
 
         protected override void OnCreated(TValue item)
         {
@@ -91,9 +86,7 @@ namespace Zenject
         Transform _originalParent;
 
         [Inject]
-        public MonoPoolableMemoryPool()
-        {
-        }
+        public MonoPoolableMemoryPool() { }
 
         protected override void OnCreated(TValue item)
         {
@@ -132,9 +125,7 @@ namespace Zenject
         Transform _originalParent;
 
         [Inject]
-        public MonoPoolableMemoryPool()
-        {
-        }
+        public MonoPoolableMemoryPool() { }
 
         protected override void OnCreated(TValue item)
         {
@@ -173,9 +164,7 @@ namespace Zenject
         Transform _originalParent;
 
         [Inject]
-        public MonoPoolableMemoryPool()
-        {
-        }
+        public MonoPoolableMemoryPool() { }
 
         protected override void OnCreated(TValue item)
         {
@@ -199,7 +188,13 @@ namespace Zenject
             }
         }
 
-        protected override void Reinitialize(TParam1 p1, TParam2 p2, TParam3 p3, TParam4 p4, TValue item)
+        protected override void Reinitialize(
+            TParam1 p1,
+            TParam2 p2,
+            TParam3 p3,
+            TParam4 p4,
+            TValue item
+        )
         {
             item.gameObject.SetActive(true);
             item.OnSpawned(p1, p2, p3, p4);
@@ -214,9 +209,7 @@ namespace Zenject
         Transform _originalParent;
 
         [Inject]
-        public MonoPoolableMemoryPool()
-        {
-        }
+        public MonoPoolableMemoryPool() { }
 
         protected override void OnCreated(TValue item)
         {
@@ -240,7 +233,14 @@ namespace Zenject
             }
         }
 
-        protected override void Reinitialize(TParam1 p1, TParam2 p2, TParam3 p3, TParam4 p4, TParam5 p5, TValue item)
+        protected override void Reinitialize(
+            TParam1 p1,
+            TParam2 p2,
+            TParam3 p3,
+            TParam4 p4,
+            TParam5 p5,
+            TValue item
+        )
         {
             item.gameObject.SetActive(true);
             item.OnSpawned(p1, p2, p3, p4, p5);
@@ -248,16 +248,21 @@ namespace Zenject
     }
 
     // Six parameters
-    public class MonoPoolableMemoryPool<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TValue>
-        : MemoryPool<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TValue>
+    public class MonoPoolableMemoryPool<
+        TParam1,
+        TParam2,
+        TParam3,
+        TParam4,
+        TParam5,
+        TParam6,
+        TValue
+    > : MemoryPool<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TValue>
         where TValue : Component, IPoolable<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6>
     {
         Transform _originalParent;
 
         [Inject]
-        public MonoPoolableMemoryPool()
-        {
-        }
+        public MonoPoolableMemoryPool() { }
 
         protected override void OnCreated(TValue item)
         {
@@ -281,7 +286,15 @@ namespace Zenject
             }
         }
 
-        protected override void Reinitialize(TParam1 p1, TParam2 p2, TParam3 p3, TParam4 p4, TParam5 p5, TParam6 p6, TValue item)
+        protected override void Reinitialize(
+            TParam1 p1,
+            TParam2 p2,
+            TParam3 p3,
+            TParam4 p4,
+            TParam5 p5,
+            TParam6 p6,
+            TValue item
+        )
         {
             item.gameObject.SetActive(true);
             item.OnSpawned(p1, p2, p3, p4, p5, p6);
@@ -289,16 +302,23 @@ namespace Zenject
     }
 
     // Seven parameters
-    public class MonoPoolableMemoryPool<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TValue>
-        : MemoryPool<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TValue>
-        where TValue : Component, IPoolable<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7>
+    public class MonoPoolableMemoryPool<
+        TParam1,
+        TParam2,
+        TParam3,
+        TParam4,
+        TParam5,
+        TParam6,
+        TParam7,
+        TValue
+    > : MemoryPool<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TValue>
+        where TValue : Component,
+            IPoolable<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7>
     {
         Transform _originalParent;
 
         [Inject]
-        public MonoPoolableMemoryPool()
-        {
-        }
+        public MonoPoolableMemoryPool() { }
 
         protected override void OnCreated(TValue item)
         {
@@ -322,7 +342,16 @@ namespace Zenject
             }
         }
 
-        protected override void Reinitialize(TParam1 p1, TParam2 p2, TParam3 p3, TParam4 p4, TParam5 p5, TParam6 p6, TParam7 p7, TValue item)
+        protected override void Reinitialize(
+            TParam1 p1,
+            TParam2 p2,
+            TParam3 p3,
+            TParam4 p4,
+            TParam5 p5,
+            TParam6 p6,
+            TParam7 p7,
+            TValue item
+        )
         {
             item.gameObject.SetActive(true);
             item.OnSpawned(p1, p2, p3, p4, p5, p6, p7);
@@ -330,16 +359,24 @@ namespace Zenject
     }
 
     // Eight parameters
-    public class MonoPoolableMemoryPool<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8, TValue>
-        : MemoryPool<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8, TValue>
-        where TValue : Component, IPoolable<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8>
+    public class MonoPoolableMemoryPool<
+        TParam1,
+        TParam2,
+        TParam3,
+        TParam4,
+        TParam5,
+        TParam6,
+        TParam7,
+        TParam8,
+        TValue
+    > : MemoryPool<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8, TValue>
+        where TValue : Component,
+            IPoolable<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8>
     {
         Transform _originalParent;
 
         [Inject]
-        public MonoPoolableMemoryPool()
-        {
-        }
+        public MonoPoolableMemoryPool() { }
 
         protected override void OnCreated(TValue item)
         {
@@ -363,7 +400,17 @@ namespace Zenject
             }
         }
 
-        protected override void Reinitialize(TParam1 p1, TParam2 p2, TParam3 p3, TParam4 p4, TParam5 p5, TParam6 p6, TParam7 p7, TParam8 p8, TValue item)
+        protected override void Reinitialize(
+            TParam1 p1,
+            TParam2 p2,
+            TParam3 p3,
+            TParam4 p4,
+            TParam5 p5,
+            TParam6 p6,
+            TParam7 p7,
+            TParam8 p8,
+            TValue item
+        )
         {
             item.gameObject.SetActive(true);
             item.OnSpawned(p1, p2, p3, p4, p5, p6, p7, p8);

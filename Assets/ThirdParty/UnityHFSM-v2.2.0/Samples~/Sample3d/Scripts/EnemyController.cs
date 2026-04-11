@@ -21,7 +21,11 @@ namespace UnityHFSM.Samples.Sample3d
         {
             // This implementation is an example and may differ for your scene setup
             Vector3 player = PlayerController.Instance.transform.position;
-            transform.position = Vector3.MoveTowards(transform.position, player, speed * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(
+                transform.position,
+                player,
+                speed * Time.deltaTime
+            );
         }
 
         void RotateAtSpeed(float speed)
@@ -58,7 +62,8 @@ namespace UnityHFSM.Samples.Sample3d
             StateMachine extractIntel = new StateMachine(needsExitTime: false);
             fsm.AddState("ExtractIntel", extractIntel);
 
-            extractIntel.AddState("SendData",
+            extractIntel.AddState(
+                "SendData",
                 onLogic: (state) =>
                 {
                     // When the state has been active for more than 5 seconds,
@@ -84,10 +89,12 @@ namespace UnityHFSM.Samples.Sample3d
             // Class based architecture
             // extractIntel.AddState("SendData", new CustomSendData(this));
 
-            extractIntel.AddState("CollectData",
+            extractIntel.AddState(
+                "CollectData",
                 onLogic: (state) =>
                 {
-                    if (state.timer.Elapsed > 5) state.fsm.StateCanExit();
+                    if (state.timer.Elapsed > 5)
+                        state.fsm.StateCanExit();
                 },
                 needsExitTime: true
             );
@@ -97,7 +104,8 @@ namespace UnityHFSM.Samples.Sample3d
             extractIntel.AddTransition("CollectData", "SendData");
             extractIntel.SetStartState("CollectData");
 
-            fsm.AddState("FollowPlayer",
+            fsm.AddState(
+                "FollowPlayer",
                 onLogic: (state) =>
                 {
                     MoveTowardsPlayer(1);
@@ -108,9 +116,7 @@ namespace UnityHFSM.Samples.Sample3d
                 }
             );
 
-            fsm.AddState("FleeFromPlayer",
-                onLogic: (state) => MoveTowardsPlayer(-1)
-            );
+            fsm.AddState("FleeFromPlayer", onLogic: (state) => MoveTowardsPlayer(-1));
 
             // This configures the entry point of the state machine
             fsm.SetStartState("FollowPlayer");
@@ -118,22 +124,26 @@ namespace UnityHFSM.Samples.Sample3d
             fsm.AddTransition(
                 "ExtractIntel",
                 "FollowPlayer",
-                (transition) => DistanceToPlayer() > ownScanningRange);
+                (transition) => DistanceToPlayer() > ownScanningRange
+            );
 
             fsm.AddTransition(
                 "FollowPlayer",
                 "ExtractIntel",
-                (transition) => DistanceToPlayer() < ownScanningRange);
+                (transition) => DistanceToPlayer() < ownScanningRange
+            );
 
             fsm.AddTransition(
                 "ExtractIntel",
                 "FleeFromPlayer",
-                (transition) => DistanceToPlayer() < playerScanningRange);
+                (transition) => DistanceToPlayer() < playerScanningRange
+            );
 
             fsm.AddTransition(
                 "FleeFromPlayer",
                 "ExtractIntel",
-                (transition) => DistanceToPlayer() > playerScanningRange);
+                (transition) => DistanceToPlayer() > playerScanningRange
+            );
 
             // Initialises the state machine and must be called before OnLogic() is called
             fsm.Init();

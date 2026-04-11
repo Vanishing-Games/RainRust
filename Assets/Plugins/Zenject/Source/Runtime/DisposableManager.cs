@@ -15,20 +15,23 @@ namespace Zenject
 
         [Inject]
         public DisposableManager(
+            [Inject(Optional = true, Source = InjectSources.Local)] List<IDisposable> disposables,
             [Inject(Optional = true, Source = InjectSources.Local)]
-            List<IDisposable> disposables,
+                List<ValuePair<Type, int>> priorities,
             [Inject(Optional = true, Source = InjectSources.Local)]
-            List<ValuePair<Type, int>> priorities,
-            [Inject(Optional = true, Source = InjectSources.Local)]
-            List<ILateDisposable> lateDisposables,
+                List<ILateDisposable> lateDisposables,
             [Inject(Id = "Late", Optional = true, Source = InjectSources.Local)]
-            List<ValuePair<Type, int>> latePriorities)
+                List<ValuePair<Type, int>> latePriorities
+        )
         {
             foreach (var disposable in disposables)
             {
                 // Note that we use zero for unspecified priority
                 // This is nice because you can use negative or positive for before/after unspecified
-                var match = priorities.Where(x => disposable.GetType().DerivesFromOrEqual(x.First)).Select(x => (int?)x.Second).SingleOrDefault();
+                var match = priorities
+                    .Where(x => disposable.GetType().DerivesFromOrEqual(x.First))
+                    .Select(x => (int?)x.Second)
+                    .SingleOrDefault();
                 int priority = match.HasValue ? match.Value : 0;
 
                 _disposables.Add(new DisposableInfo(disposable, priority));
@@ -36,7 +39,10 @@ namespace Zenject
 
             foreach (var lateDisposable in lateDisposables)
             {
-                var match = latePriorities.Where(x => lateDisposable.GetType().DerivesFromOrEqual(x.First)).Select(x => (int?)x.Second).SingleOrDefault();
+                var match = latePriorities
+                    .Where(x => lateDisposable.GetType().DerivesFromOrEqual(x.First))
+                    .Select(x => (int?)x.Second)
+                    .SingleOrDefault();
                 int priority = match.HasValue ? match.Value : 0;
 
                 _lateDisposables.Add(new LateDisposableInfo(lateDisposable, priority));
@@ -50,8 +56,7 @@ namespace Zenject
 
         public void Add(IDisposable disposable, int priority)
         {
-            _disposables.Add(
-                new DisposableInfo(disposable, priority));
+            _disposables.Add(new DisposableInfo(disposable, priority));
         }
 
         public void AddLate(ILateDisposable disposable)
@@ -61,14 +66,14 @@ namespace Zenject
 
         public void AddLate(ILateDisposable disposable, int priority)
         {
-            _lateDisposables.Add(
-                new LateDisposableInfo(disposable, priority));
+            _lateDisposables.Add(new LateDisposableInfo(disposable, priority));
         }
 
         public void Remove(IDisposable disposable)
         {
             _disposables.RemoveWithConfirm(
-                _disposables.Where(x => ReferenceEquals(x.Disposable, disposable)).Single());
+                _disposables.Where(x => ReferenceEquals(x.Disposable, disposable)).Single()
+            );
         }
 
         public void LateDispose()
@@ -80,9 +85,14 @@ namespace Zenject
             var disposablesOrdered = _lateDisposables.OrderBy(x => x.Priority).Reverse().ToList();
 
 #if UNITY_EDITOR
-            foreach (var disposable in disposablesOrdered.Select(x => x.LateDisposable).GetDuplicates())
+            foreach (
+                var disposable in disposablesOrdered.Select(x => x.LateDisposable).GetDuplicates()
+            )
             {
-                Assert.That(false, "Found duplicate ILateDisposable with type '{0}'".Fmt(disposable.GetType()));
+                Assert.That(
+                    false,
+                    "Found duplicate ILateDisposable with type '{0}'".Fmt(disposable.GetType())
+                );
             }
 #endif
 
@@ -95,7 +105,10 @@ namespace Zenject
                 catch (Exception e)
                 {
                     throw Assert.CreateException(
-                        e, "Error occurred while late disposing ILateDisposable with type '{0}'", disposable.LateDisposable.GetType());
+                        e,
+                        "Error occurred while late disposing ILateDisposable with type '{0}'",
+                        disposable.LateDisposable.GetType()
+                    );
                 }
             }
         }
@@ -111,7 +124,10 @@ namespace Zenject
 #if UNITY_EDITOR
             foreach (var disposable in disposablesOrdered.Select(x => x.Disposable).GetDuplicates())
             {
-                Assert.That(false, "Found duplicate IDisposable with type '{0}'".Fmt(disposable.GetType()));
+                Assert.That(
+                    false,
+                    "Found duplicate IDisposable with type '{0}'".Fmt(disposable.GetType())
+                );
             }
 #endif
 
@@ -124,7 +140,10 @@ namespace Zenject
                 catch (Exception e)
                 {
                     throw Assert.CreateException(
-                        e, "Error occurred while disposing IDisposable with type '{0}'", disposable.Disposable.GetType());
+                        e,
+                        "Error occurred while disposing IDisposable with type '{0}'",
+                        disposable.Disposable.GetType()
+                    );
                 }
             }
         }

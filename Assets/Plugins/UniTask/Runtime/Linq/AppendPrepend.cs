@@ -1,19 +1,25 @@
-﻿using Cysharp.Threading.Tasks.Internal;
-using System;
+﻿using System;
 using System.Threading;
+using Cysharp.Threading.Tasks.Internal;
 
 namespace Cysharp.Threading.Tasks.Linq
 {
     public static partial class UniTaskAsyncEnumerable
     {
-        public static IUniTaskAsyncEnumerable<TSource> Append<TSource>(this IUniTaskAsyncEnumerable<TSource> source, TSource element)
+        public static IUniTaskAsyncEnumerable<TSource> Append<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            TSource element
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
 
             return new AppendPrepend<TSource>(source, element, true);
         }
 
-        public static IUniTaskAsyncEnumerable<TSource> Prepend<TSource>(this IUniTaskAsyncEnumerable<TSource> source, TSource element)
+        public static IUniTaskAsyncEnumerable<TSource> Prepend<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            TSource element
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
 
@@ -34,7 +40,9 @@ namespace Cysharp.Threading.Tasks.Linq
             this.append = append;
         }
 
-        public IUniTaskAsyncEnumerator<TSource> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+        public IUniTaskAsyncEnumerator<TSource> GetAsyncEnumerator(
+            CancellationToken cancellationToken = default
+        )
         {
             return new _AppendPrepend(source, element, append, cancellationToken);
         }
@@ -46,7 +54,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 None,
                 RequirePrepend,
                 RequireAppend,
-                Completed
+                Completed,
             }
 
             static readonly Action<object> MoveNextCoreDelegate = MoveNextCore;
@@ -59,7 +67,12 @@ namespace Cysharp.Threading.Tasks.Linq
             IUniTaskAsyncEnumerator<TSource> enumerator;
             UniTask<bool>.Awaiter awaiter;
 
-            public _AppendPrepend(IUniTaskAsyncEnumerable<TSource> source, TSource element, bool append, CancellationToken cancellationToken)
+            public _AppendPrepend(
+                IUniTaskAsyncEnumerable<TSource> source,
+                TSource element,
+                bool append,
+                CancellationToken cancellationToken
+            )
             {
                 this.source = source;
                 this.element = element;
@@ -70,7 +83,6 @@ namespace Cysharp.Threading.Tasks.Linq
             }
 
             public TSource Current { get; private set; }
-
 
             public UniTask<bool> MoveNextAsync()
             {
@@ -147,5 +159,4 @@ namespace Cysharp.Threading.Tasks.Linq
             }
         }
     }
-
 }

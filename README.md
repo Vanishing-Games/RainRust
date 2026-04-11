@@ -3,7 +3,7 @@
  * Copyright (c) 2025 Vanishing Games. All Rights Reserved.
  * @Author: VanishXiao
  * @Date: 2025-10-30 16:25:44
- * @LastEditTime: 2026-03-25 01:34:37
+ * @LastEditTime: 2026-04-10 05:07:52
  * --------------------------------------------------------------------------------
 -->
 > 《不尬的诗》
@@ -82,11 +82,71 @@ GreatArt_1 GreatArt_2 GreatArt_10 # 数位不一致
 sfx_env_forest_daytime_birds_chirping_loop_ambient_lowIntensity_01.wav # 太长
 ```
 
-# 代码开发规范
+## 代码开发规范
 
 ## 结构与命名
 - **布局顺序**: 所有的字段 (Fields) 与属性 (Properties) 必须放在类的最底部。
 - **私有成员**: 私有或内部成员变量必须以 `m_` 开头 (例如 `m_IsTransitioning`)。
+
+## 事件系统规范 (Events)
+
+### 物理组织与目录结构
+- **Assembly 绑定**: 每个含有 `.asmdef` 的目录下必须建立 `Events` 文件夹。
+- **镜像映射**: `Events` 文件夹内的子目录结构必须与其对应的业务代码目录结构**完全镜像映射**。
+  - *示例*: 若业务代码位于 `GameMain/RunTime/Level/LevelManager.cs`，其对应的事件定义应位于 `GameMain/RunTime/Events/Level/LevelEvents.cs`。
+
+### 文件与类命名规范
+- **文件命名**: 仅与物理路径相关。文件名为 `Events/` 目录后的相对路径连加，并以 `Events.cs` 结尾。
+  - *示例*: `Events/Level/` -> `LevelEvents.cs`
+  - *示例*: `Events/UI/Common/` -> `UICommonEvents.cs`
+- **内部组织**: 文件内部必须使用与文件名同名的 `static class` 包裹所有具体的事件定义。
+- **事件命名**: 
+  - 遵循 `[主体][动作]Event` 格式。
+  - **生命周期事件**: 推荐使用 `Pre` 或 `On` 或 `Post` 前缀。
+    - *示例*: `GamePreInitEvent`, `GameOnInitEvent`, `GamePostInitEvent`
+  - 事件推荐定义为 `struct` 以优化性能。
+  - 事件命名必须具备上下文独立性：事件的名称（Struct/Class Name）必须自包含完整的业务语义（主体+动作），严禁依赖外层包裹的 static class 名称来暗示其含义
+- **命名空间**: 命名空间必须与该 `.asmdef` 定义的 **Root Namespace** 保持一致，不额外增加 `.Events` 后缀。
+
+### 代码组织示例
+```csharp
+namespace GameMain.RunTime // 保持与 asmdef Root Namespace 一致
+{
+    public static class LevelEvents // 与文件名 LevelEvents.cs 一致
+    {
+        public struct LoadedEvent : IEvent { public int LevelIndex; }
+        public struct UnloadedEvent : IEvent { }
+    }
+}
+```
+
+## 命令系统规范 (Commands)
+
+### 物理组织与目录结构
+- **Assembly 绑定**: 每个含有 `.asmdef` 的目录下必须建立 `Commands` 文件夹。
+- **镜像映射**: `Commands` 文件夹内的子目录结构必须与其对应的业务代码目录结构**完全镜像映射**。
+
+### 文件与类命名规范
+- **文件命名**: 仅与物理路径相关。文件名为 `Commands/` 目录后的相对路径连加，并以 `Commands.cs` 结尾。
+  - *示例*: `Commands/Level/` -> `LevelCommands.cs`
+  - *示例*: `Commands/GameFlow/` -> `GameFlowCommands.cs`
+- **内部组织**: 文件内部必须使用与文件名同名的 `public static class` 包裹所有具体的命令定义。
+- **命令命名**: 
+  - 遵循 `[动作][主体]Command` 格式。
+    - *示例*: `LoadLevelCommand`, `StartGameCommand`
+  - 命令必须具备上下文独立性：命令的名称必须自包含完整的业务语义，严禁依赖外层包裹的 static class 名称来暗示其含义。
+- **命名空间**: 命名空间必须与该 `.asmdef` 定义的 **Root Namespace** 保持一致，不额外增加 `.Commands` 后缀。
+
+### 代码组织示例
+```csharp
+namespace GameMain.RunTime // 保持与 asmdef Root Namespace 一致
+{
+    public static class LevelCommands // 与文件名 LevelCommands.cs 一致
+    {
+        public class LoadLevelCommand : ICommand { /* ... */ }
+    }
+}
+```
 
 ## 逻辑与库
 - **事件系统**: 使用 **R3** 作为事件库。

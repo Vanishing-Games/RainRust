@@ -2,7 +2,5 @@
 
 namespace FMODUnity
 {
-    public class ParamRefAttribute : PropertyAttribute
-    {
-    }
+    public class ParamRefAttribute : PropertyAttribute { }
 }

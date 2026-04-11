@@ -11,8 +11,7 @@ namespace Zenject
     {
         readonly IPrefabInstantiator _prefabCreator;
 
-        public PrefabGameObjectProvider(
-            IPrefabInstantiator prefabCreator)
+        public PrefabGameObjectProvider(IPrefabInstantiator prefabCreator)
         {
             _prefabCreator = prefabCreator;
         }
@@ -33,7 +32,11 @@ namespace Zenject
         }
 
         public void GetAllInstancesWithInjectSplit(
-            InjectContext context, List<TypeValuePair> args, out Action injectAction, List<object> buffer)
+            InjectContext context,
+            List<TypeValuePair> args,
+            out Action injectAction,
+            List<object> buffer
+        )
         {
             var instance = _prefabCreator.Instantiate(context, args, out injectAction);
 

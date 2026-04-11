@@ -2,13 +2,15 @@
     "name": "GameMain.RunTime",
     "rootNamespace": "GameMain.RunTime",
     "references": [
+        "GUID:0c752da273b17c547ae705acf0f2adf2",
         "GUID:198f161f050714b85981e87f526d009e",
         "GUID:4307f53044263cf4b835bd812fc161a4",
         "GUID:831b458ef8919c24ea12fb444fc41310",
         "GUID:bf7e815dd89b4164880b6713ec250d60",
         "GUID:77221876cc6b8244180b96e320b1bcd4",
         "GUID:f51ebe6a0ceec4240a699833d6309b23",
-        "GUID:3de88c88fbbb8f944b9210d496af9762"
+        "GUID:3de88c88fbbb8f944b9210d496af9762",
+        "GUID:6381a94ed606c437eb5ab7a29799417a"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

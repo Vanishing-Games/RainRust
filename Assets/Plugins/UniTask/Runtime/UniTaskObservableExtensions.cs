@@ -9,13 +9,18 @@ namespace Cysharp.Threading.Tasks
 {
     public static class UniTaskObservableExtensions
     {
-        public static UniTask<T> ToUniTask<T>(this IObservable<T> source, bool useFirstValue = false, CancellationToken cancellationToken = default)
+        public static UniTask<T> ToUniTask<T>(
+            this IObservable<T> source,
+            bool useFirstValue = false,
+            CancellationToken cancellationToken = default
+        )
         {
             var promise = new UniTaskCompletionSource<T>();
             var disposable = new SingleAssignmentDisposable();
 
             var observer = useFirstValue
-                ? (IObserver<T>)new FirstValueToUniTaskObserver<T>(promise, disposable, cancellationToken)
+                ? (IObserver<T>)
+                    new FirstValueToUniTaskObserver<T>(promise, disposable, cancellationToken)
                 : (IObserver<T>)new ToUniTaskObserver<T>(promise, disposable, cancellationToken);
 
             try
@@ -117,7 +122,11 @@ namespace Cysharp.Threading.Tasks
             bool hasValue;
             T latestValue;
 
-            public ToUniTaskObserver(UniTaskCompletionSource<T> promise, SingleAssignmentDisposable disposable, CancellationToken cancellationToken)
+            public ToUniTaskObserver(
+                UniTaskCompletionSource<T> promise,
+                SingleAssignmentDisposable disposable,
+                CancellationToken cancellationToken
+            )
             {
                 this.promise = promise;
                 this.disposable = disposable;
@@ -125,7 +134,11 @@ namespace Cysharp.Threading.Tasks
 
                 if (this.cancellationToken.CanBeCanceled)
                 {
-                    this.registration = this.cancellationToken.RegisterWithoutCaptureExecutionContext(callback, this);
+                    this.registration =
+                        this.cancellationToken.RegisterWithoutCaptureExecutionContext(
+                            callback,
+                            this
+                        );
                 }
             }
 
@@ -165,7 +178,9 @@ namespace Cysharp.Threading.Tasks
                     }
                     else
                     {
-                        promise.TrySetException(new InvalidOperationException("Sequence has no elements"));
+                        promise.TrySetException(
+                            new InvalidOperationException("Sequence has no elements")
+                        );
                     }
                 }
                 finally
@@ -187,7 +202,11 @@ namespace Cysharp.Threading.Tasks
 
             bool hasValue;
 
-            public FirstValueToUniTaskObserver(UniTaskCompletionSource<T> promise, SingleAssignmentDisposable disposable, CancellationToken cancellationToken)
+            public FirstValueToUniTaskObserver(
+                UniTaskCompletionSource<T> promise,
+                SingleAssignmentDisposable disposable,
+                CancellationToken cancellationToken
+            )
             {
                 this.promise = promise;
                 this.disposable = disposable;
@@ -195,7 +214,11 @@ namespace Cysharp.Threading.Tasks
 
                 if (this.cancellationToken.CanBeCanceled)
                 {
-                    this.registration = this.cancellationToken.RegisterWithoutCaptureExecutionContext(callback, this);
+                    this.registration =
+                        this.cancellationToken.RegisterWithoutCaptureExecutionContext(
+                            callback,
+                            this
+                        );
                 }
             }
 
@@ -239,7 +262,9 @@ namespace Cysharp.Threading.Tasks
                 {
                     if (!hasValue)
                     {
-                        promise.TrySetException(new InvalidOperationException("Sequence has no elements"));
+                        promise.TrySetException(
+                            new InvalidOperationException("Sequence has no elements")
+                        );
                     }
                 }
                 finally
@@ -293,14 +318,9 @@ namespace Cysharp.Threading.Tasks.Internal
     {
         public static EmptyDisposable Instance = new EmptyDisposable();
 
-        EmptyDisposable()
-        {
+        EmptyDisposable() { }
 
-        }
-
-        public void Dispose()
-        {
-        }
+        public void Dispose() { }
     }
 
     internal sealed class SingleAssignmentDisposable : IDisposable
@@ -309,14 +329,20 @@ namespace Cysharp.Threading.Tasks.Internal
         IDisposable current;
         bool disposed;
 
-        public bool IsDisposed { get { lock (gate) { return disposed; } } }
-
-        public IDisposable Disposable
+        public bool IsDisposed
         {
             get
             {
-                return current;
+                lock (gate)
+                {
+                    return disposed;
+                }
             }
+        }
+
+        public IDisposable Disposable
+        {
+            get { return current; }
             set
             {
                 var old = default(IDisposable);
@@ -327,7 +353,8 @@ namespace Cysharp.Threading.Tasks.Internal
                     old = current;
                     if (!alreadyDisposed)
                     {
-                        if (value == null) return;
+                        if (value == null)
+                            return;
                         current = value;
                     }
                 }
@@ -338,10 +365,10 @@ namespace Cysharp.Threading.Tasks.Internal
                     return;
                 }
 
-                if (old != null) throw new InvalidOperationException("Disposable is already set");
+                if (old != null)
+                    throw new InvalidOperationException("Disposable is already set");
             }
         }
-
 
         public void Dispose()
         {
@@ -357,7 +384,8 @@ namespace Cysharp.Threading.Tasks.Internal
                 }
             }
 
-            if (old != null) old.Dispose();
+            if (old != null)
+                old.Dispose();
         }
     }
 
@@ -377,21 +405,23 @@ namespace Cysharp.Threading.Tasks.Internal
             get
             {
                 ThrowIfDisposed();
-                if (!isStopped) throw new InvalidOperationException("AsyncSubject is not completed yet");
-                if (lastError != null) ExceptionDispatchInfo.Capture(lastError).Throw();
+                if (!isStopped)
+                    throw new InvalidOperationException("AsyncSubject is not completed yet");
+                if (lastError != null)
+                    ExceptionDispatchInfo.Capture(lastError).Throw();
                 return lastValue;
             }
         }
 
         public bool HasObservers
         {
-            get
-            {
-                return !(outObserver is EmptyObserver<T>) && !isStopped && !isDisposed;
-            }
+            get { return !(outObserver is EmptyObserver<T>) && !isStopped && !isDisposed; }
         }
 
-        public bool IsCompleted { get { return isStopped; } }
+        public bool IsCompleted
+        {
+            get { return isStopped; }
+        }
 
         public void OnCompleted()
         {
@@ -401,7 +431,8 @@ namespace Cysharp.Threading.Tasks.Internal
             lock (observerLock)
             {
                 ThrowIfDisposed();
-                if (isStopped) return;
+                if (isStopped)
+                    return;
 
                 old = outObserver;
                 outObserver = EmptyObserver<T>.Instance;
@@ -423,13 +454,15 @@ namespace Cysharp.Threading.Tasks.Internal
 
         public void OnError(Exception error)
         {
-            if (error == null) throw new ArgumentNullException("error");
+            if (error == null)
+                throw new ArgumentNullException("error");
 
             IObserver<T> old;
             lock (observerLock)
             {
                 ThrowIfDisposed();
-                if (isStopped) return;
+                if (isStopped)
+                    return;
 
                 old = outObserver;
                 outObserver = EmptyObserver<T>.Instance;
@@ -445,7 +478,8 @@ namespace Cysharp.Threading.Tasks.Internal
             lock (observerLock)
             {
                 ThrowIfDisposed();
-                if (isStopped) return;
+                if (isStopped)
+                    return;
 
                 this.hasValue = true;
                 this.lastValue = value;
@@ -454,7 +488,8 @@ namespace Cysharp.Threading.Tasks.Internal
 
         public IDisposable Subscribe(IObserver<T> observer)
         {
-            if (observer == null) throw new ArgumentNullException("observer");
+            if (observer == null)
+                throw new ArgumentNullException("observer");
 
             var ex = default(Exception);
             var v = default(T);
@@ -479,7 +514,9 @@ namespace Cysharp.Threading.Tasks.Internal
                         }
                         else
                         {
-                            outObserver = new ListObserver<T>(new ImmutableList<IObserver<T>>(new[] { current, observer }));
+                            outObserver = new ListObserver<T>(
+                                new ImmutableList<IObserver<T>>(new[] { current, observer })
+                            );
                         }
                     }
 
@@ -521,9 +558,10 @@ namespace Cysharp.Threading.Tasks.Internal
 
         void ThrowIfDisposed()
         {
-            if (isDisposed) throw new ObjectDisposedException("");
+            if (isDisposed)
+                throw new ObjectDisposedException("");
         }
-        
+
         class Subscription : IDisposable
         {
             readonly object gate = new object();
@@ -625,55 +663,36 @@ namespace Cysharp.Threading.Tasks.Internal
     {
         public static readonly EmptyObserver<T> Instance = new EmptyObserver<T>();
 
-        EmptyObserver()
-        {
+        EmptyObserver() { }
 
-        }
+        public void OnCompleted() { }
 
-        public void OnCompleted()
-        {
-        }
+        public void OnError(Exception error) { }
 
-        public void OnError(Exception error)
-        {
-        }
-
-        public void OnNext(T value)
-        {
-        }
+        public void OnNext(T value) { }
     }
 
     internal class ThrowObserver<T> : IObserver<T>
     {
         public static readonly ThrowObserver<T> Instance = new ThrowObserver<T>();
 
-        ThrowObserver()
-        {
+        ThrowObserver() { }
 
-        }
-
-        public void OnCompleted()
-        {
-        }
+        public void OnCompleted() { }
 
         public void OnError(Exception error)
         {
             ExceptionDispatchInfo.Capture(error).Throw();
         }
 
-        public void OnNext(T value)
-        {
-        }
+        public void OnNext(T value) { }
     }
 
     internal class DisposedObserver<T> : IObserver<T>
     {
         public static readonly DisposedObserver<T> Instance = new DisposedObserver<T>();
 
-        DisposedObserver()
-        {
-
-        }
+        DisposedObserver() { }
 
         public void OnCompleted()
         {
@@ -723,10 +742,12 @@ namespace Cysharp.Threading.Tasks.Internal
         public ImmutableList<T> Remove(T value)
         {
             var i = IndexOf(value);
-            if (i < 0) return this;
+            if (i < 0)
+                return this;
 
             var length = data.Length;
-            if (length == 1) return Empty;
+            if (length == 1)
+                return Empty;
 
             var newData = new T[length - 1];
 
@@ -741,10 +762,10 @@ namespace Cysharp.Threading.Tasks.Internal
             for (var i = 0; i < data.Length; ++i)
             {
                 // ImmutableList only use for IObserver(no worry for boxed)
-                if (object.Equals(data[i], value)) return i;
+                if (object.Equals(data[i], value))
+                    return i;
             }
             return -1;
         }
     }
 }
-

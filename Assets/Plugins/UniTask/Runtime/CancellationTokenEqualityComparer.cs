@@ -7,7 +7,8 @@ namespace Cysharp.Threading.Tasks
 {
     public class CancellationTokenEqualityComparer : IEqualityComparer<CancellationToken>
     {
-        public static readonly IEqualityComparer<CancellationToken> Default = new CancellationTokenEqualityComparer();
+        public static readonly IEqualityComparer<CancellationToken> Default =
+            new CancellationTokenEqualityComparer();
 
         public bool Equals(CancellationToken x, CancellationToken y)
         {
@@ -20,4 +21,3 @@ namespace Cysharp.Threading.Tasks
         }
     }
 }
-

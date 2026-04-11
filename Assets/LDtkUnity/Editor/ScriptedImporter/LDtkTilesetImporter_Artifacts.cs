@@ -5,7 +5,6 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-
 #if UNITY_2020_2_OR_NEWER
 using UnityEditor.AssetImporters;
 #else
@@ -21,9 +20,10 @@ namespace LDtkUnity.Editor
     {
         private LDtkArtifactAssetsTileset MakeAndCacheArtifacts(TextureGenerationOutput output)
         {
-            LDtkArtifactAssetsTileset artifacts = ScriptableObject.CreateInstance<LDtkArtifactAssetsTileset>();
+            LDtkArtifactAssetsTileset artifacts =
+                ScriptableObject.CreateInstance<LDtkArtifactAssetsTileset>();
             artifacts.name = $"_{_definition.Def.Identifier}_Artifacts";
-            
+
             LDtkProfiler.BeginSample("InitLists");
             artifacts._sprites = new Sprite[_sprites.Count];
             artifacts._tiles = new LDtkTilesetTile[_sprites.Count];
@@ -34,11 +34,11 @@ namespace LDtkUnity.Editor
             LDtkProfiler.BeginSample("CustomDataToDictionary");
             var customData = _definition.Def.CustomDataToDictionary();
             LDtkProfiler.EndSample();
-            
+
             LDtkProfiler.BeginSample("EnumTagsToDictionary");
             var enumTags = _definition.Def.EnumTagsToDictionary();
             LDtkProfiler.EndSample();
-            
+
             //The challenge here is that we have a full list of tiles, but only some of them are valid.
             //We need to iterate all of them to get the sprites, but only create tiles for the valid ones
             //We have the validIDs array to know which are valid
@@ -60,39 +60,38 @@ namespace LDtkUnity.Editor
                     newTilesetTile._enumTagValues = et;
                 }
                 LDtkProfiler.EndSample();
-                
+
                 LDtkProfiler.BeginSample("AddTileToAsset");
                 ImportContext.AddObjectToAsset(newTilesetTile.name, newTilesetTile);
                 artifacts._tiles[i] = newTilesetTile;
                 LDtkProfiler.EndSample();
-                
+
                 //sometimes a sprite is not generates if it's only thin air
                 if (!_validIds[i])
                 {
                     continue;
                 }
-                
+
                 int outputIndex = spriteIndexToOutputIndex[i];
                 Sprite spr = output.sprites[outputIndex];
                 //No hideFlags so sprites can be added to a sprite atlas
-                
+
                 LDtkProfiler.BeginSample("AddOffsetToPhysicsShape");
                 AddOffsetToPhysicsShape(spr, i);
                 LDtkProfiler.EndSample();
-                
+
                 LDtkProfiler.BeginSample("AddSpriteInfoToTile");
                 newTilesetTile._sprite = spr;
                 newTilesetTile._type = GetColliderTypeForSprite(spr);
                 LDtkProfiler.EndSample();
-                
+
                 LDtkProfiler.BeginSample("AddSpriteToAsset");
                 ImportContext.AddObjectToAsset(spr.name, spr);
                 artifacts._sprites[i] = spr;
                 LDtkProfiler.EndSample();
             }
             LDtkProfiler.EndSample();
-            
-            
+
             LDtkProfiler.BeginSample("IterateAdditionalSprites");
             for (int i = 0; i < _additionalTiles.Count; i++)
             {
@@ -102,7 +101,7 @@ namespace LDtkUnity.Editor
                 //spr.hideFlags = HideFlags.HideInHierarchy;
                 ImportContext.AddObjectToAsset(spr.name, spr);
                 LDtkProfiler.EndSample();
-                
+
                 LDtkProfiler.BeginSample("AddAdditionalSprite");
                 artifacts._additionalSprites[i] = spr;
                 LDtkProfiler.EndSample();
@@ -111,7 +110,7 @@ namespace LDtkUnity.Editor
 
             //don't need this anymore after we're done using it to check the generation result
             _validIds.Dispose();
-            
+
             LDtkProfiler.BeginSample("TryParseCustomData");
             //process these after all the tiles are created because we might reference other tiles for animation
             foreach (var tile in artifacts._tiles)
@@ -120,11 +119,9 @@ namespace LDtkUnity.Editor
             }
             LDtkProfiler.EndSample();
 
-            
-            
             return artifacts;
         }
-        
+
         //todo really look at this function and understand if it's truly nessesary.
         //experimnent with using it on and off and checking how builds behave as a result.
         //will they log like this: https://forum.unity.com/threads/sprite-outline-generation-failed-could-not-read-texture-pixel-data-when-building-the-game.861775/
@@ -134,7 +131,7 @@ namespace LDtkUnity.Editor
             {
                 return;
             }
-            
+
             LDtkProfiler.BeginSample("GetSpriteData");
             LDtkSpriteRect spriteData = _sprites[tileId];
             //LDtkSpriteRect spriteData = GetSpriteData(spr.name);
@@ -143,7 +140,7 @@ namespace LDtkUnity.Editor
             LDtkProfiler.BeginSample("GetOutlines");
             List<Vector2[]> srcShapes = spriteData.GetOutlines();
             LDtkProfiler.EndSample();
-            
+
             LDtkProfiler.BeginSample("MakeNewShapes");
             List<Vector2[]> newShapes = new List<Vector2[]>();
             foreach (Vector2[] srcOutline in srcShapes)
@@ -158,12 +155,12 @@ namespace LDtkUnity.Editor
                 newShapes.Add(newOutline);
             }
             LDtkProfiler.EndSample();
-            
+
             LDtkProfiler.BeginSample("OverridePhysicsShape");
             spr.OverridePhysicsShape(newShapes);
             LDtkProfiler.EndSample();
         }
-        
+
         Tile.ColliderType GetColliderTypeForSprite(Sprite spr)
         {
             int shapeCount = spr.GetPhysicsShapeCount();
@@ -182,19 +179,21 @@ namespace LDtkUnity.Editor
             }
             return Tile.ColliderType.Sprite;
         }
+
         private static readonly Vector2 GridCheck1 = new Vector2(-0.5f, -0.5f);
         private static readonly Vector2 GridCheck2 = new Vector2(-0.5f, 0.5f);
         private static readonly Vector2 GridCheck3 = new Vector2(0.5f, 0.5f);
         private static readonly Vector2 GridCheck4 = new Vector2(0.5f, -0.5f);
+
         public static bool IsShapeSetForGrid(List<Vector2> shape)
         {
-            return shape.Count == 4 &&
-                   shape.Any(p => p == GridCheck1) &&
-                   shape.Any(p => p == GridCheck2) &&
-                   shape.Any(p => p == GridCheck3) &&
-                   shape.Any(p => p == GridCheck4);
+            return shape.Count == 4
+                && shape.Any(p => p == GridCheck1)
+                && shape.Any(p => p == GridCheck2)
+                && shape.Any(p => p == GridCheck3)
+                && shape.Any(p => p == GridCheck4);
         }
-        
+
         private void TryParseCustomData(Sprite[] sprites, LDtkTilesetTile tile)
         {
             string customData = tile._customData;
@@ -202,13 +201,20 @@ namespace LDtkUnity.Editor
             {
                 return;
             }
-            
+
             string[] lines = customData.Split('\n');
             foreach (string line in lines)
             {
                 //animatedSprites
                 {
-                    if (ParseAndGetTokensAsInt(tile, line, "animatedSprites", out int[] spriteIdTokens))
+                    if (
+                        ParseAndGetTokensAsInt(
+                            tile,
+                            line,
+                            "animatedSprites",
+                            out int[] spriteIdTokens
+                        )
+                    )
                     {
                         tile._animatedSprites = new Sprite[spriteIdTokens.Length];
                         for (int i = 0; i < spriteIdTokens.Length; i++)
@@ -217,10 +223,12 @@ namespace LDtkUnity.Editor
 
                             if (spriteId < 0 || spriteId >= sprites.Length)
                             {
-                                Logger.LogWarning($"Issue parsing animatedSprites for tile \"{tile.name}\". Tile ID {spriteId} is out of range");
+                                Logger.LogWarning(
+                                    $"Issue parsing animatedSprites for tile \"{tile.name}\". Tile ID {spriteId} is out of range"
+                                );
                                 continue;
                             }
-                            
+
                             tile._animatedSprites[i] = sprites[spriteId];
                         }
                         continue;
@@ -229,7 +237,14 @@ namespace LDtkUnity.Editor
 
                 //animationSpeed
                 {
-                    if (ParseAndGetTokensAsFloat(tile, line, "animationSpeed", out float[] speedTokens))
+                    if (
+                        ParseAndGetTokensAsFloat(
+                            tile,
+                            line,
+                            "animationSpeed",
+                            out float[] speedTokens
+                        )
+                    )
                     {
                         if (speedTokens.Length == 1)
                         {
@@ -237,22 +252,31 @@ namespace LDtkUnity.Editor
                             tile._animationSpeedMax = speedTokens[0];
                             continue;
                         }
-                    
+
                         if (speedTokens.Length == 2)
                         {
                             tile._animationSpeedMin = speedTokens[0];
                             tile._animationSpeedMax = speedTokens[1];
                             continue;
                         }
-                    
-                        Logger.LogWarning($"Issue parsing animationSpeed for tile \"{tile.name}\". Expected 1 or 2 decimal numbers but there were {speedTokens.Length}");
+
+                        Logger.LogWarning(
+                            $"Issue parsing animationSpeed for tile \"{tile.name}\". Expected 1 or 2 decimal numbers but there were {speedTokens.Length}"
+                        );
                         continue;
                     }
                 }
 
                 //animationStartTime
                 {
-                    if (ParseAndGetTokensAsFloat(tile, line, "animationStartTime", out float[] startTimeTokens))
+                    if (
+                        ParseAndGetTokensAsFloat(
+                            tile,
+                            line,
+                            "animationStartTime",
+                            out float[] startTimeTokens
+                        )
+                    )
                     {
                         if (startTimeTokens.Length == 1)
                         {
@@ -260,22 +284,31 @@ namespace LDtkUnity.Editor
                             tile._animationStartTimeMax = startTimeTokens[0];
                             continue;
                         }
-                    
+
                         if (startTimeTokens.Length == 2)
                         {
                             tile._animationStartTimeMin = startTimeTokens[0];
                             tile._animationStartTimeMax = startTimeTokens[1];
                             continue;
                         }
-                    
-                        Logger.LogWarning($"Issue parsing animationStartTime for tile \"{tile.name}\". Expected 1 or 2 decimal numbers but there were {startTimeTokens.Length}");
+
+                        Logger.LogWarning(
+                            $"Issue parsing animationStartTime for tile \"{tile.name}\". Expected 1 or 2 decimal numbers but there were {startTimeTokens.Length}"
+                        );
                         continue;
                     }
                 }
 
                 //animationStartFrame
                 {
-                    if (ParseAndGetTokensAsInt(tile, line, "animationStartFrame", out int[] startFrameTokens))
+                    if (
+                        ParseAndGetTokensAsInt(
+                            tile,
+                            line,
+                            "animationStartFrame",
+                            out int[] startFrameTokens
+                        )
+                    )
                     {
                         if (startFrameTokens.Length == 1)
                         {
@@ -283,61 +316,91 @@ namespace LDtkUnity.Editor
                             tile._animationStartFrameMax = startFrameTokens[0];
                             continue;
                         }
-                    
+
                         if (startFrameTokens.Length == 2)
                         {
                             tile._animationStartFrameMin = startFrameTokens[0];
                             tile._animationStartFrameMax = startFrameTokens[1];
                             continue;
                         }
-                    
-                        Logger.LogWarning($"Issue parsing animationStartFrame for tile \"{tile.name}\". Expected 1 or 2 ints but there were {startFrameTokens.Length}");
+
+                        Logger.LogWarning(
+                            $"Issue parsing animationStartFrame for tile \"{tile.name}\". Expected 1 or 2 ints but there were {startFrameTokens.Length}"
+                        );
                         continue;
                     }
                 }
             }
         }
 
-        private bool ParseAndGetTokensAsInt(LDtkTilesetTile tile, string line, string keyword, out int[] tokens)
+        private bool ParseAndGetTokensAsInt(
+            LDtkTilesetTile tile,
+            string line,
+            string keyword,
+            out int[] tokens
+        )
         {
             if (!ParseAndGetTokensAsString(line, keyword, out string[] tokenStrings))
             {
                 tokens = null;
                 return false;
             }
-            
+
             tokens = new int[tokenStrings.Length];
             for (int i = 0; i < tokenStrings.Length; i++)
             {
                 string tokenString = tokenStrings[i];
-                if (int.TryParse(tokenString, NumberStyles.Integer, CultureInfo.InvariantCulture, out int intVaue))
+                if (
+                    int.TryParse(
+                        tokenString,
+                        NumberStyles.Integer,
+                        CultureInfo.InvariantCulture,
+                        out int intVaue
+                    )
+                )
                 {
                     tokens[i] = intVaue;
                     continue;
                 }
-                Logger.LogWarning($"Issue parsing \"{keyword}\"'s token {i} for tile \"{tile.name}\". Couldn't parse into int: \"{tokenString}\"");
+                Logger.LogWarning(
+                    $"Issue parsing \"{keyword}\"'s token {i} for tile \"{tile.name}\". Couldn't parse into int: \"{tokenString}\""
+                );
             }
             return true;
         }
 
-        private bool ParseAndGetTokensAsFloat(LDtkTilesetTile tile, string line, string keyword, out float[] tokens)
+        private bool ParseAndGetTokensAsFloat(
+            LDtkTilesetTile tile,
+            string line,
+            string keyword,
+            out float[] tokens
+        )
         {
             if (!ParseAndGetTokensAsString(line, keyword, out string[] tokenStrings))
             {
                 tokens = null;
                 return false;
             }
-            
+
             tokens = new float[tokenStrings.Length];
             for (int i = 0; i < tokenStrings.Length; i++)
             {
                 string tokenString = tokenStrings[i];
-                if (float.TryParse(tokenString, NumberStyles.Float, CultureInfo.InvariantCulture, out float floatValue))
+                if (
+                    float.TryParse(
+                        tokenString,
+                        NumberStyles.Float,
+                        CultureInfo.InvariantCulture,
+                        out float floatValue
+                    )
+                )
                 {
                     tokens[i] = floatValue;
                     continue;
                 }
-                Logger.LogWarning($"Issue parsing \"{keyword}\"'s token for tile \"{tile.name}\". Couldn't parse into float: \"{tokenString}\"");
+                Logger.LogWarning(
+                    $"Issue parsing \"{keyword}\"'s token for tile \"{tile.name}\". Couldn't parse into float: \"{tokenString}\""
+                );
             }
             return true;
         }
@@ -349,9 +412,9 @@ namespace LDtkUnity.Editor
                 tokens = null;
                 return false;
             }
-            
+
             string strippedOfKeyword = line.Replace(keyword, "");
-            tokens = strippedOfKeyword.Split(new []{','}, StringSplitOptions.RemoveEmptyEntries);
+            tokens = strippedOfKeyword.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
             for (int i = 0; i < tokens.Length; i++)
             {
                 tokens[i] = tokens[i].Trim();
@@ -359,25 +422,28 @@ namespace LDtkUnity.Editor
 
             return true;
         }
-        
+
         public LDtkArtifactAssetsTileset LoadArtifacts(LDtkDebugInstance projectCtx)
         {
             if (_artifacts)
             {
                 return _artifacts;
             }
-            
+
             LDtkProfiler.BeginSample($"LoadMainAssetAtPath<LDtkArtifactAssetsTileset> {AssetName}");
             _artifacts = AssetDatabase.LoadAssetAtPath<LDtkArtifactAssetsTileset>(assetPath);
             LDtkProfiler.EndSample();
-            
+
             //It's possible that the artifact assets don't exist, either because the texture importer failed to import, or the artifact assets weren't produced due to being an aseprite file or otherwise
             if (_artifacts == null)
             {
-                LDtkDebug.LogError($"Loading artifacts didn't work for getting tileset sprite artifacts. You should investigate the tileset file at \"{assetPath}\". Find that tileset file, select it, and click \"Print to Console\" to see the actual issue with it.", projectCtx);
+                LDtkDebug.LogError(
+                    $"Loading artifacts didn't work for getting tileset sprite artifacts. You should investigate the tileset file at \"{assetPath}\". Find that tileset file, select it, and click \"Print to Console\" to see the actual issue with it.",
+                    projectCtx
+                );
                 return null;
             }
-            
+
             return _artifacts;
         }
     }

@@ -23,6 +23,7 @@ namespace Core
         public override string ToString() => $"[{string.Join("][", Path)}]";
 
         // ========== Base Tags ==========
+        public static readonly LogTag Audio = new("Audio");
         public static readonly LogTag GameCore = new("GameCore");
         public static readonly LogTag Editor = new("Editor");
         public static readonly LogTag Loading = new("Loading");
@@ -38,13 +39,14 @@ namespace Core
         public static readonly LogTag Fuck = new("Fuck");
 
         // ========== Second Tags ==========
+        public static readonly LogTag AudioEntry = new("AudioEntry", Audio.Path);
         public static readonly LogTag CodeUnfucker = new("CodeUnfucker", Editor.Path);
         public static readonly LogTag SceneLoader = new("SceneLoader", Loading.Path);
         public static readonly LogTag GameCoreStart = new("GameCoreStart", GameCore.Path);
         public static readonly LogTag GameCoreDestroy = new("GameCoreDestroy", GameCore.Path);
         public static readonly LogTag GameQuit = new("GameQuit", GameCore.Path);
-        public static readonly LogTag VgLoadProgressManager = new(
-            "VgLoadProgressManager",
+        public static readonly LogTag VgLoadingSplashManager = new(
+            "VgLoadingSplashManager",
             Loading.Path
         );
         public static readonly LogTag VgCameraManager = new("VgCameraManager", CoreModule.Path);

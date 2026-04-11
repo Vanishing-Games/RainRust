@@ -8,7 +8,7 @@ namespace LDtkUnity.Editor
     internal sealed class LDtkParsedPoint : ILDtkValueParser, ILDtkPostParser
     {
         private ILDtkPostParseProcess<Vector2> _process;
-        
+
         public object ImportString(LDtkFieldParseContext ctx)
         {
             object input = ctx.Input;
@@ -19,11 +19,11 @@ namespace LDtkUnity.Editor
             }
 
             GridPoint pt = ConvertDict(input);
-            
+
             //turn it into a vector2
             Vector2Int cellPos = pt.UnityCoord;
             Vector2 point = cellPos;
-            
+
             if (_process != null)
             {
                 point = _process.Postprocess(point);
@@ -37,7 +37,7 @@ namespace LDtkUnity.Editor
             PointParseData data = builder.GetParsedPointData();
             _process = new LDtkPostParserPoint(data);
         }
-        
+
         public static GridPoint ConvertDict(object input)
         {
             if (input == null)
@@ -50,11 +50,7 @@ namespace LDtkUnity.Editor
                 double cx = (double)dict["cx"];
                 double cy = (double)dict["cy"];
 
-                return new GridPoint()
-                {
-                    Cx = (int)cx,
-                    Cy = (int)cy,
-                };
+                return new GridPoint() { Cx = (int)cx, Cy = (int)cy };
             }
             LDtkDebug.LogError("The parsed object was not a dictionary?");
             return null;

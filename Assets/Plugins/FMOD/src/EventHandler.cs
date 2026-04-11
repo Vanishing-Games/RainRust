@@ -7,7 +7,11 @@ namespace FMODUnity
 {
     public abstract class EventHandler : MonoBehaviour
 #if UNITY_UI_EXIST
-    , IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler
+            ,
+            IPointerEnterHandler,
+            IPointerExitHandler,
+            IPointerDownHandler,
+            IPointerUpHandler
 #endif
     {
         public string CollisionTag = "";
@@ -35,7 +39,11 @@ namespace FMODUnity
 #if UNITY_PHYSICS_EXIST
         private void OnTriggerEnter(Collider other)
         {
-            if (string.IsNullOrEmpty(CollisionTag) || other.CompareTag(CollisionTag) || (other.attachedRigidbody && other.attachedRigidbody.CompareTag(CollisionTag)))
+            if (
+                string.IsNullOrEmpty(CollisionTag)
+                || other.CompareTag(CollisionTag)
+                || (other.attachedRigidbody && other.attachedRigidbody.CompareTag(CollisionTag))
+            )
             {
                 HandleGameEvent(EmitterGameEvent.TriggerEnter);
             }
@@ -43,7 +51,11 @@ namespace FMODUnity
 
         private void OnTriggerExit(Collider other)
         {
-            if (string.IsNullOrEmpty(CollisionTag) || other.CompareTag(CollisionTag) || (other.attachedRigidbody && other.attachedRigidbody.CompareTag(CollisionTag)))
+            if (
+                string.IsNullOrEmpty(CollisionTag)
+                || other.CompareTag(CollisionTag)
+                || (other.attachedRigidbody && other.attachedRigidbody.CompareTag(CollisionTag))
+            )
             {
                 HandleGameEvent(EmitterGameEvent.TriggerExit);
             }
@@ -118,6 +130,7 @@ namespace FMODUnity
         {
             HandleGameEvent(EmitterGameEvent.UIMouseExit);
         }
+
         public void OnPointerDown(PointerEventData eventData)
         {
             HandleGameEvent(EmitterGameEvent.UIMouseDown);
@@ -128,6 +141,7 @@ namespace FMODUnity
             HandleGameEvent(EmitterGameEvent.UIMouseUp);
         }
 #endif
+
         protected abstract void HandleGameEvent(EmitterGameEvent gameEvent);
     }
 }

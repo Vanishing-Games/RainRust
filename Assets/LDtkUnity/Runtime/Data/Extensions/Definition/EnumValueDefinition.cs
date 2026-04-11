@@ -11,6 +11,7 @@ namespace LDtkUnity
         /// <value>
         /// Optional color
         /// </value>
-        [IgnoreDataMember] public Color UnityColor => Color.ToColor();
+        [IgnoreDataMember]
+        public Color UnityColor => Color.ToColor();
     }
 }

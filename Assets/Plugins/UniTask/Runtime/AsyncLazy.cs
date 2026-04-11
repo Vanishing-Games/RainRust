@@ -52,7 +52,6 @@ namespace Cysharp.Threading.Tasks
             }
         }
 
-
         public UniTask.Awaiter GetAwaiter() => Task.GetAwaiter();
 
         void EnsureInitialized()
@@ -170,7 +169,6 @@ namespace Cysharp.Threading.Tasks
                 return completionSource.Task;
             }
         }
-
 
         public UniTask<T>.Awaiter GetAwaiter() => Task.GetAwaiter();
 

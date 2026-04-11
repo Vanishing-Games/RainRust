@@ -3,19 +3,19 @@ using System.Reflection;
 
 namespace IngameDebugConsole
 {
-	public abstract class ConsoleAttribute  : Attribute
-	{
-		public MethodInfo Method { get; private set; }
-		public abstract int Order { get; }
+    public abstract class ConsoleAttribute : Attribute
+    {
+        public MethodInfo Method { get; private set; }
+        public abstract int Order { get; }
 
-		public void SetMethod(MethodInfo method)
-		{
-			if (Method != null)
-				throw new Exception("Method was already initialized.");
+        public void SetMethod(MethodInfo method)
+        {
+            if (Method != null)
+                throw new Exception("Method was already initialized.");
 
-			Method = method;
-		}
+            Method = method;
+        }
 
-		public abstract void Load();
-	}
+        public abstract void Load();
+    }
 }

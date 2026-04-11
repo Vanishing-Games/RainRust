@@ -17,8 +17,14 @@ namespace ModestTree
 
                 if (instance != null)
                 {
-                    Assert.That(instance.GetType().DerivesFromOrEqual(elementType),
-                        "Wrong type when creating array, expected something assignable from '"+ elementType +"', but found '" + instance.GetType() + "'");
+                    Assert.That(
+                        instance.GetType().DerivesFromOrEqual(elementType),
+                        "Wrong type when creating array, expected something assignable from '"
+                            + elementType
+                            + "', but found '"
+                            + instance.GetType()
+                            + "'"
+                    );
                 }
 
                 array.SetValue(instance, i);
@@ -39,8 +45,14 @@ namespace ModestTree
 
                 if (instance != null)
                 {
-                    Assert.That(instance.GetType().DerivesFromOrEqual(elementType),
-                        "Wrong type when creating generic list, expected something assignable from '"+ elementType +"', but found '" + instance.GetType() + "'");
+                    Assert.That(
+                        instance.GetType().DerivesFromOrEqual(elementType),
+                        "Wrong type when creating generic list, expected something assignable from '"
+                            + elementType
+                            + "', but found '"
+                            + instance.GetType()
+                            + "'"
+                    );
                 }
 
                 list.Add(instance);
@@ -81,7 +93,9 @@ namespace ModestTree
 #endif
         }
 
-        public static string ToDebugString<TParam1, TParam2, TParam3>(this Action<TParam1, TParam2, TParam3> action)
+        public static string ToDebugString<TParam1, TParam2, TParam3>(
+            this Action<TParam1, TParam2, TParam3> action
+        )
         {
 #if UNITY_WSA && ENABLE_DOTNET && !UNITY_EDITOR
             return action.ToString();
@@ -90,7 +104,9 @@ namespace ModestTree
 #endif
         }
 
-        public static string ToDebugString<TParam1, TParam2, TParam3, TParam4>(this Action<TParam1, TParam2, TParam3, TParam4> action)
+        public static string ToDebugString<TParam1, TParam2, TParam3, TParam4>(
+            this Action<TParam1, TParam2, TParam3, TParam4> action
+        )
         {
 #if UNITY_WSA && ENABLE_DOTNET && !UNITY_EDITOR
             return action.ToString();
@@ -99,11 +115,14 @@ namespace ModestTree
 #endif
         }
 
-        public static string ToDebugString<TParam1, TParam2, TParam3, TParam4, TParam5>(this
+        public static string ToDebugString<TParam1, TParam2, TParam3, TParam4, TParam5>(
+            this
 #if NET_4_6
-            Action<TParam1, TParam2, TParam3, TParam4, TParam5> action)
+            Action<TParam1, TParam2, TParam3, TParam4, TParam5> action
+        )
 #else
-            ModestTree.Util.Action<TParam1, TParam2, TParam3, TParam4, TParam5> action)
+            ModestTree.Util.Action<TParam1, TParam2, TParam3, TParam4, TParam5> action
+        )
 #endif
         {
 #if UNITY_WSA && ENABLE_DOTNET && !UNITY_EDITOR
@@ -113,11 +132,14 @@ namespace ModestTree
 #endif
         }
 
-        public static string ToDebugString<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6>(this
+        public static string ToDebugString<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6>(
+            this
 #if NET_4_6
-            Action<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6> action)
+            Action<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6> action
+        )
 #else
-            ModestTree.Util.Action<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6> action)
+            ModestTree.Util.Action<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6> action
+        )
 #endif
         {
 #if UNITY_WSA && ENABLE_DOTNET && !UNITY_EDITOR
@@ -145,7 +167,9 @@ namespace ModestTree
 #endif
         }
 
-        public static string ToDebugString<TParam1, TParam2, TParam3>(this Func<TParam1, TParam2, TParam3> func)
+        public static string ToDebugString<TParam1, TParam2, TParam3>(
+            this Func<TParam1, TParam2, TParam3> func
+        )
         {
 #if UNITY_WSA && ENABLE_DOTNET && !UNITY_EDITOR
             return func.ToString();
@@ -154,7 +178,9 @@ namespace ModestTree
 #endif
         }
 
-        public static string ToDebugString<TParam1, TParam2, TParam3, TParam4>(this Func<TParam1, TParam2, TParam3, TParam4> func)
+        public static string ToDebugString<TParam1, TParam2, TParam3, TParam4>(
+            this Func<TParam1, TParam2, TParam3, TParam4> func
+        )
         {
 #if UNITY_WSA && ENABLE_DOTNET && !UNITY_EDITOR
             return func.ToString();

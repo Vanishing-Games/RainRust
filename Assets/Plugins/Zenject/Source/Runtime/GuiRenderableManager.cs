@@ -13,9 +13,10 @@ namespace Zenject
 
         public GuiRenderableManager(
             [Inject(Optional = true, Source = InjectSources.Local)]
-            List<IGuiRenderable> renderables,
+                List<IGuiRenderable> renderables,
             [Inject(Optional = true, Source = InjectSources.Local)]
-            List<ValuePair<Type, int>> priorities)
+                List<ValuePair<Type, int>> priorities
+        )
         {
             _renderables = new List<RenderableInfo>();
 
@@ -25,12 +26,12 @@ namespace Zenject
                 // This is nice because you can use negative or positive for before/after unspecified
                 var matches = priorities
                     .Where(x => renderable.GetType().DerivesFromOrEqual(x.First))
-                    .Select(x => x.Second).ToList();
+                    .Select(x => x.Second)
+                    .ToList();
 
                 int priority = matches.IsEmpty() ? 0 : matches.Distinct().Single();
 
-                _renderables.Add(
-                    new RenderableInfo(renderable, priority));
+                _renderables.Add(new RenderableInfo(renderable, priority));
             }
 
             _renderables = _renderables.OrderBy(x => x.Priority).ToList();
@@ -38,7 +39,10 @@ namespace Zenject
 #if UNITY_EDITOR
             foreach (var renderable in _renderables.Select(x => x.Renderable).GetDuplicates())
             {
-                Assert.That(false, "Found duplicate IGuiRenderable with type '{0}'".Fmt(renderable.GetType()));
+                Assert.That(
+                    false,
+                    "Found duplicate IGuiRenderable with type '{0}'".Fmt(renderable.GetType())
+                );
             }
 #endif
         }
@@ -62,7 +66,10 @@ namespace Zenject
                 catch (Exception e)
                 {
                     throw Assert.CreateException(
-                        e, "Error occurred while calling {0}.GuiRender", renderable.Renderable.GetType());
+                        e,
+                        "Error occurred while calling {0}.GuiRender",
+                        renderable.Renderable.GetType()
+                    );
                 }
             }
         }

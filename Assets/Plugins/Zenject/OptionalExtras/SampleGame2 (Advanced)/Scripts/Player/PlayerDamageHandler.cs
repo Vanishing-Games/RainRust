@@ -9,10 +9,7 @@ namespace Zenject.SpaceFighter
         readonly Settings _settings;
         readonly Player _player;
 
-        public PlayerDamageHandler(
-            Player player,
-            Settings settings,
-            AudioPlayer audioPlayer)
+        public PlayerDamageHandler(Player player, Settings settings, AudioPlayer audioPlayer)
         {
             _audioPlayer = audioPlayer;
             _settings = settings;

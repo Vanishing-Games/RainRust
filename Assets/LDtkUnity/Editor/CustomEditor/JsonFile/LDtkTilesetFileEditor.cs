@@ -19,18 +19,18 @@ namespace LDtkUnity.Editor
             TryCacheJson();
             InitValues();
         }
-        
+
         private void InitValues()
         {
             TilesetDefinition def = JsonData.Def;
-            
+
             _relPath = def.RelPath;
             _tileCount = def.CWid * def.CHei;
             _tags = def.Tags.Length;
             _enumTags = def.EnumTags.Length;
             _customData = def.CustomData.Length;
         }
-        
+
         protected override void DrawInspectorGUI()
         {
             using (new EditorGUIUtility.IconSizeScope(Vector2.one * 16))
@@ -38,9 +38,24 @@ namespace LDtkUnity.Editor
                 DrawText($"{_relPath}", (Texture2D)LDtkIconUtility.GetUnityIcon("Folder"));
             }
             DrawCountOfItems(_tileCount, "Tile", "Tiles", LDtkIconUtility.LoadTilesetIcon());
-            DrawCountOfItems(_tags, "Tag", "Tags", (Texture2D)LDtkIconUtility.GetUnityIcon("FilterByLabel", ""));
-            DrawCountOfItems(_enumTags,"Enum Association", "Enum Associations", LDtkIconUtility.LoadEnumIcon());
-            DrawCountOfItems(_customData, "Custom Data", "Custom Datas", LDtkIconUtility.LoadListIcon());
+            DrawCountOfItems(
+                _tags,
+                "Tag",
+                "Tags",
+                (Texture2D)LDtkIconUtility.GetUnityIcon("FilterByLabel", "")
+            );
+            DrawCountOfItems(
+                _enumTags,
+                "Enum Association",
+                "Enum Associations",
+                LDtkIconUtility.LoadEnumIcon()
+            );
+            DrawCountOfItems(
+                _customData,
+                "Custom Data",
+                "Custom Datas",
+                LDtkIconUtility.LoadListIcon()
+            );
         }
     }
 }

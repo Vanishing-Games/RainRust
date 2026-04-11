@@ -29,7 +29,8 @@ namespace Zenject.SpaceFighter
             EnemyTunables tunables,
             AudioPlayer audioPlayer,
             EnemyCommonSettings commonSettings,
-            EnemyRotationHandler rotationHandler)
+            EnemyRotationHandler rotationHandler
+        )
         {
             _rotationHandler = rotationHandler;
             _commonSettings = commonSettings;
@@ -43,13 +44,9 @@ namespace Zenject.SpaceFighter
             _strafeRight = Random.Range(0.0f, 1.0f) < 0.5f;
         }
 
-        public void EnterState()
-        {
-        }
+        public void EnterState() { }
 
-        public void ExitState()
-        {
-        }
+        public void ExitState() { }
 
         public void Update()
         {
@@ -76,7 +73,10 @@ namespace Zenject.SpaceFighter
             }
 
             // If the player runs away then chase them
-            if ((_player.Position - _view.Position).magnitude > _commonSettings.AttackDistance + _settings.AttackRangeBuffer)
+            if (
+                (_player.Position - _view.Position).magnitude
+                > _commonSettings.AttackDistance + _settings.AttackRangeBuffer
+            )
             {
                 _stateManager.ChangeState(EnemyStates.Follow);
             }
@@ -98,7 +98,10 @@ namespace Zenject.SpaceFighter
         void Fire()
         {
             var bullet = _bulletFactory.Create(
-                _settings.BulletSpeed, _settings.BulletLifetime, BulletTypes.FromEnemy);
+                _settings.BulletSpeed,
+                _settings.BulletLifetime,
+                BulletTypes.FromEnemy
+            );
 
             // Randomize our aim a bit
             var accuracy = Mathf.Clamp(_tunables.Accuracy, 0, 1);
@@ -112,8 +115,10 @@ namespace Zenject.SpaceFighter
 
             var thetaError = error * _settings.ErrorRangeTheta;
 
-            bullet.transform.position = _view.Position + _view.LookDir * _settings.BulletOffsetDistance;
-            bullet.transform.rotation = Quaternion.AngleAxis(thetaError, Vector3.forward) * _view.Rotation;
+            bullet.transform.position =
+                _view.Position + _view.LookDir * _settings.BulletOffsetDistance;
+            bullet.transform.rotation =
+                Quaternion.AngleAxis(thetaError, Vector3.forward) * _view.Rotation;
 
             _audioPlayer.Play(_settings.ShootSound, _settings.ShootSoundVolume);
         }

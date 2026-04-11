@@ -379,6 +379,20 @@ MonoBehaviour:
         isBuiltIn: 1
         script: {fileID: 0}
         hasToggle: 1
+      - displayName: BezierShape
+        name: UnityEngine.ProBuilder.BezierShape, Unity.ProBuilder, Version=0.0.0.0,
+          Culture=neutral, PublicKeyToken=null
+        content:
+          m_Text: BezierShape
+          m_Image: {fileID: -8204150473280056172, guid: 0000000000000000d000000000000000,
+            type: 0}
+          m_Tooltip: BezierShape
+          m_TextWithWhitespace: "BezierShape\u200B"
+        shown: 0
+        excluded: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+        hasToggle: 1
       - displayName: Camera
         name: UnityEngine.Camera, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral,
           PublicKeyToken=null
@@ -1876,6 +1890,20 @@ MonoBehaviour:
         isBuiltIn: 1
         script: {fileID: 0}
         hasToggle: 1
+      - displayName: Entity
+        name: UnityEngine.ProBuilder.Entity, Unity.ProBuilder, Version=0.0.0.0, Culture=neutral,
+          PublicKeyToken=null
+        content:
+          m_Text: Entity
+          m_Image: {fileID: -8204150473280056172, guid: 0000000000000000d000000000000000,
+            type: 0}
+          m_Tooltip: Entity
+          m_TextWithWhitespace: "Entity\u200B"
+        shown: 0
+        excluded: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+        hasToggle: 1
       - displayName: EventTrigger
         name: UnityEngine.EventSystems.EventTrigger, UnityEngine.UI, Version=1.0.0.0,
           Culture=neutral, PublicKeyToken=null
@@ -2734,6 +2762,19 @@ MonoBehaviour:
         isBuiltIn: 1
         script: {fileID: 0}
         hasToggle: 1
+      - displayName: PolyShape
+        name: UnityEngine.ProBuilder.PolyShape, Unity.ProBuilder, Version=0.0.0.0,
+          Culture=neutral, PublicKeyToken=null
+        content:
+          m_Text: PolyShape
+          m_Image: {fileID: 2800000, guid: 554ec42bef6520444a25f7e2d3c26878, type: 3}
+          m_Tooltip: PolyShape
+          m_TextWithWhitespace: "PolyShape\u200B"
+        shown: 0
+        excluded: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+        hasToggle: 1
       - displayName: Preload
         name: AddressableAssets.DocExampleCode.Preload, Unity.Addressables.DocExampleCode.Editor.Tests,
           Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -2827,6 +2868,19 @@ MonoBehaviour:
             type: 0}
           m_Tooltip: ProbeVolumePerSceneData
           m_TextWithWhitespace: "ProbeVolumePerSceneData\u200B"
+        shown: 0
+        excluded: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+        hasToggle: 1
+      - displayName: ProBuilderShape
+        name: UnityEngine.ProBuilder.Shapes.ProBuilderShape, Unity.ProBuilder, Version=0.0.0.0,
+          Culture=neutral, PublicKeyToken=null
+        content:
+          m_Text: ProBuilderShape
+          m_Image: {fileID: 2800000, guid: 554ec42bef6520444a25f7e2d3c26878, type: 3}
+          m_Tooltip: ProBuilderShape
+          m_TextWithWhitespace: "ProBuilderShape\u200B"
         shown: 0
         excluded: 0
         isBuiltIn: 1
@@ -3152,6 +3206,20 @@ MonoBehaviour:
         isBuiltIn: 1
         script: {fileID: 0}
         hasToggle: 0
+      - displayName: TriggerBehaviour
+        name: UnityEngine.ProBuilder.TriggerBehaviour, Unity.ProBuilder, Version=0.0.0.0,
+          Culture=neutral, PublicKeyToken=null
+        content:
+          m_Text: TriggerBehaviour
+          m_Image: {fileID: -8204150473280056172, guid: 0000000000000000d000000000000000,
+            type: 0}
+          m_Tooltip: TriggerBehaviour
+          m_TextWithWhitespace: "TriggerBehaviour\u200B"
+        shown: 0
+        excluded: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+        hasToggle: 1
       - displayName: UIDocument
         name: UnityEngine.UIElements.UIDocument, UnityEngine.UIElementsModule, Version=0.0.0.0,
           Culture=neutral, PublicKeyToken=null
@@ -3189,6 +3257,370 @@ MonoBehaviour:
             type: 0}
           m_Tooltip: UniversalAdditionalLightData
           m_TextWithWhitespace: "UniversalAdditionalLightData\u200B"
+        shown: 0
+        excluded: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+        hasToggle: 1
+      - displayName: URPCameraBinder
+        name: UnityEngine.VFX.Utility.URPCameraBinder, Unity.RenderPipelines.Universal.Runtime,
+          Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+        content:
+          m_Text: URPCameraBinder
+          m_Image: {fileID: -8204150473280056172, guid: 0000000000000000d000000000000000,
+            type: 0}
+          m_Tooltip: URPCameraBinder
+          m_TextWithWhitespace: "URPCameraBinder\u200B"
+        shown: 0
+        excluded: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+        hasToggle: 1
+      - displayName: VFXEnabledBinder
+        name: UnityEngine.VFX.Utility.VFXEnabledBinder, Unity.VisualEffectGraph.Runtime,
+          Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+        content:
+          m_Text: VFXEnabledBinder
+          m_Image: {fileID: -8204150473280056172, guid: 0000000000000000d000000000000000,
+            type: 0}
+          m_Tooltip: VFXEnabledBinder
+          m_TextWithWhitespace: "VFXEnabledBinder\u200B"
+        shown: 0
+        excluded: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+        hasToggle: 1
+      - displayName: VFXHierarchyAttributeMapBinder
+        name: UnityEngine.VFX.Utility.VFXHierarchyAttributeMapBinder, Unity.VisualEffectGraph.Runtime,
+          Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+        content:
+          m_Text: VFXHierarchyAttributeMapBinder
+          m_Image: {fileID: -8204150473280056172, guid: 0000000000000000d000000000000000,
+            type: 0}
+          m_Tooltip: VFXHierarchyAttributeMapBinder
+          m_TextWithWhitespace: "VFXHierarchyAttributeMapBinder\u200B"
+        shown: 0
+        excluded: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+        hasToggle: 1
+      - displayName: VFXInputAxisBinder
+        name: UnityEngine.VFX.Utility.VFXInputAxisBinder, Unity.VisualEffectGraph.Runtime,
+          Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+        content:
+          m_Text: VFXInputAxisBinder
+          m_Image: {fileID: -8204150473280056172, guid: 0000000000000000d000000000000000,
+            type: 0}
+          m_Tooltip: VFXInputAxisBinder
+          m_TextWithWhitespace: "VFXInputAxisBinder\u200B"
+        shown: 0
+        excluded: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+        hasToggle: 1
+      - displayName: VFXInputButtonBinder
+        name: UnityEngine.VFX.Utility.VFXInputButtonBinder, Unity.VisualEffectGraph.Runtime,
+          Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+        content:
+          m_Text: VFXInputButtonBinder
+          m_Image: {fileID: -8204150473280056172, guid: 0000000000000000d000000000000000,
+            type: 0}
+          m_Tooltip: VFXInputButtonBinder
+          m_TextWithWhitespace: "VFXInputButtonBinder\u200B"
+        shown: 0
+        excluded: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+        hasToggle: 1
+      - displayName: VFXInputKeyBinder
+        name: UnityEngine.VFX.Utility.VFXInputKeyBinder, Unity.VisualEffectGraph.Runtime,
+          Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+        content:
+          m_Text: VFXInputKeyBinder
+          m_Image: {fileID: -8204150473280056172, guid: 0000000000000000d000000000000000,
+            type: 0}
+          m_Tooltip: VFXInputKeyBinder
+          m_TextWithWhitespace: "VFXInputKeyBinder\u200B"
+        shown: 0
+        excluded: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+        hasToggle: 1
+      - displayName: VFXInputMouseBinder
+        name: UnityEngine.VFX.Utility.VFXInputMouseBinder, Unity.VisualEffectGraph.Runtime,
+          Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+        content:
+          m_Text: VFXInputMouseBinder
+          m_Image: {fileID: -8204150473280056172, guid: 0000000000000000d000000000000000,
+            type: 0}
+          m_Tooltip: VFXInputMouseBinder
+          m_TextWithWhitespace: "VFXInputMouseBinder\u200B"
+        shown: 0
+        excluded: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+        hasToggle: 1
+      - displayName: VFXInputTouchBinder
+        name: UnityEngine.VFX.Utility.VFXInputTouchBinder, Unity.VisualEffectGraph.Runtime,
+          Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+        content:
+          m_Text: VFXInputTouchBinder
+          m_Image: {fileID: -8204150473280056172, guid: 0000000000000000d000000000000000,
+            type: 0}
+          m_Tooltip: VFXInputTouchBinder
+          m_TextWithWhitespace: "VFXInputTouchBinder\u200B"
+        shown: 0
+        excluded: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+        hasToggle: 1
+      - displayName: VFXLightBinder
+        name: UnityEngine.VFX.Utility.VFXLightBinder, Unity.VisualEffectGraph.Runtime,
+          Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+        content:
+          m_Text: VFXLightBinder
+          m_Image: {fileID: -8204150473280056172, guid: 0000000000000000d000000000000000,
+            type: 0}
+          m_Tooltip: VFXLightBinder
+          m_TextWithWhitespace: "VFXLightBinder\u200B"
+        shown: 0
+        excluded: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+        hasToggle: 1
+      - displayName: VFXMouseEventBinder
+        name: UnityEngine.VFX.Utility.VFXMouseEventBinder, Unity.VisualEffectGraph.Runtime,
+          Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+        content:
+          m_Text: VFXMouseEventBinder
+          m_Image: {fileID: -8204150473280056172, guid: 0000000000000000d000000000000000,
+            type: 0}
+          m_Tooltip: VFXMouseEventBinder
+          m_TextWithWhitespace: "VFXMouseEventBinder\u200B"
+        shown: 0
+        excluded: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+        hasToggle: 1
+      - displayName: VFXMultiplePositionBinder
+        name: UnityEngine.VFX.Utility.VFXMultiplePositionBinder, Unity.VisualEffectGraph.Runtime,
+          Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+        content:
+          m_Text: VFXMultiplePositionBinder
+          m_Image: {fileID: -8204150473280056172, guid: 0000000000000000d000000000000000,
+            type: 0}
+          m_Tooltip: VFXMultiplePositionBinder
+          m_TextWithWhitespace: "VFXMultiplePositionBinder\u200B"
+        shown: 0
+        excluded: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+        hasToggle: 1
+      - displayName: VFXPlaneBinder
+        name: UnityEngine.VFX.Utility.VFXPlaneBinder, Unity.VisualEffectGraph.Runtime,
+          Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+        content:
+          m_Text: VFXPlaneBinder
+          m_Image: {fileID: -8204150473280056172, guid: 0000000000000000d000000000000000,
+            type: 0}
+          m_Tooltip: VFXPlaneBinder
+          m_TextWithWhitespace: "VFXPlaneBinder\u200B"
+        shown: 0
+        excluded: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+        hasToggle: 1
+      - displayName: VFXPositionBinder
+        name: UnityEngine.VFX.Utility.VFXPositionBinder, Unity.VisualEffectGraph.Runtime,
+          Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+        content:
+          m_Text: VFXPositionBinder
+          m_Image: {fileID: -8204150473280056172, guid: 0000000000000000d000000000000000,
+            type: 0}
+          m_Tooltip: VFXPositionBinder
+          m_TextWithWhitespace: "VFXPositionBinder\u200B"
+        shown: 0
+        excluded: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+        hasToggle: 1
+      - displayName: VFXPreviousPositionBinder
+        name: UnityEngine.VFX.Utility.VFXPreviousPositionBinder, Unity.VisualEffectGraph.Runtime,
+          Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+        content:
+          m_Text: VFXPreviousPositionBinder
+          m_Image: {fileID: -8204150473280056172, guid: 0000000000000000d000000000000000,
+            type: 0}
+          m_Tooltip: VFXPreviousPositionBinder
+          m_TextWithWhitespace: "VFXPreviousPositionBinder\u200B"
+        shown: 0
+        excluded: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+        hasToggle: 1
+      - displayName: VFXPropertyBinder
+        name: UnityEngine.VFX.Utility.VFXPropertyBinder, Unity.VisualEffectGraph.Runtime,
+          Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+        content:
+          m_Text: VFXPropertyBinder
+          m_Image: {fileID: -8204150473280056172, guid: 0000000000000000d000000000000000,
+            type: 0}
+          m_Tooltip: VFXPropertyBinder
+          m_TextWithWhitespace: "VFXPropertyBinder\u200B"
+        shown: 0
+        excluded: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+        hasToggle: 1
+      - displayName: VFXRaycastBinder
+        name: UnityEngine.VFX.Utility.VFXRaycastBinder, Unity.VisualEffectGraph.Runtime,
+          Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+        content:
+          m_Text: VFXRaycastBinder
+          m_Image: {fileID: -8204150473280056172, guid: 0000000000000000d000000000000000,
+            type: 0}
+          m_Tooltip: VFXRaycastBinder
+          m_TextWithWhitespace: "VFXRaycastBinder\u200B"
+        shown: 0
+        excluded: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+        hasToggle: 1
+      - displayName: VFXRigidBodyCollisionEventBinder
+        name: UnityEngine.VFX.Utility.VFXRigidBodyCollisionEventBinder, Unity.VisualEffectGraph.Runtime,
+          Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+        content:
+          m_Text: VFXRigidBodyCollisionEventBinder
+          m_Image: {fileID: -8204150473280056172, guid: 0000000000000000d000000000000000,
+            type: 0}
+          m_Tooltip: VFXRigidBodyCollisionEventBinder
+          m_TextWithWhitespace: "VFXRigidBodyCollisionEventBinder\u200B"
+        shown: 0
+        excluded: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+        hasToggle: 1
+      - displayName: VFXSphereBinder
+        name: UnityEngine.VFX.Utility.VFXSphereBinder, Unity.VisualEffectGraph.Runtime,
+          Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+        content:
+          m_Text: VFXSphereBinder
+          m_Image: {fileID: -8204150473280056172, guid: 0000000000000000d000000000000000,
+            type: 0}
+          m_Tooltip: VFXSphereBinder
+          m_TextWithWhitespace: "VFXSphereBinder\u200B"
+        shown: 0
+        excluded: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+        hasToggle: 1
+      - displayName: VFXTerrainBinder
+        name: UnityEngine.VFX.Utility.VFXTerrainBinder, Unity.VisualEffectGraph.Runtime,
+          Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+        content:
+          m_Text: VFXTerrainBinder
+          m_Image: {fileID: -8204150473280056172, guid: 0000000000000000d000000000000000,
+            type: 0}
+          m_Tooltip: VFXTerrainBinder
+          m_TextWithWhitespace: "VFXTerrainBinder\u200B"
+        shown: 0
+        excluded: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+        hasToggle: 1
+      - displayName: VFXTransformBinder
+        name: UnityEngine.VFX.Utility.VFXTransformBinder, Unity.VisualEffectGraph.Runtime,
+          Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+        content:
+          m_Text: VFXTransformBinder
+          m_Image: {fileID: -8204150473280056172, guid: 0000000000000000d000000000000000,
+            type: 0}
+          m_Tooltip: VFXTransformBinder
+          m_TextWithWhitespace: "VFXTransformBinder\u200B"
+        shown: 0
+        excluded: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+        hasToggle: 1
+      - displayName: VFXTriggerEventBinder
+        name: UnityEngine.VFX.Utility.VFXTriggerEventBinder, Unity.VisualEffectGraph.Runtime,
+          Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+        content:
+          m_Text: VFXTriggerEventBinder
+          m_Image: {fileID: -8204150473280056172, guid: 0000000000000000d000000000000000,
+            type: 0}
+          m_Tooltip: VFXTriggerEventBinder
+          m_TextWithWhitespace: "VFXTriggerEventBinder\u200B"
+        shown: 0
+        excluded: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+        hasToggle: 1
+      - displayName: VFXUIDropdownBinder
+        name: UnityEngine.VFX.Utility.VFXUIDropdownBinder, Unity.VisualEffectGraph.Runtime,
+          Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+        content:
+          m_Text: VFXUIDropdownBinder
+          m_Image: {fileID: -8204150473280056172, guid: 0000000000000000d000000000000000,
+            type: 0}
+          m_Tooltip: VFXUIDropdownBinder
+          m_TextWithWhitespace: "VFXUIDropdownBinder\u200B"
+        shown: 0
+        excluded: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+        hasToggle: 1
+      - displayName: VFXUISliderBinder
+        name: UnityEngine.VFX.Utility.VFXUISliderBinder, Unity.VisualEffectGraph.Runtime,
+          Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+        content:
+          m_Text: VFXUISliderBinder
+          m_Image: {fileID: -8204150473280056172, guid: 0000000000000000d000000000000000,
+            type: 0}
+          m_Tooltip: VFXUISliderBinder
+          m_TextWithWhitespace: "VFXUISliderBinder\u200B"
+        shown: 0
+        excluded: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+        hasToggle: 1
+      - displayName: VFXUIToggleBinder
+        name: UnityEngine.VFX.Utility.VFXUIToggleBinder, Unity.VisualEffectGraph.Runtime,
+          Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+        content:
+          m_Text: VFXUIToggleBinder
+          m_Image: {fileID: -8204150473280056172, guid: 0000000000000000d000000000000000,
+            type: 0}
+          m_Tooltip: VFXUIToggleBinder
+          m_TextWithWhitespace: "VFXUIToggleBinder\u200B"
+        shown: 0
+        excluded: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+        hasToggle: 1
+      - displayName: VFXVelocityBinder
+        name: UnityEngine.VFX.Utility.VFXVelocityBinder, Unity.VisualEffectGraph.Runtime,
+          Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+        content:
+          m_Text: VFXVelocityBinder
+          m_Image: {fileID: -8204150473280056172, guid: 0000000000000000d000000000000000,
+            type: 0}
+          m_Tooltip: VFXVelocityBinder
+          m_TextWithWhitespace: "VFXVelocityBinder\u200B"
+        shown: 0
+        excluded: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+        hasToggle: 1
+      - displayName: VFXVisibilityEventBinder
+        name: UnityEngine.VFX.Utility.VFXVisibilityEventBinder, Unity.VisualEffectGraph.Runtime,
+          Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+        content:
+          m_Text: VFXVisibilityEventBinder
+          m_Image: {fileID: -8204150473280056172, guid: 0000000000000000d000000000000000,
+            type: 0}
+          m_Tooltip: VFXVisibilityEventBinder
+          m_TextWithWhitespace: "VFXVisibilityEventBinder\u200B"
         shown: 0
         excluded: 0
         isBuiltIn: 1
@@ -4935,6 +5367,20 @@ MonoBehaviour:
         isBuiltIn: 1
         script: {fileID: 0}
         hasToggle: 1
+      - displayName: VFXAudioSpectrumBinder
+        name: UnityEngine.VFX.Utility.VFXAudioSpectrumBinder, Unity.VisualEffectGraph.Runtime,
+          Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+        content:
+          m_Text: VFXAudioSpectrumBinder
+          m_Image: {fileID: -8204150473280056172, guid: 0000000000000000d000000000000000,
+            type: 0}
+          m_Tooltip: VFXAudioSpectrumBinder
+          m_TextWithWhitespace: "VFXAudioSpectrumBinder\u200B"
+        shown: 0
+        excluded: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+        hasToggle: 1
     - name: Mesh
       components:
       - displayName: BillboardRenderer
@@ -5086,6 +5532,19 @@ MonoBehaviour:
             type: 0}
           m_Tooltip: ParticleSystemRenderer
           m_TextWithWhitespace: "ParticleSystemRenderer\u200B"
+        shown: 0
+        excluded: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+        hasToggle: 1
+      - displayName: ProBuilderMesh
+        name: UnityEngine.ProBuilder.ProBuilderMesh, Unity.ProBuilder, Version=0.0.0.0,
+          Culture=neutral, PublicKeyToken=null
+        content:
+          m_Text: ProBuilderMesh
+          m_Image: {fileID: 2800000, guid: 432b3086cebdc438d9d33de3669fb063, type: 2}
+          m_Tooltip: ProBuilderMesh
+          m_TextWithWhitespace: "ProBuilderMesh\u200B"
         shown: 0
         excluded: 0
         isBuiltIn: 1
@@ -5338,6 +5797,20 @@ MonoBehaviour:
             type: 0}
           m_Tooltip: Collider
           m_TextWithWhitespace: "Collider\u200B"
+        shown: 0
+        excluded: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+        hasToggle: 1
+      - displayName: ColliderBehaviour
+        name: UnityEngine.ProBuilder.ColliderBehaviour, Unity.ProBuilder, Version=0.0.0.0,
+          Culture=neutral, PublicKeyToken=null
+        content:
+          m_Text: ColliderBehaviour
+          m_Image: {fileID: -8204150473280056172, guid: 0000000000000000d000000000000000,
+            type: 0}
+          m_Tooltip: ColliderBehaviour
+          m_TextWithWhitespace: "ColliderBehaviour\u200B"
         shown: 0
         excluded: 0
         isBuiltIn: 1
@@ -5664,15 +6137,15 @@ MonoBehaviour:
         isBuiltIn: 0
         script: {fileID: 11500000, guid: f625fc932515a438798036a41f7d1412, type: 3}
         hasToggle: 1
-      - displayName: VgLoadProgressManager
-        name: Core.VgLoadProgressManager, Core, Version=0.0.0.0, Culture=neutral,
+      - displayName: VgLoadingSplashManager
+        name: Core.VgLoadingSplashManager, Core, Version=0.0.0.0, Culture=neutral,
           PublicKeyToken=null
         content:
-          m_Text: VgLoadProgressManager
+          m_Text: VgLoadingSplashManager
           m_Image: {fileID: -8204150473280056172, guid: 0000000000000000d000000000000000,
             type: 0}
-          m_Tooltip: VgLoadProgressManager
-          m_TextWithWhitespace: "VgLoadProgressManager\u200B"
+          m_Tooltip: VgLoadingSplashManager
+          m_TextWithWhitespace: "VgLoadingSplashManager\u200B"
         shown: 0
         excluded: 0
         isBuiltIn: 0
@@ -5704,28 +6177,28 @@ MonoBehaviour:
         isBuiltIn: 0
         script: {fileID: 11500000, guid: 63716462085134ac5b3d7bffad1b6416, type: 3}
         hasToggle: 1
-      - displayName: VgInputManager
-        name: Core.VgInputManager, Core, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      - displayName: VgInputSystem
+        name: Core.VgInputSystem, Core, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
         content:
-          m_Text: VgInputManager
+          m_Text: VgInputSystem
           m_Image: {fileID: -8204150473280056172, guid: 0000000000000000d000000000000000,
             type: 0}
-          m_Tooltip: VgInputManager
-          m_TextWithWhitespace: "VgInputManager\u200B"
+          m_Tooltip: VgInputSystem
+          m_TextWithWhitespace: "VgInputSystem\u200B"
         shown: 0
         excluded: 0
         isBuiltIn: 0
         script: {fileID: 11500000, guid: fc4f9b0a49d7d46008b5cf8430c9edd5, type: 3}
         hasToggle: 1
-      - displayName: PlayerManager
-        name: GameMain.RunTime.PlayerManager, GameMain.RunTime, Version=0.0.0.0,
+      - displayName: PlayerManageSystem
+        name: GameMain.RunTime.PlayerManageSystem, GameMain.RunTime, Version=0.0.0.0,
           Culture=neutral, PublicKeyToken=null
         content:
-          m_Text: PlayerManager
+          m_Text: PlayerManageSystem
           m_Image: {fileID: -8204150473280056172, guid: 0000000000000000d000000000000000,
             type: 0}
-          m_Tooltip: PlayerManager
-          m_TextWithWhitespace: "PlayerManager\u200B"
+          m_Tooltip: PlayerManageSystem
+          m_TextWithWhitespace: "PlayerManageSystem\u200B"
         shown: 0
         excluded: 0
         isBuiltIn: 0
@@ -5773,14 +6246,14 @@ MonoBehaviour:
         isBuiltIn: 0
         script: {fileID: 11500000, guid: c3cc1b407f337e641ad32a2e91d5b478, type: 3}
         hasToggle: 1
-      - displayName: SaveManager
-        name: Core.SaveManager, Core, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      - displayName: VgSaveSystem
+        name: Core.VgSaveSystem, Core, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
         content:
-          m_Text: SaveManager
+          m_Text: VgSaveSystem
           m_Image: {fileID: -8204150473280056172, guid: 0000000000000000d000000000000000,
             type: 0}
-          m_Tooltip: SaveManager
-          m_TextWithWhitespace: "SaveManager\u200B"
+          m_Tooltip: VgSaveSystem
+          m_TextWithWhitespace: "VgSaveSystem\u200B"
         shown: 0
         excluded: 0
         isBuiltIn: 0
@@ -5898,7 +6371,7 @@ MonoBehaviour:
         script: {fileID: 11500000, guid: 2ddf02e76141479aa65b1d2227ab4815, type: 3}
         hasToggle: 1
       - displayName: BeeMainControl
-        name: PlayerControlByOris.BeeMainControl, PlayerControlByOris, Version=0.0.0.0,
+        name: GameMain.RunTime.BeeMainControl, GameMain.RunTime, Version=0.0.0.0,
           Culture=neutral, PublicKeyToken=null
         content:
           m_Text: BeeMainControl
@@ -5912,8 +6385,8 @@ MonoBehaviour:
         script: {fileID: 11500000, guid: 2250be956b6f9bb4ba8d6da276073edd, type: 3}
         hasToggle: 1
       - displayName: BeeAnim
-        name: PlayerControlByOris.BeeAnim, PlayerControlByOris, Version=0.0.0.0,
-          Culture=neutral, PublicKeyToken=null
+        name: GameMain.RunTime.BeeAnim, GameMain.RunTime, Version=0.0.0.0, Culture=neutral,
+          PublicKeyToken=null
         content:
           m_Text: BeeAnim
           m_Image: {fileID: -8204150473280056172, guid: 0000000000000000d000000000000000,
@@ -5925,5 +6398,86 @@ MonoBehaviour:
         isBuiltIn: 0
         script: {fileID: 11500000, guid: 8711b9abac7234145ab1baa36d298953, type: 3}
         hasToggle: 1
+      - displayName: VgLoadingBackground
+        name: Core.VgLoadingBackground, Core, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+        content:
+          m_Text: VgLoadingBackground
+          m_Image: {fileID: -8204150473280056172, guid: 0000000000000000d000000000000000,
+            type: 0}
+          m_Tooltip: VgLoadingBackground
+          m_TextWithWhitespace: "VgLoadingBackground\u200B"
+        shown: 0
+        excluded: 0
+        isBuiltIn: 0
+        script: {fileID: 11500000, guid: 4affc95e93d144975834228d6f14fd15, type: 3}
+        hasToggle: 1
+      - displayName: VgLoadingProgressBar
+        name: Core.VgLoadingProgressBar, Core, Version=0.0.0.0, Culture=neutral,
+          PublicKeyToken=null
+        content:
+          m_Text: VgLoadingProgressBar
+          m_Image: {fileID: -8204150473280056172, guid: 0000000000000000d000000000000000,
+            type: 0}
+          m_Tooltip: VgLoadingProgressBar
+          m_TextWithWhitespace: "VgLoadingProgressBar\u200B"
+        shown: 0
+        excluded: 0
+        isBuiltIn: 0
+        script: {fileID: 11500000, guid: da7ab4857e22c479db51bd1cacb34301, type: 3}
+        hasToggle: 1
+      - displayName: VgLoadingCamera
+        name: Core.VgLoadingCamera, Core, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+        content:
+          m_Text: VgLoadingCamera
+          m_Image: {fileID: -8204150473280056172, guid: 0000000000000000d000000000000000,
+            type: 0}
+          m_Tooltip: VgLoadingCamera
+          m_TextWithWhitespace: "VgLoadingCamera\u200B"
+        shown: 0
+        excluded: 0
+        isBuiltIn: 0
+        script: {fileID: 11500000, guid: bc0ddabeb7cfa47048ab062cdf7747e2, type: 3}
+        hasToggle: 1
+      - displayName: VgAudioSystem
+        name: Core.VgAudioSystem, Core, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+        content:
+          m_Text: VgAudioSystem
+          m_Image: {fileID: -8204150473280056172, guid: 0000000000000000d000000000000000,
+            type: 0}
+          m_Tooltip: VgAudioSystem
+          m_TextWithWhitespace: "VgAudioSystem\u200B"
+        shown: 0
+        excluded: 0
+        isBuiltIn: 0
+        script: {fileID: 11500000, guid: 403aaaf68dba34fb6ac51545982a39ad, type: 3}
+        hasToggle: 1
+      - displayName: DOTweenComponent
+        name: DG.Tweening.Core.DOTweenComponent, DOTween, Version=1.0.0.0, Culture=neutral,
+          PublicKeyToken=null
+        content:
+          m_Text: DOTweenComponent
+          m_Image: {fileID: 1958022779231644424, guid: 0000000000000000d000000000000000,
+            type: 0}
+          m_Tooltip: DOTweenComponent
+          m_TextWithWhitespace: "DOTweenComponent\u200B"
+        shown: 0
+        excluded: 0
+        isBuiltIn: 0
+        script: {fileID: -591303064, guid: a811bde74b26b53498b4f6d872b09b6d, type: 3}
+        hasToggle: 1
+      - displayName: MainMenuController
+        name: GameMain.RunTime.MainMenuController, GameMain.RunTime, Version=0.0.0.0,
+          Culture=neutral, PublicKeyToken=null
+        content:
+          m_Text: MainMenuController
+          m_Image: {fileID: -8204150473280056172, guid: 0000000000000000d000000000000000,
+            type: 0}
+          m_Tooltip: MainMenuController
+          m_TextWithWhitespace: "MainMenuController\u200B"
+        shown: 0
+        excluded: 0
+        isBuiltIn: 0
+        script: {fileID: 11500000, guid: a0477cb1b7124054096ff986c6718ea2, type: 3}
+        hasToggle: 1
     unityVersion: 6000.3.1f1
-    unityCount: 372
+    unityCount: 406

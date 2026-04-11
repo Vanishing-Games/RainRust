@@ -7,12 +7,13 @@ namespace LDtkUnity.Editor
     internal sealed class LDtkGUIEnabledScope : IDisposable
     {
         private readonly bool _prevEnabled;
+
         public LDtkGUIEnabledScope(bool enabled)
         {
             _prevEnabled = GUI.enabled;
             GUI.enabled = enabled;
         }
-            
+
         public void Dispose()
         {
             GUI.enabled = _prevEnabled;

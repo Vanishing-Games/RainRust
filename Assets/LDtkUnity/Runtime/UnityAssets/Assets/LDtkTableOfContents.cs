@@ -13,16 +13,21 @@ namespace LDtkUnity
     [HelpURL(LDtkHelpURL.SO_TOC)]
     public sealed class LDtkTableOfContents : ScriptableObject
     {
-        [SerializeField] internal List<LDtkTableOfContentsEntry> _entries;
-        
+        [SerializeField]
+        internal List<LDtkTableOfContentsEntry> _entries;
+
         public IReadOnlyList<LDtkTableOfContentsEntry> Entries => _entries;
-        
+
         internal void InitializeList(LdtkJson json)
         {
             _entries = new List<LDtkTableOfContentsEntry>(json.Toc.Length);
         }
 
-        internal void AddEntry(LdtkTableOfContentEntry entry, LDtkDefinitionObjectEntity def, List<LDtkField[]> fields)
+        internal void AddEntry(
+            LdtkTableOfContentEntry entry,
+            LDtkDefinitionObjectEntity def,
+            List<LDtkField[]> fields
+        )
         {
             LDtkTableOfContentsEntry newEntry = new LDtkTableOfContentsEntry(entry, def, fields);
             _entries.Add(newEntry);
@@ -33,7 +38,7 @@ namespace LDtkUnity
         {
             return GetEntry(identifier).Entries.Select(p => p.EntityRef).ToArray();
         }
-        
+
         /// <summary>
         /// Gets all the entity references in this table of contents of an entity type.
         /// </summary>
@@ -53,26 +58,33 @@ namespace LDtkUnity
             return null;
         }
     }
-    
+
     [Serializable]
     public sealed class LDtkTableOfContentsEntry
     {
-        [SerializeField] private LDtkDefinitionObjectEntity _def;
-        [SerializeField] private List<LDtkTableOfContentsEntryData> _entries;
-        
+        [SerializeField]
+        private LDtkDefinitionObjectEntity _def;
+
+        [SerializeField]
+        private List<LDtkTableOfContentsEntryData> _entries;
+
         public LDtkDefinitionObjectEntity Definition => _def;
-        
+
         /// <summary>
         /// The list of entity instances in this table of contents entry.
         /// </summary>
         public List<LDtkTableOfContentsEntryData> Entries => _entries;
-        
-        internal LDtkTableOfContentsEntry(LdtkTableOfContentEntry entry, LDtkDefinitionObjectEntity def, List<LDtkField[]> fields)
+
+        internal LDtkTableOfContentsEntry(
+            LdtkTableOfContentEntry entry,
+            LDtkDefinitionObjectEntity def,
+            List<LDtkField[]> fields
+        )
         {
             _def = def;
 
             LdtkTocInstanceData[] datas = entry.UnityInstances();
-            
+
             _entries = new List<LDtkTableOfContentsEntryData>(datas.Length);
             for (int i = 0; i < datas.Length; i++)
             {
@@ -80,20 +92,27 @@ namespace LDtkUnity
             }
         }
     }
-        
+
     [Serializable]
     public sealed class LDtkTableOfContentsEntryData
     {
-        [SerializeField] private LDtkReferenceToAnEntityInstance _entityRef;
-        [SerializeField] private Vector2Int _worldPos;
-        [SerializeField] private Vector2Int _sizePx;
-        [SerializeField] private LDtkField[] _fields;
-        
+        [SerializeField]
+        private LDtkReferenceToAnEntityInstance _entityRef;
+
+        [SerializeField]
+        private Vector2Int _worldPos;
+
+        [SerializeField]
+        private Vector2Int _sizePx;
+
+        [SerializeField]
+        private LDtkField[] _fields;
+
         public LDtkReferenceToAnEntityInstance EntityRef => _entityRef;
         public Vector2Int WorldPosition => _worldPos;
         public Vector2Int Size => _sizePx;
         public LDtkField[] Fields => _fields;
-        
+
         /// <summary>
         /// Finds a field by its identifier.
         /// </summary>
@@ -101,7 +120,7 @@ namespace LDtkUnity
         {
             return _fields.FirstOrDefault(p => p.Identifier == identifier);
         }
-        
+
         internal LDtkTableOfContentsEntryData(LdtkTocInstanceData data, LDtkField[] fields)
         {
             _entityRef = new LDtkReferenceToAnEntityInstance(data.Iids);

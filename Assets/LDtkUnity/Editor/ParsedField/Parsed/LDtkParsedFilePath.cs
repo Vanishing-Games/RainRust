@@ -13,9 +13,9 @@ namespace LDtkUnity.Editor
             {
                 return default;
             }
-            
-            string stringInput = (string) input;
-            
+
+            string stringInput = (string)input;
+
             return stringInput;
         }
     }

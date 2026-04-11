@@ -24,7 +24,8 @@ namespace Zenject.SpaceFighter
             EnemyTunables tunables,
             Settings settings,
             EnemyCommonSettings commonSettings,
-            EnemyRotationHandler rotationHandler)
+            EnemyRotationHandler rotationHandler
+        )
         {
             _rotationHandler = rotationHandler;
             _commonSettings = commonSettings;
@@ -41,9 +42,7 @@ namespace Zenject.SpaceFighter
             _lastStrafeChangeTime = Time.realtimeSinceStartup;
         }
 
-        public void ExitState()
-        {
-        }
+        public void ExitState() { }
 
         public void Update()
         {
@@ -107,4 +106,3 @@ namespace Zenject.SpaceFighter
         }
     }
 }
-

@@ -15,8 +15,10 @@ namespace Zenject
 
         public SubContainerPrefabBindingFinalizer(
             BindInfo bindInfo,
-            object subIdentifier, bool resolveAll,
-            Func<DiContainer, ISubContainerCreator> subContainerCreatorFactory)
+            object subIdentifier,
+            bool resolveAll,
+            Func<DiContainer, ISubContainerCreator> subContainerCreatorFactory
+        )
             : base(bindInfo)
         {
             _subIdentifier = subIdentifier;
@@ -48,22 +50,33 @@ namespace Zenject
                     RegisterProvidersForAllContractsPerConcreteType(
                         container,
                         concreteTypes,
-                        (_, concreteType) => new SubContainerDependencyProvider(
-                            concreteType, _subIdentifier,
-                            _subContainerCreatorFactory(container), _resolveAll));
+                        (_, concreteType) =>
+                            new SubContainerDependencyProvider(
+                                concreteType,
+                                _subIdentifier,
+                                _subContainerCreatorFactory(container),
+                                _resolveAll
+                            )
+                    );
                     break;
                 }
                 case ScopeTypes.Singleton:
                 {
                     var containerCreator = new SubContainerCreatorCached(
-                        _subContainerCreatorFactory(container));
+                        _subContainerCreatorFactory(container)
+                    );
 
                     RegisterProvidersForAllContractsPerConcreteType(
                         container,
                         concreteTypes,
                         (_, concreteType) =>
-                        new SubContainerDependencyProvider(
-                            concreteType, _subIdentifier, containerCreator, _resolveAll));
+                            new SubContainerDependencyProvider(
+                                concreteType,
+                                _subIdentifier,
+                                containerCreator,
+                                _resolveAll
+                            )
+                    );
                     break;
                 }
                 default:
@@ -83,21 +96,32 @@ namespace Zenject
                 {
                     RegisterProviderPerContract(
                         container,
-                        (_, contractType) => new SubContainerDependencyProvider(
-                            contractType, _subIdentifier,
-                            _subContainerCreatorFactory(container), _resolveAll));
+                        (_, contractType) =>
+                            new SubContainerDependencyProvider(
+                                contractType,
+                                _subIdentifier,
+                                _subContainerCreatorFactory(container),
+                                _resolveAll
+                            )
+                    );
                     break;
                 }
                 case ScopeTypes.Singleton:
                 {
                     var containerCreator = new SubContainerCreatorCached(
-                        _subContainerCreatorFactory(container));
+                        _subContainerCreatorFactory(container)
+                    );
 
                     RegisterProviderPerContract(
                         container,
                         (_, contractType) =>
-                        new SubContainerDependencyProvider(
-                            contractType, _subIdentifier, containerCreator, _resolveAll));
+                            new SubContainerDependencyProvider(
+                                contractType,
+                                _subIdentifier,
+                                containerCreator,
+                                _resolveAll
+                            )
+                    );
                     break;
                 }
                 default:

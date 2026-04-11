@@ -11,10 +11,15 @@ namespace LDtkUnity.Editor
         private readonly FieldInstance[] _fieldInstances;
         private readonly LDtkProjectImporter _project;
         private readonly LDtkJsonImporter _importer;
-        
+
         public LDtkFields FieldsComponent { get; private set; }
-        
-        public LDtkFieldsFactory(GameObject instance, FieldInstance[] fieldInstances, LDtkProjectImporter project, LDtkJsonImporter importer)
+
+        public LDtkFieldsFactory(
+            GameObject instance,
+            FieldInstance[] fieldInstances,
+            LDtkProjectImporter project,
+            LDtkJsonImporter importer
+        )
         {
             _instance = instance;
             _fieldInstances = fieldInstances;
@@ -28,16 +33,16 @@ namespace LDtkUnity.Editor
             {
                 return;
             }
-            
+
             if (!_instance.TryGetComponent(out LDtkFields fields))
             {
                 fields = _instance.AddComponent<LDtkFields>();
             }
-            
+
             LDtkProfiler.BeginSample("GetFields");
             LDtkField[] fieldData = GetFields();
             LDtkProfiler.EndSample();
-            
+
             fields.SetFieldData(fieldData);
 
             FieldsComponent = fields;
@@ -50,8 +55,11 @@ namespace LDtkUnity.Editor
             LDtkField[] fields = new LDtkField[_fieldInstances.Length];
             for (int i = 0; i < _fieldInstances.Length; i++)
             {
-                fields[i] = fieldFactory.GetFieldFromInstance(_fieldInstances[i].Definition, _fieldInstances[i].Value);
-                
+                fields[i] = fieldFactory.GetFieldFromInstance(
+                    _fieldInstances[i].Definition,
+                    _fieldInstances[i].Value
+                );
+
                 //setup transforms for the points so that they are easy to follow along.
                 LDtkProfiler.BeginSample($"Setup point transforms");
                 LDtkField field = fields[i];
@@ -60,7 +68,9 @@ namespace LDtkUnity.Editor
                     for (int ii = 0; ii < field._data.Length; ii++)
                     {
                         LDtkFieldElement element = field._data[ii];
-                        Transform newPoint = new GameObject($"{_fieldInstances[i].Identifier}_{ii}").transform;
+                        Transform newPoint = new GameObject(
+                            $"{_fieldInstances[i].Identifier}_{ii}"
+                        ).transform;
                         element.SetPointLocalTransform(newPoint);
                         newPoint.SetParent(_instance.transform, true);
                     }

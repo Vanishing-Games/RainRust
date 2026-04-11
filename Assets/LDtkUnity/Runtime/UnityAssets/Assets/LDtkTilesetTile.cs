@@ -13,33 +13,54 @@ namespace LDtkUnity
     [HelpURL(LDtkHelpURL.SO_TILESET_TILE)]
     public sealed class LDtkTilesetTile : TileBase
     {
-        [SerializeField] internal Sprite _sprite;
-        [SerializeField] internal Tile.ColliderType _type = Tile.ColliderType.None;
-        [SerializeField] internal int _tileId;
+        [SerializeField]
+        internal Sprite _sprite;
 
-        [SerializeField] internal List<string> _enumTagValues = new List<string>();
-        [SerializeField, TextArea(1, 200)] internal string _customData = string.Empty;
-        
-        [SerializeField] internal Sprite[] _animatedSprites = Array.Empty<Sprite>();
-        [SerializeField] internal float _animationSpeedMin = 1f;
-        [SerializeField] internal float _animationSpeedMax = 1f;
-        [SerializeField] internal float _animationStartTimeMin = 0f;
-        [SerializeField] internal float _animationStartTimeMax = 0f;
-        [SerializeField] internal int _animationStartFrameMin = 0;
-        [SerializeField] internal int _animationStartFrameMax = 0;
-        
+        [SerializeField]
+        internal Tile.ColliderType _type = Tile.ColliderType.None;
+
+        [SerializeField]
+        internal int _tileId;
+
+        [SerializeField]
+        internal List<string> _enumTagValues = new List<string>();
+
+        [SerializeField, TextArea(1, 200)]
+        internal string _customData = string.Empty;
+
+        [SerializeField]
+        internal Sprite[] _animatedSprites = Array.Empty<Sprite>();
+
+        [SerializeField]
+        internal float _animationSpeedMin = 1f;
+
+        [SerializeField]
+        internal float _animationSpeedMax = 1f;
+
+        [SerializeField]
+        internal float _animationStartTimeMin = 0f;
+
+        [SerializeField]
+        internal float _animationStartTimeMax = 0f;
+
+        [SerializeField]
+        internal int _animationStartFrameMin = 0;
+
+        [SerializeField]
+        internal int _animationStartFrameMax = 0;
+
         //todo also potentially add auto rule stuff for cool runtime art updates later
 
         public Sprite Sprite => _sprite;
         public Tile.ColliderType Type => _type;
         public int TileId => _tileId;
-        
+
         /// <summary>
         /// The enum tag values as strings. Opt to use <see cref="GetEnumTagValues{TEnum}"/> to get them formatted as enum-typed values
         /// </summary>
         public IReadOnlyList<string> EnumTagValues => _enumTagValues;
         public string CustomData => _customData;
-        
+
         public Sprite[] AnimatedSprites => _animatedSprites;
         public float AnimationSpeedMin => _animationSpeedMin;
         public float AnimationSpeedMax => _animationSpeedMax;
@@ -48,38 +69,49 @@ namespace LDtkUnity
         public int AnimationStartFrameMin => _animationStartFrameMin;
         public int AnimationStartFrameMax => _animationStartFrameMax;
 
-        public override void GetTileData(Vector3Int position, ITilemap tilemap, ref TileData tileData)
+        public override void GetTileData(
+            Vector3Int position,
+            ITilemap tilemap,
+            ref TileData tileData
+        )
         {
             tileData.colliderType = _type;
             tileData.sprite = _sprite;
-            
+
             //make color full, the tilemap components themselves have the actual requested opacity set.
             tileData.color = Color.white;
         }
-        
-        public override bool GetTileAnimationData(Vector3Int position, ITilemap tilemap, ref TileAnimationData data)
+
+        public override bool GetTileAnimationData(
+            Vector3Int position,
+            ITilemap tilemap,
+            ref TileAnimationData data
+        )
         {
             if (_animatedSprites.IsNullOrEmpty())
             {
                 return false;
             }
-            
+
             data.animatedSprites = _animatedSprites;
             data.animationSpeed = Random.Range(_animationSpeedMin, _animationSpeedMax);
             data.animationStartTime = Random.Range(_animationStartTimeMin, _animationStartTimeMax);
 
-            bool hasStartFrameMin = _animationStartFrameMin > 0 && _animationStartFrameMin <= _animatedSprites.Length;
-            bool hasStartFrameMax = _animationStartFrameMax > 0 && _animationStartFrameMax <= _animatedSprites.Length;
+            bool hasStartFrameMin =
+                _animationStartFrameMin > 0 && _animationStartFrameMin <= _animatedSprites.Length;
+            bool hasStartFrameMax =
+                _animationStartFrameMax > 0 && _animationStartFrameMax <= _animatedSprites.Length;
             if (hasStartFrameMin && hasStartFrameMax)
             {
                 int startFrame = Random.Range(_animationStartFrameMin, _animationStartFrameMax + 1);
                 var tilemapComponent = tilemap.GetComponent<Tilemap>();
                 if (tilemapComponent != null && tilemapComponent.animationFrameRate > 0)
                 {
-                    data.animationStartTime = (startFrame - 1) / tilemapComponent.animationFrameRate;
+                    data.animationStartTime =
+                        (startFrame - 1) / tilemapComponent.animationFrameRate;
                 }
             }
-            
+
             return true;
         }
 
@@ -88,7 +120,8 @@ namespace LDtkUnity
         /// </summary>
         /// <typeparam name="TEnum">Use an enum type that was generated by the project importer.</typeparam>
         /// <returns>The enum values convert</returns>
-        public TEnum[] GetEnumTagValues<TEnum>() where TEnum : struct
+        public TEnum[] GetEnumTagValues<TEnum>()
+            where TEnum : struct
         {
             Type type = typeof(TEnum);
             if (!type.IsEnum)
@@ -97,27 +130,30 @@ namespace LDtkUnity
                 return Array.Empty<TEnum>();
             }
 
-            TEnum[] enums = _enumTagValues.Select(enumTagValue =>
-            {
-                if (Enum.IsDefined(type, enumTagValue))
+            TEnum[] enums = _enumTagValues
+                .Select(enumTagValue =>
                 {
-                    return (TEnum)Enum.Parse(type, enumTagValue);
-                }
+                    if (Enum.IsDefined(type, enumTagValue))
+                    {
+                        return (TEnum)Enum.Parse(type, enumTagValue);
+                    }
 
-                //Error scenario
-                Array enumDefValues = Enum.GetValues(typeof(TEnum));
-                List<string> stringValues = new List<string>();
-                foreach (object value in enumDefValues)
-                {
-                    string stringValue = Convert.ToString(value);
-                    stringValues.Add(stringValue);
-                }
+                    //Error scenario
+                    Array enumDefValues = Enum.GetValues(typeof(TEnum));
+                    List<string> stringValues = new List<string>();
+                    foreach (object value in enumDefValues)
+                    {
+                        string stringValue = Convert.ToString(value);
+                        stringValues.Add(stringValue);
+                    }
 
-                string joined = string.Join("\", \"", stringValues);
-                LDtkDebug.LogError($"C# enum \"{type.Name}\" does not define enum value \"{enumTagValue}\". Possible values are \"{joined}\"");
-                return default;
-
-            }).ToArray();
+                    string joined = string.Join("\", \"", stringValues);
+                    LDtkDebug.LogError(
+                        $"C# enum \"{type.Name}\" does not define enum value \"{enumTagValue}\". Possible values are \"{joined}\""
+                    );
+                    return default;
+                })
+                .ToArray();
             return enums;
         }
 
@@ -125,7 +161,8 @@ namespace LDtkUnity
         /// If a tile has an enum tag value
         /// </summary>
         /// <typeparam name="TEnum">Use an enum type that was generated by the project importer.</typeparam>
-        public bool HasEnumTagValue<TEnum>() where TEnum : struct
+        public bool HasEnumTagValue<TEnum>()
+            where TEnum : struct
         {
             Type type = typeof(TEnum);
             if (!type.IsEnum)

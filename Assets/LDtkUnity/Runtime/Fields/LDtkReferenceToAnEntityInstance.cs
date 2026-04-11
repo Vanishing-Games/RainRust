@@ -13,11 +13,18 @@ namespace LDtkUnity
         internal const string PROPERTY_LAYER = nameof(_layerIid);
         internal const string PROPERTY_LEVEL = nameof(_levelIid);
         internal const string PROPERTY_WORLD = nameof(_worldIid);
-        
-        [SerializeField] private string _entityIid;
-        [SerializeField] private string _layerIid;
-        [SerializeField] private string _levelIid;
-        [SerializeField] private string _worldIid;
+
+        [SerializeField]
+        private string _entityIid;
+
+        [SerializeField]
+        private string _layerIid;
+
+        [SerializeField]
+        private string _levelIid;
+
+        [SerializeField]
+        private string _worldIid;
 
         public string EntityIid => _entityIid;
         public string LayerIid => _layerIid;
@@ -43,6 +50,7 @@ namespace LDtkUnity
         /// In most cases you can use <see cref="GetEntity"/> instead as long as the object you are looking for is active. If the object you are looking for is inactive, you can try this.
         /// </remarks>
         public LDtkIid FindEntity() => LDtkIidComponentBank.FindObjectOfIid(_entityIid);
+
         /// <summary>
         /// Finds the iid Layer GameObject.
         /// </summary>
@@ -54,6 +62,7 @@ namespace LDtkUnity
         /// In most cases you can use <see cref="GetLayer"/> instead as long as the object you are looking for is active. If the object you are looking for is inactive, you can try this.
         /// </remarks>
         public LDtkIid FindLayer() => LDtkIidComponentBank.FindObjectOfIid(_layerIid);
+
         /// <summary>
         /// Finds the iid Level GameObject.
         /// </summary>
@@ -65,6 +74,7 @@ namespace LDtkUnity
         /// In most cases you can use <see cref="GetLevel"/> instead as long as the object you are looking for is active. If the object you are looking for is inactive, you can try this.
         /// </remarks>
         public LDtkIid FindLevel() => LDtkIidComponentBank.FindObjectOfIid(_levelIid);
+
         /// <summary>
         /// Finds the iid World GameObject.
         /// </summary>
@@ -76,7 +86,7 @@ namespace LDtkUnity
         /// In most cases you can use <see cref="GetWorld"/> instead as long as the object you are looking for is active. If the object you are looking for is inactive, you can try this.
         /// </remarks>
         public LDtkIid FindWorld() => LDtkIidComponentBank.FindObjectOfIid(_worldIid);
-        
+
         /// <summary>
         /// Gets a iid GameObject.
         /// </summary>
@@ -88,6 +98,7 @@ namespace LDtkUnity
         /// If the iid component exists but this returned null, then make sure the referenced component is active and accessed after it's OnEnable.
         /// </remarks>
         public LDtkIid GetEntity() => LDtkIidComponentBank.GetByIid(_entityIid);
+
         /// <summary>
         /// Gets a iid GameObject.
         /// </summary>
@@ -99,6 +110,7 @@ namespace LDtkUnity
         /// If the iid component exists but this returned null, then make sure the referenced component is active and accessed after it's OnEnable.
         /// </remarks>
         public LDtkIid GetLayer() => LDtkIidComponentBank.GetByIid(_layerIid);
+
         /// <summary>
         /// Gets a iid GameObject.
         /// </summary>
@@ -110,6 +122,7 @@ namespace LDtkUnity
         /// If the iid component exists but this returned null, then make sure the referenced component is active and accessed after it's OnEnable.
         /// </remarks>
         public LDtkIid GetLevel() => LDtkIidComponentBank.GetByIid(_levelIid);
+
         /// <summary>
         /// Gets a iid GameObject.
         /// </summary>

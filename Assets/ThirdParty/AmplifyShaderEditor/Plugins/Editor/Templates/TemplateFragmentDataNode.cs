@@ -1,285 +1,362 @@
 // Amplify Shader Editor - Visual Shader Editing Tool
 // Copyright (c) Amplify Creations, Lda <info@amplify.pt>
-using UnityEngine;
-using UnityEditor;
 using System;
 using System.Collections.Generic;
+using UnityEditor;
+using UnityEngine;
 
 namespace AmplifyShaderEditor
 {
-	[Serializable]
-	[NodeAttributes( "Template Fragment Data" , "Surface Data" , "Select and use available interpolated fragment data from the template" )]
-	public class TemplateFragmentDataNode : TemplateNodeParent
-	{
-		private List<TemplateVertexData> m_interpolatorData = null;
+    [Serializable]
+    [NodeAttributes(
+        "Template Fragment Data",
+        "Surface Data",
+        "Select and use available interpolated fragment data from the template"
+    )]
+    public class TemplateFragmentDataNode : TemplateNodeParent
+    {
+        private List<TemplateVertexData> m_interpolatorData = null;
 
-		[SerializeField]
-		private int m_currentDataIdx = -1;
+        [SerializeField]
+        private int m_currentDataIdx = -1;
 
-		[SerializeField]
-		private string m_dataName = string.Empty;
-		[SerializeField]
-		private string m_inVarName = string.Empty;
+        [SerializeField]
+        private string m_dataName = string.Empty;
 
-		private string[] m_dataLabels = null;
+        [SerializeField]
+        private string m_inVarName = string.Empty;
 
-		private bool m_fetchDataId = false;
-		private UpperLeftWidgetHelper m_upperLeftWidgetHelper = new UpperLeftWidgetHelper();
+        private string[] m_dataLabels = null;
 
-		protected override void CommonInit( int uniqueId )
-		{
-			base.CommonInit( uniqueId );
-			m_autoWrapProperties = true;
-		}
+        private bool m_fetchDataId = false;
+        private UpperLeftWidgetHelper m_upperLeftWidgetHelper = new UpperLeftWidgetHelper();
 
-		void FetchDataId()
-		{
-			if( m_interpolatorData != null )
-			{
-				m_currentDataIdx = 0;
-				int count = m_interpolatorData.Count;
-				m_dataLabels = new string[ count ];
-				for( int i = 0 ; i < count ; i++ )
-				{
-					m_dataLabels[ i ] = m_interpolatorData[ i ].VarName;
-					if( m_interpolatorData[ i ].VarName.Equals( m_dataName ) )
-					{
-						m_currentDataIdx = i;
-					}
-				}
-				UpdateFromId();
-			}
-			else
-			{
-				m_currentDataIdx = -1;
-			}
-		}
+        protected override void CommonInit(int uniqueId)
+        {
+            base.CommonInit(uniqueId);
+            m_autoWrapProperties = true;
+        }
 
-		void UpdateFromId()
-		{
-			if( m_interpolatorData != null )
-			{
-				if( m_interpolatorData.Count == 0 )
-				{
-					for( int i = 0 ; i < 4 ; i++ )
-						m_containerGraph.DeleteConnection( false , UniqueId , i , false , true );
+        void FetchDataId()
+        {
+            if (m_interpolatorData != null)
+            {
+                m_currentDataIdx = 0;
+                int count = m_interpolatorData.Count;
+                m_dataLabels = new string[count];
+                for (int i = 0; i < count; i++)
+                {
+                    m_dataLabels[i] = m_interpolatorData[i].VarName;
+                    if (m_interpolatorData[i].VarName.Equals(m_dataName))
+                    {
+                        m_currentDataIdx = i;
+                    }
+                }
+                UpdateFromId();
+            }
+            else
+            {
+                m_currentDataIdx = -1;
+            }
+        }
 
-					m_headerColor = UIUtils.GetColorFromCategory( "Default" );
-					SetAdditonalTitleText( "<None>" );
-					m_additionalContent.text = string.Empty;
-					m_outputPorts[ 0 ].ChangeProperties( "None" , WirePortDataType.OBJECT , false );
-					ConfigurePorts();
-					return;
-				}
+        void UpdateFromId()
+        {
+            if (m_interpolatorData != null)
+            {
+                if (m_interpolatorData.Count == 0)
+                {
+                    for (int i = 0; i < 4; i++)
+                        m_containerGraph.DeleteConnection(false, UniqueId, i, false, true);
 
-				bool areCompatible = TemplateHelperFunctions.CheckIfCompatibles( m_outputPorts[ 0 ].DataType , m_interpolatorData[ m_currentDataIdx ].DataType );
-				switch( m_interpolatorData[ m_currentDataIdx ].DataType )
-				{
-					default:
-					case WirePortDataType.INT:
-					case WirePortDataType.FLOAT:
-					m_outputPorts[ 0 ].ChangeProperties( Constants.EmptyPortValue , m_interpolatorData[ m_currentDataIdx ].DataType , false );
-					break;
-					case WirePortDataType.FLOAT2:
-					m_outputPorts[ 0 ].ChangeProperties( "XY" , m_interpolatorData[ m_currentDataIdx ].DataType , false );
-					break;
-					case WirePortDataType.FLOAT3:
-					m_outputPorts[ 0 ].ChangeProperties( "XYZ" , m_interpolatorData[ m_currentDataIdx ].DataType , false );
-					break;
-					case WirePortDataType.FLOAT4:
-					m_outputPorts[ 0 ].ChangeProperties( "XYZW" , m_interpolatorData[ m_currentDataIdx ].DataType , false );
-					break;
-					case WirePortDataType.COLOR:
-					m_outputPorts[ 0 ].ChangeProperties( "RGBA" , m_interpolatorData[ m_currentDataIdx ].DataType , false );
-					break;
-				}
+                    m_headerColor = UIUtils.GetColorFromCategory("Default");
+                    SetAdditonalTitleText("<None>");
+                    m_additionalContent.text = string.Empty;
+                    m_outputPorts[0].ChangeProperties("None", WirePortDataType.OBJECT, false);
+                    ConfigurePorts();
+                    return;
+                }
 
-				ConfigurePorts();
+                bool areCompatible = TemplateHelperFunctions.CheckIfCompatibles(
+                    m_outputPorts[0].DataType,
+                    m_interpolatorData[m_currentDataIdx].DataType
+                );
+                switch (m_interpolatorData[m_currentDataIdx].DataType)
+                {
+                    default:
+                    case WirePortDataType.INT:
+                    case WirePortDataType.FLOAT:
+                        m_outputPorts[0]
+                            .ChangeProperties(
+                                Constants.EmptyPortValue,
+                                m_interpolatorData[m_currentDataIdx].DataType,
+                                false
+                            );
+                        break;
+                    case WirePortDataType.FLOAT2:
+                        m_outputPorts[0]
+                            .ChangeProperties(
+                                "XY",
+                                m_interpolatorData[m_currentDataIdx].DataType,
+                                false
+                            );
+                        break;
+                    case WirePortDataType.FLOAT3:
+                        m_outputPorts[0]
+                            .ChangeProperties(
+                                "XYZ",
+                                m_interpolatorData[m_currentDataIdx].DataType,
+                                false
+                            );
+                        break;
+                    case WirePortDataType.FLOAT4:
+                        m_outputPorts[0]
+                            .ChangeProperties(
+                                "XYZW",
+                                m_interpolatorData[m_currentDataIdx].DataType,
+                                false
+                            );
+                        break;
+                    case WirePortDataType.COLOR:
+                        m_outputPorts[0]
+                            .ChangeProperties(
+                                "RGBA",
+                                m_interpolatorData[m_currentDataIdx].DataType,
+                                false
+                            );
+                        break;
+                }
 
-				if( !areCompatible )
-				{
-					m_containerGraph.DeleteConnection( false , UniqueId , 0 , false , true );
-				}
+                ConfigurePorts();
 
-				m_dataName = m_interpolatorData[ m_currentDataIdx ].VarName;
-				SetAdditonalTitleText( m_dataName );
-				m_sizeIsDirty = true;
-				CheckWarningState();
-			}
-		}
+                if (!areCompatible)
+                {
+                    m_containerGraph.DeleteConnection(false, UniqueId, 0, false, true);
+                }
 
+                m_dataName = m_interpolatorData[m_currentDataIdx].VarName;
+                SetAdditonalTitleText(m_dataName);
+                m_sizeIsDirty = true;
+                CheckWarningState();
+            }
+        }
 
-		public override void DrawProperties()
-		{
-			base.DrawProperties();
-			if( m_containerGraph.CurrentCanvasMode != NodeAvailability.TemplateShader )
-			{
-				return;
-			}
+        public override void DrawProperties()
+        {
+            base.DrawProperties();
+            if (m_containerGraph.CurrentCanvasMode != NodeAvailability.TemplateShader)
+            {
+                return;
+            }
 
-			if( m_multiPassMode )
-			{
-				DrawMultipassProperties();
-			}
+            if (m_multiPassMode)
+            {
+                DrawMultipassProperties();
+            }
 
-			if( m_currentDataIdx > -1 )
-			{
-				EditorGUI.BeginChangeCheck();
-				m_currentDataIdx = EditorGUILayoutPopup( DataLabelStr , m_currentDataIdx , m_dataLabels );
-				if( EditorGUI.EndChangeCheck() )
-				{
-					UpdateFromId();
-				}
-			}
-		}
+            if (m_currentDataIdx > -1)
+            {
+                EditorGUI.BeginChangeCheck();
+                m_currentDataIdx = EditorGUILayoutPopup(
+                    DataLabelStr,
+                    m_currentDataIdx,
+                    m_dataLabels
+                );
+                if (EditorGUI.EndChangeCheck())
+                {
+                    UpdateFromId();
+                }
+            }
+        }
 
-		protected override void OnSubShaderChange()
-		{
-			base.OnSubShaderChange();
-			FetchInterpolator();
-			FetchDataId();
-		}
+        protected override void OnSubShaderChange()
+        {
+            base.OnSubShaderChange();
+            FetchInterpolator();
+            FetchDataId();
+        }
 
-		protected override void OnPassChange()
-		{
-			FetchInterpolator();
-			FetchDataId();
-		}
+        protected override void OnPassChange()
+        {
+            FetchInterpolator();
+            FetchDataId();
+        }
 
-		void DrawMultipassProperties()
-		{
-			DrawSubShaderUI();
-			DrawPassUI();
-		}
+        void DrawMultipassProperties()
+        {
+            DrawSubShaderUI();
+            DrawPassUI();
+        }
 
-		public override void Draw( DrawInfo drawInfo )
-		{
-			base.Draw( drawInfo );
-			if( m_containerGraph.CurrentCanvasMode != NodeAvailability.TemplateShader )
-				return;
+        public override void Draw(DrawInfo drawInfo)
+        {
+            base.Draw(drawInfo);
+            if (m_containerGraph.CurrentCanvasMode != NodeAvailability.TemplateShader)
+                return;
 
-			if( m_interpolatorData == null || m_interpolatorData.Count == 0 )
-			{
-				MasterNode masterNode = m_containerGraph.CurrentMasterNode;
-				FetchInterpolator( masterNode );
-			}
+            if (m_interpolatorData == null || m_interpolatorData.Count == 0)
+            {
+                MasterNode masterNode = m_containerGraph.CurrentMasterNode;
+                FetchInterpolator(masterNode);
+            }
 
-			if( m_fetchDataId )
-			{
-				m_fetchDataId = false;
-				FetchDataId();
-			}
+            if (m_fetchDataId)
+            {
+                m_fetchDataId = false;
+                FetchDataId();
+            }
 
-			if( m_currentDataIdx > -1 )
-			{
-				EditorGUI.BeginChangeCheck();
-				m_currentDataIdx = m_upperLeftWidgetHelper.DrawWidget( this , m_currentDataIdx , m_dataLabels );
-				if( EditorGUI.EndChangeCheck() )
-				{
-					UpdateFromId();
-				}
-			}
-		}
+            if (m_currentDataIdx > -1)
+            {
+                EditorGUI.BeginChangeCheck();
+                m_currentDataIdx = m_upperLeftWidgetHelper.DrawWidget(
+                    this,
+                    m_currentDataIdx,
+                    m_dataLabels
+                );
+                if (EditorGUI.EndChangeCheck())
+                {
+                    UpdateFromId();
+                }
+            }
+        }
 
-		public override string GenerateShaderForOutput( int outputId , ref MasterNodeDataCollector dataCollector , bool ignoreLocalvar )
-		{
-			if( dataCollector.MasterNodeCategory != AvailableShaderTypes.Template )
-			{
-				UIUtils.ShowMessage( UniqueId , "Template Fragmment Data node is only intended for templates use only" , MessageSeverity.Error );
-				return m_outputPorts[ 0 ].ErrorValue;
-			}
+        public override string GenerateShaderForOutput(
+            int outputId,
+            ref MasterNodeDataCollector dataCollector,
+            bool ignoreLocalvar
+        )
+        {
+            if (dataCollector.MasterNodeCategory != AvailableShaderTypes.Template)
+            {
+                UIUtils.ShowMessage(
+                    UniqueId,
+                    "Template Fragmment Data node is only intended for templates use only",
+                    MessageSeverity.Error
+                );
+                return m_outputPorts[0].ErrorValue;
+            }
 
-			if( !dataCollector.IsFragmentCategory )
-			{
-				UIUtils.ShowMessage( UniqueId , "Template Fragment Data node node is only intended for fragment use use only" , MessageSeverity.Error );
-				return m_outputPorts[ 0 ].ErrorValue;
-			}
+            if (!dataCollector.IsFragmentCategory)
+            {
+                UIUtils.ShowMessage(
+                    UniqueId,
+                    "Template Fragment Data node node is only intended for fragment use use only",
+                    MessageSeverity.Error
+                );
+                return m_outputPorts[0].ErrorValue;
+            }
 
-			if( m_multiPassMode )
-			{
-				if( dataCollector.TemplateDataCollectorInstance.MultipassSubshaderIdx != SubShaderIdx ||
-					dataCollector.TemplateDataCollectorInstance.MultipassPassIdx != PassIdx
-					)
-				{
-					UIUtils.ShowMessage( UniqueId , string.Format( "{0} is only intended for subshader {1} and pass {2}" , m_dataLabels[ m_currentDataIdx ] , SubShaderIdx , PassIdx ) );
-					return m_outputPorts[ outputId ].ErrorValue;
-				}
-			}
+            if (m_multiPassMode)
+            {
+                if (
+                    dataCollector.TemplateDataCollectorInstance.MultipassSubshaderIdx
+                        != SubShaderIdx
+                    || dataCollector.TemplateDataCollectorInstance.MultipassPassIdx != PassIdx
+                )
+                {
+                    UIUtils.ShowMessage(
+                        UniqueId,
+                        string.Format(
+                            "{0} is only intended for subshader {1} and pass {2}",
+                            m_dataLabels[m_currentDataIdx],
+                            SubShaderIdx,
+                            PassIdx
+                        )
+                    );
+                    return m_outputPorts[outputId].ErrorValue;
+                }
+            }
 
-			return GetOutputVectorItem( 0 , outputId , m_inVarName + m_dataName );
-		}
+            return GetOutputVectorItem(0, outputId, m_inVarName + m_dataName);
+        }
 
-		public override void ReadFromString( ref string[] nodeParams )
-		{
-			base.ReadFromString( ref nodeParams );
-			m_dataName = GetCurrentParam( ref nodeParams );
-			m_fetchDataId = true;
-		}
+        public override void ReadFromString(ref string[] nodeParams)
+        {
+            base.ReadFromString(ref nodeParams);
+            m_dataName = GetCurrentParam(ref nodeParams);
+            m_fetchDataId = true;
+        }
 
-		public override void WriteToString( ref string nodeInfo , ref string connectionsInfo )
-		{
-			base.WriteToString( ref nodeInfo , ref connectionsInfo );
-			IOUtils.AddFieldValueToString( ref nodeInfo , m_dataName );
-		}
+        public override void WriteToString(ref string nodeInfo, ref string connectionsInfo)
+        {
+            base.WriteToString(ref nodeInfo, ref connectionsInfo);
+            IOUtils.AddFieldValueToString(ref nodeInfo, m_dataName);
+        }
 
-		public override void OnMasterNodeReplaced( MasterNode newMasterNode )
-		{
-			base.OnMasterNodeReplaced( newMasterNode );
-			if( newMasterNode.CurrentMasterNodeCategory == AvailableShaderTypes.Template )
-			{
-				FetchInterpolator( newMasterNode );
-			}
-			else
-			{
-				m_interpolatorData = null;
-				m_currentDataIdx = -1;
-			}
-		}
+        public override void OnMasterNodeReplaced(MasterNode newMasterNode)
+        {
+            base.OnMasterNodeReplaced(newMasterNode);
+            if (newMasterNode.CurrentMasterNodeCategory == AvailableShaderTypes.Template)
+            {
+                FetchInterpolator(newMasterNode);
+            }
+            else
+            {
+                m_interpolatorData = null;
+                m_currentDataIdx = -1;
+            }
+        }
 
-		protected override bool ValidatePass( int passIdx )
-		{
-			return ( m_templateMPData.SubShaders[ SubShaderIdx ].Passes[ passIdx ].FragmentFunctionData != null &&
-						m_templateMPData.SubShaders[ SubShaderIdx ].Passes[ passIdx ].InterpolatorDataContainer != null );
-		}
+        protected override bool ValidatePass(int passIdx)
+        {
+            return (
+                m_templateMPData.SubShaders[SubShaderIdx].Passes[passIdx].FragmentFunctionData
+                    != null
+                && m_templateMPData
+                    .SubShaders[SubShaderIdx]
+                    .Passes[passIdx]
+                    .InterpolatorDataContainer != null
+            );
+        }
 
-		void FetchInterpolator( MasterNode masterNode = null )
-		{
-			FetchMultiPassTemplate( masterNode );
-			if( m_multiPassMode )
-			{
-				if( m_templateMPData != null )
-				{
-					m_inVarName = m_templateMPData.SubShaders[ SubShaderIdx ].Passes[ PassIdx ].FragmentFunctionData.InVarName + ".";
-					m_interpolatorData = m_templateMPData.SubShaders[ SubShaderIdx ].Passes[ PassIdx ].InterpolatorDataContainer.RawInterpolators;
-					m_fetchDataId = true;
-				}
-			}
-			else
-			{
-				if( masterNode == null )
-					masterNode = m_containerGraph.CurrentMasterNode;
+        void FetchInterpolator(MasterNode masterNode = null)
+        {
+            FetchMultiPassTemplate(masterNode);
+            if (m_multiPassMode)
+            {
+                if (m_templateMPData != null)
+                {
+                    m_inVarName =
+                        m_templateMPData
+                            .SubShaders[SubShaderIdx]
+                            .Passes[PassIdx]
+                            .FragmentFunctionData
+                            .InVarName + ".";
+                    m_interpolatorData = m_templateMPData
+                        .SubShaders[SubShaderIdx]
+                        .Passes[PassIdx]
+                        .InterpolatorDataContainer
+                        .RawInterpolators;
+                    m_fetchDataId = true;
+                }
+            }
+            else
+            {
+                if (masterNode == null)
+                    masterNode = m_containerGraph.CurrentMasterNode;
 
-				TemplateData currentTemplate = ( masterNode as TemplateMasterNode ).CurrentTemplate;
-				if( currentTemplate != null )
-				{
-					m_inVarName = currentTemplate.FragmentFunctionData.InVarName + ".";
-					m_interpolatorData = currentTemplate.InterpolatorData.RawInterpolators;
-					FetchDataId();
-				}
-				else
-				{
-					m_interpolatorData = null;
-					m_currentDataIdx = -1;
-				}
-			}
-		}
+                TemplateData currentTemplate = (masterNode as TemplateMasterNode).CurrentTemplate;
+                if (currentTemplate != null)
+                {
+                    m_inVarName = currentTemplate.FragmentFunctionData.InVarName + ".";
+                    m_interpolatorData = currentTemplate.InterpolatorData.RawInterpolators;
+                    FetchDataId();
+                }
+                else
+                {
+                    m_interpolatorData = null;
+                    m_currentDataIdx = -1;
+                }
+            }
+        }
 
-		public override void Destroy()
-		{
-			base.Destroy();
-			m_dataLabels = null;
-			m_interpolatorData = null;
-			m_upperLeftWidgetHelper = null;
-		}
-	}
+        public override void Destroy()
+        {
+            base.Destroy();
+            m_dataLabels = null;
+            m_interpolatorData = null;
+            m_upperLeftWidgetHelper = null;
+        }
+    }
 }

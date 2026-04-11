@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ui:UXML
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ui="UnityEngine.UIElements"
+    xmlns:uie="UnityEditor.UIElements"
+    xsi:noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd"
+ editor-extension-mode="False">
+    <ui:Style src="project://database/Assets/GameMain/UI/MainMenu.uss" />
+    <ui:VisualElement name="root-container" class="root-container">
+        <!-- Main Menu -->
+        <ui:VisualElement name="main-menu-container" class="menu-container">
+            <ui:Label text="Game Main Menu" name="menu-title" class="title" />
+            <ui:VisualElement name="button-container" class="button-list">
+                <ui:Button text="Start New Game" name="start-new-game-button" class="menu-button" />
+                <ui:Button text="Continue" name="continue-button" class="menu-button" />
+                <ui:Button text="Settings" name="settings-button" class="menu-button" />
+                <ui:Button text="Quit" name="quit-button" class="menu-button" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- Save Slot Selection Screen -->
+        <ui:VisualElement name="save-slot-screen" class="menu-container" style="display: none;">
+            <ui:Label text="Save Slots" class="title" />
+            
+            <ui:VisualElement name="new-slot-area" class="slot-section">
+                <ui:Label text="Create New" class="section-header" />
+                <ui:Button name="create-new-slot-button" class="slot-button new-slot-button">
+                    <ui:Label text="+ Create New Save" class="slot-name-label" />
+                </ui:Button>
+            </ui:VisualElement>
+
+            <ui:VisualElement name="existing-slots-area" class="slot-section" style="flex-grow: 1; width: 600px;">
+                <ui:Label text="Load Existing" class="section-header" />
+                <ui:ScrollView name="slots-scrollview" class="slots-scrollview">
+                    <ui:VisualElement name="slot-container" class="slot-list" />
+                </ui:ScrollView>
+            </ui:VisualElement>
+
+            <ui:Button text="Back" name="back-to-menu-from-save" class="menu-button" style="margin-top: 10px;" />
+        </ui:VisualElement>
+
+        <!-- Rename Popup -->
+        <ui:VisualElement name="rename-overlay" class="overlay" style="display: none;">
+            <ui:VisualElement class="popup">
+                <ui:Label text="Rename Save" class="section-header" />
+                <ui:TextField name="rename-textfield" label="New Name" />
+                <ui:VisualElement style="flex-direction: row; justify-content: space-between; margin-top: 10px;">
+                    <ui:Button text="Cancel" name="rename-cancel-button" class="menu-button small" />
+                    <ui:Button text="Confirm" name="rename-confirm-button" class="menu-button small" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- Settings Screen -->
+        <ui:VisualElement name="settings-screen" class="menu-container" style="display: none;">
+            <ui:Label text="Settings" class="title" />
+            <ui:VisualElement class="settings-panel">
+                <ui:Label text="Audio Volume" class="setting-label" />
+                <ui:Slider name="volume-slider" low-value="0" high-value="100" value="50" />
+                <ui:Toggle name="fullscreen-toggle" label="Fullscreen" value="true" />
+            </ui:VisualElement>
+            <ui:Button text="Back" name="back-to-menu-from-settings" class="menu-button" style="margin-top: 20px;" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

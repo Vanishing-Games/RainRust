@@ -10,9 +10,9 @@ namespace Test.PlayMode
     public class SaveSystemPlayModeTests
     {
         [UnityTest]
-        public IEnumerator SaveManager_PersistsAcrossSceneLoads()
+        public IEnumerator VgSaveSystem_PersistsAcrossSceneLoads()
         {
-            var instance = SaveManager.Instance;
+            var instance = VgSaveSystem.Instance;
             Assert.IsNotNull(instance);
 
             var go = instance.gameObject;
@@ -22,18 +22,18 @@ namespace Test.PlayMode
         }
 
         [UnityTest]
-        public IEnumerator SaveManager_UsesPersistentDataPath_InRuntimeMode()
+        public IEnumerator VgSaveSystem_UsesPersistentDataPath_InRuntimeMode()
         {
-            var go = new GameObject("SaveManager_Runtime");
-            var sm = go.AddComponent<SaveManager>();
+            var go = new GameObject("VgSaveSystem_Runtime");
+            var sm = go.AddComponent<VgSaveSystem>();
 
-            var modeField = typeof(SaveManager).GetField(
+            var modeField = typeof(VgSaveSystem).GetField(
                 "m_SaveMode",
                 System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance
             );
             modeField.SetValue(sm, SaveMode.Runtime);
 
-            var rootField = typeof(SaveManager).GetField(
+            var rootField = typeof(VgSaveSystem).GetField(
                 "m_RootPathType",
                 System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance
             );
@@ -48,7 +48,7 @@ namespace Test.PlayMode
 
         /* Commented out due to Save System refactor (removal of ISavable and Register system)
         [UnityTest]
-        public IEnumerator SaveManager_AutomaticRegistration_FromMonoBehaviour()
+        public IEnumerator VgSaveSystem_AutomaticRegistration_FromMonoBehaviour()
         {
             // We need a class that registers itself in Start
             var go = new GameObject("SavableObject");
@@ -59,9 +59,9 @@ namespace Test.PlayMode
             yield return null;
 
             // Save and see if it's there
-            SaveManager.Instance.WriteSlotSaveAsync().Forget();
+            VgSaveSystem.Instance.WriteSlotSaveAsync().Forget();
 
-            string path = Path.Combine(SaveManager.Instance.SaveDirectory, "default.json");
+            string path = Path.Combine(VgSaveSystem.Instance.SaveDirectory, "default.json");
             Assert.IsTrue(File.Exists(path));
             Assert.IsTrue(File.ReadAllText(path).Contains("AutoRegTest"));
 
@@ -80,13 +80,13 @@ namespace Test.PlayMode
 
             private void Start()
             {
-                // SaveManager.Instance.Register(this);
+                // VgSaveSystem.Instance.Register(this);
             }
 
             private void OnDestroy()
             {
-                // if (SaveManager.Instance != null)
-                //     SaveManager.Instance.Unregister(this);
+                // if (VgSaveSystem.Instance != null)
+                //     VgSaveSystem.Instance.Unregister(this);
             }
         }
         */

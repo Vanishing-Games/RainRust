@@ -9,7 +9,8 @@ namespace Zenject
     public class CachedOpenTypeProvider : IProvider
     {
         readonly IProvider _creator;
-        readonly Dictionary<Type, CachedProvider> _providerMap = new Dictionary<Type, CachedProvider>();
+        readonly Dictionary<Type, CachedProvider> _providerMap =
+            new Dictionary<Type, CachedProvider>();
 
 #if ZEN_MULTITHREADING
         readonly object _locker = new object();
@@ -66,7 +67,11 @@ namespace Zenject
         }
 
         public void GetAllInstancesWithInjectSplit(
-            InjectContext context, List<TypeValuePair> args, out Action injectAction, List<object> buffer)
+            InjectContext context,
+            List<TypeValuePair> args,
+            out Action injectAction,
+            List<object> buffer
+        )
         {
             Assert.IsNotNull(context);
 
@@ -83,9 +88,7 @@ namespace Zenject
                 }
             }
 
-            provider.GetAllInstancesWithInjectSplit(
-                context, args, out injectAction, buffer);
+            provider.GetAllInstancesWithInjectSplit(context, args, out injectAction, buffer);
         }
     }
 }
-

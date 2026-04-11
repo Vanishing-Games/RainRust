@@ -6,7 +6,7 @@ namespace LDtkUnity.Editor
     internal sealed class LDtkParsedFloat : ILDtkValueParser, ILDtkPostParser
     {
         private ILDtkPostParseProcess<float> _process;
-        
+
         public object ImportString(LDtkFieldParseContext ctx)
         {
             object input = ctx.Input;
@@ -25,7 +25,7 @@ namespace LDtkUnity.Editor
             {
                 value = _process.Postprocess(value);
             }
-            
+
             return value;
         }
 

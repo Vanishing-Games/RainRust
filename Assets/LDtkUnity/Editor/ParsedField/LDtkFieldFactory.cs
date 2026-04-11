@@ -12,13 +12,13 @@ namespace LDtkUnity.Editor
     {
         private readonly LDtkProjectImporter _project;
         private readonly LDtkJsonImporter _importer;
-        
+
         public LDtkFieldFactory(LDtkProjectImporter project, LDtkJsonImporter importer)
         {
             _project = project;
             _importer = importer;
         }
-        
+
         /// <summary>
         /// Make an LDtkField from a field instance.
         /// </summary>
@@ -32,13 +32,13 @@ namespace LDtkUnity.Editor
             LDtkProfiler.EndSample();
 
             LDtkDefinitionObjectField defObj = null;
-            
+
             Debug.Assert(_importer.DefinitionObjects != null);
             if (_importer.DefinitionObjects != null)
             {
                 defObj = _importer.DefinitionObjects.GetObject<LDtkDefinitionObjectField>(def.Uid);
             }
-            
+
             LDtkField field = new LDtkField(defObj, elements);
             return field;
         }
@@ -48,7 +48,7 @@ namespace LDtkUnity.Editor
             LDtkProfiler.BeginSample($"GetElements");
             object[] elements = GetElements(def, value);
             LDtkProfiler.EndSample();
-            
+
             LDtkProfiler.BeginSample($"new LDtkFieldElements");
             LDtkFieldElement[] fieldElements = new LDtkFieldElement[elements.Length];
             for (int i = 0; i < fieldElements.Length; i++)
@@ -56,7 +56,7 @@ namespace LDtkUnity.Editor
                 fieldElements[i] = new LDtkFieldElement(elements[i], def);
             }
             LDtkProfiler.EndSample();
-            
+
             return fieldElements;
         }
 
@@ -67,7 +67,7 @@ namespace LDtkUnity.Editor
                 LDtkProfiler.BeginSample("GetArray");
                 Array array = GetArray(def, value);
                 LDtkProfiler.EndSample();
-                
+
                 object[] objArray = new object[array.Length];
                 for (int i = 0; i < array.Length; i++)
                 {
@@ -78,23 +78,25 @@ namespace LDtkUnity.Editor
 
             LDtkProfiler.BeginSample("GetSingle");
             object single = GetParsedValue(def, value);
-            
+
             LDtkProfiler.EndSample();
-            
+
             return new[] { single };
         }
 
         private Array GetArray(FieldDefinition def, object value)
         {
             List<object> objs;
-            
+
             if (value is List<object> list)
             {
                 objs = list;
             }
             else
             {
-                LDtkDebug.LogError($"Not list (was {value.GetType().GetGenericArguments().First().Name}), not populating field instance \"{def.Identifier}\"");
+                LDtkDebug.LogError(
+                    $"Not list (was {value.GetType().GetGenericArguments().First().Name}), not populating field instance \"{def.Identifier}\""
+                );
                 return Array.Empty<object>();
             }
 
@@ -113,27 +115,29 @@ namespace LDtkUnity.Editor
             {
                 Array.Copy(srcObjs, array, srcObjs.Length);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 string srcObjsStrings = string.Join(", ", srcObjs);
-                LDtkDebug.LogError($"Issue copying array for field instance \"{def.Identifier}\"; LDtk type: {def.Type}, ParsedObjects: {srcObjsStrings}. {e}");
+                LDtkDebug.LogError(
+                    $"Issue copying array for field instance \"{def.Identifier}\"; LDtk type: {def.Type}, ParsedObjects: {srcObjsStrings}. {e}"
+                );
             }
             LDtkProfiler.EndSample();
-            
+
             return array;
         }
 
         private object GetParsedValue(FieldDefinition field, object value)
         {
             ParseFieldValueAction action = LDtkFieldParser.GetParserMethodForType(field);
-            
+
             LDtkFieldParseContext ctx = new LDtkFieldParseContext()
             {
                 Project = _project,
                 Importer = _importer,
-                Input = value
+                Input = value,
             };
-            
+
             return action?.Invoke(ctx);
         }
     }

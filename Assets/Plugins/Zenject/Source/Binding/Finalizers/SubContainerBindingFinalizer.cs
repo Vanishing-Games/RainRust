@@ -12,8 +12,11 @@ namespace Zenject
         readonly Func<DiContainer, ISubContainerCreator> _creatorFactory;
 
         public SubContainerBindingFinalizer(
-            BindInfo bindInfo, object subIdentifier,
-            bool resolveAll, Func<DiContainer, ISubContainerCreator> creatorFactory)
+            BindInfo bindInfo,
+            object subIdentifier,
+            bool resolveAll,
+            Func<DiContainer, ISubContainerCreator> creatorFactory
+        )
             : base(bindInfo)
         {
             _subIdentifier = subIdentifier;
@@ -47,19 +50,31 @@ namespace Zenject
                         concreteTypes,
                         (_, concreteType) =>
                             new SubContainerDependencyProvider(
-                                concreteType, _subIdentifier, _creatorFactory(container), _resolveAll));
+                                concreteType,
+                                _subIdentifier,
+                                _creatorFactory(container),
+                                _resolveAll
+                            )
+                    );
                     break;
                 }
                 case ScopeTypes.Singleton:
                 {
-                    var containerCreator = new SubContainerCreatorCached(_creatorFactory(container));
+                    var containerCreator = new SubContainerCreatorCached(
+                        _creatorFactory(container)
+                    );
 
                     RegisterProvidersForAllContractsPerConcreteType(
                         container,
                         concreteTypes,
                         (_, concreteType) =>
                             new SubContainerDependencyProvider(
-                                concreteType, _subIdentifier, containerCreator, _resolveAll));
+                                concreteType,
+                                _subIdentifier,
+                                containerCreator,
+                                _resolveAll
+                            )
+                    );
                     break;
                 }
                 default:
@@ -79,19 +94,32 @@ namespace Zenject
                 {
                     RegisterProviderPerContract(
                         container,
-                        (_, contractType) => new SubContainerDependencyProvider(
-                            contractType, _subIdentifier, _creatorFactory(container), _resolveAll));
+                        (_, contractType) =>
+                            new SubContainerDependencyProvider(
+                                contractType,
+                                _subIdentifier,
+                                _creatorFactory(container),
+                                _resolveAll
+                            )
+                    );
                     break;
                 }
                 case ScopeTypes.Singleton:
                 {
-                    var containerCreator = new SubContainerCreatorCached(_creatorFactory(container));
+                    var containerCreator = new SubContainerCreatorCached(
+                        _creatorFactory(container)
+                    );
 
                     RegisterProviderPerContract(
                         container,
                         (_, contractType) =>
                             new SubContainerDependencyProvider(
-                                contractType, _subIdentifier, containerCreator, _resolveAll));
+                                contractType,
+                                _subIdentifier,
+                                containerCreator,
+                                _resolveAll
+                            )
+                    );
                     break;
                 }
                 default:
@@ -102,5 +130,3 @@ namespace Zenject
         }
     }
 }
-
-

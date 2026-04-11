@@ -18,9 +18,9 @@ namespace LDtkUnity
         /// These could be extra rects that are shaped like rectangles to slice, from tile field definitions, or icons maybe.
         /// </summary>
         public List<TilesetRect> Rects;
-        
+
         /// <summary>
-        /// The tileset definition. 
+        /// The tileset definition.
         /// </summary>
         public TilesetDefinition Def;
 
@@ -28,6 +28,7 @@ namespace LDtkUnity
         {
             return JsonSerializer.Deserialize<LDtkTilesetDefinitionWrapper>(json);
         }
+
         public byte[] ToJson()
         {
             byte[] serialize = JsonSerializer.Serialize(this);
@@ -50,9 +51,10 @@ namespace LDtkUnity
                     x = rectInt.x,
                     y = rectInt.y,
                     w = rectInt.width,
-                    h = rectInt.height
+                    h = rectInt.height,
                 };
             }
+
             public Rect ToRect()
             {
                 return new Rect()
@@ -60,7 +62,7 @@ namespace LDtkUnity
                     x = x,
                     y = y,
                     width = w,
-                    height = h
+                    height = h,
                 };
             }
         }

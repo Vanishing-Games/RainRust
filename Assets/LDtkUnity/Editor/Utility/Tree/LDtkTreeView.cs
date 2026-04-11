@@ -12,11 +12,9 @@ namespace LDtkUnity.Editor
 
         private readonly List<int> _expandedIDs = new List<int>();
 
-        protected LDtkTreeView(TreeViewState state) : base(state)
-        {
+        protected LDtkTreeView(TreeViewState state)
+            : base(state) { }
 
-        }
-        
         public void ExpandSpecificIds()
         {
             foreach (int id in _expandedIDs)
@@ -31,19 +29,15 @@ namespace LDtkUnity.Editor
             {
                 _expandedIDs.Add(_nextId);
             }
-            
-            return new TreeViewItem
-            {
-                id = _nextId++,
-                depth = Depth
-            }; 
+
+            return new TreeViewItem { id = _nextId++, depth = Depth };
         }
-        
+
         protected override TreeViewItem BuildRoot()
         {
             TreeViewItem root = CreateTreeItem(true);
             Depth++;
-            
+
             BuildFirstRoot(root);
             SetupDepthsFromParentsAndChildren(root);
             return root;
@@ -57,7 +51,7 @@ namespace LDtkUnity.Editor
             levelItem.displayName = level.Identifier;
             levelItem.icon = LDtkIconUtility.LoadLevelIcon();
             parent.AddChild(levelItem);
-            
+
             BuildLayers(levelItem, level);
         }
 
@@ -69,7 +63,7 @@ namespace LDtkUnity.Editor
             {
                 return;
             }
-            
+
             foreach (LayerInstance layerInstance in level.LayerInstances)
             {
                 BuildLayer(parent, layerInstance);
@@ -111,7 +105,7 @@ namespace LDtkUnity.Editor
                     {
                         continue;
                     }
-                    
+
                     if (!valueCounts.ContainsKey(l))
                     {
                         valueCounts.Add(l, 0);
@@ -121,15 +115,14 @@ namespace LDtkUnity.Editor
 
                 string totalCount = $"{valueCounts.Values.Sum()} Total Values";
                 BuildLayerContent(totalCount, LDtkIconUtility.LoadIntGridIcon());
-                
-                
-                foreach (KeyValuePair<long,int> pair in valueCounts.OrderBy(p => p.Key))
+
+                foreach (KeyValuePair<long, int> pair in valueCounts.OrderBy(p => p.Key))
                 {
                     string count = $"{pair.Key}: {pair.Value} Values";
                     BuildLayerContent(count, LDtkIconUtility.LoadIntGridIcon());
                 }
             }
-            
+
             if (layerInstance.IsEntitiesLayer)
             {
                 foreach (EntityInstance entityInstance in layerInstance.EntityInstances)
@@ -137,13 +130,13 @@ namespace LDtkUnity.Editor
                     BuildLayerContent(entityInstance.Identifier, LDtkIconUtility.LoadEntityIcon());
                 }
             }
-            
+
             if (layerInstance.IsTilesLayer)
             {
                 string count = $"{layerInstance.GridTiles.Length} Tiles";
                 BuildLayerContent(count, LDtkIconUtility.LoadTilesetIcon());
             }
-            
+
             if (layerInstance.IsAutoLayer)
             {
                 string count = $"{layerInstance.AutoLayerTiles.Length} Auto Tiles";

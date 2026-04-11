@@ -1,13 +1,9 @@
-
 namespace UnityHFSM
 {
-	public interface ITimer
-	{
-		float Elapsed
-		{
-			get;
-		}
+    public interface ITimer
+    {
+        float Elapsed { get; }
 
-		void Reset();
-	}
+        void Reset();
+    }
 }

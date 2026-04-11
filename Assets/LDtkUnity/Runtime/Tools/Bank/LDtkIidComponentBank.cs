@@ -11,26 +11,27 @@ namespace LDtkUnity
     /// </summary>
     public static class LDtkIidComponentBank
     {
-        private static readonly Dictionary<string, LDtkIid> IidObjects = new Dictionary<string, LDtkIid>();
-        
+        private static readonly Dictionary<string, LDtkIid> IidObjects =
+            new Dictionary<string, LDtkIid>();
+
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         internal static void Release()
         {
             IidObjects.Clear();
         }
-        
+
         internal static void Add(LDtkIid iid)
         {
             if (iid == null)
             {
                 return;
             }
-            
+
             if (!IsIidValid(iid.Iid))
             {
                 return;
             }
-            
+
             if (IidObjects.ContainsKey(iid.Iid))
             {
                 IidObjects[iid.Iid] = iid;
@@ -39,25 +40,25 @@ namespace LDtkUnity
 
             IidObjects.Add(iid.Iid, iid);
         }
-        
+
         internal static void Remove(LDtkIid iid)
         {
             if (iid == null)
             {
                 return;
             }
-            
+
             if (!IsIidValid(iid.Iid))
             {
                 return;
             }
-            
+
             if (IidObjects.ContainsKey(iid.Iid))
             {
                 IidObjects.Remove(iid.Iid);
             }
         }
-        
+
         /// <summary>
         /// Gets an iid GameObject. The objects are only available after their OnEnable. Otherwise, try using <see cref="FindObjectOfIid"/>. <br/>
         /// If the component was not found, then make sure the referenced component is active and accessed after it's OnEnable.
@@ -84,8 +85,8 @@ namespace LDtkUnity
             {
                 return false;
             }
-            
-            const int iidFormatLength = 36; 
+
+            const int iidFormatLength = 36;
             if (iid.Length != iidFormatLength)
             {
                 return false;
@@ -93,7 +94,7 @@ namespace LDtkUnity
 
             return true;
         }
-        
+
         /// <summary>
         /// Finds an iid component.<br/>
         /// </summary>
@@ -114,15 +115,18 @@ namespace LDtkUnity
             {
                 return null;
             }
-            
+
             LDtkIid iidComponent = GetByIid(iid);
             if (iidComponent != null)
             {
                 return iidComponent;
             }
-            
+
 #if UNITY_2023_1_OR_NEWER
-            LDtkIid[] iidComponents = Object.FindObjectsByType<LDtkIid>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            LDtkIid[] iidComponents = Object.FindObjectsByType<LDtkIid>(
+                FindObjectsInactive.Include,
+                FindObjectsSortMode.None
+            );
 #elif UNITY_2020_1_OR_NEWER
             LDtkIid[] iidComponents = Object.FindObjectsOfType<LDtkIid>(true);
 #else

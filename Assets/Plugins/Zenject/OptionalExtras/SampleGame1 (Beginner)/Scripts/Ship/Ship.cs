@@ -84,4 +84,3 @@ namespace Zenject.Asteroids
         }
     }
 }
-

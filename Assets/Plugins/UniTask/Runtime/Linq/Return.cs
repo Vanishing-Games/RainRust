@@ -1,5 +1,5 @@
-﻿using Cysharp.Threading.Tasks.Internal;
-using System.Threading;
+﻿using System.Threading;
+using Cysharp.Threading.Tasks.Internal;
 
 namespace Cysharp.Threading.Tasks.Linq
 {
@@ -20,7 +20,9 @@ namespace Cysharp.Threading.Tasks.Linq
             this.value = value;
         }
 
-        public IUniTaskAsyncEnumerator<TValue> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+        public IUniTaskAsyncEnumerator<TValue> GetAsyncEnumerator(
+            CancellationToken cancellationToken = default
+        )
         {
             return new _Return(value, cancellationToken);
         }

@@ -14,7 +14,7 @@ namespace LDtkUnity.Editor
         {
             base.OnEnable();
             _importer = (LDtkLevelImporter)target;
-            
+
             if (_importer == null || _importer.IsBackupFile())
             {
                 return;
@@ -24,8 +24,9 @@ namespace LDtkUnity.Editor
             {
                 return;
             }
-                
-            _projectAsset = (GameObject)AssetDatabase.LoadMainAssetAtPath(projectImporter.assetPath);
+
+            _projectAsset = (GameObject)
+                AssetDatabase.LoadMainAssetAtPath(projectImporter.assetPath);
         }
 
         public override void OnDisable()
@@ -37,13 +38,13 @@ namespace LDtkUnity.Editor
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
-            
+
             if (TryDrawBackupGui(_importer))
             {
                 ApplyRevertGUI();
                 return;
             }
-            
+
             if (serializedObject.isEditingMultipleObjects)
             {
                 DrawDependenciesProperty();
@@ -51,7 +52,7 @@ namespace LDtkUnity.Editor
                 ApplyRevertGUI();
                 return;
             }
-            
+
             try
             {
                 DrawProfilerButton();
@@ -62,16 +63,14 @@ namespace LDtkUnity.Editor
                 SectionDependencies.Draw();
             }
             catch (Exception e)
-            {   
+            {
                 LDtkDebug.LogError(e.ToString());
                 DrawTextBox();
             }
 
             serializedObject.ApplyModifiedProperties();
-            
+
             ApplyRevertGUI();
         }
-
-        
     }
 }

@@ -13,17 +13,17 @@ namespace LDtkUnity.Editor
                     Upper();
                     Left();
                     break;
-                
+
                 case TextAnchor.UpperCenter:
                     Upper();
                     Center();
                     break;
-                
+
                 case TextAnchor.UpperRight:
                     Upper();
                     Right();
                     break;
-                
+
                 case TextAnchor.MiddleLeft:
                     Middle();
                     Left();
@@ -32,22 +32,22 @@ namespace LDtkUnity.Editor
                     Middle();
                     Center();
                     break;
-                
+
                 case TextAnchor.MiddleRight:
                     Middle();
                     Right();
                     break;
-                
+
                 case TextAnchor.LowerLeft:
                     Lower();
                     Left();
                     break;
-                
+
                 case TextAnchor.LowerCenter:
                     Lower();
                     Center();
                     break;
-                
+
                 case TextAnchor.LowerRight:
                     Lower();
                     Right();
@@ -87,7 +87,10 @@ namespace LDtkUnity.Editor
             Rect labelRect = GetLabelRect(position);
             Rect fieldRect = new Rect(position);
             fieldRect.x = labelRect.xMax;
-            fieldRect.width = Mathf.Max(EditorGUIUtility.fieldWidth, position.width - labelRect.width);
+            fieldRect.width = Mathf.Max(
+                EditorGUIUtility.fieldWidth,
+                position.width - labelRect.width
+            );
             return fieldRect;
         }
 
@@ -97,7 +100,7 @@ namespace LDtkUnity.Editor
             labelRect.width = EditorGUIUtility.labelWidth + 2;
             return labelRect;
         }
-        
+
         public static float LabelWidth(float controlRectWidth)
         {
             const float divisor = 2.24f;
@@ -105,38 +108,42 @@ namespace LDtkUnity.Editor
             float totalWidth = controlRectWidth + EditorGUIUtility.singleLineHeight;
             return Mathf.Max(totalWidth / divisor + offset, EditorGUIUtility.labelWidth);
         }
-        
+
         public static void DrawDivider(float height = 2f)
         {
             const float space = 2;
 
             GUILayout.Space(space);
-            
+
             Rect area = GUILayoutUtility.GetRect(0, height);
             area.xMin -= 15;
-            
+
             float colorIntensity = EditorGUIUtility.isProSkin ? 0.1f : 0.5f;
             Color areaColor = new Color(colorIntensity, colorIntensity, colorIntensity, 1);
             EditorGUI.DrawRect(area, areaColor);
-            
+
             GUILayout.Space(space);
         }
 
         public static void DenyPotentialResursiveGameObjects(SerializedProperty prop)
         {
-            GameObject levelPrefab = (GameObject) prop.objectReferenceValue;
+            GameObject levelPrefab = (GameObject)prop.objectReferenceValue;
             if (ReferenceEquals(levelPrefab, null))
             {
                 return;
             }
-            
-            if (!levelPrefab.GetComponent<LDtkComponentProject>() && 
-                !levelPrefab.GetComponent<LDtkComponentLevel>())
+
+            if (
+                !levelPrefab.GetComponent<LDtkComponentProject>()
+                && !levelPrefab.GetComponent<LDtkComponentLevel>()
+            )
             {
                 return;
             }
 
-            LDtkDebug.LogWarning("Not allowed to assign an imported LDtk GameObject. It would have resulted in a recursive crash.");
+            LDtkDebug.LogWarning(
+                "Not allowed to assign an imported LDtk GameObject. It would have resulted in a recursive crash."
+            );
             prop.objectReferenceValue = null;
         }
     }

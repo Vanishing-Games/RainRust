@@ -87,11 +87,11 @@ namespace GameMain.RunTime
             {
                 float msec = m_DeltaTime * 1000.0f;
                 float fps = 1.0f / m_DeltaTime;
-                
+
                 // Color coding based on FPS performance
                 string colorHex = fps >= 60f ? "#00FF00" : (fps >= 30f ? "#FFFF00" : "#FF0000");
                 string fpsText = $"<b>FPS:</b> <color={colorHex}>{fps:0.}</color> ({msec:0.0} ms)";
-                
+
                 GUILayout.Label(fpsText, m_LabelStyle);
 
                 // Add spacing if we also have active logs
@@ -174,7 +174,7 @@ namespace GameMain.RunTime
         private GUIStyle m_BoxStyle;
         private GUIStyle m_LabelStyle;
         private Texture2D m_BackgroundTexture;
-        
+
         // Variables for FPS calculation
         private float m_DeltaTime = 0.0f;
     }

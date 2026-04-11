@@ -18,8 +18,10 @@ namespace Sirenix.OdinInspector.Modules.Localization.Editor
         public Rect CurrentThumbRect;
         public Color CurrentColor;
         public bool Enabled;
-        public SirenixAnimationUtility.InterpolatedFloat T1 = new SirenixAnimationUtility.InterpolatedFloat {Destination = 1f};
-        public SirenixAnimationUtility.InterpolatedFloat T2 = new SirenixAnimationUtility.InterpolatedFloat {Destination = 1f};
+        public SirenixAnimationUtility.InterpolatedFloat T1 =
+            new SirenixAnimationUtility.InterpolatedFloat { Destination = 1f };
+        public SirenixAnimationUtility.InterpolatedFloat T2 =
+            new SirenixAnimationUtility.InterpolatedFloat { Destination = 1f };
 
         private bool _toggled;
 

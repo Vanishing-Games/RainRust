@@ -21,6 +21,5 @@ namespace LDtkUnity
             }
             return null;
         }
-        
     }
 }

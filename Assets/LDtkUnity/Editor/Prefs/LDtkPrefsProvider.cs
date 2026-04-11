@@ -7,20 +7,25 @@ namespace LDtkUnity.Editor
 {
     internal sealed class LDtkPrefsProvider : SettingsProvider
     {
-        public const string PROVIDER_PATH = "Preferences/LDtk To Unity"; 
- 
+        public const string PROVIDER_PATH = "Preferences/LDtk To Unity";
+
         //cached so that we don't call the deserializer as much
         private static LDtkPrefs _instance;
         private static SerializedObject _serializedObject;
 
-        private LDtkPrefsProvider(string path, SettingsScope scopes, IEnumerable<string> keywords = null) : base(path, scopes, keywords) { }
-        
+        private LDtkPrefsProvider(
+            string path,
+            SettingsScope scopes,
+            IEnumerable<string> keywords = null
+        )
+            : base(path, scopes, keywords) { }
+
         [SettingsProvider]
         public static SettingsProvider CreateProvider()
         {
             return new LDtkPrefsProvider(PROVIDER_PATH, SettingsScope.User);
         }
-        
+
         public override void OnActivate(string searchContext, VisualElement rootElement)
         {
             UpdateSerializedObject();
@@ -31,7 +36,7 @@ namespace LDtkUnity.Editor
         {
             SaveAsJson();
         }
-        
+
         public static LDtkPrefs Instance
         {
             get
@@ -40,7 +45,7 @@ namespace LDtkUnity.Editor
                 {
                     LoadFromJson();
                 }
-                
+
                 return _instance;
             }
         }
@@ -52,11 +57,11 @@ namespace LDtkUnity.Editor
                 LDtkDebug.LogError("Tried saving prefs but the instance was null");
                 return;
             }
-            
+
             string json = JsonUtility.ToJson(_instance, true);
             EditorPrefs.SetString(PROVIDER_PATH, json);
-            
         }
+
         private static void LoadFromJson()
         {
             CreateFreshInstance();

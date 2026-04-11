@@ -64,7 +64,6 @@ namespace RainRust.Rendering
                 return;
             }
 
-
             var rainRustContextData = frameData.Get<RainRustContextData>();
             var resourceData = frameData.Get<UniversalResourceData>();
             var cameraData = frameData.Get<UniversalCameraData>();

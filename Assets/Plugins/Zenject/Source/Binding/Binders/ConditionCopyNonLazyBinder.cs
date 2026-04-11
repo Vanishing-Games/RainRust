@@ -8,9 +8,7 @@ namespace Zenject
     public class ConditionCopyNonLazyBinder : CopyNonLazyBinder
     {
         public ConditionCopyNonLazyBinder(BindInfo bindInfo)
-            : base(bindInfo)
-        {
-        }
+            : base(bindInfo) { }
 
         public CopyNonLazyBinder When(BindingCondition condition)
         {
@@ -25,7 +23,9 @@ namespace Zenject
 
         public CopyNonLazyBinder WhenInjectedInto(params Type[] targets)
         {
-            return When(r => targets.Where(x => r.ObjectType != null && r.ObjectType.DerivesFromOrEqual(x)).Any());
+            return When(r =>
+                targets.Where(x => r.ObjectType != null && r.ObjectType.DerivesFromOrEqual(x)).Any()
+            );
         }
 
         public CopyNonLazyBinder WhenInjectedInto<T>()

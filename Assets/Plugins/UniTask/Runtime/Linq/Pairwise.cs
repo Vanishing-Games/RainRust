@@ -1,12 +1,14 @@
-﻿using Cysharp.Threading.Tasks.Internal;
-using System;
+﻿using System;
 using System.Threading;
+using Cysharp.Threading.Tasks.Internal;
 
 namespace Cysharp.Threading.Tasks.Linq
 {
     public static partial class UniTaskAsyncEnumerable
     {
-        public static IUniTaskAsyncEnumerable<(TSource, TSource)> Pairwise<TSource>(this IUniTaskAsyncEnumerable<TSource> source)
+        public static IUniTaskAsyncEnumerable<(TSource, TSource)> Pairwise<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
 
@@ -23,7 +25,9 @@ namespace Cysharp.Threading.Tasks.Linq
             this.source = source;
         }
 
-        public IUniTaskAsyncEnumerator<(TSource, TSource)> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+        public IUniTaskAsyncEnumerator<(TSource, TSource)> GetAsyncEnumerator(
+            CancellationToken cancellationToken = default
+        )
         {
             return new _Pairwise(source, cancellationToken);
         }
@@ -41,7 +45,10 @@ namespace Cysharp.Threading.Tasks.Linq
             TSource prev;
             bool isFirst;
 
-            public _Pairwise(IUniTaskAsyncEnumerable<TSource> source, CancellationToken cancellationToken)
+            public _Pairwise(
+                IUniTaskAsyncEnumerable<TSource> source,
+                CancellationToken cancellationToken
+            )
             {
                 this.source = source;
                 this.cancellationToken = cancellationToken;

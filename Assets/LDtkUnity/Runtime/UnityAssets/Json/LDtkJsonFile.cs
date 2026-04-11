@@ -6,7 +6,8 @@ namespace LDtkUnity
     [ExcludeFromDocs]
     public abstract class LDtkJsonFile<T> : ScriptableObject, ILDtkJsonFile
     {
-        [SerializeField] protected byte[] _json; 
+        [SerializeField]
+        protected byte[] _json;
 
         public abstract T FromJson { get; }
 

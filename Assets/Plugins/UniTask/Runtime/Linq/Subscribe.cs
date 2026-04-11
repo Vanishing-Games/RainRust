@@ -1,6 +1,6 @@
-﻿using Cysharp.Threading.Tasks.Internal;
-using System;
+﻿using System;
 using System.Threading;
+using Cysharp.Threading.Tasks.Internal;
 using Subscribes = Cysharp.Threading.Tasks.Linq.Subscribe;
 
 namespace Cysharp.Threading.Tasks.Linq
@@ -9,263 +9,509 @@ namespace Cysharp.Threading.Tasks.Linq
     {
         // OnNext
 
-        public static IDisposable Subscribe<TSource>(this IUniTaskAsyncEnumerable<TSource> source, Action<TSource> action)
+        public static IDisposable Subscribe<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            Action<TSource> action
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
             Error.ThrowArgumentNullException(action, nameof(action));
 
             var cts = new CancellationTokenDisposable();
-            Subscribes.SubscribeCore(source, action, Subscribes.NopError, Subscribes.NopCompleted, cts.Token).Forget();
+            Subscribes
+                .SubscribeCore(
+                    source,
+                    action,
+                    Subscribes.NopError,
+                    Subscribes.NopCompleted,
+                    cts.Token
+                )
+                .Forget();
             return cts;
         }
 
-        public static IDisposable Subscribe<TSource>(this IUniTaskAsyncEnumerable<TSource> source, Func<TSource, UniTaskVoid> action)
+        public static IDisposable Subscribe<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, UniTaskVoid> action
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
             Error.ThrowArgumentNullException(action, nameof(action));
 
             var cts = new CancellationTokenDisposable();
-            Subscribes.SubscribeCore(source, action, Subscribes.NopError, Subscribes.NopCompleted, cts.Token).Forget();
+            Subscribes
+                .SubscribeCore(
+                    source,
+                    action,
+                    Subscribes.NopError,
+                    Subscribes.NopCompleted,
+                    cts.Token
+                )
+                .Forget();
             return cts;
         }
 
-        public static IDisposable Subscribe<TSource>(this IUniTaskAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, UniTaskVoid> action)
+        public static IDisposable Subscribe<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, CancellationToken, UniTaskVoid> action
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
             Error.ThrowArgumentNullException(action, nameof(action));
 
             var cts = new CancellationTokenDisposable();
-            Subscribes.SubscribeCore(source, action, Subscribes.NopError, Subscribes.NopCompleted, cts.Token).Forget();
+            Subscribes
+                .SubscribeCore(
+                    source,
+                    action,
+                    Subscribes.NopError,
+                    Subscribes.NopCompleted,
+                    cts.Token
+                )
+                .Forget();
             return cts;
         }
 
-        public static void Subscribe<TSource>(this IUniTaskAsyncEnumerable<TSource> source, Action<TSource> action, CancellationToken cancellationToken)
+        public static void Subscribe<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            Action<TSource> action,
+            CancellationToken cancellationToken
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
             Error.ThrowArgumentNullException(action, nameof(action));
 
-            Subscribes.SubscribeCore(source, action, Subscribes.NopError, Subscribes.NopCompleted, cancellationToken).Forget();
+            Subscribes
+                .SubscribeCore(
+                    source,
+                    action,
+                    Subscribes.NopError,
+                    Subscribes.NopCompleted,
+                    cancellationToken
+                )
+                .Forget();
         }
 
-        public static void Subscribe<TSource>(this IUniTaskAsyncEnumerable<TSource> source, Func<TSource, UniTaskVoid> action, CancellationToken cancellationToken)
+        public static void Subscribe<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, UniTaskVoid> action,
+            CancellationToken cancellationToken
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
             Error.ThrowArgumentNullException(action, nameof(action));
 
-            Subscribes.SubscribeCore(source, action, Subscribes.NopError, Subscribes.NopCompleted, cancellationToken).Forget();
+            Subscribes
+                .SubscribeCore(
+                    source,
+                    action,
+                    Subscribes.NopError,
+                    Subscribes.NopCompleted,
+                    cancellationToken
+                )
+                .Forget();
         }
 
-        public static void Subscribe<TSource>(this IUniTaskAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, UniTaskVoid> action, CancellationToken cancellationToken)
+        public static void Subscribe<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, CancellationToken, UniTaskVoid> action,
+            CancellationToken cancellationToken
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
             Error.ThrowArgumentNullException(action, nameof(action));
 
-            Subscribes.SubscribeCore(source, action, Subscribes.NopError, Subscribes.NopCompleted, cancellationToken).Forget();
+            Subscribes
+                .SubscribeCore(
+                    source,
+                    action,
+                    Subscribes.NopError,
+                    Subscribes.NopCompleted,
+                    cancellationToken
+                )
+                .Forget();
         }
 
-        public static IDisposable SubscribeAwait<TSource>(this IUniTaskAsyncEnumerable<TSource> source, Func<TSource, UniTask> onNext)
+        public static IDisposable SubscribeAwait<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, UniTask> onNext
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
             Error.ThrowArgumentNullException(onNext, nameof(onNext));
 
             var cts = new CancellationTokenDisposable();
-            Subscribes.SubscribeAwaitCore(source, onNext, Subscribes.NopError, Subscribes.NopCompleted, cts.Token).Forget();
+            Subscribes
+                .SubscribeAwaitCore(
+                    source,
+                    onNext,
+                    Subscribes.NopError,
+                    Subscribes.NopCompleted,
+                    cts.Token
+                )
+                .Forget();
             return cts;
         }
 
-        public static void SubscribeAwait<TSource>(this IUniTaskAsyncEnumerable<TSource> source, Func<TSource, UniTask> onNext, CancellationToken cancellationToken)
+        public static void SubscribeAwait<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, UniTask> onNext,
+            CancellationToken cancellationToken
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
             Error.ThrowArgumentNullException(onNext, nameof(onNext));
 
-            Subscribes.SubscribeAwaitCore(source, onNext, Subscribes.NopError, Subscribes.NopCompleted, cancellationToken).Forget();
+            Subscribes
+                .SubscribeAwaitCore(
+                    source,
+                    onNext,
+                    Subscribes.NopError,
+                    Subscribes.NopCompleted,
+                    cancellationToken
+                )
+                .Forget();
         }
 
-        public static IDisposable SubscribeAwait<TSource>(this IUniTaskAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, UniTask> onNext)
+        public static IDisposable SubscribeAwait<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, CancellationToken, UniTask> onNext
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
             Error.ThrowArgumentNullException(onNext, nameof(onNext));
 
             var cts = new CancellationTokenDisposable();
-            Subscribes.SubscribeAwaitCore(source, onNext, Subscribes.NopError, Subscribes.NopCompleted, cts.Token).Forget();
+            Subscribes
+                .SubscribeAwaitCore(
+                    source,
+                    onNext,
+                    Subscribes.NopError,
+                    Subscribes.NopCompleted,
+                    cts.Token
+                )
+                .Forget();
             return cts;
         }
 
-        public static void SubscribeAwait<TSource>(this IUniTaskAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, UniTask> onNext, CancellationToken cancellationToken)
+        public static void SubscribeAwait<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, CancellationToken, UniTask> onNext,
+            CancellationToken cancellationToken
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
             Error.ThrowArgumentNullException(onNext, nameof(onNext));
 
-            Subscribes.SubscribeAwaitCore(source, onNext, Subscribes.NopError, Subscribes.NopCompleted, cancellationToken).Forget();
+            Subscribes
+                .SubscribeAwaitCore(
+                    source,
+                    onNext,
+                    Subscribes.NopError,
+                    Subscribes.NopCompleted,
+                    cancellationToken
+                )
+                .Forget();
         }
 
         // OnNext, OnError
 
-        public static IDisposable Subscribe<TSource>(this IUniTaskAsyncEnumerable<TSource> source, Action<TSource> onNext, Action<Exception> onError)
+        public static IDisposable Subscribe<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            Action<TSource> onNext,
+            Action<Exception> onError
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
             Error.ThrowArgumentNullException(onNext, nameof(onNext));
             Error.ThrowArgumentNullException(onError, nameof(onError));
 
             var cts = new CancellationTokenDisposable();
-            Subscribes.SubscribeCore(source, onNext, onError, Subscribes.NopCompleted, cts.Token).Forget();
+            Subscribes
+                .SubscribeCore(source, onNext, onError, Subscribes.NopCompleted, cts.Token)
+                .Forget();
             return cts;
         }
 
-        public static IDisposable Subscribe<TSource>(this IUniTaskAsyncEnumerable<TSource> source, Func<TSource, UniTaskVoid> onNext, Action<Exception> onError)
+        public static IDisposable Subscribe<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, UniTaskVoid> onNext,
+            Action<Exception> onError
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
             Error.ThrowArgumentNullException(onNext, nameof(onNext));
             Error.ThrowArgumentNullException(onError, nameof(onError));
 
             var cts = new CancellationTokenDisposable();
-            Subscribes.SubscribeCore(source, onNext, onError, Subscribes.NopCompleted, cts.Token).Forget();
+            Subscribes
+                .SubscribeCore(source, onNext, onError, Subscribes.NopCompleted, cts.Token)
+                .Forget();
             return cts;
         }
 
-        public static void Subscribe<TSource>(this IUniTaskAsyncEnumerable<TSource> source, Action<TSource> onNext, Action<Exception> onError, CancellationToken cancellationToken)
+        public static void Subscribe<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            Action<TSource> onNext,
+            Action<Exception> onError,
+            CancellationToken cancellationToken
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
             Error.ThrowArgumentNullException(onNext, nameof(onNext));
             Error.ThrowArgumentNullException(onError, nameof(onError));
 
-            Subscribes.SubscribeCore(source, onNext, onError, Subscribes.NopCompleted, cancellationToken).Forget();
+            Subscribes
+                .SubscribeCore(source, onNext, onError, Subscribes.NopCompleted, cancellationToken)
+                .Forget();
         }
 
-        public static void Subscribe<TSource>(this IUniTaskAsyncEnumerable<TSource> source, Func<TSource, UniTaskVoid> onNext, Action<Exception> onError, CancellationToken cancellationToken)
+        public static void Subscribe<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, UniTaskVoid> onNext,
+            Action<Exception> onError,
+            CancellationToken cancellationToken
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
             Error.ThrowArgumentNullException(onNext, nameof(onNext));
             Error.ThrowArgumentNullException(onError, nameof(onError));
 
-            Subscribes.SubscribeCore(source, onNext, onError, Subscribes.NopCompleted, cancellationToken).Forget();
+            Subscribes
+                .SubscribeCore(source, onNext, onError, Subscribes.NopCompleted, cancellationToken)
+                .Forget();
         }
 
-        public static IDisposable SubscribeAwait<TSource>(this IUniTaskAsyncEnumerable<TSource> source, Func<TSource, UniTask> onNext, Action<Exception> onError)
+        public static IDisposable SubscribeAwait<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, UniTask> onNext,
+            Action<Exception> onError
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
             Error.ThrowArgumentNullException(onNext, nameof(onNext));
             Error.ThrowArgumentNullException(onError, nameof(onError));
 
             var cts = new CancellationTokenDisposable();
-            Subscribes.SubscribeAwaitCore(source, onNext, onError, Subscribes.NopCompleted, cts.Token).Forget();
+            Subscribes
+                .SubscribeAwaitCore(source, onNext, onError, Subscribes.NopCompleted, cts.Token)
+                .Forget();
             return cts;
         }
 
-        public static void SubscribeAwait<TSource>(this IUniTaskAsyncEnumerable<TSource> source, Func<TSource, UniTask> onNext, Action<Exception> onError, CancellationToken cancellationToken)
+        public static void SubscribeAwait<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, UniTask> onNext,
+            Action<Exception> onError,
+            CancellationToken cancellationToken
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
             Error.ThrowArgumentNullException(onNext, nameof(onNext));
             Error.ThrowArgumentNullException(onError, nameof(onError));
 
-            Subscribes.SubscribeAwaitCore(source, onNext, onError, Subscribes.NopCompleted, cancellationToken).Forget();
+            Subscribes
+                .SubscribeAwaitCore(
+                    source,
+                    onNext,
+                    onError,
+                    Subscribes.NopCompleted,
+                    cancellationToken
+                )
+                .Forget();
         }
 
-        public static IDisposable SubscribeAwait<TSource>(this IUniTaskAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, UniTask> onNext, Action<Exception> onError)
+        public static IDisposable SubscribeAwait<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, CancellationToken, UniTask> onNext,
+            Action<Exception> onError
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
             Error.ThrowArgumentNullException(onNext, nameof(onNext));
             Error.ThrowArgumentNullException(onError, nameof(onError));
 
             var cts = new CancellationTokenDisposable();
-            Subscribes.SubscribeAwaitCore(source, onNext, onError, Subscribes.NopCompleted, cts.Token).Forget();
+            Subscribes
+                .SubscribeAwaitCore(source, onNext, onError, Subscribes.NopCompleted, cts.Token)
+                .Forget();
             return cts;
         }
 
-        public static void SubscribeAwait<TSource>(this IUniTaskAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, UniTask> onNext, Action<Exception> onError, CancellationToken cancellationToken)
+        public static void SubscribeAwait<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, CancellationToken, UniTask> onNext,
+            Action<Exception> onError,
+            CancellationToken cancellationToken
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
             Error.ThrowArgumentNullException(onNext, nameof(onNext));
             Error.ThrowArgumentNullException(onError, nameof(onError));
 
-            Subscribes.SubscribeAwaitCore(source, onNext, onError, Subscribes.NopCompleted, cancellationToken).Forget();
+            Subscribes
+                .SubscribeAwaitCore(
+                    source,
+                    onNext,
+                    onError,
+                    Subscribes.NopCompleted,
+                    cancellationToken
+                )
+                .Forget();
         }
 
         // OnNext, OnCompleted
 
-        public static IDisposable Subscribe<TSource>(this IUniTaskAsyncEnumerable<TSource> source, Action<TSource> onNext, Action onCompleted)
+        public static IDisposable Subscribe<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            Action<TSource> onNext,
+            Action onCompleted
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
             Error.ThrowArgumentNullException(onNext, nameof(onNext));
             Error.ThrowArgumentNullException(onCompleted, nameof(onCompleted));
 
             var cts = new CancellationTokenDisposable();
-            Subscribes.SubscribeCore(source, onNext, Subscribes.NopError, onCompleted, cts.Token).Forget();
+            Subscribes
+                .SubscribeCore(source, onNext, Subscribes.NopError, onCompleted, cts.Token)
+                .Forget();
             return cts;
         }
 
-        public static IDisposable Subscribe<TSource>(this IUniTaskAsyncEnumerable<TSource> source, Func<TSource, UniTaskVoid> onNext, Action onCompleted)
+        public static IDisposable Subscribe<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, UniTaskVoid> onNext,
+            Action onCompleted
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
             Error.ThrowArgumentNullException(onNext, nameof(onNext));
             Error.ThrowArgumentNullException(onCompleted, nameof(onCompleted));
 
             var cts = new CancellationTokenDisposable();
-            Subscribes.SubscribeCore(source, onNext, Subscribes.NopError, onCompleted, cts.Token).Forget();
+            Subscribes
+                .SubscribeCore(source, onNext, Subscribes.NopError, onCompleted, cts.Token)
+                .Forget();
             return cts;
         }
 
-        public static void Subscribe<TSource>(this IUniTaskAsyncEnumerable<TSource> source, Action<TSource> onNext, Action onCompleted, CancellationToken cancellationToken)
+        public static void Subscribe<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            Action<TSource> onNext,
+            Action onCompleted,
+            CancellationToken cancellationToken
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
             Error.ThrowArgumentNullException(onNext, nameof(onNext));
             Error.ThrowArgumentNullException(onCompleted, nameof(onCompleted));
 
-            Subscribes.SubscribeCore(source, onNext, Subscribes.NopError, onCompleted, cancellationToken).Forget();
+            Subscribes
+                .SubscribeCore(source, onNext, Subscribes.NopError, onCompleted, cancellationToken)
+                .Forget();
         }
 
-        public static void Subscribe<TSource>(this IUniTaskAsyncEnumerable<TSource> source, Func<TSource, UniTaskVoid> onNext, Action onCompleted, CancellationToken cancellationToken)
+        public static void Subscribe<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, UniTaskVoid> onNext,
+            Action onCompleted,
+            CancellationToken cancellationToken
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
             Error.ThrowArgumentNullException(onNext, nameof(onNext));
             Error.ThrowArgumentNullException(onCompleted, nameof(onCompleted));
 
-            Subscribes.SubscribeCore(source, onNext, Subscribes.NopError, onCompleted, cancellationToken).Forget();
+            Subscribes
+                .SubscribeCore(source, onNext, Subscribes.NopError, onCompleted, cancellationToken)
+                .Forget();
         }
 
-        public static IDisposable SubscribeAwait<TSource>(this IUniTaskAsyncEnumerable<TSource> source, Func<TSource, UniTask> onNext, Action onCompleted)
+        public static IDisposable SubscribeAwait<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, UniTask> onNext,
+            Action onCompleted
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
             Error.ThrowArgumentNullException(onNext, nameof(onNext));
             Error.ThrowArgumentNullException(onCompleted, nameof(onCompleted));
 
             var cts = new CancellationTokenDisposable();
-            Subscribes.SubscribeAwaitCore(source, onNext, Subscribes.NopError, onCompleted, cts.Token).Forget();
+            Subscribes
+                .SubscribeAwaitCore(source, onNext, Subscribes.NopError, onCompleted, cts.Token)
+                .Forget();
             return cts;
         }
 
-        public static void SubscribeAwait<TSource>(this IUniTaskAsyncEnumerable<TSource> source, Func<TSource, UniTask> onNext, Action onCompleted, CancellationToken cancellationToken)
+        public static void SubscribeAwait<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, UniTask> onNext,
+            Action onCompleted,
+            CancellationToken cancellationToken
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
             Error.ThrowArgumentNullException(onNext, nameof(onNext));
             Error.ThrowArgumentNullException(onCompleted, nameof(onCompleted));
 
-            Subscribes.SubscribeAwaitCore(source, onNext, Subscribes.NopError, onCompleted, cancellationToken).Forget();
+            Subscribes
+                .SubscribeAwaitCore(
+                    source,
+                    onNext,
+                    Subscribes.NopError,
+                    onCompleted,
+                    cancellationToken
+                )
+                .Forget();
         }
 
-        public static IDisposable SubscribeAwait<TSource>(this IUniTaskAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, UniTask> onNext, Action onCompleted)
+        public static IDisposable SubscribeAwait<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, CancellationToken, UniTask> onNext,
+            Action onCompleted
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
             Error.ThrowArgumentNullException(onNext, nameof(onNext));
             Error.ThrowArgumentNullException(onCompleted, nameof(onCompleted));
 
             var cts = new CancellationTokenDisposable();
-            Subscribes.SubscribeAwaitCore(source, onNext, Subscribes.NopError, onCompleted, cts.Token).Forget();
+            Subscribes
+                .SubscribeAwaitCore(source, onNext, Subscribes.NopError, onCompleted, cts.Token)
+                .Forget();
             return cts;
         }
 
-        public static void SubscribeAwait<TSource>(this IUniTaskAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, UniTask> onNext, Action onCompleted, CancellationToken cancellationToken)
+        public static void SubscribeAwait<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, CancellationToken, UniTask> onNext,
+            Action onCompleted,
+            CancellationToken cancellationToken
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
             Error.ThrowArgumentNullException(onNext, nameof(onNext));
             Error.ThrowArgumentNullException(onCompleted, nameof(onCompleted));
 
-            Subscribes.SubscribeAwaitCore(source, onNext, Subscribes.NopError, onCompleted, cancellationToken).Forget();
+            Subscribes
+                .SubscribeAwaitCore(
+                    source,
+                    onNext,
+                    Subscribes.NopError,
+                    onCompleted,
+                    cancellationToken
+                )
+                .Forget();
         }
 
         // IObserver
 
-        public static IDisposable Subscribe<TSource>(this IUniTaskAsyncEnumerable<TSource> source, IObserver<TSource> observer)
+        public static IDisposable Subscribe<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            IObserver<TSource> observer
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
             Error.ThrowArgumentNullException(observer, nameof(observer));
@@ -275,7 +521,11 @@ namespace Cysharp.Threading.Tasks.Linq
             return cts;
         }
 
-        public static void Subscribe<TSource>(this IUniTaskAsyncEnumerable<TSource> source, IObserver<TSource> observer, CancellationToken cancellationToken)
+        public static void Subscribe<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            IObserver<TSource> observer,
+            CancellationToken cancellationToken
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
             Error.ThrowArgumentNullException(observer, nameof(observer));
@@ -304,7 +554,13 @@ namespace Cysharp.Threading.Tasks.Linq
         public static readonly Action<Exception> NopError = _ => { };
         public static readonly Action NopCompleted = () => { };
 
-        public static async UniTaskVoid SubscribeCore<TSource>(IUniTaskAsyncEnumerable<TSource> source, Action<TSource> onNext, Action<Exception> onError, Action onCompleted, CancellationToken cancellationToken)
+        public static async UniTaskVoid SubscribeCore<TSource>(
+            IUniTaskAsyncEnumerable<TSource> source,
+            Action<TSource> onNext,
+            Action<Exception> onError,
+            Action onCompleted,
+            CancellationToken cancellationToken
+        )
         {
             var e = source.GetAsyncEnumerator(cancellationToken);
             try
@@ -330,7 +586,8 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                if (ex is OperationCanceledException) return;
+                if (ex is OperationCanceledException)
+                    return;
 
                 onError(ex);
             }
@@ -343,7 +600,13 @@ namespace Cysharp.Threading.Tasks.Linq
             }
         }
 
-        public static async UniTaskVoid SubscribeCore<TSource>(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, UniTaskVoid> onNext, Action<Exception> onError, Action onCompleted, CancellationToken cancellationToken)
+        public static async UniTaskVoid SubscribeCore<TSource>(
+            IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, UniTaskVoid> onNext,
+            Action<Exception> onError,
+            Action onCompleted,
+            CancellationToken cancellationToken
+        )
         {
             var e = source.GetAsyncEnumerator(cancellationToken);
             try
@@ -369,7 +632,8 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                if (ex is OperationCanceledException) return;
+                if (ex is OperationCanceledException)
+                    return;
 
                 onError(ex);
             }
@@ -382,7 +646,13 @@ namespace Cysharp.Threading.Tasks.Linq
             }
         }
 
-        public static async UniTaskVoid SubscribeCore<TSource>(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, UniTaskVoid> onNext, Action<Exception> onError, Action onCompleted, CancellationToken cancellationToken)
+        public static async UniTaskVoid SubscribeCore<TSource>(
+            IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, CancellationToken, UniTaskVoid> onNext,
+            Action<Exception> onError,
+            Action onCompleted,
+            CancellationToken cancellationToken
+        )
         {
             var e = source.GetAsyncEnumerator(cancellationToken);
             try
@@ -408,7 +678,8 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                if (ex is OperationCanceledException) return;
+                if (ex is OperationCanceledException)
+                    return;
 
                 onError(ex);
             }
@@ -421,7 +692,11 @@ namespace Cysharp.Threading.Tasks.Linq
             }
         }
 
-        public static async UniTaskVoid SubscribeCore<TSource>(IUniTaskAsyncEnumerable<TSource> source, IObserver<TSource> observer, CancellationToken cancellationToken)
+        public static async UniTaskVoid SubscribeCore<TSource>(
+            IUniTaskAsyncEnumerable<TSource> source,
+            IObserver<TSource> observer,
+            CancellationToken cancellationToken
+        )
         {
             var e = source.GetAsyncEnumerator(cancellationToken);
             try
@@ -441,7 +716,8 @@ namespace Cysharp.Threading.Tasks.Linq
             }
             catch (Exception ex)
             {
-                if (ex is OperationCanceledException) return;
+                if (ex is OperationCanceledException)
+                    return;
 
                 observer.OnError(ex);
             }
@@ -454,7 +730,13 @@ namespace Cysharp.Threading.Tasks.Linq
             }
         }
 
-        public static async UniTaskVoid SubscribeAwaitCore<TSource>(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, UniTask> onNext, Action<Exception> onError, Action onCompleted, CancellationToken cancellationToken)
+        public static async UniTaskVoid SubscribeAwaitCore<TSource>(
+            IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, UniTask> onNext,
+            Action<Exception> onError,
+            Action onCompleted,
+            CancellationToken cancellationToken
+        )
         {
             var e = source.GetAsyncEnumerator(cancellationToken);
             try
@@ -480,7 +762,8 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                if (ex is OperationCanceledException) return;
+                if (ex is OperationCanceledException)
+                    return;
 
                 onError(ex);
             }
@@ -493,7 +776,13 @@ namespace Cysharp.Threading.Tasks.Linq
             }
         }
 
-        public static async UniTaskVoid SubscribeAwaitCore<TSource>(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, UniTask> onNext, Action<Exception> onError, Action onCompleted, CancellationToken cancellationToken)
+        public static async UniTaskVoid SubscribeAwaitCore<TSource>(
+            IUniTaskAsyncEnumerable<TSource> source,
+            Func<TSource, CancellationToken, UniTask> onNext,
+            Action<Exception> onError,
+            Action onCompleted,
+            CancellationToken cancellationToken
+        )
         {
             var e = source.GetAsyncEnumerator(cancellationToken);
             try
@@ -519,7 +808,8 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                if (ex is OperationCanceledException) return;
+                if (ex is OperationCanceledException)
+                    return;
 
                 onError(ex);
             }
@@ -531,6 +821,5 @@ namespace Cysharp.Threading.Tasks.Linq
                 }
             }
         }
-
     }
 }

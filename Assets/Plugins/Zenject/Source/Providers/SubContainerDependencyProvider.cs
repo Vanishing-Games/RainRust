@@ -16,7 +16,9 @@ namespace Zenject
         public SubContainerDependencyProvider(
             Type dependencyType,
             object identifier,
-            ISubContainerCreator subContainerCreator, bool resolveAll)
+            ISubContainerCreator subContainerCreator,
+            bool resolveAll
+        )
         {
             _subContainerCreator = subContainerCreator;
             _dependencyType = dependencyType;
@@ -39,8 +41,7 @@ namespace Zenject
             return _dependencyType;
         }
 
-        InjectContext CreateSubContext(
-            InjectContext parent, DiContainer subContainer)
+        InjectContext CreateSubContext(InjectContext parent, DiContainer subContainer)
         {
             var subContext = parent.CreateSubContext(_dependencyType, _identifier);
 
@@ -53,11 +54,19 @@ namespace Zenject
         }
 
         public void GetAllInstancesWithInjectSplit(
-            InjectContext context, List<TypeValuePair> args, out Action injectAction, List<object> buffer)
+            InjectContext context,
+            List<TypeValuePair> args,
+            out Action injectAction,
+            List<object> buffer
+        )
         {
             Assert.IsNotNull(context);
 
-            var subContainer = _subContainerCreator.CreateSubContainer(args, context, out injectAction);
+            var subContainer = _subContainerCreator.CreateSubContainer(
+                args,
+                context,
+                out injectAction
+            );
 
             var subContext = CreateSubContext(context, subContainer);
 

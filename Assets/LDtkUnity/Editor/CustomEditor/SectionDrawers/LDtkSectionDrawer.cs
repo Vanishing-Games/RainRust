@@ -16,13 +16,13 @@ namespace LDtkUnity.Editor
         protected abstract string GuiTooltip { get; }
         protected abstract Texture GuiImage { get; }
         protected abstract string ReferenceLink { get; }
-        
+
         public bool HasResizedArrayPropThisUpdate { get; protected set; } = false;
 
-        protected LDtkProjectImporter ProjectImporter => (LDtkProjectImporter)SerializedObject?.targetObject;
+        protected LDtkProjectImporter ProjectImporter =>
+            (LDtkProjectImporter)SerializedObject?.targetObject;
         public virtual bool HasProblem => false;
-        protected virtual bool SupportsMultipleSelection => false; 
-        
+        protected virtual bool SupportsMultipleSelection => false;
 
         protected LDtkSectionDrawer(LDtkImporterEditor editor, SerializedObject serializedObject)
         {
@@ -34,12 +34,12 @@ namespace LDtkUnity.Editor
         {
             _dropdown = EditorPrefs.GetBool(GetType().Name, true);
         }
-        
+
         public virtual void Dispose()
         {
             EditorPrefs.SetBool(GetType().Name, _dropdown);
         }
-        
+
         public virtual void Draw()
         {
             DrawFoldoutArea();
@@ -47,15 +47,19 @@ namespace LDtkUnity.Editor
             //don't process any data or resize arrays when we have multi-selections; references will break because of how dynamic the arrays can be.
             if (SerializedObject.isEditingMultipleObjects && !SupportsMultipleSelection)
             {
-                EditorGUILayout.HelpBox($"Multi-object editing not supported for {GuiText}.", MessageType.None);
+                EditorGUILayout.HelpBox(
+                    $"Multi-object editing not supported for {GuiText}.",
+                    MessageType.None
+                );
                 return;
             }
-            
+
             if (CanDrawDropdown())
             {
                 DrawDropdownContent();
             }
         }
+
         protected virtual bool CanDrawDropdown()
         {
             return _dropdown;
@@ -67,16 +71,16 @@ namespace LDtkUnity.Editor
             Rect errorArea = new Rect(controlRect)
             {
                 x = controlRect.x + EditorGUIUtility.labelWidth - dimension + 1,
-                y = controlRect.y +1,
+                y = controlRect.y + 1,
                 width = dimension,
-                height = dimension
+                height = dimension,
             };
 
             GUIContent tooltipContent = new GUIContent()
             {
-                tooltip = "Expand this section to view the error"
+                tooltip = "Expand this section to view the error",
             };
-            
+
             GUI.Label(errorArea, tooltipContent);
             GUI.DrawTexture(errorArea, EditorGUIUtility.IconContent("console.warnicon.sml").image);
         }
@@ -99,7 +103,7 @@ namespace LDtkUnity.Editor
             {
                 text = GuiText,
                 tooltip = GuiTooltip,
-                image = GuiImage
+                image = GuiImage,
             };
 
             //Rect foldoutRect = controlRect;
@@ -109,9 +113,6 @@ namespace LDtkUnity.Editor
             _dropdown = EditorGUILayout.Foldout(_dropdown, content, style);
         }
 
-        protected virtual void DrawDropdownContent()
-        {
-            
-        }
+        protected virtual void DrawDropdownContent() { }
     }
 }

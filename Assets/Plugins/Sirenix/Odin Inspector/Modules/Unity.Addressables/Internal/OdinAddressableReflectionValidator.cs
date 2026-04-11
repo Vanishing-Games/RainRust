@@ -15,32 +15,34 @@ using Sirenix.OdinInspector.Modules.Addressables.Editor.Internal;
 
 namespace Sirenix.OdinInspector.Modules.Addressables.Editor.Internal
 {
-	public class OdinAddressableReflectionValidator : GlobalValidator
-	{
-		public override IEnumerable RunValidation(ValidationResult result)
-		{
-			OdinAddressableReflection.EnsureConstructed();
+    public class OdinAddressableReflectionValidator : GlobalValidator
+    {
+        public override IEnumerable RunValidation(ValidationResult result)
+        {
+            OdinAddressableReflection.EnsureConstructed();
 
-			FieldInfo[] fields = typeof(OdinAddressableReflection).GetFields(BindingFlags.Static | BindingFlags.Public);
+            FieldInfo[] fields = typeof(OdinAddressableReflection).GetFields(
+                BindingFlags.Static | BindingFlags.Public
+            );
 
-			for (var i = 0; i < fields.Length; i++)
-			{
-				if (fields[i].IsLiteral)
-				{
-					continue;
-				}
+            for (var i = 0; i < fields.Length; i++)
+            {
+                if (fields[i].IsLiteral)
+                {
+                    continue;
+                }
 
-				if (fields[i].GetValue(null) != null)
-				{
-					continue;
-				}
+                if (fields[i].GetValue(null) != null)
+                {
+                    continue;
+                }
 
-				result.AddError($"[Odin Addressable Module]: {fields[i].Name} was not found.");
-			}
+                result.AddError($"[Odin Addressable Module]: {fields[i].Name} was not found.");
+            }
 
-			return null;
-		}
-	}
+            return null;
+        }
+    }
 }
 #endif
 #endif

@@ -1,12 +1,14 @@
-﻿using Cysharp.Threading.Tasks.Internal;
-using System;
+﻿using System;
 using System.Threading;
+using Cysharp.Threading.Tasks.Internal;
 
 namespace Cysharp.Threading.Tasks.Linq
 {
     public static partial class UniTaskAsyncEnumerable
     {
-        public static IConnectableUniTaskAsyncEnumerable<TSource> Publish<TSource>(this IUniTaskAsyncEnumerable<TSource> source)
+        public static IConnectableUniTaskAsyncEnumerable<TSource> Publish<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
 
@@ -32,7 +34,8 @@ namespace Cysharp.Threading.Tasks.Linq
 
         public IDisposable Connect()
         {
-            if (connectedDisposable != null) return connectedDisposable;
+            if (connectedDisposable != null)
+                return connectedDisposable;
 
             if (enumerator == null)
             {
@@ -69,7 +72,9 @@ namespace Cysharp.Threading.Tasks.Linq
             }
         }
 
-        public IUniTaskAsyncEnumerator<TSource> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+        public IUniTaskAsyncEnumerator<TSource> GetAsyncEnumerator(
+            CancellationToken cancellationToken = default
+        )
         {
             return new _Publish(this, cancellationToken);
         }
@@ -89,7 +94,10 @@ namespace Cysharp.Threading.Tasks.Linq
             }
         }
 
-        sealed class _Publish : MoveNextSource, IUniTaskAsyncEnumerator<TSource>, ITriggerHandler<TSource>
+        sealed class _Publish
+            : MoveNextSource,
+                IUniTaskAsyncEnumerator<TSource>,
+                ITriggerHandler<TSource>
         {
             static readonly Action<object> CancelDelegate = OnCanceled;
 
@@ -100,14 +108,19 @@ namespace Cysharp.Threading.Tasks.Linq
 
             public _Publish(Publish<TSource> parent, CancellationToken cancellationToken)
             {
-                if (cancellationToken.IsCancellationRequested) return;
+                if (cancellationToken.IsCancellationRequested)
+                    return;
 
                 this.parent = parent;
                 this.cancellationToken = cancellationToken;
 
                 if (cancellationToken.CanBeCanceled)
                 {
-                    this.cancellationTokenRegistration = cancellationToken.RegisterWithoutCaptureExecutionContext(CancelDelegate, this);
+                    this.cancellationTokenRegistration =
+                        cancellationToken.RegisterWithoutCaptureExecutionContext(
+                            CancelDelegate,
+                            this
+                        );
                 }
 
                 parent.trigger.Add(this);
@@ -122,7 +135,8 @@ namespace Cysharp.Threading.Tasks.Linq
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                if (parent.isCompleted) return CompletedTasks.False;
+                if (parent.isCompleted)
+                    return CompletedTasks.False;
 
                 completionSource.Reset();
                 return new UniTask<bool>(this, completionSource.Version);

@@ -8,14 +8,14 @@ namespace Core
     {
         public static InputSettings Load()
         {
-            if (VgInputManager.Instance.inputSettings == null)
+            if (VgInputSystem.Instance.inputSettings == null)
             {
                 throw new CoreModuleException(
-                    "VgInputManager.Instance or InputSettings is null, cannot load settings"
+                    "VgInputSystem.Instance or InputSettings is null, cannot load settings"
                 );
             }
 
-            return VgInputManager.Instance.inputSettings;
+            return VgInputSystem.Instance.inputSettings;
         }
 
         [BoxGroup("Sensitivity Settings")]

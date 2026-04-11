@@ -8,19 +8,30 @@ namespace LDtkUnity.Editor
     {
         public delegate T ObjectCreation<out T>();
 
-        public static T CreateAssetButton<T>(Rect buttonRect, GUIContent content, string assetName, ObjectCreation<T> c, bool renameInProjectWindow) where T : Object
+        public static T CreateAssetButton<T>(
+            Rect buttonRect,
+            GUIContent content,
+            string assetName,
+            ObjectCreation<T> c,
+            bool renameInProjectWindow
+        )
+            where T : Object
         {
             if (!GUI.Button(buttonRect, content, EditorStyles.miniButton))
             {
                 return null;
             }
-            
+
             return CreateAsset(assetName, c, renameInProjectWindow);
         }
 
-        public static T CreateAsset<T>(string assetName, ObjectCreation<T> c, bool renameInProjectWindow) where T : Object
+        public static T CreateAsset<T>(
+            string assetName,
+            ObjectCreation<T> c,
+            bool renameInProjectWindow
+        )
+            where T : Object
         {
-            
             string selectedPath = GetSelectedPathOrFallback();
             string path = $"{selectedPath}{assetName}";
             string uniquePath = AssetDatabase.GenerateUniqueAssetPath(path);
@@ -39,7 +50,7 @@ namespace LDtkUnity.Editor
                 AssetDatabase.ImportAsset(uniquePath, ImportAssetOptions.Default);
                 EditorGUIUtility.PingObject(obj);
             }
-            
+
             return obj;
         }
 

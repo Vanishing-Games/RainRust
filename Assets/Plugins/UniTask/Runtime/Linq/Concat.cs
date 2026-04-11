@@ -1,12 +1,15 @@
-﻿using Cysharp.Threading.Tasks.Internal;
-using System;
+﻿using System;
 using System.Threading;
+using Cysharp.Threading.Tasks.Internal;
 
 namespace Cysharp.Threading.Tasks.Linq
 {
     public static partial class UniTaskAsyncEnumerable
     {
-        public static IUniTaskAsyncEnumerable<TSource> Concat<TSource>(this IUniTaskAsyncEnumerable<TSource> first, IUniTaskAsyncEnumerable<TSource> second)
+        public static IUniTaskAsyncEnumerable<TSource> Concat<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> first,
+            IUniTaskAsyncEnumerable<TSource> second
+        )
         {
             Error.ThrowArgumentNullException(first, nameof(first));
             Error.ThrowArgumentNullException(second, nameof(second));
@@ -20,13 +23,18 @@ namespace Cysharp.Threading.Tasks.Linq
         readonly IUniTaskAsyncEnumerable<TSource> first;
         readonly IUniTaskAsyncEnumerable<TSource> second;
 
-        public Concat(IUniTaskAsyncEnumerable<TSource> first, IUniTaskAsyncEnumerable<TSource> second)
+        public Concat(
+            IUniTaskAsyncEnumerable<TSource> first,
+            IUniTaskAsyncEnumerable<TSource> second
+        )
         {
             this.first = first;
             this.second = second;
         }
 
-        public IUniTaskAsyncEnumerator<TSource> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+        public IUniTaskAsyncEnumerator<TSource> GetAsyncEnumerator(
+            CancellationToken cancellationToken = default
+        )
         {
             return new _Concat(first, second, cancellationToken);
         }
@@ -39,7 +47,7 @@ namespace Cysharp.Threading.Tasks.Linq
             {
                 IteratingFirst,
                 IteratingSecond,
-                Complete
+                Complete,
             }
 
             readonly IUniTaskAsyncEnumerable<TSource> first;
@@ -51,7 +59,11 @@ namespace Cysharp.Threading.Tasks.Linq
             IUniTaskAsyncEnumerator<TSource> enumerator;
             UniTask<bool>.Awaiter awaiter;
 
-            public _Concat(IUniTaskAsyncEnumerable<TSource> first, IUniTaskAsyncEnumerable<TSource> second, CancellationToken cancellationToken)
+            public _Concat(
+                IUniTaskAsyncEnumerable<TSource> first,
+                IUniTaskAsyncEnumerable<TSource> second,
+                CancellationToken cancellationToken
+            )
             {
                 this.first = first;
                 this.second = second;
@@ -66,7 +78,8 @@ namespace Cysharp.Threading.Tasks.Linq
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                if (iteratingState == IteratingState.Complete) return CompletedTasks.False;
+                if (iteratingState == IteratingState.Complete)
+                    return CompletedTasks.False;
 
                 completionSource.Reset();
                 StartIterate();

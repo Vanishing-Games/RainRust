@@ -17,25 +17,32 @@ using UnityEngine.AddressableAssets;
 using Sirenix.OdinInspector.Modules.Addressables.Editor;
 
 #if ODIN_VALIDATOR_3_1
-[assembly: RegisterValidationRule(typeof(AssetLabelReferenceValidator), Description =
-	"This validator ensures that AssetLabelReferences marked with the Required attribute display an error " +
-	"message if they are not set. It can also be configured to require that all AssetLabelReferences be set " +
-	"by default; the Optional attribute can then be used to exclude specific AssetLabelReferences from " +
-	"validation.")]
+[assembly: RegisterValidationRule(
+    typeof(AssetLabelReferenceValidator),
+    Description = "This validator ensures that AssetLabelReferences marked with the Required attribute display an error "
+        + "message if they are not set. It can also be configured to require that all AssetLabelReferences be set "
+        + "by default; the Optional attribute can then be used to exclude specific AssetLabelReferences from "
+        + "validation."
+)]
+
+
 #else
 [assembly: RegisterValidator(typeof(AssetLabelReferenceValidator))]
+
 #endif
 
 namespace Sirenix.OdinInspector.Modules.Addressables.Editor
 {
-	/// <summary>
-	/// Validator for AssetLabelReference values.
-	/// </summary>
-	public class AssetLabelReferenceValidator : ValueValidator<AssetLabelReference>
+    /// <summary>
+    /// Validator for AssetLabelReference values.
+    /// </summary>
+    public class AssetLabelReferenceValidator : ValueValidator<AssetLabelReference>
     {
-        [Tooltip("If enabled, the validator will display an error message if the AssetLabelReference is not set. " +
-            "If disabled, the validator will only display an error message if the AssetLabelReference is set, but the " +
-            "assigned label does not exist.")]
+        [Tooltip(
+            "If enabled, the validator will display an error message if the AssetLabelReference is not set. "
+                + "If disabled, the validator will only display an error message if the AssetLabelReference is set, but the "
+                + "assigned label does not exist."
+        )]
         [ToggleLeft]
         public bool RequiredByDefault;
 
@@ -47,7 +54,8 @@ namespace Sirenix.OdinInspector.Modules.Addressables.Editor
         {
             var requiredAttr = this.Property.GetAttribute<RequiredAttribute>();
 
-            this.requiredMessage = requiredAttr?.ErrorMessage ?? $"<b>{this.Property.NiceName}</b> is required.";
+            this.requiredMessage =
+                requiredAttr?.ErrorMessage ?? $"<b>{this.Property.NiceName}</b> is required.";
 
             if (this.RequiredByDefault)
             {
@@ -66,8 +74,12 @@ namespace Sirenix.OdinInspector.Modules.Addressables.Editor
             // If the Addressables settings have not been created, nothing else is really valid.
             if (AddressableAssetSettingsDefaultObject.SettingsExists == false)
             {
-                result.AddError("Addressables Settings have not been created.")
-                    .WithButton("Open Settings Window", () => OdinAddressableUtility.OpenGroupsWindow());
+                result
+                    .AddError("Addressables Settings have not been created.")
+                    .WithButton(
+                        "Open Settings Window",
+                        () => OdinAddressableUtility.OpenGroupsWindow()
+                    );
                 return;
             }
 
@@ -86,13 +98,16 @@ namespace Sirenix.OdinInspector.Modules.Addressables.Editor
 
                 if (labels.Contains(value) == false)
                 {
-                    result.AddError($"Label <i>{value}</i> has not been created as a label.")
-                        .WithButton("Open Label Settings", () => OdinAddressableUtility.OpenLabelsWindow());
+                    result
+                        .AddError($"Label <i>{value}</i> has not been created as a label.")
+                        .WithButton(
+                            "Open Label Settings",
+                            () => OdinAddressableUtility.OpenLabelsWindow()
+                        );
                 }
             }
         }
     }
-
 }
 
 #endif

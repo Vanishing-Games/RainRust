@@ -10,7 +10,10 @@ namespace LDtkUnity.InternalBridge
 {
     internal static class InternalEditorBridge
     {
-        public static void RenderSortingLayerFields(SerializedProperty order, SerializedProperty layer)
+        public static void RenderSortingLayerFields(
+            SerializedProperty order,
+            SerializedProperty layer
+        )
         {
             SortingLayerEditorUtility.RenderSortingLayerFields(order, layer);
         }
@@ -20,19 +23,47 @@ namespace LDtkUnity.InternalBridge
             window.RepaintImmediately();
         }
 
-        public static ISpriteEditorDataProvider GetISpriteEditorDataProviderFromPath(string importedAsset)
+        public static ISpriteEditorDataProvider GetISpriteEditorDataProviderFromPath(
+            string importedAsset
+        )
         {
             return AssetImporter.GetAtPath(importedAsset) as ISpriteEditorDataProvider;
         }
 
-        public static void GenerateOutline(Texture2D texture, Rect rect, float detail, byte alphaTolerance, bool holeDetection, out Vector2[][] paths)
+        public static void GenerateOutline(
+            Texture2D texture,
+            Rect rect,
+            float detail,
+            byte alphaTolerance,
+            bool holeDetection,
+            out Vector2[][] paths
+        )
         {
-            UnityEditor.Sprites.SpriteUtility.GenerateOutline(texture, rect, detail, alphaTolerance, holeDetection, out paths);
+            UnityEditor.Sprites.SpriteUtility.GenerateOutline(
+                texture,
+                rect,
+                detail,
+                alphaTolerance,
+                holeDetection,
+                out paths
+            );
         }
-        
-        public static void GenerateOutlineFromSprite(Sprite sprite, float detail, byte alphaTolerance, bool holeDetection, out Vector2[][] paths)
+
+        public static void GenerateOutlineFromSprite(
+            Sprite sprite,
+            float detail,
+            byte alphaTolerance,
+            bool holeDetection,
+            out Vector2[][] paths
+        )
         {
-            UnityEditor.Sprites.SpriteUtility.GenerateOutlineFromSprite(sprite, detail, alphaTolerance, holeDetection, out paths);
+            UnityEditor.Sprites.SpriteUtility.GenerateOutlineFromSprite(
+                sprite,
+                detail,
+                alphaTolerance,
+                holeDetection,
+                out paths
+            );
         }
 
         public static bool DoesHardwareSupportsFullNPOT()
@@ -53,11 +84,12 @@ namespace LDtkUnity.InternalBridge
             SpriteUtilityWindow.ShowSpriteEditorWindow();
 #endif
         }
+
         /*public static void ApplySpriteEditorWindow()
         {
-            SpriteUtilityWindow.ApplySpriteEditorWindow();    
+            SpriteUtilityWindow.ApplySpriteEditorWindow();
         }*/
-        
+
         public static void ApplyWireMaterial()
         {
             HandleUtility.ApplyWireMaterial();
@@ -74,7 +106,10 @@ namespace LDtkUnity.InternalBridge
                     zoom.SetValue(spriteEditor, -1);
                 }
 
-                var scrollPosition = t.GetField("m_ScrollPosition", BindingFlags.Instance | BindingFlags.NonPublic);
+                var scrollPosition = t.GetField(
+                    "m_ScrollPosition",
+                    BindingFlags.Instance | BindingFlags.NonPublic
+                );
                 if (scrollPosition != null)
                 {
                     scrollPosition.SetValue(spriteEditor, new Vector2());
@@ -122,7 +157,8 @@ namespace LDtkUnity.InternalBridge
             return ProjectWindowUtil.GetActiveFolderPath();
         }
 
-        public static GUIContent GetIconContent<T>() where T : UnityEngine.Object 
+        public static GUIContent GetIconContent<T>()
+            where T : UnityEngine.Object
         {
             return EditorGUIUtility.IconContent<T>();
         }
@@ -131,7 +167,7 @@ namespace LDtkUnity.InternalBridge
         {
             return ProjectBrowser.kAssetCreationInstanceID_ForNonExistingAssets;
         }*/
-        
+
         /*public static VisualElement SceneViewCameraViewVisualElement(SceneView sc)
         {
             return sc.cameraViewVisualElement;
@@ -156,7 +192,7 @@ namespace LDtkUnity.InternalBridge
         {
             return EditorUtility.InstantiateForAnimatorPreview(original);
         }
-        
+
         public static void ShowAndLoadProfilerSample(string filename)
         {
             ProfilerWindow window = EditorWindow.GetWindow<ProfilerWindow>(false);
@@ -166,6 +202,7 @@ namespace LDtkUnity.InternalBridge
             }
         }
 
-        public static void AddManagedGameObject(this PreviewRenderUtility scene, GameObject go) => scene.AddManagedGO(go);
+        public static void AddManagedGameObject(this PreviewRenderUtility scene, GameObject go) =>
+            scene.AddManagedGO(go);
     }
 }

@@ -8,7 +8,7 @@ namespace AmplifyShaderEditor
 {
     public class DragAndDropTool
     {
-        public delegate void OnValidDropObject(params UnityEngine.Object[] draggedObjs );
+        public delegate void OnValidDropObject(params UnityEngine.Object[] draggedObjs);
         public event OnValidDropObject OnValidDropObjectEvt;
 
         public void Destroy()
@@ -16,30 +16,30 @@ namespace AmplifyShaderEditor
             OnValidDropObjectEvt = null;
         }
 
-        public void TestDragAndDrop( Rect dropArea )
+        public void TestDragAndDrop(Rect dropArea)
         {
             Event currentEvent = Event.current;
             EventType currentEventType = currentEvent.type;
-            
+
             switch (currentEventType)
             {
                 case EventType.DragUpdated:
                 case EventType.DragPerform:
-                {
-                    
-                    if (!dropArea.Contains(currentEvent.mousePosition))
-                        return;
-
-                    DragAndDrop.visualMode = DragAndDropVisualMode.Copy;
-                    if (currentEvent.type == EventType.DragPerform)
                     {
-                        DragAndDrop.AcceptDrag();
-                        if (OnValidDropObjectEvt != null)
+                        if (!dropArea.Contains(currentEvent.mousePosition))
+                            return;
+
+                        DragAndDrop.visualMode = DragAndDropVisualMode.Copy;
+                        if (currentEvent.type == EventType.DragPerform)
                         {
-                            OnValidDropObjectEvt(DragAndDrop.objectReferences);
+                            DragAndDrop.AcceptDrag();
+                            if (OnValidDropObjectEvt != null)
+                            {
+                                OnValidDropObjectEvt(DragAndDrop.objectReferences);
+                            }
                         }
                     }
-                }break;
+                    break;
                 //case EventType.DragExited:DragAndDrop.PrepareStartDrag();break;
             }
         }

@@ -8,14 +8,15 @@ namespace LDtkUnity.Editor
     internal abstract class LDtkGroupDrawer<TDef, TData, TDrawer> : LDtkContentDrawer<TData>
         where TDef : ILDtkIdentifier
         where TData : ILDtkIdentifier
-        where TDrawer : LDtkContentDrawer<TDef> 
+        where TDrawer : LDtkContentDrawer<TDef>
     {
         protected string Tag;
         protected readonly SerializedProperty ArrayProp;
-        
+
         private List<TDrawer> _drawers;
 
-        protected LDtkGroupDrawer(TData data, SerializedProperty serializedProperty) : base(data)
+        protected LDtkGroupDrawer(TData data, SerializedProperty serializedProperty)
+            : base(data)
         {
             ArrayProp = serializedProperty;
 
@@ -29,6 +30,7 @@ namespace LDtkUnity.Editor
         {
             _drawers = GetDrawersForGroup();
         }
+
         protected abstract List<TDrawer> GetDrawersForGroup();
 
         public override void Draw()
@@ -44,7 +46,7 @@ namespace LDtkUnity.Editor
                 valueDrawer?.Draw();
             }
         }
-        
+
         protected void DrawGroupLabel(string label)
         {
             GUILayout.Space(3);

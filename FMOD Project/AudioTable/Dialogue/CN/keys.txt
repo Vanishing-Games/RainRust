@@ -1,3 +1,0 @@
-welcome,cn_welcome.ogg
-main menu,cn_main_menu.ogg
-goodbye,cn_goodbye.ogg

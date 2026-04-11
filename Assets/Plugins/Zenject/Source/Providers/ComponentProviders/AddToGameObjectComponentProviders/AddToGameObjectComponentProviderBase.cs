@@ -19,9 +19,12 @@ namespace Zenject
         readonly Action<InjectContext, object> _instantiateCallback;
 
         public AddToGameObjectComponentProviderBase(
-            DiContainer container, Type componentType,
-            IEnumerable<TypeValuePair> extraArguments, object concreteIdentifier,
-            Action<InjectContext, object> instantiateCallback)
+            DiContainer container,
+            Type componentType,
+            IEnumerable<TypeValuePair> extraArguments,
+            object concreteIdentifier,
+            Action<InjectContext, object> instantiateCallback
+        )
         {
             Assert.That(componentType.DerivesFrom<Component>());
 
@@ -52,10 +55,7 @@ namespace Zenject
             get { return _componentType; }
         }
 
-        protected abstract bool ShouldToggleActive
-        {
-            get;
-        }
+        protected abstract bool ShouldToggleActive { get; }
 
         public Type GetInstanceType(InjectContext context)
         {
@@ -63,7 +63,11 @@ namespace Zenject
         }
 
         public void GetAllInstancesWithInjectSplit(
-            InjectContext context, List<TypeValuePair> args, out Action injectAction, List<object> buffer)
+            InjectContext context,
+            List<TypeValuePair> args,
+            out Action injectAction,
+            List<object> buffer
+        )
         {
             Assert.IsNotNull(context);
 
@@ -81,13 +85,15 @@ namespace Zenject
                 gameObj.SetActive(false);
             }
 
-            if (!_container.IsValidating || TypeAnalyzer.ShouldAllowDuringValidation(_componentType))
+            if (
+                !_container.IsValidating || TypeAnalyzer.ShouldAllowDuringValidation(_componentType)
+            )
             {
                 if (_componentType == typeof(Transform))
-                    // Treat transform as a special case because it's the one component that's always automatically added
-                    // Otherwise, calling AddComponent below will fail and return null
-                    // This is nice to allow doing things like
-                    //      Container.Bind<Transform>().FromNewComponentOnNewGameObject();
+                // Treat transform as a special case because it's the one component that's always automatically added
+                // Otherwise, calling AddComponent below will fail and return null
+                // This is nice to allow doing things like
+                //      Container.Bind<Transform>().FromNewComponentOnNewGameObject();
                 {
                     instance = gameObj.transform;
                 }
@@ -112,7 +118,13 @@ namespace Zenject
                     extraArgs.AllocFreeAddRange(_extraArguments);
                     extraArgs.AllocFreeAddRange(args);
 
-                    _container.InjectExplicit(instance, _componentType, extraArgs, context, _concreteIdentifier);
+                    _container.InjectExplicit(
+                        instance,
+                        _componentType,
+                        extraArgs,
+                        context,
+                        _concreteIdentifier
+                    );
 
                     Assert.That(extraArgs.Count == 0);
 

@@ -1,3 +1,0 @@
-welcome,jp_welcome.ogg
-main menu,jp_main_menu.ogg
-goodbye,jp_goodbye.ogg

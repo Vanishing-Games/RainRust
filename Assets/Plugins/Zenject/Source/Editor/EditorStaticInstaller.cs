@@ -1,4 +1,3 @@
-
 namespace Zenject
 {
     // Derive from this class, add [InitializeOnLoad], and then call Install

@@ -18,7 +18,8 @@ namespace Zenject.SpaceFighter
             Explosion.Factory explosionFactory,
             Settings settings,
             SignalBus signalBus,
-            EnemyFacade facade)
+            EnemyFacade facade
+        )
         {
             _facade = facade;
             _signalBus = signalBus;

@@ -4,31 +4,39 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using Sirenix.Serialization;
-using System.Reflection;
-using UnityEngine.Localization;
 using System;
+using System.Reflection;
+using Sirenix.Serialization;
+using UnityEngine.Localization;
 
 #if !ODIN_INSPECTOR_EDITOR_ONLY
-[assembly: RegisterFormatter(typeof(Sirenix.OdinInspector.Modules.Localization.LocalizedStringFormatter))]
+[assembly: RegisterFormatter(
+    typeof(Sirenix.OdinInspector.Modules.Localization.LocalizedStringFormatter)
+)]
+
 #endif
 
 namespace Sirenix.OdinInspector.Modules.Localization
 {
-    #if !ODIN_INSPECTOR_EDITOR_ONLY
+#if !ODIN_INSPECTOR_EDITOR_ONLY
     public class LocalizedStringFormatter : ReflectionOrEmittedBaseFormatter<LocalizedString>
     {
         private static readonly FieldInfo m_LocalVariables_Field;
 
         static LocalizedStringFormatter()
         {
-            m_LocalVariables_Field = typeof(LocalizedString).GetField("m_LocalVariables", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            m_LocalVariables_Field = typeof(LocalizedString).GetField(
+                "m_LocalVariables",
+                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance
+            );
 
             if (m_LocalVariables_Field == null)
             {
-                DefaultLoggers.DefaultLogger.LogError("Could not find field 'UnityEngine.LocalizedString.m_LocalVariables'" +
-                    " - the internals of the Localization package have changed, and deserialization of Odin-serialized" +
-                    " LocalizedString instances may be broken in some cases.");
+                DefaultLoggers.DefaultLogger.LogError(
+                    "Could not find field 'UnityEngine.LocalizedString.m_LocalVariables'"
+                        + " - the internals of the Localization package have changed, and deserialization of Odin-serialized"
+                        + " LocalizedString instances may be broken in some cases."
+                );
             }
         }
 
@@ -37,14 +45,17 @@ namespace Sirenix.OdinInspector.Modules.Localization
             return new LocalizedString();
         }
 
-        protected override void DeserializeImplementation(ref LocalizedString value, IDataReader reader)
+        protected override void DeserializeImplementation(
+            ref LocalizedString value,
+            IDataReader reader
+        )
         {
             base.DeserializeImplementation(ref value, reader);
 
             if (m_LocalVariables_Field != null && value != null)
             {
                 var localVariablesList = m_LocalVariables_Field.GetValue(value);
-                
+
                 // This list is not allowed to be null!
                 if (localVariablesList == null)
                 {
@@ -54,5 +65,5 @@ namespace Sirenix.OdinInspector.Modules.Localization
             }
         }
     }
-    #endif
+#endif
 }

@@ -1,15 +1,11 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using JetBrains.Annotations;
-
 using UnityEngine;
 using Object = UnityEngine.Object;
-
 #if UNITY_EDITOR
 using UnityEditor;
-
 #if UNITY_2020_2_OR_NEWER
 using UnityEditor.AssetImporters;
 #else
@@ -26,6 +22,7 @@ namespace LDtkUnity
 #if UNITY_EDITOR
         private readonly AssetImportContext _ctx;
         public readonly ImportLogEntries _entries;
+
         public LDtkDebugInstance(AssetImportContext ctx)
         {
             _ctx = ctx;
@@ -40,16 +37,16 @@ namespace LDtkUnity
             {
                 return;
             }
-            
+
             msg = LDtkDebug.Format(msg) + '\n' + StackTraceUtility.ExtractStackTrace();
             _ctx.LogImportError(msg, obj);
-            
-    #if !UNITY_2022_2_OR_NEWER
+
+#if !UNITY_2022_2_OR_NEWER
             _entries.Log(msg, ImportLogFlags.Error);
-    #endif
+#endif
 #endif
         }
-        
+
         public void LogWarning(string msg, Object obj = null)
         {
 #if UNITY_EDITOR
@@ -57,36 +54,38 @@ namespace LDtkUnity
             {
                 return;
             }
-            
+
             msg = LDtkDebug.Format(msg) + '\n' + StackTraceUtility.ExtractStackTrace();
 
             _ctx.LogImportWarning(msg, obj);
-            
-    #if !UNITY_2022_2_OR_NEWER
+
+#if !UNITY_2022_2_OR_NEWER
             _entries.Log(msg, ImportLogFlags.Warning);
-    #endif
+#endif
 #endif
         }
-        
+
         private bool ShouldBlockImport(string msg)
         {
             if (_importMessages.Contains(msg))
             {
                 return true;
             }
-            
+
             _importMessages.Add(msg);
             return false;
         }
     }
-    
-    #if UNITY_EDITOR
-    
+
+#if UNITY_EDITOR
+
     [Serializable]
     internal sealed class ImportLogEntries
     {
         public List<ImportLogEntry> _entries = new List<ImportLogEntry>();
-        [NonSerialized] public string AssetPath;
+
+        [NonSerialized]
+        public string AssetPath;
 
         public ImportLogEntries(string assetPath)
         {
@@ -95,30 +94,26 @@ namespace LDtkUnity
 
         public void Log(string msg, ImportLogFlags flag)
         {
-            _entries.Add(new ImportLogEntry()
-            {
-                _message = msg,
-                _flag = flag
-            });
+            _entries.Add(new ImportLogEntry() { _message = msg, _flag = flag });
         }
-        
+
         [UsedImplicitly]
         public void WriteTheEntries()
         {
             string dir = Dir();
             string path = FilePath();
-            
+
             Directory.CreateDirectory(dir);
             if (_entries.IsNullOrEmpty())
             {
                 File.WriteAllText(path, string.Empty);
                 return;
             }
-            
+
             string json = JsonUtility.ToJson(this);
             File.WriteAllText(path, json);
         }
-        
+
         [UsedImplicitly]
         public void ReadTheEntries()
         {
@@ -144,14 +139,18 @@ namespace LDtkUnity
 
         private string Dir()
         {
-            return Path.GetFullPath(Path.Combine(Application.dataPath, "..", "Library", "LDtkImportLogs"));
+            return Path.GetFullPath(
+                Path.Combine(Application.dataPath, "..", "Library", "LDtkImportLogs")
+            );
         }
+
         private string FilePath()
         {
             string guid = AssetDatabase.AssetPathToGUID(AssetPath);
             return Path.Combine(Dir(), $"{Path.GetFileNameWithoutExtension(AssetPath)}_{guid}.txt");
         }
     }
+
     [Serializable]
     public struct ImportLogEntry
     {
@@ -173,11 +172,11 @@ namespace LDtkUnity
             }
         }
     }
-    
+
     public enum ImportLogFlags
     {
         Warning = 0,
         Error = 1,
     }
-    #endif
+#endif
 }

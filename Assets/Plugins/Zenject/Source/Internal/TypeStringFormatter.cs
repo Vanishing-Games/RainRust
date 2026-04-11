@@ -68,7 +68,12 @@ namespace ModestTree
                     }
                     else
                     {
-                        sb.Append(string.Join(", ", type.GenericArguments().Select(t => t.PrettyName()).ToArray()));
+                        sb.Append(
+                            string.Join(
+                                ", ",
+                                type.GenericArguments().Select(t => t.PrettyName()).ToArray()
+                            )
+                        );
                     }
 
                     sb.Append(">");
@@ -109,4 +114,3 @@ namespace ModestTree
         }
     }
 }
-

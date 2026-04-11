@@ -41,7 +41,14 @@ namespace Zenject
                 var percent = 100.0 * (time / total);
                 var name = pair.Key;
 
-                result.Append("\n  {0:00.0}% ({1:00000}x) ({2:0000} ms) {3}".Fmt(percent, pair.Value.CallCount, time, name));
+                result.Append(
+                    "\n  {0:00.0}% ({1:00000}x) ({2:0000} ms) {3}".Fmt(
+                        percent,
+                        pair.Value.CallCount,
+                        time,
+                        name
+                    )
+                );
             }
 
             return result.ToString();
@@ -74,15 +81,16 @@ namespace Zenject
 
         class TimedBlock : IDisposable
         {
-            public static StaticMemoryPool<TimerInfo, TimedBlock> Pool =
-                new StaticMemoryPool<TimerInfo, TimedBlock>(OnSpawned, OnDespawned);
+            public static StaticMemoryPool<TimerInfo, TimedBlock> Pool = new StaticMemoryPool<
+                TimerInfo,
+                TimedBlock
+            >(OnSpawned, OnDespawned);
 
             readonly List<TimerInfo> _pausedTimers = new List<TimerInfo>();
 
             TimerInfo _exclusiveTimer;
 
-            static void OnSpawned(
-                TimerInfo exclusiveTimer, TimedBlock instance)
+            static void OnSpawned(TimerInfo exclusiveTimer, TimedBlock instance)
             {
                 Assert.That(instance._pausedTimers.Count == 0);
 
@@ -132,10 +140,7 @@ namespace Zenject
                 _timer = new Stopwatch();
             }
 
-            public int CallCount
-            {
-                get; set;
-            }
+            public int CallCount { get; set; }
 
             public double TotalMilliseconds
             {

@@ -26,7 +26,10 @@ namespace Cysharp.Threading.Tasks.Internal
                 var newArray = pool.Rent((index < newSize) ? newSize : (index * 2));
                 Array.Copy(array, 0, newArray, 0, array.Length);
 
-                pool.Return(array, clearArray: !RuntimeHelpersAbstraction.IsWellKnownNoReferenceContainsType<T>());
+                pool.Return(
+                    array,
+                    clearArray: !RuntimeHelpersAbstraction.IsWellKnownNoReferenceContainsType<T>()
+                );
 
                 array = newArray;
             }
@@ -112,4 +115,3 @@ namespace Cysharp.Threading.Tasks.Internal
         }
     }
 }
-

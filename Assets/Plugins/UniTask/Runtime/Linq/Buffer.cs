@@ -1,25 +1,35 @@
-﻿using Cysharp.Threading.Tasks.Internal;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using Cysharp.Threading.Tasks.Internal;
 
 namespace Cysharp.Threading.Tasks.Linq
 {
     public static partial class UniTaskAsyncEnumerable
     {
-        public static IUniTaskAsyncEnumerable<IList<TSource>> Buffer<TSource>(this IUniTaskAsyncEnumerable<TSource> source, Int32 count)
+        public static IUniTaskAsyncEnumerable<IList<TSource>> Buffer<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            Int32 count
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
-            if (count <= 0) throw Error.ArgumentOutOfRange(nameof(count));
+            if (count <= 0)
+                throw Error.ArgumentOutOfRange(nameof(count));
 
             return new Buffer<TSource>(source, count);
         }
 
-        public static IUniTaskAsyncEnumerable<IList<TSource>> Buffer<TSource>(this IUniTaskAsyncEnumerable<TSource> source, Int32 count, Int32 skip)
+        public static IUniTaskAsyncEnumerable<IList<TSource>> Buffer<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            Int32 count,
+            Int32 skip
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
-            if (count <= 0) throw Error.ArgumentOutOfRange(nameof(count));
-            if (skip <= 0) throw Error.ArgumentOutOfRange(nameof(skip));
+            if (count <= 0)
+                throw Error.ArgumentOutOfRange(nameof(count));
+            if (skip <= 0)
+                throw Error.ArgumentOutOfRange(nameof(skip));
 
             return new BufferSkip<TSource>(source, count, skip);
         }
@@ -36,7 +46,9 @@ namespace Cysharp.Threading.Tasks.Linq
             this.count = count;
         }
 
-        public IUniTaskAsyncEnumerator<IList<TSource>> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+        public IUniTaskAsyncEnumerator<IList<TSource>> GetAsyncEnumerator(
+            CancellationToken cancellationToken = default
+        )
         {
             return new _Buffer(source, count, cancellationToken);
         }
@@ -56,7 +68,11 @@ namespace Cysharp.Threading.Tasks.Linq
             bool completed;
             List<TSource> buffer;
 
-            public _Buffer(IUniTaskAsyncEnumerable<TSource> source, int count, CancellationToken cancellationToken)
+            public _Buffer(
+                IUniTaskAsyncEnumerable<TSource> source,
+                int count,
+                CancellationToken cancellationToken
+            )
             {
                 this.source = source;
                 this.count = count;
@@ -103,7 +119,6 @@ namespace Cysharp.Threading.Tasks.Linq
 
                 try
                 {
-
                     LOOP:
                     awaiter = enumerator.MoveNextAsync().GetAwaiter();
                     if (awaiter.IsCompleted)
@@ -126,7 +141,6 @@ namespace Cysharp.Threading.Tasks.Linq
                     completionSource.TrySetException(ex);
                 }
             }
-
 
             static void MoveNextCore(object state)
             {
@@ -192,7 +206,9 @@ namespace Cysharp.Threading.Tasks.Linq
             this.skip = skip;
         }
 
-        public IUniTaskAsyncEnumerator<IList<TSource>> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+        public IUniTaskAsyncEnumerator<IList<TSource>> GetAsyncEnumerator(
+            CancellationToken cancellationToken = default
+        )
         {
             return new _BufferSkip(source, count, skip, cancellationToken);
         }
@@ -214,7 +230,12 @@ namespace Cysharp.Threading.Tasks.Linq
             Queue<List<TSource>> buffers;
             int index = 0;
 
-            public _BufferSkip(IUniTaskAsyncEnumerable<TSource> source, int count, int skip, CancellationToken cancellationToken)
+            public _BufferSkip(
+                IUniTaskAsyncEnumerable<TSource> source,
+                int count,
+                int skip,
+                CancellationToken cancellationToken
+            )
             {
                 this.source = source;
                 this.count = count;
@@ -259,7 +280,6 @@ namespace Cysharp.Threading.Tasks.Linq
 
                 try
                 {
-
                     LOOP:
                     awaiter = enumerator.MoveNextAsync().GetAwaiter();
                     if (awaiter.IsCompleted)
@@ -282,7 +302,6 @@ namespace Cysharp.Threading.Tasks.Linq
                     completionSource.TrySetException(ex);
                 }
             }
-
 
             static void MoveNextCore(object state)
             {

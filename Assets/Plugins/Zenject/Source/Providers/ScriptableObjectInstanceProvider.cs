@@ -21,10 +21,14 @@ namespace Zenject
         readonly UnityEngine.Object _resource;
 
         public ScriptableObjectInstanceProvider(
-            UnityEngine.Object resource, Type resourceType,
-            DiContainer container, IEnumerable<TypeValuePair> extraArguments,
-            bool createNew, object concreteIdentifier,
-            Action<InjectContext, object> instantiateCallback)
+            UnityEngine.Object resource,
+            Type resourceType,
+            DiContainer container,
+            IEnumerable<TypeValuePair> extraArguments,
+            bool createNew,
+            object concreteIdentifier,
+            Action<InjectContext, object> instantiateCallback
+        )
         {
             _container = container;
             Assert.DerivesFromOrEqual<ScriptableObject>(resourceType);
@@ -53,7 +57,11 @@ namespace Zenject
         }
 
         public void GetAllInstancesWithInjectSplit(
-            InjectContext context, List<TypeValuePair> args, out Action injectAction, List<object> buffer)
+            InjectContext context,
+            List<TypeValuePair> args,
+            out Action injectAction,
+            List<object> buffer
+        )
         {
             Assert.IsNotNull(context);
 
@@ -78,7 +86,12 @@ namespace Zenject
                     extraArgs.AllocFreeAddRange(args);
 
                     _container.InjectExplicit(
-                        obj, _resourceType, extraArgs, context, _concreteIdentifier);
+                        obj,
+                        _resourceType,
+                        extraArgs,
+                        context,
+                        _concreteIdentifier
+                    );
 
                     ZenPools.DespawnList(extraArgs);
 
@@ -93,4 +106,3 @@ namespace Zenject
 }
 
 #endif
-

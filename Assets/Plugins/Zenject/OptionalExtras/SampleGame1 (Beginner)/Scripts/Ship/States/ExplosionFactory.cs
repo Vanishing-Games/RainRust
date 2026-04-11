@@ -2,8 +2,5 @@ using UnityEngine;
 
 namespace Zenject.Asteroids
 {
-    public class ExplosionFactory : PlaceholderFactory<Transform>
-    {
-    }
+    public class ExplosionFactory : PlaceholderFactory<Transform> { }
 }
-

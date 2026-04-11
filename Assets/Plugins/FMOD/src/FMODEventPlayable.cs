@@ -76,7 +76,10 @@ namespace FMODUnity
                 for (int i = 0; i < Parameters.Length; i++)
                 {
                     FMOD.Studio.PARAMETER_DESCRIPTION parameterDescription;
-                    eventDescription.getParameterDescriptionByName(Parameters[i].Name, out parameterDescription);
+                    eventDescription.getParameterDescriptionByName(
+                        Parameters[i].Name,
+                        out parameterDescription
+                    );
                     Parameters[i].ID = parameterDescription.id;
                 }
 
@@ -85,7 +88,10 @@ namespace FMODUnity
                 for (int i = 0; i < parameterLinks.Count; i++)
                 {
                     FMOD.Studio.PARAMETER_DESCRIPTION parameterDescription;
-                    eventDescription.getParameterDescriptionByName(parameterLinks[i].Name, out parameterDescription);
+                    eventDescription.getParameterDescriptionByName(
+                        parameterLinks[i].Name,
+                        out parameterDescription
+                    );
                     parameterLinks[i].ID = parameterDescription.id;
                 }
 
@@ -150,7 +156,7 @@ namespace FMODUnity
     {
         AllowFadeout,
         Immediate,
-        None
+        None,
     }
 
     [Serializable]
@@ -220,14 +226,22 @@ namespace FMODUnity
 #if UNITY_PHYSICS_EXIST
                     if (TrackTargetObject.GetComponent<Rigidbody>())
                     {
-                        RuntimeManager.AttachInstanceToGameObject(eventInstance, TrackTargetObject, TrackTargetObject.GetComponent<Rigidbody>());
+                        RuntimeManager.AttachInstanceToGameObject(
+                            eventInstance,
+                            TrackTargetObject,
+                            TrackTargetObject.GetComponent<Rigidbody>()
+                        );
                     }
                     else
 #endif
 #if UNITY_PHYSICS2D_EXIST
                     if (TrackTargetObject.GetComponent<Rigidbody2D>())
                     {
-                        RuntimeManager.AttachInstanceToGameObject(eventInstance, TrackTargetObject, TrackTargetObject.GetComponent<Rigidbody2D>());
+                        RuntimeManager.AttachInstanceToGameObject(
+                            eventInstance,
+                            TrackTargetObject,
+                            TrackTargetObject.GetComponent<Rigidbody2D>()
+                        );
                     }
                     else
 #endif
@@ -283,7 +297,11 @@ namespace FMODUnity
                     {
                         if (StopType != STOP_MODE.None)
                         {
-                            eventInstance.stop(StopType == STOP_MODE.Immediate ? FMOD.Studio.STOP_MODE.IMMEDIATE : FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
+                            eventInstance.stop(
+                                StopType == STOP_MODE.Immediate
+                                    ? FMOD.Studio.STOP_MODE.IMMEDIATE
+                                    : FMOD.Studio.STOP_MODE.ALLOWFADEOUT
+                            );
                         }
                         eventInstance.release();
                         eventInstance.clearHandle();

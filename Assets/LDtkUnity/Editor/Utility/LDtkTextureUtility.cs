@@ -4,12 +4,17 @@ namespace LDtkUnity.Editor
 {
     internal static class LDtkTextureUtility
     {
-        public static Sprite CreateSprite(Texture2D texture, Rect rect, Vector2 pivot, float pixelsPerUnit)
+        public static Sprite CreateSprite(
+            Texture2D texture,
+            Rect rect,
+            Vector2 pivot,
+            float pixelsPerUnit
+        )
         {
             //fullRect for performance reasons on import speed https://forum.unity.com/threads/any-way-to-speed-up-sprite-create.529525/
-            return Sprite.Create(texture, rect, pivot, pixelsPerUnit, 0U, SpriteMeshType.FullRect); 
+            return Sprite.Create(texture, rect, pivot, pixelsPerUnit, 0U, SpriteMeshType.FullRect);
         }
-        
+
         public static Color[] TintPixels(Texture2D srcTex, Color tint)
         {
             Color[] pixels = srcTex.GetPixels();
@@ -22,7 +27,7 @@ namespace LDtkUnity.Editor
 
             return pixels;
         }
-        
+
         //from https://stackoverflow.com/questions/56949217/how-to-resize-a-texture2d-using-height-and-width
         public static Texture2D ResizeStretchAsCopy(Texture2D source, int newWidth, int newHeight)
         {
@@ -32,7 +37,7 @@ namespace LDtkUnity.Editor
             RenderTexture.active = rt;
             Graphics.Blit(source, rt);
             Texture2D nTex = new Texture2D(newWidth, newHeight);
-            nTex.ReadPixels(new Rect(0, 0, newWidth, newHeight), 0,0);
+            nTex.ReadPixels(new Rect(0, 0, newWidth, newHeight), 0, 0);
             nTex.Apply();
             RenderTexture.active = null;
             RenderTexture.ReleaseTemporary(rt);
@@ -47,8 +52,13 @@ namespace LDtkUnity.Editor
             tex.Resize(width, height);
 #endif
         }
-        
-        public static void ResizeStretch(Texture2D source, int newWidth, int newHeight, FilterMode filterMode = FilterMode.Trilinear)
+
+        public static void ResizeStretch(
+            Texture2D source,
+            int newWidth,
+            int newHeight,
+            FilterMode filterMode = FilterMode.Trilinear
+        )
         {
             source.filterMode = filterMode;
             RenderTexture rt = RenderTexture.GetTemporary(newWidth, newHeight);
@@ -56,7 +66,7 @@ namespace LDtkUnity.Editor
             RenderTexture.active = rt;
             Graphics.Blit(source, rt);
             Resize(source, newWidth, newHeight);
-            source.ReadPixels(new Rect(0, 0, newWidth, newHeight), 0,0);
+            source.ReadPixels(new Rect(0, 0, newWidth, newHeight), 0, 0);
             source.Apply();
             RenderTexture.active = null;
             RenderTexture.ReleaseTemporary(rt);
@@ -65,8 +75,21 @@ namespace LDtkUnity.Editor
         public static Texture2D CreateSlice(Texture2D src, RectInt slice)
         {
             Texture2D dest = new Texture2D(slice.width, slice.height);
-            
-            Graphics.CopyTexture(src, 0, 0, slice.x, slice.y, slice.width, slice.height, dest, 0, 0, 0, 0);
+
+            Graphics.CopyTexture(
+                src,
+                0,
+                0,
+                slice.x,
+                slice.y,
+                slice.width,
+                slice.height,
+                dest,
+                0,
+                0,
+                0,
+                0
+            );
 
             return dest;
         }

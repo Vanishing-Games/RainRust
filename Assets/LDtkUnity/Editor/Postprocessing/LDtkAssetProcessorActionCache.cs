@@ -9,32 +9,40 @@ namespace LDtkUnity.Editor
     /// The stored actions are sorted by order before  </summary>
     internal sealed class LDtkAssetProcessorActionCache
     {
-        private readonly List<LDtkAssetProcessorAction> _assetProcessActions = new List<LDtkAssetProcessorAction>();
-        
+        private readonly List<LDtkAssetProcessorAction> _assetProcessActions =
+            new List<LDtkAssetProcessorAction>();
+
         public void AddProcessAction(int order, Action action, string debugInfo)
         {
-            _assetProcessActions.Add(new LDtkAssetProcessorAction()
-            {
-                Action = action,
-                Order = order,
-                DebugInfo = debugInfo,
-            });
+            _assetProcessActions.Add(
+                new LDtkAssetProcessorAction()
+                {
+                    Action = action,
+                    Order = order,
+                    DebugInfo = debugInfo,
+                }
+            );
         }
-        
-        public void TryAddInterfaceEvent<T>(MonoBehaviour[] behaviors, Action<T> action) where T : ILDtkImported
+
+        public void TryAddInterfaceEvent<T>(MonoBehaviour[] behaviors, Action<T> action)
+            where T : ILDtkImported
         {
             foreach (MonoBehaviour component in behaviors)
             {
                 if (component is T imported)
                 {
                     AddProcessAction(
-                        imported.GetPostprocessOrder(), 
-                        () => { action.Invoke(imported); },
-                        $"Interface\t<{typeof(T).Name}>\t({component.gameObject.name})");
+                        imported.GetPostprocessOrder(),
+                        () =>
+                        {
+                            action.Invoke(imported);
+                        },
+                        $"Interface\t<{typeof(T).Name}>\t({component.gameObject.name})"
+                    );
                 }
             }
         }
-        
+
         public void Process()
         {
             if (_assetProcessActions == null)
@@ -42,7 +50,7 @@ namespace LDtkUnity.Editor
                 LDtkDebug.LogError("LDtkPostProcessorCache not initialized first");
                 return;
             }
-            
+
             //sort everything to that execution is based on the user's custom inputs
             _assetProcessActions.Sort();
 
@@ -53,7 +61,7 @@ namespace LDtkUnity.Editor
                     LDtkDebug.Log($"Process: {action}");
                 }
             }
-            
+
             foreach (LDtkAssetProcessorAction action in _assetProcessActions)
             {
                 try
@@ -67,7 +75,7 @@ namespace LDtkUnity.Editor
             }
         }
     }
-    
+
     internal sealed class LDtkAssetProcessorAction : IComparable<LDtkAssetProcessorAction>
     {
         public int Order = 0;

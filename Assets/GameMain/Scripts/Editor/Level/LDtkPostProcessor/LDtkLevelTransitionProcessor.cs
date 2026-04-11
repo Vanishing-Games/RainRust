@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Core;
 using GameMain.RunTime;
 using LDtkUnity;
@@ -45,6 +46,14 @@ namespace GameMain.Editor
                         var levelTransition = transitionGo.AddComponent<LevelTransition>();
                         levelTransition.Index = indexCounter++;
 
+                        LDtkFields fields = transitionGo.GetComponent<LDtkFields>();
+                        if (fields != null)
+                        {
+                            var targetRef = fields.GetEntityReference("Target");
+                            if (targetRef != null)
+                                levelTransition.TargetIid = targetRef.EntityIid;
+                        }
+
                         EditorUtility.SetDirty(levelTransition);
                     }
                 }
@@ -58,52 +67,26 @@ namespace GameMain.Editor
                 LogTag.LDtkTransitionProcessor
             );
 
-            // Find all LevelTransition components in the project to link them
             LevelTransition[] allTransitions = root.GetComponentsInChildren<LevelTransition>();
+
+            var iidToTransition = new Dictionary<string, LevelTransition>();
+            foreach (var t in allTransitions)
+            {
+                var entity = t.GetComponent<LDtkComponentEntity>();
+                if (entity != null)
+                    iidToTransition[entity.Iid] = t;
+            }
 
             foreach (var transition in allTransitions)
             {
-                LDtkFields fields = transition.GetComponent<LDtkFields>();
-                var targetRef = fields.GetEntityReference("Target");
+                if (string.IsNullOrEmpty(transition.TargetIid))
+                    continue;
 
-                if (targetRef != null)
+                if (iidToTransition.TryGetValue(transition.TargetIid, out var targetComp))
                 {
-                    LDtkIid targetIidComponent = LDtkIidComponentBank.GetByIid(targetRef.EntityIid);
-
-                    if (targetIidComponent != null)
-                    {
-                        GameObject targetTransitionGo = targetIidComponent.gameObject;
-                        if (targetTransitionGo.TryGetComponent<LevelTransition>(out var targetComp))
-                        {
-                            transition.Target = targetComp;
-                        }
-                        else
-                        {
-                            CLogger.LogError(
-                                $"关卡出入口: {transition.name} 有设置对应的目标 {targetTransitionGo.name}, 但目标对象上缺少 LevelTransition 组件",
-                                LogTag.LDtkTransitionProcessor
-                            );
-                        }
-                    }
-                    else
-                    {
-                        CLogger.LogError(
-                            $"关卡出入口: {transition.name} 有设置对应的目标 IID: {targetRef.EntityIid}, 但却无法在项目中获取目标对象",
-                            LogTag.LDtkTransitionProcessor
-                        );
-                        transition.Target = null;
-                    }
+                    transition.Target = targetComp;
+                    EditorUtility.SetDirty(transition);
                 }
-                else
-                {
-                    CLogger.LogWarn(
-                        $"关卡出入口: {transition.name} 没有设置对应的目标, 请确认这是否正确",
-                        LogTag.LDtkTransitionProcessor
-                    );
-                    transition.Target = null;
-                }
-
-                EditorUtility.SetDirty(transition);
             }
         }
     }

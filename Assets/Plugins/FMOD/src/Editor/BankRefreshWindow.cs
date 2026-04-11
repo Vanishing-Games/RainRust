@@ -17,9 +17,15 @@ namespace FMODUnity
 
         private const float CloseDelay = 5;
 
-        public static bool IsVisible { get { return instance != null; } }
+        public static bool IsVisible
+        {
+            get { return instance != null; }
+        }
 
-        public static bool ReadyToRefreshBanks { get { return instance == null || instance.readyToRefreshBanks; } }
+        public static bool ReadyToRefreshBanks
+        {
+            get { return instance == null || instance.readyToRefreshBanks; }
+        }
 
         public static void ShowWindow()
         {
@@ -110,7 +116,11 @@ namespace FMODUnity
 
         private bool ConsumeEscapeKey()
         {
-            if ((focusedWindow == this) && Event.current.isKey && Event.current.keyCode == KeyCode.Escape)
+            if (
+                (focusedWindow == this)
+                && Event.current.isKey
+                && Event.current.keyCode == KeyCode.Escape
+            )
             {
                 Event.current.Use();
                 return true;
@@ -138,8 +148,13 @@ namespace FMODUnity
 
             if (timeSinceFileChange != float.MaxValue)
             {
-                GUILayout.Label(string.Format(L10n.Tr("The FMOD source banks changed {0} ago."),
-                    EditorUtils.DurationString(timeSinceFileChange)), labelStyle);
+                GUILayout.Label(
+                    string.Format(
+                        L10n.Tr("The FMOD source banks changed {0} ago."),
+                        EditorUtils.DurationString(timeSinceFileChange)
+                    ),
+                    labelStyle
+                );
 
                 float timeUntilBankRefresh = BankRefresher.TimeUntilBankRefresh();
 
@@ -150,8 +165,14 @@ namespace FMODUnity
                 }
                 else if (timeUntilBankRefresh != float.MaxValue)
                 {
-                    if (DrawCountdown(L10n.Tr("Refreshing banks"), timeUntilBankRefresh, Settings.Instance.BankRefreshCooldown, labelStyle)
-                        || ConsumeEscapeKey())
+                    if (
+                        DrawCountdown(
+                            L10n.Tr("Refreshing banks"),
+                            timeUntilBankRefresh,
+                            Settings.Instance.BankRefreshCooldown,
+                            labelStyle
+                        ) || ConsumeEscapeKey()
+                    )
                     {
                         BankRefresher.DisableAutoRefresh();
                     }
@@ -178,16 +199,31 @@ namespace FMODUnity
             {
                 float timeUntilClose = Mathf.Max(0, closeTime - Time.realtimeSinceStartup);
 
-                if (DrawCountdown(L10n.Tr("Closing"), timeUntilClose, CloseDelay, labelStyle) || ConsumeEscapeKey())
+                if (
+                    DrawCountdown(L10n.Tr("Closing"), timeUntilClose, CloseDelay, labelStyle)
+                    || ConsumeEscapeKey()
+                )
                 {
                     closeTime = float.MaxValue;
                 }
             }
         }
 
-        private static bool DrawCountdown(string text, float remainingTime, float totalTime, GUIStyle labelStyle)
+        private static bool DrawCountdown(
+            string text,
+            float remainingTime,
+            float totalTime,
+            GUIStyle labelStyle
+        )
         {
-            GUILayout.Label(string.Format(L10n.Tr("{0} in {1}..."), text, EditorUtils.DurationString(remainingTime)), labelStyle);
+            GUILayout.Label(
+                string.Format(
+                    L10n.Tr("{0} in {1}..."),
+                    text,
+                    EditorUtils.DurationString(remainingTime)
+                ),
+                labelStyle
+            );
 
             const float boxHeight = 2;
 
@@ -202,7 +238,10 @@ namespace FMODUnity
 
             GUIContent cancelContent = new GUIContent(L10n.Tr("Cancel"));
 
-            controlRect = EditorGUILayout.GetControlRect(false, EditorGUIUtility.singleLineHeight * 2);
+            controlRect = EditorGUILayout.GetControlRect(
+                false,
+                EditorGUIUtility.singleLineHeight * 2
+            );
 
             Rect buttonRect = controlRect;
             buttonRect.width = 100;
@@ -213,7 +252,10 @@ namespace FMODUnity
 
         private void DrawButtons()
         {
-            Rect rect = EditorGUILayout.GetControlRect(false, EditorGUIUtility.singleLineHeight * 2);
+            Rect rect = EditorGUILayout.GetControlRect(
+                false,
+                EditorGUIUtility.singleLineHeight * 2
+            );
 
             int buttonCount = 2;
 

@@ -10,7 +10,7 @@
         /// Triggers on an all level components that implements this interface during the import process.
         /// </summary>
         /// <param name="level">
-        /// The level. 
+        /// The level.
         /// </param>
         void OnLDtkImportLevel(Level level);
     }

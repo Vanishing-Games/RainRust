@@ -25,7 +25,7 @@ namespace LDtkUnity.Editor
             {
                 //avoiding this api call. tilemaps are none by default anyway
                 //map.SetTileFlags(cell, TileFlags.None);
-                
+
                 //only do the tilemap api calls when necessary, as it could get expensive
                 if (color != null && color.Value != Color.white)
                 {
@@ -37,17 +37,17 @@ namespace LDtkUnity.Editor
                 }
             }
         }
-        
+
         public TilemapTilesBuilder(Tilemap map, int capacity)
         {
             Map = map;
             _tilesToBuild = new Dictionary<Vector3Int, TileBase>(capacity);
             _extraData = new Dictionary<Vector3Int, ExtraData>(capacity);
-            
-            //in most realistic situations, tiles will not overlap, but we can overestimate anyways to avoid resizing 
+
+            //in most realistic situations, tiles will not overlap, but we can overestimate anyways to avoid resizing
             _depth = new Dictionary<Vector3Int, int>(10);
         }
-        
+
         /// <param name="cell">Z is always 0</param>
         public int GetNextCellZ(Vector3Int cell)
         {
@@ -60,7 +60,7 @@ namespace LDtkUnity.Editor
             _depth[cell] += 1;
             return _depth[cell];
         }
-        
+
         public void SetPendingTile(Vector3Int cell, TileBase tileAsset)
         {
             //if we try placing a tile on top of a spot that already occupies a tile, then increment z
@@ -73,15 +73,15 @@ namespace LDtkUnity.Editor
             Vector3Int[] cells = _tilesToBuild.Keys.ToArray();
             TileBase[] tiles = _tilesToBuild.Values.ToArray();
             LDtkProfiler.EndSample();
-            
+
             LDtkProfiler.BeginSample("Tilemap.SetTiles");
             Map.SetTiles(cells, tiles);
             LDtkProfiler.EndSample();
-            
+
             LDtkProfiler.BeginSample("CompressBounds");
             Map.CompressBounds();
             LDtkProfiler.EndSample();
-            
+
             LDtkProfiler.BeginSample("ApplyExtraData");
             ApplyExtraData();
             LDtkProfiler.EndSample();
@@ -90,7 +90,7 @@ namespace LDtkUnity.Editor
             {
                 return;
             }
-            
+
             LDtkProfiler.BeginSample("TryDestroyExtra");
             //for some reason a GameObject is instantiated causing two to exist in play mode; maybe because it's the import process. destroy it
             foreach (Vector3Int cell in cells)
@@ -106,21 +106,21 @@ namespace LDtkUnity.Editor
 
         public void ApplyExtraData()
         {
-            foreach (KeyValuePair<Vector3Int,ExtraData> pair in _extraData)
+            foreach (KeyValuePair<Vector3Int, ExtraData> pair in _extraData)
             {
                 pair.Value.ApplyExtraValues(Map, pair.Key);
             }
         }
 
         public void SetColor(Vector3Int cell, Color color)
-        {            
+        {
             if (!_extraData.ContainsKey(cell))
             {
                 _extraData.Add(cell, new ExtraData());
             }
             _extraData[cell].color = color;
         }
-        
+
         public void SetTransformMatrix(Vector3Int cell, Matrix4x4 matrix)
         {
             if (!_extraData.ContainsKey(cell))
@@ -129,9 +129,9 @@ namespace LDtkUnity.Editor
             }
             _extraData[cell].matrix = matrix;
         }
-        
+
         public void SetColorAndMatrix(Vector3Int cell, ref Color color, ref Matrix4x4 matrix)
-        {            
+        {
             _extraData.Add(cell, new ExtraData());
             _extraData[cell].color = color;
             _extraData[cell].matrix = matrix;

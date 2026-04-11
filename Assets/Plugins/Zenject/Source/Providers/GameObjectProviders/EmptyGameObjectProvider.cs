@@ -14,7 +14,9 @@ namespace Zenject
         readonly GameObjectCreationParameters _gameObjectBindInfo;
 
         public EmptyGameObjectProvider(
-            DiContainer container, GameObjectCreationParameters gameObjectBindInfo)
+            DiContainer container,
+            GameObjectCreationParameters gameObjectBindInfo
+        )
         {
             _gameObjectBindInfo = gameObjectBindInfo;
             _container = container;
@@ -36,7 +38,11 @@ namespace Zenject
         }
 
         public void GetAllInstancesWithInjectSplit(
-            InjectContext context, List<TypeValuePair> args, out Action injectAction, List<object> buffer)
+            InjectContext context,
+            List<TypeValuePair> args,
+            out Action injectAction,
+            List<object> buffer
+        )
         {
             Assert.IsEmpty(args);
 
@@ -49,4 +55,3 @@ namespace Zenject
 }
 
 #endif
-

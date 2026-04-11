@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 
 namespace Cysharp.Threading.Tasks
 {
@@ -11,4 +10,3 @@ namespace Cysharp.Threading.Tasks
         }
     }
 }
-

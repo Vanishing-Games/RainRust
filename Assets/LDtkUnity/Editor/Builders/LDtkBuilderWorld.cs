@@ -15,7 +15,14 @@ namespace LDtkUnity.Editor
         private LDtkComponentProject _projectComponent;
         private LDtkIid _iidComponent;
 
-        public LDtkBuilderWorld(GameObject worldObj, LDtkProjectImporter project, LdtkJson json, World world, LDtkAssetProcessorActionCache assetProcess, LDtkComponentProject projectComponent)
+        public LDtkBuilderWorld(
+            GameObject worldObj,
+            LDtkProjectImporter project,
+            LdtkJson json,
+            World world,
+            LDtkAssetProcessorActionCache assetProcess,
+            LDtkComponentProject projectComponent
+        )
         {
             _worldObject = worldObj;
             _project = project;
@@ -24,19 +31,19 @@ namespace LDtkUnity.Editor
             _assetProcess = assetProcess;
             _projectComponent = projectComponent;
         }
-        
+
         public LDtkComponentWorld BuildWorld()
         {
             AddComponents();
 
             LDtkComponentLevel[] levels = null;
-            
+
             //don't make levels if we are using separate levels because the levels in the project only contain root-level information
             if (!_json.ExternalLevels)
             {
                 levels = BuildLevels();
             }
-            
+
             InitWorldObject(levels);
 
             return _worldComponent;
@@ -49,8 +56,20 @@ namespace LDtkUnity.Editor
             for (int i = 0; i < _world.Levels.Length; i++)
             {
                 Level lvl = _world.Levels[i];
-                WorldLayout layout = _world.WorldLayout.HasValue ? _world.WorldLayout.Value : WorldLayout.Free;
-                LDtkBuilderLevel levelBuilder = new LDtkBuilderLevel(_project, _json, layout, lvl, null, _assetProcess, _project, _worldComponent, _linearVector);
+                WorldLayout layout = _world.WorldLayout.HasValue
+                    ? _world.WorldLayout.Value
+                    : WorldLayout.Free;
+                LDtkBuilderLevel levelBuilder = new LDtkBuilderLevel(
+                    _project,
+                    _json,
+                    layout,
+                    lvl,
+                    null,
+                    _assetProcess,
+                    _project,
+                    _worldComponent,
+                    _linearVector
+                );
 
                 LDtkProfiler.BeginSample("SetParent Level to World");
                 GameObject levelObj = levelBuilder.StubGameObject();
@@ -71,7 +90,7 @@ namespace LDtkUnity.Editor
             _worldComponent = _worldObject.AddComponent<LDtkComponentWorld>();
             _iidComponent = _worldObject.AddComponent<LDtkIid>();
         }
-        
+
         private void InitWorldObject(LDtkComponentLevel[] levels)
         {
             _iidComponent.SetIid(_world);

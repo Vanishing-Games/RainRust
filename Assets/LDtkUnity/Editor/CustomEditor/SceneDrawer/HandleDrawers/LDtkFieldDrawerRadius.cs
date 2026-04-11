@@ -10,7 +10,13 @@ namespace LDtkUnity.Editor
         private readonly float _gridSize;
         private readonly Color _smartColor;
 
-        public LDtkFieldDrawerRadius(LDtkFields fields, string identifier, EditorDisplayMode mode, float gridSize, Color smartColor)
+        public LDtkFieldDrawerRadius(
+            LDtkFields fields,
+            string identifier,
+            EditorDisplayMode mode,
+            float gridSize,
+            Color smartColor
+        )
         {
             _fields = fields;
             _identifier = identifier;
@@ -25,7 +31,7 @@ namespace LDtkUnity.Editor
             {
                 return;
             }
-            
+
             switch (_mode)
             {
                 case EditorDisplayMode.RadiusPx:
@@ -45,23 +51,31 @@ namespace LDtkUnity.Editor
                 LDtkDebug.LogError("Did not draw, avoided dividing by zero");
                 return;
             }
-            
-            float radius = GetRadius() / gridSize; 
+
+            float radius = GetRadius() / gridSize;
             float diameter = radius * 2;
-            
+
             UnityEditor.Handles.color = _smartColor;
 
-            HandleAAUtil.DrawAAEllipse(_fields.transform.position, Vector2.one * diameter, LDtkPrefs.FieldRadiusThickness, 0);
+            HandleAAUtil.DrawAAEllipse(
+                _fields.transform.position,
+                Vector2.one * diameter,
+                LDtkPrefs.FieldRadiusThickness,
+                0
+            );
         }
-        
+
         private float GetRadius()
         {
             if (!_fields.ContainsField(_identifier))
             {
-                LDtkDebug.LogWarning($"Fields component doesn't contain a field called {_identifier}, this should never happen. Try reverting prefab changes", _fields.gameObject);
+                LDtkDebug.LogWarning(
+                    $"Fields component doesn't contain a field called {_identifier}, this should never happen. Try reverting prefab changes",
+                    _fields.gameObject
+                );
                 return default;
             }
-            
+
             if (_fields.IsFieldOfType(_identifier, LDtkFieldType.Float))
             {
                 return _fields.GetFloat(_identifier);

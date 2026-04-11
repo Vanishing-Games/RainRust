@@ -5,27 +5,28 @@ using System.Security.Cryptography;
 namespace LDtkUnity.Editor
 {
     //this is for the editor scripts, so that selecting the importers subsequent times is quicker.
-    //We also want to store it in the editor, because storing in the object as a serialized field affects source control. 
-    //don't get confused, domain reload is different from a json file reimport. A json reimport does not cause a domain reload, so these values can indeed survive the reimport.  
+    //We also want to store it in the editor, because storing in the object as a serialized field affects source control.
+    //don't get confused, domain reload is different from a json file reimport. A json reimport does not cause a domain reload, so these values can indeed survive the reimport.
     internal sealed class LDtkJsonEditorCache
     {
-        private static readonly Dictionary<string, LDtkJsonEditorCacheInstance> GlobalCache = new Dictionary<string, LDtkJsonEditorCacheInstance>();
+        private static readonly Dictionary<string, LDtkJsonEditorCacheInstance> GlobalCache =
+            new Dictionary<string, LDtkJsonEditorCacheInstance>();
         public readonly LdtkJson Json;
         private readonly string _assetPath;
-        
+
         public LDtkJsonEditorCache(LDtkProjectImporter importer)
         {
             _assetPath = importer.assetPath;
-            
+
             TryCreateKey(_assetPath);
             TryReconstruct(importer);
-            
+
             if (GlobalCache[_assetPath] == null)
             {
                 LDtkDebug.LogError("A cached editor value is null, this should never be expected");
                 return;
             }
-            
+
             GlobalCache[_assetPath].ShouldReconstruct = false;
             Json = GlobalCache[_assetPath].Json;
         }
@@ -34,7 +35,7 @@ namespace LDtkUnity.Editor
         {
             //if the asset is null or check if the new hash is different from the last one, to update the json info for the editor. or if enforced
             byte[] newHash;
-            
+
             if (ShouldForceReconstruct())
             {
                 newHash = GetFileHash();
@@ -53,7 +54,9 @@ namespace LDtkUnity.Editor
             LdtkJson fromJson;
             try
             {
-                LDtkProfiler.BeginWriting($"JsonEditorCache/{Path.GetFileName(importer.assetPath)}");
+                LDtkProfiler.BeginWriting(
+                    $"JsonEditorCache/{Path.GetFileName(importer.assetPath)}"
+                );
                 fromJson = importer.FromJson<LdtkJson>(); //todo benchmark how long each one takes. a test run-through
             }
             finally
@@ -65,7 +68,7 @@ namespace LDtkUnity.Editor
             {
                 Hash = newHash,
                 Json = fromJson,
-                ShouldReconstruct = false
+                ShouldReconstruct = false,
             };
         }
 
@@ -103,7 +106,7 @@ namespace LDtkUnity.Editor
 
             return cache.ShouldReconstruct;
         }
-        
+
         private bool ShouldDeserialize(byte[] newHash)
         {
             if (!GlobalCache.ContainsKey(_assetPath))
@@ -121,16 +124,16 @@ namespace LDtkUnity.Editor
 
             byte[] prevHash = cache.Hash;
             bool areDifferent = !CompareHash(prevHash, newHash);
-            
+
             //Debug.Log($"Compare hashes: {(areDifferent ? "DIFFERENT" : "SAME")} for {_assetPath}\n{string.Join("", prevHash)}\n{string.Join("", newHash)}");
-            
+
             return areDifferent;
         }
-        
+
         private byte[] GetFileHash()
         {
             HashAlgorithm sha1 = HashAlgorithm.Create();
-            
+
             FileStream stream = new FileStream(_assetPath, FileMode.Open, FileAccess.Read);
             using (stream)
             {
@@ -140,21 +143,21 @@ namespace LDtkUnity.Editor
                 return hash;
             }
         }
-        
+
         private bool CompareHash(byte[] lhs, byte[] rhs)
         {
             if (rhs.Length != lhs.Length)
             {
                 return false;
             }
-            
+
             bool isEqual = false;
             int i = 0;
             while (i < rhs.Length && (rhs[i] == lhs[i]))
             {
                 i += 1;
             }
-            
+
             if (i == rhs.Length)
             {
                 isEqual = true;

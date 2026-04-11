@@ -14,7 +14,14 @@ namespace LDtkUnity.Editor
         private readonly Vector2 _middleCenter;
         private readonly Color _smartColor;
 
-        public LDtkFieldDrawerEntityRef(LDtkFields fields, string identifier, EditorDisplayMode mode, int pixelsPerUnit, Vector2 middleCenter, Color smartColor)
+        public LDtkFieldDrawerEntityRef(
+            LDtkFields fields,
+            string identifier,
+            EditorDisplayMode mode,
+            int pixelsPerUnit,
+            Vector2 middleCenter,
+            Color smartColor
+        )
         {
             _fields = fields;
             _identifier = identifier;
@@ -30,9 +37,8 @@ namespace LDtkUnity.Editor
             {
                 return;
             }
-            
-            GameObject[] refs = GetEntityRefs();
 
+            GameObject[] refs = GetEntityRefs();
 
             Handles.color = _smartColor;
             Vector3 pos = _fields.transform.position;
@@ -45,7 +51,7 @@ namespace LDtkUnity.Editor
                 }
 
                 //_mode = EditorDisplayMode.RefLinkBetweenCenters;
-                
+
                 switch (_mode)
                 {
                     case EditorDisplayMode.RefLinkBetweenCenters:
@@ -54,36 +60,42 @@ namespace LDtkUnity.Editor
                     case EditorDisplayMode.RefLinkBetweenPivots:
                         break;
                 }
-                
+
                 LDtkHandleDrawerUtil.RenderRefLink(pos, dest.transform.position, _pixelsPerUnit);
             }
         }
-        
+
         private GameObject[] GetEntityRefs()
         {
             if (!_fields.ContainsField(_identifier))
             {
-                LDtkDebug.LogWarning($"Fields component doesn't contain a field called {_identifier}, this should never happen. Try reverting prefab changes", _fields.gameObject);
+                LDtkDebug.LogWarning(
+                    $"Fields component doesn't contain a field called {_identifier}, this should never happen. Try reverting prefab changes",
+                    _fields.gameObject
+                );
                 return Array.Empty<GameObject>();
             }
-            
+
             if (_fields.IsFieldArray(_identifier))
             {
-                return _fields.GetEntityReferenceArray(_identifier).Select(p =>
-                {
-                    LDtkIid foundEntity = p.FindEntity();
-                    return foundEntity == null ? null : foundEntity.gameObject;
-                }).ToArray();
+                return _fields
+                    .GetEntityReferenceArray(_identifier)
+                    .Select(p =>
+                    {
+                        LDtkIid foundEntity = p.FindEntity();
+                        return foundEntity == null ? null : foundEntity.gameObject;
+                    })
+                    .ToArray();
             }
-            
+
             LDtkIid iid = _fields.GetEntityReference(_identifier).FindEntity();
-            
+
             //it's possible that the object doesnt exist if the entity was in another level for example.
             if (iid == null)
             {
                 return Array.Empty<GameObject>();
             }
-            
+
             GameObject entityRef = iid.gameObject;
             return new[] { entityRef };
         }

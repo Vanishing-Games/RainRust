@@ -4,7 +4,7 @@ namespace Zenject
     {
         OneAtATime,
         Double,
-        Disabled
+        Disabled,
     }
 
     [NoReflectionBaking]
@@ -16,20 +16,10 @@ namespace Zenject
             MaxSize = int.MaxValue;
         }
 
-        public PoolExpandMethods ExpandMethod
-        {
-            get; set;
-        }
+        public PoolExpandMethods ExpandMethod { get; set; }
 
-        public int InitialSize
-        {
-            get; set;
-        }
+        public int InitialSize { get; set; }
 
-        public int MaxSize
-        {
-            get; set;
-        }
+        public int MaxSize { get; set; }
     }
 }
-

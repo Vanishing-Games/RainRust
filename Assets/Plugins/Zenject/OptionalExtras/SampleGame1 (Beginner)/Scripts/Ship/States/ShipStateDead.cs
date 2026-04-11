@@ -16,10 +16,12 @@ namespace Zenject.Asteroids
         GameObject _explosion;
 
         public ShipStateDead(
-            Settings settings, Ship ship,
+            Settings settings,
+            Ship ship,
             ExplosionFactory explosionFactory,
             BrokenShipFactory brokenShipFactory,
-            SignalBus signalBus)
+            SignalBus signalBus
+        )
         {
             _signalBus = signalBus;
             _brokenShipFactory = brokenShipFactory;
@@ -61,9 +63,7 @@ namespace Zenject.Asteroids
             GameObject.Destroy(_shipBroken);
         }
 
-        public override void Update()
-        {
-        }
+        public override void Update() { }
 
         [Serializable]
         public class Settings
@@ -71,8 +71,6 @@ namespace Zenject.Asteroids
             public float explosionForce;
         }
 
-        public class Factory : PlaceholderFactory<ShipStateDead>
-        {
-        }
+        public class Factory : PlaceholderFactory<ShipStateDead> { }
     }
 }

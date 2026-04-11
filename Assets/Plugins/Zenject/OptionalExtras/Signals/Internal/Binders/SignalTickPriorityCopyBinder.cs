@@ -3,16 +3,12 @@ namespace Zenject
     [NoReflectionBaking]
     public class SignalTickPriorityCopyBinder : SignalCopyBinder
     {
-        public SignalTickPriorityCopyBinder(
-            SignalDeclarationBindInfo signalBindInfo)
+        public SignalTickPriorityCopyBinder(SignalDeclarationBindInfo signalBindInfo)
         {
             SignalBindInfo = signalBindInfo;
         }
 
-        protected SignalDeclarationBindInfo SignalBindInfo
-        {
-            get; private set;
-        }
+        protected SignalDeclarationBindInfo SignalBindInfo { get; private set; }
 
         public SignalCopyBinder WithTickPriority(int priority)
         {
@@ -22,4 +18,3 @@ namespace Zenject
         }
     }
 }
-

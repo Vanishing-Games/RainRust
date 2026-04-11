@@ -13,12 +13,19 @@ namespace LDtkUnity
         internal const string PROPERTY_TILE_LIST = nameof(_tiles);
         internal const string PROPERTY_ADDITIONAL_SPRITES = nameof(_additionalSprites);
 
-        [SerializeField] internal int _overrideTextureMultiplier = 1;
-        [SerializeField] internal Sprite[] _sprites;
-        [SerializeField] internal LDtkTilesetTile[] _tiles;
-        [SerializeField] internal Sprite[] _additionalSprites;
-        
-        // There isn't an easy way to index additional shapes in an optimized way when it comes to serialization 
+        [SerializeField]
+        internal int _overrideTextureMultiplier = 1;
+
+        [SerializeField]
+        internal Sprite[] _sprites;
+
+        [SerializeField]
+        internal LDtkTilesetTile[] _tiles;
+
+        [SerializeField]
+        internal Sprite[] _additionalSprites;
+
+        // There isn't an easy way to index additional shapes in an optimized way when it comes to serialization
 
         /// <summary>
         /// Indexed by tile id. Sprites can be null if all the tile's pixels were empty
@@ -29,18 +36,18 @@ namespace LDtkUnity
         /// Indexed by tile id
         /// </summary>
         public IReadOnlyList<LDtkTilesetTile> Tiles => _tiles;
-        
+
         /// <summary>
         /// These sprites are slices created from tile instances or any other situations that result in a larger area selection.
         /// Not indexed; Perform a lookup by comparing this list's rectangles.
         ///
         /// There are 8 possible sources of additional TilesetRectangle.
-        /// 
+        ///
         /// Instance-based possible sources of additional sprites are:
         /// - EntityInstance.Tile
         /// - EntityInstance.FieldInstances.Tile
         /// - Level.FieldInstances.Tile
-        /// 
+        ///
         /// Definition-based possible sources of additional sprites are:
         /// - AutoLayerRuleGroup.Icon
         /// - EntityDefinition.TileRect
@@ -53,7 +60,7 @@ namespace LDtkUnity
         internal Dictionary<Rect, Sprite> AllSpritesToConvertedDict()
         {
             int capacity = _sprites.Length + _additionalSprites.Length;
-            Dictionary<Rect,Sprite> dict = new Dictionary<Rect, Sprite>(capacity);
+            Dictionary<Rect, Sprite> dict = new Dictionary<Rect, Sprite>(capacity);
             foreach (Sprite sprite in _sprites)
             {
                 //sprite could be null due to clear pixels
@@ -61,13 +68,19 @@ namespace LDtkUnity
                 {
                     continue;
                 }
-                Rect convertedRect = LDtkCoordConverter.ImageSlice(sprite.rect, sprite.texture.height);
+                Rect convertedRect = LDtkCoordConverter.ImageSlice(
+                    sprite.rect,
+                    sprite.texture.height
+                );
                 ScaleDown(ref convertedRect);
                 dict.Add(convertedRect, sprite);
             }
             foreach (Sprite sprite in _additionalSprites)
             {
-                Rect convertedRect = LDtkCoordConverter.ImageSlice(sprite.rect, sprite.texture.height);
+                Rect convertedRect = LDtkCoordConverter.ImageSlice(
+                    sprite.rect,
+                    sprite.texture.height
+                );
                 ScaleDown(ref convertedRect);
                 if (!dict.ContainsKey(convertedRect))
                 {
@@ -76,7 +89,7 @@ namespace LDtkUnity
             }
             return dict;
         }
-        
+
         /// <summary>
         /// This tries iterating over every possible coordinate to track down a tileset index.
         /// Is only able to check for tiles that are the same size as GridSize, no additional sprites.
@@ -91,7 +104,7 @@ namespace LDtkUnity
 
             return _sprites[i];
         }
-        
+
         /// <summary>
         /// <seealso cref="LDtkDefinitionObjectsCache.GetSpriteForTilesetRectangle"/>
         /// </summary>
@@ -102,8 +115,9 @@ namespace LDtkUnity
 
             foreach (Sprite additionalSprite in _additionalSprites)
             {
-                
-                if (additionalSprite.rect == LDtkCoordConverter.ImageSlice(smallRect, textureHeight))
+                if (
+                    additionalSprite.rect == LDtkCoordConverter.ImageSlice(smallRect, textureHeight)
+                )
                 {
                     return additionalSprite;
                 }

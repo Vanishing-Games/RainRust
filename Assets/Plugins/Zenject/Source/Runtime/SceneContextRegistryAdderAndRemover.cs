@@ -9,7 +9,8 @@ namespace Zenject
 
         public SceneContextRegistryAdderAndRemover(
             SceneContext sceneContext,
-            SceneContextRegistry registry)
+            SceneContextRegistry registry
+        )
         {
             _registry = registry;
             _sceneContext = sceneContext;
@@ -26,4 +27,3 @@ namespace Zenject
         }
     }
 }
-

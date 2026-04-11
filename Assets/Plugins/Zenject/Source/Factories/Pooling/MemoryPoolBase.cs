@@ -8,9 +8,7 @@ namespace Zenject
     public class PoolExceededFixedSizeException : Exception
     {
         public PoolExceededFixedSizeException(string errorMessage)
-            : base(errorMessage)
-        {
-        }
+            : base(errorMessage) { }
     }
 
     [Serializable]
@@ -51,8 +49,8 @@ namespace Zenject
         void Construct(
             IFactory<TContract> factory,
             DiContainer container,
-            [InjectOptional]
-            MemoryPoolSettings settings)
+            [InjectOptional] MemoryPoolSettings settings
+        )
         {
             _settings = settings ?? MemoryPoolSettings.Default;
             _factory = factory;
@@ -117,8 +115,11 @@ namespace Zenject
 
         public void Despawn(TContract item)
         {
-            Assert.That(!_inactiveItems.Contains(item),
-                "Tried to return an item to pool {0} twice", GetType());
+            Assert.That(
+                !_inactiveItems.Contains(item),
+                "Tried to return an item to pool {0} twice",
+                GetType()
+            );
 
             _activeCount--;
 
@@ -148,7 +149,12 @@ namespace Zenject
 
                 if (!_container.IsValidating)
                 {
-                    Assert.IsNotNull(item, "Factory '{0}' returned null value when creating via {1}!", _factory.GetType(), GetType());
+                    Assert.IsNotNull(
+                        item,
+                        "Factory '{0}' returned null value when creating via {1}!",
+                        _factory.GetType(),
+                        GetType()
+                    );
                     OnCreated(item);
                 }
 
@@ -158,7 +164,11 @@ namespace Zenject
             {
                 throw new ZenjectException(
                     "Error during construction of type '{0}' via {1}.Create method!".Fmt(
-                        typeof(TContract), GetType()), e);
+                        typeof(TContract),
+                        GetType()
+                    ),
+                    e
+                );
             }
         }
 
@@ -170,8 +180,7 @@ namespace Zenject
             }
             catch (Exception e)
             {
-                throw new ZenjectException(
-                    "Validation for factory '{0}' failed".Fmt(GetType()), e);
+                throw new ZenjectException("Validation for factory '{0}' failed".Fmt(GetType()), e);
             }
         }
 
@@ -214,8 +223,11 @@ namespace Zenject
             if (_settings.ExpandMethod == PoolExpandMethods.Disabled)
             {
                 throw new PoolExceededFixedSizeException(
-                    "Pool factory '{0}' attempted resize but pool set to fixed size of '{1}'!"
-                    .Fmt(GetType(), _inactiveItems.Count));
+                    "Pool factory '{0}' attempted resize but pool set to fixed size of '{1}'!".Fmt(
+                        GetType(),
+                        _inactiveItems.Count
+                    )
+                );
             }
 
             Assert.That(desiredPoolSize >= 0, "Attempted to resize the pool to a negative amount");
@@ -240,8 +252,11 @@ namespace Zenject
                 case PoolExpandMethods.Disabled:
                 {
                     throw new PoolExceededFixedSizeException(
-                        "Pool factory '{0}' exceeded its fixed size of '{1}'!"
-                        .Fmt(GetType(), _inactiveItems.Count));
+                        "Pool factory '{0}' exceeded its fixed size of '{1}'!".Fmt(
+                            GetType(),
+                            _inactiveItems.Count
+                        )
+                    );
                 }
                 case PoolExpandMethods.OneAtATime:
                 {

@@ -9,9 +9,7 @@ namespace Zenject.SpaceFighter
 
         float _health = 100.0f;
 
-        public Player(
-            Rigidbody rigidBody,
-            MeshRenderer renderer)
+        public Player(Rigidbody rigidBody, MeshRenderer renderer)
         {
             _rigidBody = rigidBody;
             _renderer = renderer;
@@ -22,10 +20,7 @@ namespace Zenject.SpaceFighter
             get { return _renderer; }
         }
 
-        public bool IsDead
-        {
-            get; set;
-        }
+        public bool IsDead { get; set; }
 
         public float Health
         {

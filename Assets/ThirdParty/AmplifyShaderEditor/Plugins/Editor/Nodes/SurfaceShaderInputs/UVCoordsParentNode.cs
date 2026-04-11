@@ -21,7 +21,7 @@
 
 //		[SerializeField]
 //		private Vector2 m_tiling = new Vector2( 1, 1 );
-		
+
 //		protected override void CommonInit( int uniqueId )
 //		{
 //			base.CommonInit( uniqueId );

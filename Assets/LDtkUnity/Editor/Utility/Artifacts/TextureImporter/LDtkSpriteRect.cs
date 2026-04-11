@@ -9,7 +9,8 @@ namespace LDtkUnity.Editor
     [Serializable]
     internal sealed class LDtkSpriteRect : SpriteRect
     {
-        [SerializeField] private List<Outline> spriteOutline = new List<Outline>();
+        [SerializeField]
+        private List<Outline> spriteOutline = new List<Outline>();
         public float tessellationDetail;
 
         [Serializable]
@@ -17,9 +18,9 @@ namespace LDtkUnity.Editor
         {
             public Vector2[] shape = Array.Empty<Vector2>();
         }
-        public LDtkSpriteRect()
-        {
-        }
+
+        public LDtkSpriteRect() { }
+
         public LDtkSpriteRect(SpriteRect sr)
         {
             alignment = sr.alignment;
@@ -31,8 +32,10 @@ namespace LDtkUnity.Editor
         }
 
         public List<Vector2[]> GetOutlines() => spriteOutline.Select(p => p.shape).ToList();
-        public void SetOutlines(List<Vector2[]> outlines) => spriteOutline = outlines.Select(p => new Outline(){shape = p}).ToList();
-        
+
+        public void SetOutlines(List<Vector2[]> outlines) =>
+            spriteOutline = outlines.Select(p => new Outline() { shape = p }).ToList();
+
         public static Vector2 GetPivotValue(SpriteAlignment alignment, Vector2 customOffset)
         {
             switch (alignment)

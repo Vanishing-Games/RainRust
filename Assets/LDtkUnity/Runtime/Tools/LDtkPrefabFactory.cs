@@ -4,7 +4,8 @@ namespace LDtkUnity
 {
     internal static class LDtkPrefabFactory
     {
-        public static T Instantiate<T>(T prefab) where T : Object
+        public static T Instantiate<T>(T prefab)
+            where T : Object
         {
             Object entityObj = null;
             if (Application.isPlaying)
@@ -22,7 +23,7 @@ namespace LDtkUnity
             {
                 return (T)entityObj;
             }
-            
+
             LDtkDebug.LogError("Entity null when trying to instantiate");
             return null;
         }

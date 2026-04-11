@@ -11,20 +11,20 @@ namespace LDtkUnity.Editor
         private static readonly GUIContent ReimportProjectButton = new GUIContent()
         {
             text = "Reimport Project",
-            tooltip = "Reimport this asset's project."
+            tooltip = "Reimport this asset's project.",
         };
-        
+
         private GUIContent _buttonContent;
         protected GameObject _projectAsset;
 
         public override void OnEnable()
         {
             base.OnEnable();
-            
+
             _buttonContent = new GUIContent
             {
                 text = "Source Project",
-                image = LDtkIconUtility.LoadProjectFileIcon()
+                image = LDtkIconUtility.LoadProjectFileIcon(),
             };
         }
 
@@ -32,7 +32,9 @@ namespace LDtkUnity.Editor
         {
             if (!_projectAsset)
             {
-                DrawTextBox("Could not locate the source project asset. Make sure LDtk can also load this asset from it's project, and try again.");
+                DrawTextBox(
+                    "Could not locate the source project asset. Make sure LDtk can also load this asset from it's project, and try again."
+                );
                 return;
             }
 
@@ -42,7 +44,12 @@ namespace LDtkUnity.Editor
                 {
                     using (new EditorGUIUtility.IconSizeScope(Vector2.one * 16))
                     {
-                        EditorGUILayout.ObjectField(_buttonContent, _projectAsset, typeof(GameObject), false);
+                        EditorGUILayout.ObjectField(
+                            _buttonContent,
+                            _projectAsset,
+                            typeof(GameObject),
+                            false
+                        );
                     }
                 }
 

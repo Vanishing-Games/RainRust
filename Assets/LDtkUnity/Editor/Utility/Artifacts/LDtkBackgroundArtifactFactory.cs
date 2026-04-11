@@ -7,18 +7,27 @@ namespace LDtkUnity.Editor
         private readonly LDtkTextureSpriteSlicer _slicer;
         private readonly string _assetName;
 
-        public LDtkBackgroundArtifactFactory(string assetName, Texture2D srcTex, int pixelsPerUnit, Level lvl)
+        public LDtkBackgroundArtifactFactory(
+            string assetName,
+            Texture2D srcTex,
+            int pixelsPerUnit,
+            Level lvl
+        )
         {
             Rect rect = lvl.BgPos.UnityCropRect;
-            rect.position = LDtkCoordConverter.LevelBackgroundImageSliceCoord(rect.position, srcTex.height, rect.height);
+            rect.position = LDtkCoordConverter.LevelBackgroundImageSliceCoord(
+                rect.position,
+                srcTex.height,
+                rect.height
+            );
 
             Vector2 pivot = lvl.UnityBgPivot;
-            pivot.y = 1f - pivot.y; 
+            pivot.y = 1f - pivot.y;
 
             _slicer = new LDtkTextureSpriteSlicer(srcTex, rect, pixelsPerUnit, pivot);
             _assetName = assetName;
         }
-        
+
         public Sprite CreateBackground()
         {
             Sprite sprite = _slicer.Slice();

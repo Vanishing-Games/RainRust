@@ -7,7 +7,7 @@ namespace Cysharp.Threading.Tasks
         {
             await awaitable;
         }
-        
+
         public static async UniTask<T> AsUniTask<T>(this UnityEngine.Awaitable<T> awaitable)
         {
             return await awaitable;

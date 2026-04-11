@@ -17,7 +17,9 @@ namespace Zenject
         public PrefabBindingFinalizer(
             BindInfo bindInfo,
             GameObjectCreationParameters gameObjectBindInfo,
-            UnityEngine.Object prefab, Func<Type, IPrefabInstantiator, IProvider> providerFactory)
+            UnityEngine.Object prefab,
+            Func<Type, IPrefabInstantiator, IProvider> providerFactory
+        )
             : base(bindInfo)
         {
             _gameObjectBindInfo = gameObjectBindInfo;
@@ -59,7 +61,10 @@ namespace Zenject
                                     concreteTypes,
                                     BindInfo.Arguments,
                                     new PrefabProvider(_prefab),
-                                    BindInfo.InstantiatedCallback)));
+                                    BindInfo.InstantiatedCallback
+                                )
+                            )
+                    );
                     break;
                 }
                 case ScopeTypes.Singleton:
@@ -68,8 +73,10 @@ namespace Zenject
 
                     if (argumentTarget == null)
                     {
-                        Assert.That(BindInfo.Arguments.IsEmpty(),
-                            "Cannot provide arguments to prefab instantiator when using more than one concrete type");
+                        Assert.That(
+                            BindInfo.Arguments.IsEmpty(),
+                            "Cannot provide arguments to prefab instantiator when using more than one concrete type"
+                        );
                     }
 
                     var prefabCreator = new PrefabInstantiatorCached(
@@ -80,13 +87,18 @@ namespace Zenject
                             concreteTypes,
                             BindInfo.Arguments,
                             new PrefabProvider(_prefab),
-                            BindInfo.InstantiatedCallback));
+                            BindInfo.InstantiatedCallback
+                        )
+                    );
 
                     RegisterProvidersForAllContractsPerConcreteType(
                         container,
                         concreteTypes,
-                        (_, concreteType) => BindingUtil.CreateCachedProvider(
-                            _providerFactory(concreteType, prefabCreator)));
+                        (_, concreteType) =>
+                            BindingUtil.CreateCachedProvider(
+                                _providerFactory(concreteType, prefabCreator)
+                            )
+                    );
                     break;
                 }
                 default:
@@ -116,7 +128,10 @@ namespace Zenject
                                     BindInfo.ContractTypes,
                                     BindInfo.Arguments,
                                     new PrefabProvider(_prefab),
-                                    BindInfo.InstantiatedCallback)));
+                                    BindInfo.InstantiatedCallback
+                                )
+                            )
+                    );
                     break;
                 }
                 case ScopeTypes.Singleton:
@@ -125,8 +140,10 @@ namespace Zenject
 
                     if (argumentTarget == null)
                     {
-                        Assert.That(BindInfo.Arguments.IsEmpty(),
-                            "Cannot provide arguments to prefab instantiator when using more than one concrete type");
+                        Assert.That(
+                            BindInfo.Arguments.IsEmpty(),
+                            "Cannot provide arguments to prefab instantiator when using more than one concrete type"
+                        );
                     }
 
                     var prefabCreator = new PrefabInstantiatorCached(
@@ -137,13 +154,17 @@ namespace Zenject
                             BindInfo.ContractTypes,
                             BindInfo.Arguments,
                             new PrefabProvider(_prefab),
-                            BindInfo.InstantiatedCallback));
+                            BindInfo.InstantiatedCallback
+                        )
+                    );
 
                     RegisterProviderPerContract(
                         container,
                         (_, contractType) =>
                             BindingUtil.CreateCachedProvider(
-                                _providerFactory(contractType, prefabCreator)));
+                                _providerFactory(contractType, prefabCreator)
+                            )
+                    );
                     break;
                 }
                 default:

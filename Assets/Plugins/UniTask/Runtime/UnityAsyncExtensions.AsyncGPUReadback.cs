@@ -1,4 +1,4 @@
-﻿ #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+﻿#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
 using System;
 using System.Threading;
@@ -10,28 +10,59 @@ namespace Cysharp.Threading.Tasks
     {
         #region AsyncGPUReadbackRequest
 
-        public static UniTask<AsyncGPUReadbackRequest>.Awaiter GetAwaiter(this AsyncGPUReadbackRequest asyncOperation)
+        public static UniTask<AsyncGPUReadbackRequest>.Awaiter GetAwaiter(
+            this AsyncGPUReadbackRequest asyncOperation
+        )
         {
             return ToUniTask(asyncOperation).GetAwaiter();
         }
 
-        public static UniTask<AsyncGPUReadbackRequest> WithCancellation(this AsyncGPUReadbackRequest asyncOperation, CancellationToken cancellationToken)
+        public static UniTask<AsyncGPUReadbackRequest> WithCancellation(
+            this AsyncGPUReadbackRequest asyncOperation,
+            CancellationToken cancellationToken
+        )
         {
             return ToUniTask(asyncOperation, cancellationToken: cancellationToken);
         }
 
-        public static UniTask<AsyncGPUReadbackRequest> WithCancellation(this AsyncGPUReadbackRequest asyncOperation, CancellationToken cancellationToken, bool cancelImmediately)
+        public static UniTask<AsyncGPUReadbackRequest> WithCancellation(
+            this AsyncGPUReadbackRequest asyncOperation,
+            CancellationToken cancellationToken,
+            bool cancelImmediately
+        )
         {
-            return ToUniTask(asyncOperation, cancellationToken: cancellationToken, cancelImmediately: cancelImmediately);
+            return ToUniTask(
+                asyncOperation,
+                cancellationToken: cancellationToken,
+                cancelImmediately: cancelImmediately
+            );
         }
 
-        public static UniTask<AsyncGPUReadbackRequest> ToUniTask(this AsyncGPUReadbackRequest asyncOperation, PlayerLoopTiming timing = PlayerLoopTiming.Update, CancellationToken cancellationToken = default(CancellationToken), bool cancelImmediately = false)
+        public static UniTask<AsyncGPUReadbackRequest> ToUniTask(
+            this AsyncGPUReadbackRequest asyncOperation,
+            PlayerLoopTiming timing = PlayerLoopTiming.Update,
+            CancellationToken cancellationToken = default(CancellationToken),
+            bool cancelImmediately = false
+        )
         {
-            if (asyncOperation.done) return UniTask.FromResult(asyncOperation);
-            return new UniTask<AsyncGPUReadbackRequest>(AsyncGPUReadbackRequestAwaiterConfiguredSource.Create(asyncOperation, timing, cancellationToken, cancelImmediately, out var token), token);
+            if (asyncOperation.done)
+                return UniTask.FromResult(asyncOperation);
+            return new UniTask<AsyncGPUReadbackRequest>(
+                AsyncGPUReadbackRequestAwaiterConfiguredSource.Create(
+                    asyncOperation,
+                    timing,
+                    cancellationToken,
+                    cancelImmediately,
+                    out var token
+                ),
+                token
+            );
         }
-        
-        sealed class AsyncGPUReadbackRequestAwaiterConfiguredSource : IUniTaskSource<AsyncGPUReadbackRequest>, IPlayerLoopItem, ITaskPoolNode<AsyncGPUReadbackRequestAwaiterConfiguredSource>
+
+        sealed class AsyncGPUReadbackRequestAwaiterConfiguredSource
+            : IUniTaskSource<AsyncGPUReadbackRequest>,
+                IPlayerLoopItem,
+                ITaskPoolNode<AsyncGPUReadbackRequestAwaiterConfiguredSource>
         {
             static TaskPool<AsyncGPUReadbackRequestAwaiterConfiguredSource> pool;
             AsyncGPUReadbackRequestAwaiterConfiguredSource nextNode;
@@ -39,7 +70,10 @@ namespace Cysharp.Threading.Tasks
 
             static AsyncGPUReadbackRequestAwaiterConfiguredSource()
             {
-                TaskPool.RegisterSizeGetter(typeof(AsyncGPUReadbackRequestAwaiterConfiguredSource), () => pool.Size);
+                TaskPool.RegisterSizeGetter(
+                    typeof(AsyncGPUReadbackRequestAwaiterConfiguredSource),
+                    () => pool.Size
+                );
             }
 
             AsyncGPUReadbackRequest asyncOperation;
@@ -48,15 +82,22 @@ namespace Cysharp.Threading.Tasks
             bool cancelImmediately;
             UniTaskCompletionSourceCore<AsyncGPUReadbackRequest> core;
 
-            AsyncGPUReadbackRequestAwaiterConfiguredSource()
-            {
-            }
+            AsyncGPUReadbackRequestAwaiterConfiguredSource() { }
 
-            public static IUniTaskSource<AsyncGPUReadbackRequest> Create(AsyncGPUReadbackRequest asyncOperation, PlayerLoopTiming timing, CancellationToken cancellationToken, bool cancelImmediately, out short token)
+            public static IUniTaskSource<AsyncGPUReadbackRequest> Create(
+                AsyncGPUReadbackRequest asyncOperation,
+                PlayerLoopTiming timing,
+                CancellationToken cancellationToken,
+                bool cancelImmediately,
+                out short token
+            )
             {
                 if (cancellationToken.IsCancellationRequested)
                 {
-                    return AutoResetUniTaskCompletionSource<AsyncGPUReadbackRequest>.CreateFromCanceled(cancellationToken, out token);
+                    return AutoResetUniTaskCompletionSource<AsyncGPUReadbackRequest>.CreateFromCanceled(
+                        cancellationToken,
+                        out token
+                    );
                 }
 
                 if (!pool.TryPop(out var result))
@@ -67,14 +108,18 @@ namespace Cysharp.Threading.Tasks
                 result.asyncOperation = asyncOperation;
                 result.cancellationToken = cancellationToken;
                 result.cancelImmediately = cancelImmediately;
-                
+
                 if (cancelImmediately && cancellationToken.CanBeCanceled)
                 {
-                    result.cancellationTokenRegistration = cancellationToken.RegisterWithoutCaptureExecutionContext(state =>
-                    {
-                        var promise = (AsyncGPUReadbackRequestAwaiterConfiguredSource)state;
-                        promise.core.TrySetCanceled(promise.cancellationToken);
-                    }, result);
+                    result.cancellationTokenRegistration =
+                        cancellationToken.RegisterWithoutCaptureExecutionContext(
+                            state =>
+                            {
+                                var promise = (AsyncGPUReadbackRequestAwaiterConfiguredSource)state;
+                                promise.core.TrySetCanceled(promise.cancellationToken);
+                            },
+                            result
+                        );
                 }
 
                 TaskTracker.TrackActiveTask(result, 3);

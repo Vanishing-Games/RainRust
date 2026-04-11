@@ -1,4 +1,3 @@
-
 namespace Zenject
 {
     // This is installed by default in ProjectContext, however, if you are using Zenject outside
@@ -13,9 +12,15 @@ namespace Zenject
     {
         public override void InstallBindings()
         {
-            Container.Bind(typeof(TickableManager), typeof(InitializableManager), typeof(DisposableManager))
-                .ToSelf().AsSingle().CopyIntoAllSubContainers();
+            Container
+                .Bind(
+                    typeof(TickableManager),
+                    typeof(InitializableManager),
+                    typeof(DisposableManager)
+                )
+                .ToSelf()
+                .AsSingle()
+                .CopyIntoAllSubContainers();
         }
     }
 }
-

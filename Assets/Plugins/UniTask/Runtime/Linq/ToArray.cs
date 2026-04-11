@@ -1,13 +1,16 @@
-﻿using Cysharp.Threading.Tasks.Internal;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using Cysharp.Threading.Tasks.Internal;
 
 namespace Cysharp.Threading.Tasks.Linq
 {
     public static partial class UniTaskAsyncEnumerable
     {
-        public static UniTask<TSource[]> ToArrayAsync<TSource>(this IUniTaskAsyncEnumerable<TSource> source, CancellationToken cancellationToken = default)
+        public static UniTask<TSource[]> ToArrayAsync<TSource>(
+            this IUniTaskAsyncEnumerable<TSource> source,
+            CancellationToken cancellationToken = default
+        )
         {
             Error.ThrowArgumentNullException(source, nameof(source));
 
@@ -17,7 +20,10 @@ namespace Cysharp.Threading.Tasks.Linq
 
     internal static class ToArray
     {
-        internal static async UniTask<TSource[]> ToArrayAsync<TSource>(IUniTaskAsyncEnumerable<TSource> source, CancellationToken cancellationToken)
+        internal static async UniTask<TSource[]> ToArrayAsync<TSource>(
+            IUniTaskAsyncEnumerable<TSource> source,
+            CancellationToken cancellationToken
+        )
         {
             var pool = ArrayPool<TSource>.Shared;
             var array = pool.Rent(16);
@@ -46,7 +52,10 @@ namespace Cysharp.Threading.Tasks.Linq
             }
             finally
             {
-                pool.Return(array, clearArray: !RuntimeHelpersAbstraction.IsWellKnownNoReferenceContainsType<TSource>());
+                pool.Return(
+                    array,
+                    clearArray: !RuntimeHelpersAbstraction.IsWellKnownNoReferenceContainsType<TSource>()
+                );
 
                 if (e != null)
                 {

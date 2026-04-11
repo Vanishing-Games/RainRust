@@ -8,7 +8,10 @@ namespace LDtkUnity.Editor
     {
         public override void OnInspectorGUI()
         {
-            EditorGUILayout.HelpBox("This object draws the scene content. Configure what to draw in preferences", MessageType.None);
+            EditorGUILayout.HelpBox(
+                "This object draws the scene content. Configure what to draw in preferences",
+                MessageType.None
+            );
             EditorGUILayout.HelpBox("This will be removed in a future update", MessageType.Warning);
             if (GUILayout.Button("LDtk To Unity's Preferences"))
             {

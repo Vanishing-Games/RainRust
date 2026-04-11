@@ -13,10 +13,20 @@ namespace Zenject
         readonly GameObject _gameObject;
 
         public AddToExistingGameObjectComponentProvider(
-            GameObject gameObject, DiContainer container, Type componentType,
-            IEnumerable<TypeValuePair> extraArguments, object concreteIdentifier,
-            Action<InjectContext, object> instantiateCallback)
-            : base(container, componentType, extraArguments, concreteIdentifier, instantiateCallback)
+            GameObject gameObject,
+            DiContainer container,
+            Type componentType,
+            IEnumerable<TypeValuePair> extraArguments,
+            object concreteIdentifier,
+            Action<InjectContext, object> instantiateCallback
+        )
+            : base(
+                container,
+                componentType,
+                extraArguments,
+                concreteIdentifier,
+                instantiateCallback
+            )
         {
             _gameObject = gameObject;
         }
@@ -36,15 +46,26 @@ namespace Zenject
     }
 
     [NoReflectionBaking]
-    public class AddToExistingGameObjectComponentProviderGetter : AddToGameObjectComponentProviderBase
+    public class AddToExistingGameObjectComponentProviderGetter
+        : AddToGameObjectComponentProviderBase
     {
         readonly Func<InjectContext, GameObject> _gameObjectGetter;
 
         public AddToExistingGameObjectComponentProviderGetter(
-            Func<InjectContext, GameObject> gameObjectGetter, DiContainer container, Type componentType,
-            List<TypeValuePair> extraArguments, object concreteIdentifier,
-            Action<InjectContext, object> instantiateCallback)
-            : base(container, componentType, extraArguments, concreteIdentifier, instantiateCallback)
+            Func<InjectContext, GameObject> gameObjectGetter,
+            DiContainer container,
+            Type componentType,
+            List<TypeValuePair> extraArguments,
+            object concreteIdentifier,
+            Action<InjectContext, object> instantiateCallback
+        )
+            : base(
+                container,
+                componentType,
+                extraArguments,
+                concreteIdentifier,
+                instantiateCallback
+            )
         {
             _gameObjectGetter = gameObjectGetter;
         }
@@ -60,7 +81,10 @@ namespace Zenject
         protected override GameObject GetGameObject(InjectContext context)
         {
             var gameObj = _gameObjectGetter(context);
-            Assert.IsNotNull(gameObj, "Provided Func<InjectContext, GameObject> returned null value for game object when using FromComponentOn");
+            Assert.IsNotNull(
+                gameObj,
+                "Provided Func<InjectContext, GameObject> returned null value for game object when using FromComponentOn"
+            );
             return gameObj;
         }
     }

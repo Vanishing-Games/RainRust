@@ -1,13 +1,17 @@
-﻿using Cysharp.Threading.Tasks.Internal;
-using System.Threading;
+﻿using System.Threading;
+using Cysharp.Threading.Tasks.Internal;
 
 namespace Cysharp.Threading.Tasks.Linq
 {
     public static partial class UniTaskAsyncEnumerable
     {
-        public static IUniTaskAsyncEnumerable<TElement> Repeat<TElement>(TElement element, int count)
+        public static IUniTaskAsyncEnumerable<TElement> Repeat<TElement>(
+            TElement element,
+            int count
+        )
         {
-            if (count < 0) throw Error.ArgumentOutOfRange(nameof(count));
+            if (count < 0)
+                throw Error.ArgumentOutOfRange(nameof(count));
 
             return new Repeat<TElement>(element, count);
         }
@@ -24,7 +28,9 @@ namespace Cysharp.Threading.Tasks.Linq
             this.count = count;
         }
 
-        public IUniTaskAsyncEnumerator<TElement> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+        public IUniTaskAsyncEnumerator<TElement> GetAsyncEnumerator(
+            CancellationToken cancellationToken = default
+        )
         {
             return new _Repeat(element, count, cancellationToken);
         }

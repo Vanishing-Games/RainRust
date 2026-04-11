@@ -17,19 +17,45 @@ namespace Cysharp.Threading.Tasks
         {
             var e = (IEnumerator)enumerator;
             Error.ThrowArgumentNullException(e, nameof(enumerator));
-            return new UniTask(EnumeratorPromise.Create(e, PlayerLoopTiming.Update, CancellationToken.None, out var token), token).GetAwaiter();
+            return new UniTask(
+                EnumeratorPromise.Create(
+                    e,
+                    PlayerLoopTiming.Update,
+                    CancellationToken.None,
+                    out var token
+                ),
+                token
+            ).GetAwaiter();
         }
 
-        public static UniTask WithCancellation(this IEnumerator enumerator, CancellationToken cancellationToken)
+        public static UniTask WithCancellation(
+            this IEnumerator enumerator,
+            CancellationToken cancellationToken
+        )
         {
             Error.ThrowArgumentNullException(enumerator, nameof(enumerator));
-            return new UniTask(EnumeratorPromise.Create(enumerator, PlayerLoopTiming.Update, cancellationToken, out var token), token);
+            return new UniTask(
+                EnumeratorPromise.Create(
+                    enumerator,
+                    PlayerLoopTiming.Update,
+                    cancellationToken,
+                    out var token
+                ),
+                token
+            );
         }
 
-        public static UniTask ToUniTask(this IEnumerator enumerator, PlayerLoopTiming timing = PlayerLoopTiming.Update, CancellationToken cancellationToken = default(CancellationToken))
+        public static UniTask ToUniTask(
+            this IEnumerator enumerator,
+            PlayerLoopTiming timing = PlayerLoopTiming.Update,
+            CancellationToken cancellationToken = default(CancellationToken)
+        )
         {
             Error.ThrowArgumentNullException(enumerator, nameof(enumerator));
-            return new UniTask(EnumeratorPromise.Create(enumerator, timing, cancellationToken, out var token), token);
+            return new UniTask(
+                EnumeratorPromise.Create(enumerator, timing, cancellationToken, out var token),
+                token
+            );
         }
 
         public static UniTask ToUniTask(this IEnumerator enumerator, MonoBehaviour coroutineRunner)
@@ -39,13 +65,20 @@ namespace Cysharp.Threading.Tasks
             return source.Task;
         }
 
-        static IEnumerator Core(IEnumerator inner, MonoBehaviour coroutineRunner, AutoResetUniTaskCompletionSource source)
+        static IEnumerator Core(
+            IEnumerator inner,
+            MonoBehaviour coroutineRunner,
+            AutoResetUniTaskCompletionSource source
+        )
         {
             yield return coroutineRunner.StartCoroutine(inner);
             source.TrySetResult();
         }
 
-        sealed class EnumeratorPromise : IUniTaskSource, IPlayerLoopItem, ITaskPoolNode<EnumeratorPromise>
+        sealed class EnumeratorPromise
+            : IUniTaskSource,
+                IPlayerLoopItem,
+                ITaskPoolNode<EnumeratorPromise>
         {
             static TaskPool<EnumeratorPromise> pool;
             EnumeratorPromise nextNode;
@@ -64,15 +97,21 @@ namespace Cysharp.Threading.Tasks
 
             UniTaskCompletionSourceCore<object> core;
 
-            EnumeratorPromise()
-            {
-            }
+            EnumeratorPromise() { }
 
-            public static IUniTaskSource Create(IEnumerator innerEnumerator, PlayerLoopTiming timing, CancellationToken cancellationToken, out short token)
+            public static IUniTaskSource Create(
+                IEnumerator innerEnumerator,
+                PlayerLoopTiming timing,
+                CancellationToken cancellationToken,
+                out short token
+            )
             {
                 if (cancellationToken.IsCancellationRequested)
                 {
-                    return AutoResetUniTaskCompletionSource.CreateFromCanceled(cancellationToken, out token);
+                    return AutoResetUniTaskCompletionSource.CreateFromCanceled(
+                        cancellationToken,
+                        out token
+                    );
                 }
 
                 if (!pool.TryPop(out var result))
@@ -94,7 +133,7 @@ namespace Cysharp.Threading.Tasks
                 {
                     PlayerLoopHelper.AddAction(timing, result);
                 }
-                
+
                 return result;
             }
 
@@ -252,12 +291,17 @@ namespace Cysharp.Threading.Tasks
 
                     WARN:
                     // WaitForEndOfFrame, WaitForFixedUpdate, others.
-                    UnityEngine.Debug.LogWarning($"yield {current.GetType().Name} is not supported on await IEnumerator or IEnumerator.ToUniTask(), please use ToUniTask(MonoBehaviour coroutineRunner) instead.");
+                    UnityEngine.Debug.LogWarning(
+                        $"yield {current.GetType().Name} is not supported on await IEnumerator or IEnumerator.ToUniTask(), please use ToUniTask(MonoBehaviour coroutineRunner) instead."
+                    );
                     yield return null;
                 }
             }
 
-            static readonly FieldInfo waitForSeconds_Seconds = typeof(WaitForSeconds).GetField("m_Seconds", BindingFlags.Instance | BindingFlags.GetField | BindingFlags.NonPublic);
+            static readonly FieldInfo waitForSeconds_Seconds = typeof(WaitForSeconds).GetField(
+                "m_Seconds",
+                BindingFlags.Instance | BindingFlags.GetField | BindingFlags.NonPublic
+            );
 
             static IEnumerator UnwrapWaitForSeconds(WaitForSeconds waitForSeconds)
             {
@@ -272,7 +316,8 @@ namespace Cysharp.Threading.Tasks
                     {
                         break;
                     }
-                };
+                }
+                ;
             }
 
             static IEnumerator UnwrapWaitAsyncOperation(AsyncOperation asyncOperation)

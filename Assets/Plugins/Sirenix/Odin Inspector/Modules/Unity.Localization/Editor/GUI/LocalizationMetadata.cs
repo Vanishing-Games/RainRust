@@ -36,27 +36,24 @@ namespace Sirenix.OdinInspector.Modules.Localization.Editor
         private StringBuilder stringBuilder = new StringBuilder();
         private OdinLocalizationEditorWindow.WindowState windowState;
 
-        private List<Type> tags = new List<Type>
-        {
-            typeof(ExcludeEntryFromExport)
-        };
+        private List<Type> tags = new List<Type> { typeof(ExcludeEntryFromExport) };
 
         private GUIStyle _contentPadding;
         private GUIStyle ContentPadding =>
-            this._contentPadding = this._contentPadding ?? new GUIStyle
-            {
-                padding = new RectOffset(10, 10, 10, 10)
-            };
+            this._contentPadding =
+                this._contentPadding ?? new GUIStyle { padding = new RectOffset(10, 10, 10, 10) };
 
         private GUIStyle _platformOverridePadding;
 
         private GUIStyle PlatformOverridePadding =>
-            this._platformOverridePadding = this._platformOverridePadding ?? new GUIStyle
-            {
-                padding = new RectOffset(10, 20, 10, 10)
-            };
+            this._platformOverridePadding =
+                this._platformOverridePadding
+                ?? new GUIStyle { padding = new RectOffset(10, 20, 10, 10) };
 
-        public LocalizationMetadata(LocalizationTableCollection localizationTableCollection, OdinLocalizationEditorWindow.WindowState windowState)
+        public LocalizationMetadata(
+            LocalizationTableCollection localizationTableCollection,
+            OdinLocalizationEditorWindow.WindowState windowState
+        )
         {
             this.localizationTableCollection = localizationTableCollection;
             this.windowState = windowState;
@@ -132,7 +129,8 @@ namespace Sirenix.OdinInspector.Modules.Localization.Editor
         public float Draw(Rect rect)
         {
             var minWidth = 0f;
-            if (this.Target == null) return minWidth;
+            if (this.Target == null)
+                return minWidth;
 
             if (Event.current.type != EventType.Repaint)
             {
@@ -141,19 +139,31 @@ namespace Sirenix.OdinInspector.Modules.Localization.Editor
                     switch (this.Target)
                     {
                         case LocalizationTable localizationTable:
-                            Undo.RecordObject(this.localizationTableCollection, "Localization Tables Metadata Added");
+                            Undo.RecordObject(
+                                this.localizationTableCollection,
+                                "Localization Tables Metadata Added"
+                            );
                             this.Add(localizationTable, this.toBeAdded);
                             break;
                         case SharedTableData.SharedTableEntry sharedTableEntry:
-                            Undo.RecordObject(this.localizationTableCollection.SharedData, "Localization Tables Metadata Added");
+                            Undo.RecordObject(
+                                this.localizationTableCollection.SharedData,
+                                "Localization Tables Metadata Added"
+                            );
                             this.Add(sharedTableEntry, this.toBeAdded);
                             break;
                         case TableEntry tableEntry:
-                            Undo.RecordObject(tableEntry.Table, "Localization Tables Metadata Added");
+                            Undo.RecordObject(
+                                tableEntry.Table,
+                                "Localization Tables Metadata Added"
+                            );
                             this.Add(tableEntry, this.toBeAdded);
                             break;
                         default:
-                            Undo.RecordObject(this.localizationTableCollection.SharedData, "Localization Tables Metadata Added");
+                            Undo.RecordObject(
+                                this.localizationTableCollection.SharedData,
+                                "Localization Tables Metadata Added"
+                            );
                             this.Add(this.toBeAdded);
                             break;
                     }
@@ -167,19 +177,31 @@ namespace Sirenix.OdinInspector.Modules.Localization.Editor
                     switch (this.Target)
                     {
                         case LocalizationTable localizationTable:
-                            Undo.RecordObject(this.localizationTableCollection, "Localization Tables Metadata Removed");
+                            Undo.RecordObject(
+                                this.localizationTableCollection,
+                                "Localization Tables Metadata Removed"
+                            );
                             this.Remove(localizationTable, this.toBeRemoved);
                             break;
                         case SharedTableData.SharedTableEntry sharedTableEntry:
-                            Undo.RecordObject(this.localizationTableCollection.SharedData, "Localization Tables Metadata Removed");
+                            Undo.RecordObject(
+                                this.localizationTableCollection.SharedData,
+                                "Localization Tables Metadata Removed"
+                            );
                             this.Remove(sharedTableEntry, this.toBeRemoved);
                             break;
                         case TableEntry tableEntry:
-                            Undo.RecordObject(tableEntry.Table, "Localization Tables Metadata Removed");
+                            Undo.RecordObject(
+                                tableEntry.Table,
+                                "Localization Tables Metadata Removed"
+                            );
                             this.Remove(tableEntry, this.toBeRemoved);
                             break;
                         default:
-                            Undo.RecordObject(this.localizationTableCollection.SharedData, "Localization Tables Metadata Removed");
+                            Undo.RecordObject(
+                                this.localizationTableCollection.SharedData,
+                                "Localization Tables Metadata Removed"
+                            );
                             this.Remove(this.toBeRemoved);
                             break;
                     }
@@ -192,7 +214,7 @@ namespace Sirenix.OdinInspector.Modules.Localization.Editor
             if (this.windowState.MetadataTree == null || this.lastTarget != this.Target)
             {
                 this.windowState.MetadataTree?.Dispose();
-                
+
                 switch (this.Target)
                 {
                     case LocalizationTable localizationTable:
@@ -203,20 +225,27 @@ namespace Sirenix.OdinInspector.Modules.Localization.Editor
                         break;
                     case TableEntry tableEntry:
                     {
-                        var bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
-                        var entryData = typeof(TableEntry).GetProperty("Data", bindingFlags).GetValue(tableEntry);
+                        var bindingFlags =
+                            BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+                        var entryData = typeof(TableEntry)
+                            .GetProperty("Data", bindingFlags)
+                            .GetValue(tableEntry);
                         this.windowState.MetadataTree = PropertyTree.Create(entryData);
                         break;
                     }
                     case LocalizationTableCollection localizationTableCollection:
-                        this.windowState.MetadataTree = PropertyTree.Create(localizationTableCollection.SharedData);
+                        this.windowState.MetadataTree = PropertyTree.Create(
+                            localizationTableCollection.SharedData
+                        );
                         break;
                 }
 
                 this.lastTarget = this.Target;
             }
 
-            var metadataCollection = this.windowState.MetadataTree.RootProperty.Children["m_Metadata"];
+            var metadataCollection = this.windowState.MetadataTree.RootProperty.Children[
+                "m_Metadata"
+            ];
             var metadataEntries = metadataCollection.Children["m_Items"].Children.ToList();
 
             metadataEntries = metadataEntries
@@ -229,16 +258,48 @@ namespace Sirenix.OdinInspector.Modules.Localization.Editor
             switch (this.Target)
             {
                 case LocalizationTable localizationTable:
-                    minWidth = this.Draw(rect, localizationTable, "Table", metadataEntries, m => this.Add(localizationTable, m), m => this.Remove(localizationTable, m), () => this.OpenMetadataSelector(localizationTable));
+                    minWidth = this.Draw(
+                        rect,
+                        localizationTable,
+                        "Table",
+                        metadataEntries,
+                        m => this.Add(localizationTable, m),
+                        m => this.Remove(localizationTable, m),
+                        () => this.OpenMetadataSelector(localizationTable)
+                    );
                     break;
                 case SharedTableData.SharedTableEntry sharedTableEntry:
-                    minWidth = this.Draw(rect, this.localizationTableCollection.SharedData, "Shared Entry", metadataEntries, m => this.Add(sharedTableEntry, m), m => this.Remove(sharedTableEntry, m), () => this.OpenMetadataSelector(sharedTableEntry));
+                    minWidth = this.Draw(
+                        rect,
+                        this.localizationTableCollection.SharedData,
+                        "Shared Entry",
+                        metadataEntries,
+                        m => this.Add(sharedTableEntry, m),
+                        m => this.Remove(sharedTableEntry, m),
+                        () => this.OpenMetadataSelector(sharedTableEntry)
+                    );
                     break;
                 case TableEntry tableEntry:
-                    minWidth = this.Draw(rect, tableEntry.Table, "Entry", metadataEntries, m => this.Add(tableEntry, m), m => this.Remove(tableEntry, m), () => this.OpenMetadataSelector(tableEntry));
+                    minWidth = this.Draw(
+                        rect,
+                        tableEntry.Table,
+                        "Entry",
+                        metadataEntries,
+                        m => this.Add(tableEntry, m),
+                        m => this.Remove(tableEntry, m),
+                        () => this.OpenMetadataSelector(tableEntry)
+                    );
                     break;
                 default:
-                    minWidth = this.Draw(rect, this.localizationTableCollection.SharedData, "Shared Table", metadataEntries, m => this.Add(m), m => this.Remove(m), () => this.OpenMetadataSelector(this.localizationTableCollection));
+                    minWidth = this.Draw(
+                        rect,
+                        this.localizationTableCollection.SharedData,
+                        "Shared Table",
+                        metadataEntries,
+                        m => this.Add(m),
+                        m => this.Remove(m),
+                        () => this.OpenMetadataSelector(this.localizationTableCollection)
+                    );
                     break;
             }
             this.windowState.MetadataTree.EndDraw();
@@ -246,7 +307,15 @@ namespace Sirenix.OdinInspector.Modules.Localization.Editor
             return minWidth;
         }
 
-        private float Draw(Rect rect, UnityEngine.Object target, string title, List<InspectorProperty> metadataEntries, Action<IMetadata> add, Action<IMetadata> remove, Action openMetadataSelector)
+        private float Draw(
+            Rect rect,
+            UnityEngine.Object target,
+            string title,
+            List<InspectorProperty> metadataEntries,
+            Action<IMetadata> add,
+            Action<IMetadata> remove,
+            Action openMetadataSelector
+        )
         {
             const int headerHeight = 22;
             const int addButtonAreaHeight = 40;
@@ -273,8 +342,11 @@ namespace Sirenix.OdinInspector.Modules.Localization.Editor
                 var titleWidth = SirenixGUIStyles.LabelCentered.CalcWidth(title) + 13;
                 var titleRect = searchAreaRect.AlignRight(titleWidth);
                 EditorGUI.DrawRect(titleRect.TakeFromLeft(1), SirenixGUIStyles.BorderColor);
-                this.searchTerm = this.searchField.Draw(searchAreaRect.SubXMax(titleWidth).Padding(6), this.searchTerm,
-                    "Search for metadata...");
+                this.searchTerm = this.searchField.Draw(
+                    searchAreaRect.SubXMax(titleWidth).Padding(6),
+                    this.searchTerm,
+                    "Search for metadata..."
+                );
                 GUI.Label(titleRect, title, SirenixGUIStyles.LabelCentered);
             }
             else
@@ -284,82 +356,137 @@ namespace Sirenix.OdinInspector.Modules.Localization.Editor
 
             var filteredMetadataEntries = string.IsNullOrWhiteSpace(this.searchTerm)
                 ? metadataEntries.ToList()
-                : metadataEntries.Where(metadataEntry =>
-                {
-                    if (FuzzySearch.Contains(this.searchTerm, metadataEntry.Info.TypeOfOwner.Name))
+                : metadataEntries
+                    .Where(metadataEntry =>
                     {
-                        return true;
-                    }
-
-                    if (FuzzySearch.Contains(this.searchTerm, metadataEntry.ValueEntry?.WeakSmartValue?.ToString()))
-                    {
-                        return true;
-                    }
-
-                    foreach (var child in metadataEntry.Children.Recurse())
-                    {
-                        if (FuzzySearch.Contains(this.searchTerm, child.Name))
+                        if (
+                            FuzzySearch.Contains(
+                                this.searchTerm,
+                                metadataEntry.Info.TypeOfOwner.Name
+                            )
+                        )
                         {
                             return true;
                         }
 
-                        if (FuzzySearch.Contains(this.searchTerm, child.ValueEntry?.WeakSmartValue?.ToString()))
+                        if (
+                            FuzzySearch.Contains(
+                                this.searchTerm,
+                                metadataEntry.ValueEntry?.WeakSmartValue?.ToString()
+                            )
+                        )
                         {
                             return true;
                         }
-                    }
 
-                    return false;
-                }).ToList();
+                        foreach (var child in metadataEntry.Children.Recurse())
+                        {
+                            if (FuzzySearch.Contains(this.searchTerm, child.Name))
+                            {
+                                return true;
+                            }
+
+                            if (
+                                FuzzySearch.Contains(
+                                    this.searchTerm,
+                                    child.ValueEntry?.WeakSmartValue?.ToString()
+                                )
+                            )
+                            {
+                                return true;
+                            }
+                        }
+
+                        return false;
+                    })
+                    .ToList();
 
             var metadataViewHeight = rect.height - addButtonAreaHeight;
             GUILayout.BeginArea(rect.AlignTop(metadataViewHeight));
-            this.scrollPosition = EditorGUILayout.BeginScrollView(this.scrollPosition, GUIStyle.none, GUI.skin.verticalScrollbar);
+            this.scrollPosition = EditorGUILayout.BeginScrollView(
+                this.scrollPosition,
+                GUIStyle.none,
+                GUI.skin.verticalScrollbar
+            );
             GUIHelper.BeginLayoutMeasuring();
             {
                 for (var i = 0; i < filteredMetadataEntries.Count; i++)
                 {
                     var metadataEntry = filteredMetadataEntries[i];
-                    var metadataHeaderRect = GUILayoutUtility.GetRect(0, headerHeight, GUILayoutOptions.ExpandWidth().ExpandHeight(false));
+                    var metadataHeaderRect = GUILayoutUtility.GetRect(
+                        0,
+                        headerHeight,
+                        GUILayoutOptions.ExpandWidth().ExpandHeight(false)
+                    );
                     var unchangedMetadataHeaderRect = metadataHeaderRect;
 
                     var genericMenu = new GenericMenu();
-                    genericMenu.AddItem(new GUIContent("Delete"), false, () =>
-                    {
-                        var metadata = (IMetadata)metadataEntry.ValueEntry.WeakSmartValue;
-                        this.toBeRemoved = metadata;
-                    });
+                    genericMenu.AddItem(
+                        new GUIContent("Delete"),
+                        false,
+                        () =>
+                        {
+                            var metadata = (IMetadata)metadataEntry.ValueEntry.WeakSmartValue;
+                            this.toBeRemoved = metadata;
+                        }
+                    );
 
                     var isTag = this.tags.Contains(metadataEntry.ValueEntry.TypeOfValue);
 
                     if (!isTag)
                     {
-                        genericMenu.AddItem(new GUIContent("Copy"), false, () =>
-                        {
-                            var metadata = (IMetadata)metadataEntry.ValueEntry.WeakSmartValue;
-                            Clipboard.Copy(metadata);
-                        });
+                        genericMenu.AddItem(
+                            new GUIContent("Copy"),
+                            false,
+                            () =>
+                            {
+                                var metadata = (IMetadata)metadataEntry.ValueEntry.WeakSmartValue;
+                                Clipboard.Copy(metadata);
+                            }
+                        );
 
                         if (Clipboard.CanPaste<IMetadata>())
-                            genericMenu.AddItem(new GUIContent("Paste"), false, () =>
-                            {
-                                var metadata = (IMetadata)Clipboard.Paste();
-                                this.toBeAdded = metadata;
-                            });
+                            genericMenu.AddItem(
+                                new GUIContent("Paste"),
+                                false,
+                                () =>
+                                {
+                                    var metadata = (IMetadata)Clipboard.Paste();
+                                    this.toBeAdded = metadata;
+                                }
+                            );
                         else
                             genericMenu.AddDisabledItem(new GUIContent("Paste"));
 
                         genericMenu.AddSeparator("");
-                        genericMenu.AddItem(new GUIContent($"{(metadataEntry.State.Expanded ? "Collapse" : "Expand")} All   (Ctrl-Click)"), false, () =>
-                        {
-                            var newState = !metadataEntry.State.Expanded;
-                            foreach (var entry in filteredMetadataEntries) entry.State.Expanded = newState;
-                        });
-                        genericMenu.AddItem(new GUIContent($"{(metadataEntry.State.Expanded ? "Collapse" : "Expand")} All Of Same Type   (Alt-Click)"), false, () =>
-                        {
-                            var newState = !metadataEntry.State.Expanded;
-                            foreach (var entry in filteredMetadataEntries.Where(m => m.Info.TypeOfOwner == metadataEntry.Info.TypeOfOwner)) entry.State.Expanded = newState;
-                        });
+                        genericMenu.AddItem(
+                            new GUIContent(
+                                $"{(metadataEntry.State.Expanded ? "Collapse" : "Expand")} All   (Ctrl-Click)"
+                            ),
+                            false,
+                            () =>
+                            {
+                                var newState = !metadataEntry.State.Expanded;
+                                foreach (var entry in filteredMetadataEntries)
+                                    entry.State.Expanded = newState;
+                            }
+                        );
+                        genericMenu.AddItem(
+                            new GUIContent(
+                                $"{(metadataEntry.State.Expanded ? "Collapse" : "Expand")} All Of Same Type   (Alt-Click)"
+                            ),
+                            false,
+                            () =>
+                            {
+                                var newState = !metadataEntry.State.Expanded;
+                                foreach (
+                                    var entry in filteredMetadataEntries.Where(m =>
+                                        m.Info.TypeOfOwner == metadataEntry.Info.TypeOfOwner
+                                    )
+                                )
+                                    entry.State.Expanded = newState;
+                            }
+                        );
                     }
 
                     Color metadataHeaderBackground = new Color(0.243f, 0.243f, 0.243f);
@@ -378,9 +505,10 @@ namespace Sirenix.OdinInspector.Modules.Localization.Editor
                             GUIHelper.RequestRepaint();
                         }
 
-                        metadataHeaderBackground = this.lastMetadataTypeUnderCursor == metadataEntry.ValueEntry.TypeOfValue
-                            ? new Color(0.278f, 0.278f, 0.278f)
-                            : new Color(0.243f, 0.243f, 0.243f);
+                        metadataHeaderBackground =
+                            this.lastMetadataTypeUnderCursor == metadataEntry.ValueEntry.TypeOfValue
+                                ? new Color(0.278f, 0.278f, 0.278f)
+                                : new Color(0.243f, 0.243f, 0.243f);
                     }
 
                     if (Event.current.IsMouseOver(unchangedMetadataHeaderRect))
@@ -392,7 +520,10 @@ namespace Sirenix.OdinInspector.Modules.Localization.Editor
 
                     if (i != 0)
                     {
-                        EditorGUI.DrawRect(unchangedMetadataHeaderRect.AlignTop(1), new Color(0.102f, 0.102f, 0.102f));
+                        EditorGUI.DrawRect(
+                            unchangedMetadataHeaderRect.AlignTop(1),
+                            new Color(0.102f, 0.102f, 0.102f)
+                        );
                     }
 
                     var foldoutTriangleRect = metadataHeaderRect.TakeFromLeft(headerHeight);
@@ -400,28 +531,44 @@ namespace Sirenix.OdinInspector.Modules.Localization.Editor
                     if (!isTag)
                         SdfIcons.DrawIcon(
                             foldoutTriangleRect.Padding(6),
-                            metadataEntry.State.Expanded ? SdfIconType.CaretDownFill : SdfIconType.CaretRightFill,
-                            new Color(0.443f, 0.443f, 0.443f));
+                            metadataEntry.State.Expanded
+                                ? SdfIconType.CaretDownFill
+                                : SdfIconType.CaretRightFill,
+                            new Color(0.443f, 0.443f, 0.443f)
+                        );
 
                     var iconRect = metadataHeaderRect.TakeFromLeft(headerHeight);
                     SdfIcons.DrawIcon(
                         iconRect.Padding(0, 4, 4, 4),
                         isTag ? SdfIconType.TagFill : SdfIconType.GeoAltFill,
-                        new Color(0.933f, 0.933f, 0.933f));
+                        new Color(0.933f, 0.933f, 0.933f)
+                    );
 
                     var contextMenuIconRect = metadataHeaderRect.TakeFromRight(headerHeight);
 
-                    SdfIcons.DrawIcon(contextMenuIconRect.Padding(7), SdfIconType.ThreeDotsVertical);
+                    SdfIcons.DrawIcon(
+                        contextMenuIconRect.Padding(7),
+                        SdfIconType.ThreeDotsVertical
+                    );
 
-                    var niceName = ObjectNames.NicifyVariableName(metadataEntry.ValueEntry.TypeOfValue.GetNiceName());
+                    var niceName = ObjectNames.NicifyVariableName(
+                        metadataEntry.ValueEntry.TypeOfValue.GetNiceName()
+                    );
 
                     if (metadataEntry.Info.TypeOfOwner == typeof(Comment))
                     {
                         var headerLabelWidth = EditorStyles.label.CalcWidth(niceName) + 1;
-                        var comment = ((string)metadataEntry.ValueEntry.WeakSmartValue).Split('\n')[0];
-                        var hintRect = metadataHeaderRect.AlignRight(metadataHeaderRect.width - headerLabelWidth - 10);
+                        var comment = ((string)metadataEntry.ValueEntry.WeakSmartValue).Split('\n')[
+                            0
+                        ];
+                        var hintRect = metadataHeaderRect.AlignRight(
+                            metadataHeaderRect.width - headerLabelWidth - 10
+                        );
 
-                        if (SirenixGUIStyles.RightAlignedGreyMiniLabel.CalcWidth(comment) > hintRect.width)
+                        if (
+                            SirenixGUIStyles.RightAlignedGreyMiniLabel.CalcWidth(comment)
+                            > hintRect.width
+                        )
                         {
                             if (hintRect.width < 30)
                             {
@@ -429,7 +576,11 @@ namespace Sirenix.OdinInspector.Modules.Localization.Editor
                             }
                             else
                             {
-                                GUI.Label(hintRect.TakeFromLeft(11), "...", SirenixGUIStyles.RightAlignedGreyMiniLabel);
+                                GUI.Label(
+                                    hintRect.TakeFromLeft(11),
+                                    "...",
+                                    SirenixGUIStyles.RightAlignedGreyMiniLabel
+                                );
                             }
                         }
 
@@ -438,10 +589,17 @@ namespace Sirenix.OdinInspector.Modules.Localization.Editor
                     else if (metadataEntry.Info.TypeOfOwner == typeof(PreloadAssetTableMetadata))
                     {
                         var headerLabelWidth = EditorStyles.label.CalcWidth(niceName) + 1;
-                        var preloadAssetLabel = ObjectNames.NicifyVariableName(metadataEntry.ValueEntry.WeakSmartValue.ToString());
-                        var hintRect = metadataHeaderRect.AlignRight(metadataHeaderRect.width - headerLabelWidth - 10);
+                        var preloadAssetLabel = ObjectNames.NicifyVariableName(
+                            metadataEntry.ValueEntry.WeakSmartValue.ToString()
+                        );
+                        var hintRect = metadataHeaderRect.AlignRight(
+                            metadataHeaderRect.width - headerLabelWidth - 10
+                        );
 
-                        if (SirenixGUIStyles.RightAlignedGreyMiniLabel.CalcWidth(preloadAssetLabel) > hintRect.width)
+                        if (
+                            SirenixGUIStyles.RightAlignedGreyMiniLabel.CalcWidth(preloadAssetLabel)
+                            > hintRect.width
+                        )
                         {
                             if (hintRect.width < 30)
                             {
@@ -449,23 +607,37 @@ namespace Sirenix.OdinInspector.Modules.Localization.Editor
                             }
                             else
                             {
-                                GUI.Label(hintRect.TakeFromLeft(11), "...", SirenixGUIStyles.RightAlignedGreyMiniLabel);
+                                GUI.Label(
+                                    hintRect.TakeFromLeft(11),
+                                    "...",
+                                    SirenixGUIStyles.RightAlignedGreyMiniLabel
+                                );
                             }
                         }
 
-                        GUI.Label(hintRect, preloadAssetLabel, SirenixGUIStyles.RightAlignedGreyMiniLabel);
+                        GUI.Label(
+                            hintRect,
+                            preloadAssetLabel,
+                            SirenixGUIStyles.RightAlignedGreyMiniLabel
+                        );
                     }
                     else if (metadataEntry.Info.TypeOfOwner == typeof(PlatformOverride))
                     {
                         var platformOverrides = metadataEntry.Children;
                         var headerLabelWidth = EditorStyles.label.CalcWidth(niceName) + 1;
-                        var hintRect = metadataHeaderRect.AlignRight(metadataHeaderRect.width - headerLabelWidth - 10);
+                        var hintRect = metadataHeaderRect.AlignRight(
+                            metadataHeaderRect.width - headerLabelWidth - 10
+                        );
 
                         this.stringBuilder.Clear();
                         for (var j = 0; j < platformOverrides.Count; j++)
                         {
                             var platformOverrideInspectorProperty = platformOverrides[j];
-                            var platform = (RuntimePlatform)platformOverrideInspectorProperty.Children[0].ValueEntry.WeakSmartValue;
+                            var platform = (RuntimePlatform)
+                                platformOverrideInspectorProperty
+                                    .Children[0]
+                                    .ValueEntry
+                                    .WeakSmartValue;
                             this.stringBuilder.Append(platform);
 
                             if (j != platformOverrides.Count - 1)
@@ -476,16 +648,27 @@ namespace Sirenix.OdinInspector.Modules.Localization.Editor
 
                         var platforms = this.stringBuilder.ToString();
 
-                        if (SirenixGUIStyles.RightAlignedGreyMiniLabel.CalcWidth(platforms) > hintRect.width)
+                        if (
+                            SirenixGUIStyles.RightAlignedGreyMiniLabel.CalcWidth(platforms)
+                            > hintRect.width
+                        )
                         {
                             if (hintRect.width < 30)
                             {
-                                GUI.Label(hintRect, $"[{platformOverrides.Count}]", SirenixGUIStyles.RightAlignedGreyMiniLabel);
+                                GUI.Label(
+                                    hintRect,
+                                    $"[{platformOverrides.Count}]",
+                                    SirenixGUIStyles.RightAlignedGreyMiniLabel
+                                );
                                 platforms = "";
                             }
                             else if (platformOverrides.Count > 1)
                             {
-                                GUI.Label(hintRect.TakeFromLeft(11), "...", SirenixGUIStyles.RightAlignedGreyMiniLabel);
+                                GUI.Label(
+                                    hintRect.TakeFromLeft(11),
+                                    "...",
+                                    SirenixGUIStyles.RightAlignedGreyMiniLabel
+                                );
                             }
                         }
 
@@ -497,9 +680,11 @@ namespace Sirenix.OdinInspector.Modules.Localization.Editor
                     var evt = Event.current;
                     if (evt.OnMouseDown(contextMenuIconRect, 0, false))
                         genericMenu.ShowAsContext();
-                    else if (evt.OnMouseDown(unchangedMetadataHeaderRect, 1, false)) genericMenu.ShowAsContext();
+                    else if (evt.OnMouseDown(unchangedMetadataHeaderRect, 1, false))
+                        genericMenu.ShowAsContext();
 
-                    if (metadataEntry.ValueEntry.TypeOfValue == typeof(ExcludeEntryFromExport)) continue;
+                    if (metadataEntry.ValueEntry.TypeOfValue == typeof(ExcludeEntryFromExport))
+                        continue;
 
                     if (evt.OnMouseDown(unchangedMetadataHeaderRect, 0, false))
                     {
@@ -514,7 +699,11 @@ namespace Sirenix.OdinInspector.Modules.Localization.Editor
                         else if (holdingAlt)
                         {
                             var newState = !metadataEntry.State.Expanded;
-                            foreach (var entry in filteredMetadataEntries.Where(m => m.ValueEntry.TypeOfValue == this.lastMetadataTypeUnderCursor))
+                            foreach (
+                                var entry in filteredMetadataEntries.Where(m =>
+                                    m.ValueEntry.TypeOfValue == this.lastMetadataTypeUnderCursor
+                                )
+                            )
                             {
                                 entry.State.Expanded = newState;
                             }
@@ -527,10 +716,14 @@ namespace Sirenix.OdinInspector.Modules.Localization.Editor
                         GUIHelper.RemoveFocusControl();
                     }
 
-                    if (SirenixEditorGUI.BeginFadeGroup(metadataEntry, metadataEntry.State.Expanded))
+                    if (
+                        SirenixEditorGUI.BeginFadeGroup(metadataEntry, metadataEntry.State.Expanded)
+                    )
                     {
-                        EditorGUI.DrawRect(unchangedMetadataHeaderRect.AlignBottom(1),
-                            new Color(0.188f, 0.188f, 0.188f));
+                        EditorGUI.DrawRect(
+                            unchangedMetadataHeaderRect.AlignBottom(1),
+                            new Color(0.188f, 0.188f, 0.188f)
+                        );
 
                         var contentRect = EditorGUILayout.BeginVertical();
 
@@ -543,35 +736,67 @@ namespace Sirenix.OdinInspector.Modules.Localization.Editor
                             }
                             EditorGUILayout.EndVertical();
                         }
-                        else if (metadataEntry.ValueEntry.TypeOfValue == typeof(PreloadAssetTableMetadata))
+                        else if (
+                            metadataEntry.ValueEntry.TypeOfValue
+                            == typeof(PreloadAssetTableMetadata)
+                        )
                         {
                             EditorGUILayout.BeginVertical(this.ContentPadding);
 
-                            var preloadAssetTableMetadata = (PreloadAssetTableMetadata)metadataEntry.ValueEntry.WeakSmartValue;
+                            var preloadAssetTableMetadata = (PreloadAssetTableMetadata)
+                                metadataEntry.ValueEntry.WeakSmartValue;
                             var btnRect = EditorGUILayout.GetControlRect(false);
                             var leftRect = btnRect.Split(0, 2);
                             var mouseOverLeft = Event.current.IsMouseOver(leftRect);
-                            var leftActive = mouseOverLeft && Event.current.type == EventType.MouseDown && Event.current.button == 0;
-                            var leftOn = preloadAssetTableMetadata.Behaviour == PreloadAssetTableMetadata.PreloadBehaviour.NoPreload;
+                            var leftActive =
+                                mouseOverLeft
+                                && Event.current.type == EventType.MouseDown
+                                && Event.current.button == 0;
+                            var leftOn =
+                                preloadAssetTableMetadata.Behaviour
+                                == PreloadAssetTableMetadata.PreloadBehaviour.NoPreload;
 
                             var rightRect = btnRect.Split(1, 2);
                             var mouseOverRight = Event.current.IsMouseOver(rightRect);
-                            var rightActive = mouseOverRight && Event.current.type == EventType.MouseDown && Event.current.button == 0;
-                            var rightOn = preloadAssetTableMetadata.Behaviour == PreloadAssetTableMetadata.PreloadBehaviour.PreloadAll;
+                            var rightActive =
+                                mouseOverRight
+                                && Event.current.type == EventType.MouseDown
+                                && Event.current.button == 0;
+                            var rightOn =
+                                preloadAssetTableMetadata.Behaviour
+                                == PreloadAssetTableMetadata.PreloadBehaviour.PreloadAll;
 
                             if (Event.current.type == EventType.Repaint)
                             {
-                                SirenixGUIStyles.ButtonLeft.Draw(leftRect, "No Preload", mouseOverLeft, leftActive, leftOn, false);
-                                SirenixGUIStyles.ButtonRight.Draw(rightRect, "Preload All", mouseOverRight, rightActive, rightOn, false);
+                                SirenixGUIStyles.ButtonLeft.Draw(
+                                    leftRect,
+                                    "No Preload",
+                                    mouseOverLeft,
+                                    leftActive,
+                                    leftOn,
+                                    false
+                                );
+                                SirenixGUIStyles.ButtonRight.Draw(
+                                    rightRect,
+                                    "Preload All",
+                                    mouseOverRight,
+                                    rightActive,
+                                    rightOn,
+                                    false
+                                );
                             }
 
                             if (Event.current.OnMouseDown(leftRect, 0, false))
                             {
-                                preloadAssetTableMetadata.Behaviour = PreloadAssetTableMetadata.PreloadBehaviour.NoPreload;
+                                preloadAssetTableMetadata.Behaviour = PreloadAssetTableMetadata
+                                    .PreloadBehaviour
+                                    .NoPreload;
                             }
                             else if (Event.current.OnMouseDown(rightRect, 0, false))
                             {
-                                preloadAssetTableMetadata.Behaviour = PreloadAssetTableMetadata.PreloadBehaviour.PreloadAll;
+                                preloadAssetTableMetadata.Behaviour = PreloadAssetTableMetadata
+                                    .PreloadBehaviour
+                                    .PreloadAll;
                             }
 
                             EditorGUILayout.EndVertical();
@@ -608,7 +833,9 @@ namespace Sirenix.OdinInspector.Modules.Localization.Editor
                 EditorGUI.DrawRect(rect.TakeFromTop(1), SirenixGUIStyles.BorderColor);
             }
 
-            var addMetadataRect = rect.AlignTop(addButtonAreaHeight).AlignCenter(Mathf.Min(200, rect.width - 16)).VerticalPadding(8);
+            var addMetadataRect = rect.AlignTop(addButtonAreaHeight)
+                .AlignCenter(Mathf.Min(200, rect.width - 16))
+                .VerticalPadding(8);
 
             if (GUI.Button(addMetadataRect, "Add Metadata"))
             {
@@ -624,7 +851,8 @@ namespace Sirenix.OdinInspector.Modules.Localization.Editor
                 1.0f,
                 new Color(0, 0, 0, Mathf.InverseLerp(0f, 30f, this.scrollPosition.y) * 0.6f),
                 0,
-                0);
+                0
+            );
 
             if (measureRect.height > metadataViewHeight)
             {
@@ -636,9 +864,15 @@ namespace Sirenix.OdinInspector.Modules.Localization.Editor
                     ScaleMode.StretchToFill,
                     true,
                     1.0f,
-                    new Color(0, 0, 0, Mathf.InverseLerp(measureRect.height, measureRect.height - 30, pos) * 0.6f),
+                    new Color(
+                        0,
+                        0,
+                        0,
+                        Mathf.InverseLerp(measureRect.height, measureRect.height - 30, pos) * 0.6f
+                    ),
                     0,
-                    0);
+                    0
+                );
             }
 
             return measureRect.width;
@@ -647,8 +881,11 @@ namespace Sirenix.OdinInspector.Modules.Localization.Editor
         private void DrawPlatformOverride(InspectorProperty metadataEntry)
         {
             var platformOverride = (PlatformOverride)metadataEntry.ValueEntry.WeakSmartValue;
-            var platformOverrideDatas = (IList)metadataEntry.Children["m_PlatformOverrides"]?.ValueEntry.WeakSmartValue;
-            var platformOverrideDataInspectorProperties = metadataEntry.Children["m_PlatformOverrides"]?.Children;
+            var platformOverrideDatas = (IList)
+                metadataEntry.Children["m_PlatformOverrides"]?.ValueEntry.WeakSmartValue;
+            var platformOverrideDataInspectorProperties = metadataEntry
+                .Children["m_PlatformOverrides"]
+                ?.Children;
 
             if (platformOverrideDatas == null)
             {
@@ -657,45 +894,103 @@ namespace Sirenix.OdinInspector.Modules.Localization.Editor
 
             if (platformOverrideDatas.Count == 0)
             {
-                platformOverride.AddPlatformOverride(RuntimePlatform.WindowsPlayer, null, null, EntryOverrideType.None);
+                platformOverride.AddPlatformOverride(
+                    RuntimePlatform.WindowsPlayer,
+                    null,
+                    null,
+                    EntryOverrideType.None
+                );
             }
 
             for (var i = 0; i < platformOverrideDataInspectorProperties.Count; i++)
             {
-                var platformOverrideDataInspectorProperty = platformOverrideDataInspectorProperties[i];
+                var platformOverrideDataInspectorProperty = platformOverrideDataInspectorProperties[
+                    i
+                ];
                 var backgroundRect = EditorGUILayout.BeginVertical(this.PlatformOverridePadding);
-                var backgroundColor = i % 2 == 0 ? SirenixGUIStyles.ListItemColorEven : SirenixGUIStyles.ListItemColorOdd;
+                var backgroundColor =
+                    i % 2 == 0
+                        ? SirenixGUIStyles.ListItemColorEven
+                        : SirenixGUIStyles.ListItemColorOdd;
                 EditorGUI.DrawRect(backgroundRect, backgroundColor);
                 platformOverrideDataInspectorProperty.Children["platform"].Draw();
                 platformOverrideDataInspectorProperty.Children["entryOverrideType"].Draw();
 
-                var entryOverrideType = (EntryOverrideType)platformOverrideDataInspectorProperty.Children
-                    .FirstOrDefault(c => c.Info.TypeOfValue == typeof(EntryOverrideType))?.ValueEntry.WeakSmartValue;
+                var entryOverrideType = (EntryOverrideType)
+                    platformOverrideDataInspectorProperty
+                        .Children.FirstOrDefault(c =>
+                            c.Info.TypeOfValue == typeof(EntryOverrideType)
+                        )
+                        ?.ValueEntry.WeakSmartValue;
 
-                var entryOverrideRect = GUILayoutUtility.GetRect(0, EditorGUIUtility.singleLineHeight, GUILayoutOptions.ExpandWidth(true).ExpandHeight(false));
+                var entryOverrideRect = GUILayoutUtility.GetRect(
+                    0,
+                    EditorGUIUtility.singleLineHeight,
+                    GUILayoutOptions.ExpandWidth(true).ExpandHeight(false)
+                );
 
                 switch (entryOverrideType)
                 {
                     case EntryOverrideType.Table:
                     {
-                        var tableReference = (TableReference)platformOverrideDataInspectorProperty.Children.FirstOrDefault(c => c.Info.TypeOfValue == typeof(TableReference))?.ValueEntry.WeakSmartValue;
-                        this.DoTableGUI(entryOverrideRect, tableReference, platformOverrideDataInspectorProperty);
+                        var tableReference = (TableReference)
+                            platformOverrideDataInspectorProperty
+                                .Children.FirstOrDefault(c =>
+                                    c.Info.TypeOfValue == typeof(TableReference)
+                                )
+                                ?.ValueEntry.WeakSmartValue;
+                        this.DoTableGUI(
+                            entryOverrideRect,
+                            tableReference,
+                            platformOverrideDataInspectorProperty
+                        );
                         break;
                     }
                     case EntryOverrideType.Entry:
                     {
-                        var tableReference = (TableReference)platformOverrideDataInspectorProperty.Children.FirstOrDefault(c => c.Info.TypeOfValue == typeof(TableReference))
-                            ?.ValueEntry.WeakSmartValue;
-                        var tableEntryReference = (TableEntryReference)platformOverrideDataInspectorProperty.Children.FirstOrDefault(c => c.Info.TypeOfValue == typeof(TableEntryReference))?.ValueEntry.WeakSmartValue;
-                        this.DoTableAndEntryGUI(entryOverrideRect, tableReference, tableEntryReference, platformOverrideDataInspectorProperty, false);
+                        var tableReference = (TableReference)
+                            platformOverrideDataInspectorProperty
+                                .Children.FirstOrDefault(c =>
+                                    c.Info.TypeOfValue == typeof(TableReference)
+                                )
+                                ?.ValueEntry.WeakSmartValue;
+                        var tableEntryReference = (TableEntryReference)
+                            platformOverrideDataInspectorProperty
+                                .Children.FirstOrDefault(c =>
+                                    c.Info.TypeOfValue == typeof(TableEntryReference)
+                                )
+                                ?.ValueEntry.WeakSmartValue;
+                        this.DoTableAndEntryGUI(
+                            entryOverrideRect,
+                            tableReference,
+                            tableEntryReference,
+                            platformOverrideDataInspectorProperty,
+                            false
+                        );
                         break;
                     }
 
                     case EntryOverrideType.TableAndEntry:
                     {
-                        var tableReference = (TableReference)platformOverrideDataInspectorProperty.Children.FirstOrDefault(c => c.Info.TypeOfValue == typeof(TableReference))?.ValueEntry.WeakSmartValue;
-                        var tableEntryReference = (TableEntryReference)platformOverrideDataInspectorProperty.Children.FirstOrDefault(c => c.Info.TypeOfValue == typeof(TableEntryReference))?.ValueEntry.WeakSmartValue;
-                        this.DoTableAndEntryGUI(entryOverrideRect, tableReference, tableEntryReference, platformOverrideDataInspectorProperty, true);
+                        var tableReference = (TableReference)
+                            platformOverrideDataInspectorProperty
+                                .Children.FirstOrDefault(c =>
+                                    c.Info.TypeOfValue == typeof(TableReference)
+                                )
+                                ?.ValueEntry.WeakSmartValue;
+                        var tableEntryReference = (TableEntryReference)
+                            platformOverrideDataInspectorProperty
+                                .Children.FirstOrDefault(c =>
+                                    c.Info.TypeOfValue == typeof(TableEntryReference)
+                                )
+                                ?.ValueEntry.WeakSmartValue;
+                        this.DoTableAndEntryGUI(
+                            entryOverrideRect,
+                            tableReference,
+                            tableEntryReference,
+                            platformOverrideDataInspectorProperty,
+                            true
+                        );
                         break;
                     }
                 }
@@ -704,16 +999,25 @@ namespace Sirenix.OdinInspector.Modules.Localization.Editor
 
                 var xIconRect = backgroundRect.AlignRight(10).SubX(4).AlignCenterY(10);
                 var mouseOverX = Event.current.IsMouseOver(xIconRect);
-                SdfIcons.DrawIcon(xIconRect, SdfIconType.X, mouseOverX ? Color.white : EditorStyles.label.normal.textColor);
+                SdfIcons.DrawIcon(
+                    xIconRect,
+                    SdfIconType.X,
+                    mouseOverX ? Color.white : EditorStyles.label.normal.textColor
+                );
 
                 if (Event.current.OnMouseDown(xIconRect, 0, false))
                 {
-                    var platform = (RuntimePlatform)platformOverrideDataInspectorProperty.Children[0].ValueEntry.WeakSmartValue;
+                    var platform = (RuntimePlatform)
+                        platformOverrideDataInspectorProperty.Children[0].ValueEntry.WeakSmartValue;
                     platformOverride.RemovePlatformOverride(platform);
                 }
             }
 
-            var addButtonRect = GUILayoutUtility.GetRect(0, 40, GUILayoutOptions.ExpandWidth().ExpandHeight(false));
+            var addButtonRect = GUILayoutUtility.GetRect(
+                0,
+                40,
+                GUILayoutOptions.ExpandWidth().ExpandHeight(false)
+            );
             EditorGUI.DrawRect(addButtonRect.AlignTop(1), new Color(0.188f, 0.188f, 0.188f));
 
             if (GUI.Button(addButtonRect.Padding(8), "Add Platform Override"))
@@ -722,7 +1026,12 @@ namespace Sirenix.OdinInspector.Modules.Localization.Editor
                 selector.SelectionConfirmed += platforms =>
                 {
                     var platform = platforms.FirstOrDefault();
-                    platformOverride.AddPlatformOverride(platform, null, null, EntryOverrideType.None);
+                    platformOverride.AddPlatformOverride(
+                        platform,
+                        null,
+                        null,
+                        EntryOverrideType.None
+                    );
                 };
                 selector.ShowInPopup();
             }
@@ -730,7 +1039,10 @@ namespace Sirenix.OdinInspector.Modules.Localization.Editor
 
         private void OpenMetadataSelector(LocalizationTableCollection localizationTableCollection)
         {
-            this.OpenMetadataSelector(localizationTableCollection.SharedData.Metadata.MetadataEntries, MetadataType.SharedTableData);
+            this.OpenMetadataSelector(
+                localizationTableCollection.SharedData.Metadata.MetadataEntries,
+                MetadataType.SharedTableData
+            );
         }
 
         private void OpenMetadataSelector(LocalizationTable localizationTable)
@@ -738,10 +1050,16 @@ namespace Sirenix.OdinInspector.Modules.Localization.Editor
             switch (localizationTable)
             {
                 case StringTable _:
-                    this.OpenMetadataSelector(localizationTable.MetadataEntries, MetadataType.StringTable);
+                    this.OpenMetadataSelector(
+                        localizationTable.MetadataEntries,
+                        MetadataType.StringTable
+                    );
                     break;
                 case AssetTable _:
-                    this.OpenMetadataSelector(localizationTable.MetadataEntries, MetadataType.AssetTable);
+                    this.OpenMetadataSelector(
+                        localizationTable.MetadataEntries,
+                        MetadataType.AssetTable
+                    );
                     break;
             }
         }
@@ -751,10 +1069,18 @@ namespace Sirenix.OdinInspector.Modules.Localization.Editor
             switch (this.localizationTableCollection)
             {
                 case StringTableCollection _:
-                    this.OpenMetadataSelector(sharedTableEntry.Metadata.MetadataEntries, MetadataType.StringTableEntry, MetadataType.SharedStringTableEntry);
+                    this.OpenMetadataSelector(
+                        sharedTableEntry.Metadata.MetadataEntries,
+                        MetadataType.StringTableEntry,
+                        MetadataType.SharedStringTableEntry
+                    );
                     break;
                 case AssetTableCollection _:
-                    this.OpenMetadataSelector(sharedTableEntry.Metadata.MetadataEntries, MetadataType.AssetTableEntry, MetadataType.SharedAssetTableEntry);
+                    this.OpenMetadataSelector(
+                        sharedTableEntry.Metadata.MetadataEntries,
+                        MetadataType.AssetTableEntry,
+                        MetadataType.SharedAssetTableEntry
+                    );
                     break;
             }
         }
@@ -764,15 +1090,24 @@ namespace Sirenix.OdinInspector.Modules.Localization.Editor
             switch (tableEntry)
             {
                 case StringTableEntry _:
-                    this.OpenMetadataSelector(tableEntry.MetadataEntries, MetadataType.StringTableEntry);
+                    this.OpenMetadataSelector(
+                        tableEntry.MetadataEntries,
+                        MetadataType.StringTableEntry
+                    );
                     break;
                 case AssetTableEntry _:
-                    this.OpenMetadataSelector(tableEntry.MetadataEntries, MetadataType.AssetTableEntry);
+                    this.OpenMetadataSelector(
+                        tableEntry.MetadataEntries,
+                        MetadataType.AssetTableEntry
+                    );
                     break;
             }
         }
 
-        private void OpenMetadataSelector(IList<IMetadata> existingMetadata, params MetadataType[] allowedTypes)
+        private void OpenMetadataSelector(
+            IList<IMetadata> existingMetadata,
+            params MetadataType[] allowedTypes
+        )
         {
             var existingMetadataTypes = existingMetadata.Select(m => m?.GetType()).ToList();
             var metadataTypes = TypeCache.GetTypesDerivedFrom<IMetadata>();
@@ -781,15 +1116,31 @@ namespace Sirenix.OdinInspector.Modules.Localization.Editor
             foreach (var metadataType in metadataTypes)
             {
                 var metadataAttribute = metadataType.GetCustomAttribute<MetadataAttribute>();
-                if (metadataAttribute != null && allowedTypes.Any(allowedType => metadataAttribute.AllowedTypes.HasFlag(allowedType)))
+                if (
+                    metadataAttribute != null
+                    && allowedTypes.Any(allowedType =>
+                        metadataAttribute.AllowedTypes.HasFlag(allowedType)
+                    )
+                )
                 {
-                    if (existingMetadataTypes.Contains(metadataType) && !OdinLocalizationMetadataRegistry.MetadataAllowsMultiple.ContainsKey(metadataType)) continue;
+                    if (
+                        existingMetadataTypes.Contains(metadataType)
+                        && !OdinLocalizationMetadataRegistry.MetadataAllowsMultiple.ContainsKey(
+                            metadataType
+                        )
+                    )
+                        continue;
 
                     validMetadataTypes.Add(metadataType);
                 }
             }
 
-            var selector = new GenericSelector<Type>("", validMetadataTypes, false, type => ObjectNames.NicifyVariableName(type.Name));
+            var selector = new GenericSelector<Type>(
+                "",
+                validMetadataTypes,
+                false,
+                type => ObjectNames.NicifyVariableName(type.Name)
+            );
 
             foreach (var item in selector.SelectionTree.MenuItems)
             {
@@ -826,20 +1177,27 @@ namespace Sirenix.OdinInspector.Modules.Localization.Editor
                 tree.Config.SelectMenuItemsOnMouseDown = true;
                 tree.Selection.SupportsMultiSelect = false;
 
-                var collectionGUIDs = AssetDatabase.FindAssets($"t:{nameof(LocalizationTableCollection)}");
+                var collectionGUIDs = AssetDatabase.FindAssets(
+                    $"t:{nameof(LocalizationTableCollection)}"
+                );
 
                 foreach (var guid in collectionGUIDs)
                 {
                     var path = AssetDatabase.GUIDToAssetPath(guid);
-                    var collection = AssetDatabase.LoadAssetAtPath<LocalizationTableCollection>(path);
+                    var collection = AssetDatabase.LoadAssetAtPath<LocalizationTableCollection>(
+                        path
+                    );
 
-                    if (collection is null) continue;
-                    if (collection.Tables.Count < 1) continue;
-                    if (collection.Tables[0].asset.GetType() != this.tableType) continue;
+                    if (collection is null)
+                        continue;
+                    if (collection.Tables.Count < 1)
+                        continue;
+                    if (collection.Tables[0].asset.GetType() != this.tableType)
+                        continue;
 
                     var collectionItem = new OdinMenuItem(tree, collection.name, collection)
                     {
-                        SdfIcon = SdfIconType.Table
+                        SdfIcon = SdfIconType.Table,
                     };
 
                     tree.MenuItems.Add(collectionItem);
@@ -847,7 +1205,8 @@ namespace Sirenix.OdinInspector.Modules.Localization.Editor
             }
         }
 
-        public class TableEntryReferenceSelector : OdinSelector<TableEntryReferenceSelector.TableEntry>
+        public class TableEntryReferenceSelector
+            : OdinSelector<TableEntryReferenceSelector.TableEntry>
         {
             private Type tableType;
 
@@ -867,21 +1226,27 @@ namespace Sirenix.OdinInspector.Modules.Localization.Editor
                 tree.Config.SelectMenuItemsOnMouseDown = true;
                 tree.Selection.SupportsMultiSelect = false;
 
-
-                var collectionGUIDs = AssetDatabase.FindAssets($"t:{nameof(LocalizationTableCollection)}");
+                var collectionGUIDs = AssetDatabase.FindAssets(
+                    $"t:{nameof(LocalizationTableCollection)}"
+                );
 
                 foreach (var guid in collectionGUIDs)
                 {
                     var path = AssetDatabase.GUIDToAssetPath(guid);
-                    var collection = AssetDatabase.LoadAssetAtPath<LocalizationTableCollection>(path);
+                    var collection = AssetDatabase.LoadAssetAtPath<LocalizationTableCollection>(
+                        path
+                    );
 
-                    if (collection is null) continue;
-                    if (collection.Tables.Count < 1) continue;
-                    if (collection.Tables[0].asset.GetType() != this.tableType) continue;
+                    if (collection is null)
+                        continue;
+                    if (collection.Tables.Count < 1)
+                        continue;
+                    if (collection.Tables[0].asset.GetType() != this.tableType)
+                        continue;
 
                     var collectionItem = new OdinMenuItem(tree, collection.name, collection)
                     {
-                        SdfIcon = SdfIconType.Table
+                        SdfIcon = SdfIconType.Table,
                     };
 
                     List<SharedTableData.SharedTableEntry> entries = collection.SharedData.Entries;
@@ -890,11 +1255,15 @@ namespace Sirenix.OdinInspector.Modules.Localization.Editor
                     {
                         SharedTableData.SharedTableEntry entry = entries[j];
 
-                        var tableEntry = new TableEntry {Collection = collection, SharedEntry = entry};
+                        var tableEntry = new TableEntry
+                        {
+                            Collection = collection,
+                            SharedEntry = entry,
+                        };
 
                         var entryItem = new OdinMenuItem(tree, entry.Key, tableEntry)
                         {
-                            SdfIcon = SdfIconType.KeyFill
+                            SdfIcon = SdfIconType.KeyFill,
                         };
 
                         collectionItem.ChildMenuItems.Add(entryItem);
@@ -906,18 +1275,25 @@ namespace Sirenix.OdinInspector.Modules.Localization.Editor
             }
         }
 
-        private void DoTableGUI(Rect rect, TableReference tableReference, InspectorProperty platformOverrideData)
+        private void DoTableGUI(
+            Rect rect,
+            TableReference tableReference,
+            InspectorProperty platformOverrideData
+        )
         {
             var dropDownPosition = EditorGUI.PrefixLabel(rect, new GUIContent("Table Collection"));
             var label = tableReference.TableCollectionName;
 
-            if (EditorGUI.DropdownButton(dropDownPosition, new GUIContent(label), FocusType.Passive))
+            if (
+                EditorGUI.DropdownButton(dropDownPosition, new GUIContent(label), FocusType.Passive)
+            )
             {
                 TableReferenceSelector tableReferenceSelector;
 
-                tableReferenceSelector = this.localizationTableCollection.GetType() == typeof(AssetTableCollection)
-                    ? new TableReferenceSelector(typeof(AssetTable))
-                    : new TableReferenceSelector(typeof(StringTable));
+                tableReferenceSelector =
+                    this.localizationTableCollection.GetType() == typeof(AssetTableCollection)
+                        ? new TableReferenceSelector(typeof(AssetTable))
+                        : new TableReferenceSelector(typeof(StringTable));
 
                 tableReferenceSelector.GetCurrentSelection();
 
@@ -926,64 +1302,94 @@ namespace Sirenix.OdinInspector.Modules.Localization.Editor
                     var selection = selections.FirstOrDefault();
 
                     var platformOverrideType = typeof(PlatformOverride);
-                    var platformOverrideDataType = platformOverrideType.GetNestedType("PlatformOverrideData", BindingFlags.NonPublic);
-                    
+                    var platformOverrideDataType = platformOverrideType.GetNestedType(
+                        "PlatformOverrideData",
+                        BindingFlags.NonPublic
+                    );
+
                     platformOverrideDataType
                         .GetField("tableReference")
-                        .SetValue(platformOverrideData.ValueEntry.WeakSmartValue, selection.TableCollectionNameReference);
+                        .SetValue(
+                            platformOverrideData.ValueEntry.WeakSmartValue,
+                            selection.TableCollectionNameReference
+                        );
 
                     platformOverrideDataType
                         .GetField("tableEntryReference")
-                        .SetValue(platformOverrideData.ValueEntry.WeakSmartValue, (TableEntryReference) string.Empty);
+                        .SetValue(
+                            platformOverrideData.ValueEntry.WeakSmartValue,
+                            (TableEntryReference)string.Empty
+                        );
                 };
 
                 tableReferenceSelector.ShowInPopup();
             }
         }
 
-        private void DoTableAndEntryGUI(Rect rect,
-                                        TableReference tableReference,
-                                        TableEntryReference tableEntryReference,
-                                        InspectorProperty platformOverrideData,
-                                        bool displayTableName)
+        private void DoTableAndEntryGUI(
+            Rect rect,
+            TableReference tableReference,
+            TableEntryReference tableEntryReference,
+            InspectorProperty platformOverrideData,
+            bool displayTableName
+        )
         {
             var dropDownPosition = EditorGUI.PrefixLabel(rect, new GUIContent("Reference"));
 
-            var entryLabel = tableEntryReference.ReferenceType != TableEntryReference.Type.Empty
-                                 ? tableEntryReference.ResolveKeyName(this.localizationTableCollection.SharedData)
-                                 : null;
+            var entryLabel =
+                tableEntryReference.ReferenceType != TableEntryReference.Type.Empty
+                    ? tableEntryReference.ResolveKeyName(
+                        this.localizationTableCollection.SharedData
+                    )
+                    : null;
 
             string label;
             if (displayTableName)
             {
                 var tableLabel = tableReference.TableCollectionName ?? "";
-                label = string.IsNullOrEmpty(tableLabel) || string.IsNullOrEmpty(entryLabel) ? "None" : $"{tableLabel}/{entryLabel}";
+                label =
+                    string.IsNullOrEmpty(tableLabel) || string.IsNullOrEmpty(entryLabel)
+                        ? "None"
+                        : $"{tableLabel}/{entryLabel}";
             }
             else
             {
                 label = string.IsNullOrWhiteSpace(entryLabel) ? "None" : $"{entryLabel}";
             }
 
-            if (EditorGUI.DropdownButton(dropDownPosition, new GUIContent(label), FocusType.Passive))
+            if (
+                EditorGUI.DropdownButton(dropDownPosition, new GUIContent(label), FocusType.Passive)
+            )
             {
-                Type tableType = this.localizationTableCollection.GetType() == typeof(AssetTableCollection)
-                    ? typeof(AssetTable)
-                    : typeof(StringTable);
+                Type tableType =
+                    this.localizationTableCollection.GetType() == typeof(AssetTableCollection)
+                        ? typeof(AssetTable)
+                        : typeof(StringTable);
 
-                TableEntryReferenceSelector tableEntryReferenceSelector = new TableEntryReferenceSelector(tableType);
+                TableEntryReferenceSelector tableEntryReferenceSelector =
+                    new TableEntryReferenceSelector(tableType);
                 tableEntryReferenceSelector.SelectionConfirmed += selections =>
                 {
                     var selection = selections.FirstOrDefault();
                     var platformOverrideType = typeof(PlatformOverride);
-                    var platformOverrideDataType = platformOverrideType.GetNestedType("PlatformOverrideData", BindingFlags.NonPublic);
+                    var platformOverrideDataType = platformOverrideType.GetNestedType(
+                        "PlatformOverrideData",
+                        BindingFlags.NonPublic
+                    );
 
                     platformOverrideDataType
                         .GetField("tableReference")
-                        .SetValue(platformOverrideData.ValueEntry.WeakSmartValue, selection.Collection.TableCollectionNameReference);
-                    
+                        .SetValue(
+                            platformOverrideData.ValueEntry.WeakSmartValue,
+                            selection.Collection.TableCollectionNameReference
+                        );
+
                     platformOverrideDataType
                         .GetField("tableEntryReference")
-                        .SetValue(platformOverrideData.ValueEntry.WeakSmartValue, (TableEntryReference) selection.SharedEntry.Key);
+                        .SetValue(
+                            platformOverrideData.ValueEntry.WeakSmartValue,
+                            (TableEntryReference)selection.SharedEntry.Key
+                        );
                 };
 
                 tableEntryReferenceSelector.ShowInPopup();

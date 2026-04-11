@@ -35,8 +35,7 @@ namespace Zenject
             return new T[_length];
         }
 
-        static readonly Dictionary<int, ArrayPool<T>> _pools =
-            new Dictionary<int, ArrayPool<T>>();
+        static readonly Dictionary<int, ArrayPool<T>> _pools = new Dictionary<int, ArrayPool<T>>();
 
         public static ArrayPool<T> GetPool(int length)
         {

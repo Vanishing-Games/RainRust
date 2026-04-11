@@ -38,7 +38,7 @@ namespace LDtkUnity.Editor
                     return null;
                 }
             }
-            
+
             //never apply post-processing to field values if it was a level. the builder would be null in this case
             if (_builder != null && parser is ILDtkPostParser postParser)
             {
@@ -48,7 +48,7 @@ namespace LDtkUnity.Editor
             //Debug.Log($"Parse FieldInstance {instance.Identifier}");
             return parser.ImportString;
         }
-        
+
         private static void GetParserInstances()
         {
             if (_parsers == null)
@@ -57,36 +57,26 @@ namespace LDtkUnity.Editor
                 {
                     { "Int", new LDtkParsedInt() },
                     { "Array<Int>", new LDtkParsedInt() },
-                    
                     { "Float", new LDtkParsedFloat() },
                     { "Array<Float>", new LDtkParsedFloat() },
-                    
                     { "Bool", new LDtkParsedBool() },
                     { "Array<Bool>", new LDtkParsedBool() },
-                    
                     { "String", new LDtkParsedString() },
                     { "Array<String>", new LDtkParsedString() },
-                    
                     { "Multilines", new LDtkParsedMultiline() },
                     { "Array<Multilines>", new LDtkParsedMultiline() },
-                    
                     { "FilePath", new LDtkParsedFilePath() },
                     { "Array<FilePath>", new LDtkParsedFilePath() },
-                    
                     { "Color", new LDtkParsedColor() },
                     { "Array<Color>", new LDtkParsedColor() },
-                    
                     //only need the one because enums are an exception to the rule
                     { "LocalEnum", new LDtkParsedEnum() },
-                    
                     { "Tile", new LDtkParsedTile() },
                     { "Array<Tile>", new LDtkParsedTile() },
-                    
                     { "EntityRef", new LDtkParsedEntityRef() },
                     { "Array<EntityRef>", new LDtkParsedEntityRef() },
-                    
                     { "Point", new LDtkParsedPoint() },
-                    { "Array<Point>", new LDtkParsedPoint() }
+                    { "Array<Point>", new LDtkParsedPoint() },
                 };
             }
         }

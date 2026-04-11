@@ -11,8 +11,7 @@ namespace Zenject
         readonly Type _instanceType;
         readonly DiContainer _container;
 
-        public InstanceProvider(
-            Type instanceType, object instance, DiContainer container)
+        public InstanceProvider(Type instanceType, object instance, DiContainer container)
         {
             _instanceType = instanceType;
             _instance = instance;
@@ -35,7 +34,11 @@ namespace Zenject
         }
 
         public void GetAllInstancesWithInjectSplit(
-            InjectContext context, List<TypeValuePair> args, out Action injectAction, List<object> buffer)
+            InjectContext context,
+            List<TypeValuePair> args,
+            out Action injectAction,
+            List<object> buffer
+        )
         {
             Assert.That(args.Count == 0);
             Assert.IsNotNull(context);

@@ -8,9 +8,7 @@ namespace Zenject
         List<BindInfo> _secondaryBindInfos;
 
         public CopyNonLazyBinder(BindInfo bindInfo)
-            : base(bindInfo)
-        {
-        }
+            : base(bindInfo) { }
 
         // This is used in cases where you have multiple bindings that depend on each other so should
         // be inherited together (eg. FromIFactory)

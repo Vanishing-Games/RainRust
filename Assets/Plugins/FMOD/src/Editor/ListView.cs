@@ -9,8 +9,13 @@ namespace FMODUnity
 
         public DrawElementWithLabelDelegate drawElementWithLabelCallback;
 
-        public delegate void DrawElementWithLabelDelegate(Rect rect, float labelRight, int index,
-            bool active, bool focused);
+        public delegate void DrawElementWithLabelDelegate(
+            Rect rect,
+            float labelRight,
+            int index,
+            bool active,
+            bool focused
+        );
 
         private float labelRight;
 
@@ -42,4 +47,3 @@ namespace FMODUnity
         }
     }
 }
-

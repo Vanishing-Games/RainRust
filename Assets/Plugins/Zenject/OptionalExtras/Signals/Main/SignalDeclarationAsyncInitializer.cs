@@ -13,10 +13,10 @@ namespace Zenject
         readonly List<SignalDeclaration> _declarations;
 
         public SignalDeclarationAsyncInitializer(
-            [Inject(Source = InjectSources.Local)]
-            List<SignalDeclaration> declarations,
+            [Inject(Source = InjectSources.Local)] List<SignalDeclaration> declarations,
             [Inject(Optional = true, Source = InjectSources.Local)]
-            LazyInject<TickableManager> tickManager)
+                LazyInject<TickableManager> tickManager
+        )
         {
             _declarations = declarations;
             _tickManager = tickManager;
@@ -30,11 +30,13 @@ namespace Zenject
 
                 if (declaration.IsAsync)
                 {
-                    Assert.IsNotNull(_tickManager.Value, "TickableManager is required when using asynchronous signals");
+                    Assert.IsNotNull(
+                        _tickManager.Value,
+                        "TickableManager is required when using asynchronous signals"
+                    );
                     _tickManager.Value.Add(declaration, declaration.TickPriority);
                 }
             }
         }
     }
 }
-

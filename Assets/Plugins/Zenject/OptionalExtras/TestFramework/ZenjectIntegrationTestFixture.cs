@@ -1,12 +1,12 @@
 using System;
 using System.Collections;
-using Zenject.Internal;
-using ModestTree;
-using Assert = ModestTree.Assert;
 using System.Linq;
+using ModestTree;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 using UnityEngine;
+using Zenject.Internal;
+using Assert = ModestTree.Assert;
 
 namespace Zenject
 {
@@ -21,8 +21,10 @@ namespace Zenject
         {
             get
             {
-                Assert.That(_hasStartedInstall,
-                    "Must call PreInstall() before accessing ZenjectIntegrationTestFixture.Container!");
+                Assert.That(
+                    _hasStartedInstall,
+                    "Must call PreInstall() before accessing ZenjectIntegrationTestFixture.Container!"
+                );
                 return _sceneContext.Container;
             }
         }
@@ -31,8 +33,10 @@ namespace Zenject
         {
             get
             {
-                Assert.That(_hasStartedInstall,
-                    "Must call PreInstall() before accessing ZenjectIntegrationTestFixture.SceneContext!");
+                Assert.That(
+                    _hasStartedInstall,
+                    "Must call PreInstall() before accessing ZenjectIntegrationTestFixture.SceneContext!"
+                );
                 return _sceneContext;
             }
         }
@@ -40,8 +44,11 @@ namespace Zenject
         [SetUp]
         public void Setup()
         {
-            Assert.That(Application.isPlaying,
-                "ZenjectIntegrationTestFixture is meant to be used for play mode tests only.  Please ensure your test file '{0}' is outside of the editor folder and try again.", GetType());
+            Assert.That(
+                Application.isPlaying,
+                "ZenjectIntegrationTestFixture is meant to be used for play mode tests only.  Please ensure your test file '{0}' is outside of the editor folder and try again.",
+                GetType()
+            );
 
             ZenjectTestUtil.DestroyEverythingExceptTestRunner(true);
             StaticContext.Clear();
@@ -55,7 +62,11 @@ namespace Zenject
 
         protected void PreInstall()
         {
-            Assert.That(!_hasStartedInstall, "Called PreInstall twice in test '{0}'!", TestContext.CurrentContext.Test.Name);
+            Assert.That(
+                !_hasStartedInstall,
+                "Called PreInstall twice in test '{0}'!",
+                TestContext.CurrentContext.Test.Name
+            );
             _hasStartedInstall = true;
 
             Assert.That(!ProjectContext.HasInstance);
@@ -77,17 +88,27 @@ namespace Zenject
         bool CurrentTestHasAttribute<T>()
             where T : Attribute
         {
-            return GetType().GetMethod(TestContext.CurrentContext.Test.MethodName)
+            return GetType()
+                .GetMethod(TestContext.CurrentContext.Test.MethodName)
                 .GetCustomAttributes(true)
-                .Cast<Attribute>().OfType<T>().Any();
+                .Cast<Attribute>()
+                .OfType<T>()
+                .Any();
         }
 
         protected void PostInstall()
         {
-            Assert.That(_hasStartedInstall,
-                "Called PostInstall but did not call PreInstall in test '{0}'!", TestContext.CurrentContext.Test.Name);
+            Assert.That(
+                _hasStartedInstall,
+                "Called PostInstall but did not call PreInstall in test '{0}'!",
+                TestContext.CurrentContext.Test.Name
+            );
 
-            Assert.That(!_hasEndedInstall, "Called PostInstall twice in test '{0}'!", TestContext.CurrentContext.Test.Name);
+            Assert.That(
+                !_hasEndedInstall,
+                "Called PostInstall twice in test '{0}'!",
+                TestContext.CurrentContext.Test.Name
+            );
 
             _hasEndedInstall = true;
             _sceneContext.Resolve();
@@ -105,8 +126,11 @@ namespace Zenject
 
         protected IEnumerator DestroyEverything()
         {
-            Assert.That(_hasStartedInstall,
-                "Called DestroyAll but did not call PreInstall (or SkipInstall) in test '{0}'!", TestContext.CurrentContext.Test.Name);
+            Assert.That(
+                _hasStartedInstall,
+                "Called DestroyAll but did not call PreInstall (or SkipInstall) in test '{0}'!",
+                TestContext.CurrentContext.Test.Name
+            );
             DestroyEverythingInternal(false);
             // Wait one frame for GC to really destroy everything
             yield return null;
@@ -139,11 +163,17 @@ namespace Zenject
         {
             if (TestContext.CurrentContext.Result.Outcome == ResultState.Success)
             {
-                Assert.That(_hasStartedInstall,
-                    "PreInstall (or SkipInstall) was not called in test '{0}'!", TestContext.CurrentContext.Test.Name);
+                Assert.That(
+                    _hasStartedInstall,
+                    "PreInstall (or SkipInstall) was not called in test '{0}'!",
+                    TestContext.CurrentContext.Test.Name
+                );
 
-                Assert.That(_hasEndedInstall,
-                    "PostInstall was not called in test '{0}'!", TestContext.CurrentContext.Test.Name);
+                Assert.That(
+                    _hasEndedInstall,
+                    "PostInstall was not called in test '{0}'!",
+                    TestContext.CurrentContext.Test.Name
+                );
             }
 
             DestroyEverythingInternal(true);

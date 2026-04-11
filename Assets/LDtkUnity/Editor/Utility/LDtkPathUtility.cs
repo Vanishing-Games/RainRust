@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
@@ -19,16 +18,19 @@ namespace LDtkUnity.Editor
         {
             return directory.Replace('\\', '/');
         }
+
         private static string SimplifyPathWithDoubleDots(string inputPath)
         {
             string fullPath = CleanPathSlashes(Path.GetFullPath(inputPath));
-            
+
             if (fullPath.StartsWith(Application.dataPath))
             {
                 return "Assets" + fullPath.Substring(Application.dataPath.Length);
             }
 
-            LDtkDebug.LogWarning($"Cannot specify a folder outside of the Unity project\n{fullPath}");
+            LDtkDebug.LogWarning(
+                $"Cannot specify a folder outside of the Unity project\n{fullPath}"
+            );
             return fullPath;
         }
 
@@ -37,6 +39,7 @@ namespace LDtkUnity.Editor
             string directory = Path.GetDirectoryName(filePath);
             TryCreateDirectory(directory);
         }
+
         public static void TryCreateDirectory(string directory)
         {
             if (!Directory.Exists(directory))
@@ -54,6 +57,7 @@ namespace LDtkUnity.Editor
             string objAssetPath = AssetDatabase.GetAssetPath(obj);
             return SiblingDirectoryOfAssetPath(objAssetPath);
         }
+
         public static string SiblingDirectoryOfAssetPath(string objAssetPath)
         {
             string objAssetDirectory = Path.GetDirectoryName(objAssetPath);
@@ -62,15 +66,16 @@ namespace LDtkUnity.Editor
 
             return CleanPath(directory);
         }
+
         public static string DirectoryOfAssetPath(string objAssetPath)
         {
             string objAssetDirectory = Path.GetDirectoryName(objAssetPath);
             return CleanPath(objAssetDirectory);
         }
-        
+
         public static string AbsolutePathToAssetsPath(string absolutePath)
         {
-            if (absolutePath.StartsWith(Application.dataPath)) 
+            if (absolutePath.StartsWith(Application.dataPath))
             {
                 return "Assets" + absolutePath.Substring(Application.dataPath.Length);
             }
@@ -85,7 +90,7 @@ namespace LDtkUnity.Editor
             {
                 LDtkDebug.LogError("Incorrect string format");
             }
-            
+
             return Application.dataPath + assetsPath.Remove(0, "Assets".Length);
         }
 
@@ -98,7 +103,7 @@ namespace LDtkUnity.Editor
                 startFrom = AssetsPathToAbsolutePath(assetPath);
                 startFrom = Path.GetDirectoryName(startFrom);
             }
-            
+
             string directory = EditorUtility.OpenFolderPanel(title, startFrom, "");
 
             if (string.IsNullOrEmpty(directory))
@@ -111,13 +116,17 @@ namespace LDtkUnity.Editor
             directory += '/';
             if (directory.Contains("~/"))
             {
-                LDtkDebug.LogError("Chosen directory contains a '~' at the end of a folder name, which is considered a hidden folder to Unity. Consider renaming the folder.");
+                LDtkDebug.LogError(
+                    "Chosen directory contains a '~' at the end of a folder name, which is considered a hidden folder to Unity. Consider renaming the folder."
+                );
                 return "";
             }
 
             if (directory.Contains("/."))
             {
-                LDtkDebug.LogError("Chosen directory contains a '.' at the start of a folder name, which is considered a hidden folder to Unity. Consider renaming the folder.");
+                LDtkDebug.LogError(
+                    "Chosen directory contains a '.' at the start of a folder name, which is considered a hidden folder to Unity. Consider renaming the folder."
+                );
                 return "";
             }
 
@@ -126,10 +135,9 @@ namespace LDtkUnity.Editor
                 LDtkDebug.LogError("Chosen directory is outside the Unity project.");
                 return "";
             }
-            
+
             return directory;
         }
-
 
         public static bool IsFileBackupFile(string path, string projectPath)
         {
@@ -143,13 +151,14 @@ namespace LDtkUnity.Editor
             }
             return path.Contains("/backups/");
         }
-        
+
         public static string GetRelativePath(string fromPath, string destinationPath)
         {
             Uri startUri = new Uri(fromPath);
             Uri endUri = new Uri(destinationPath);
             Uri relUri = startUri.MakeRelativeUri(endUri);
-            return Uri.UnescapeDataString(relUri.ToString()).Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+            return Uri.UnescapeDataString(relUri.ToString())
+                .Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
         }
     }
 }

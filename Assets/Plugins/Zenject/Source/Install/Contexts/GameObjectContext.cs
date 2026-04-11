@@ -19,7 +19,9 @@ namespace Zenject
         public event Action PostResolve;
 
         [SerializeField]
-        [Tooltip("Note that this field is optional and can be ignored in most cases.  This is really only needed if you want to control the 'Script Execution Order' of your subcontainer.  In this case, define a new class that derives from MonoKernel, add it to this game object, then drag it into this field.  Then you can set a value for 'Script Execution Order' for this new class and this will control when all ITickable/IInitializable classes bound within this subcontainer get called.")]
+        [Tooltip(
+            "Note that this field is optional and can be ignored in most cases.  This is really only needed if you want to control the 'Script Execution Order' of your subcontainer.  In this case, define a new class that derives from MonoKernel, add it to this game object, then drag it into this field.  Then you can set a value for 'Script Execution Order' for this new class and this will control when all ITickable/IInitializable classes bound within this subcontainer get called."
+        )]
         [FormerlySerializedAs("_facade")]
         MonoKernel _kernel;
 
@@ -41,8 +43,7 @@ namespace Zenject
         }
 
         [Inject]
-        public void Construct(
-            DiContainer parentContainer)
+        public void Construct(DiContainer parentContainer)
         {
             Assert.IsNull(_parentContainer);
             _parentContainer = parentContainer;
@@ -56,13 +57,13 @@ namespace Zenject
             ResolveAndStart();
         }
 
-        public void Install(DiContainer parentContainer) 
+        public void Install(DiContainer parentContainer)
         {
             Assert.That(_parentContainer == null || _parentContainer == parentContainer);
 
             // We allow calling this explicitly instead of relying on the [Inject] event above
             // so that we can follow the two-pass construction-injection pattern in the providers
-            if (_hasInstalled) 
+            if (_hasInstalled)
             {
                 return;
             }
@@ -86,8 +87,10 @@ namespace Zenject
             {
                 if (instance is MonoKernel)
                 {
-                    Assert.That(ReferenceEquals(instance, _kernel),
-                        "Found MonoKernel derived class that is not hooked up to GameObjectContext.  If you use MonoKernel, you must indicate this to GameObjectContext by dragging and dropping it to the Kernel field in the inspector");
+                    Assert.That(
+                        ReferenceEquals(instance, _kernel),
+                        "Found MonoKernel derived class that is not hooked up to GameObjectContext.  If you use MonoKernel, you must indicate this to GameObjectContext by dragging and dropping it to the Kernel field in the inspector"
+                    );
                 }
 
                 _container.QueueForInject(instance);
@@ -110,7 +113,7 @@ namespace Zenject
             }
         }
 
-        void ResolveAndStart() 
+        void ResolveAndStart()
         {
             if (PreResolve != null)
             {
@@ -174,7 +177,9 @@ namespace Zenject
                 if (child != null)
                 {
                     ZenUtilInternal.GetInjectableMonoBehavioursUnderGameObject(
-                        child.gameObject, monoBehaviours);
+                        child.gameObject,
+                        monoBehaviours
+                    );
                 }
             }
         }
@@ -188,8 +193,12 @@ namespace Zenject
 
             if (_kernel == null)
             {
-                _container.Bind<MonoKernel>()
-                    .To<DefaultGameObjectKernel>().FromNewComponentOn(gameObject).AsSingle().NonLazy();
+                _container
+                    .Bind<MonoKernel>()
+                    .To<DefaultGameObjectKernel>()
+                    .FromNewComponentOn(gameObject)
+                    .AsSingle()
+                    .NonLazy();
             }
             else
             {

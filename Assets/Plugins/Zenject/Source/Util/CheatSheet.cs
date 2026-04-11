@@ -131,7 +131,11 @@ namespace Zenject
             Container.Bind<Foo>().FromNewComponentOnNewGameObject().AsSingle();
 
             // You can also specify the game object name to use using WithGameObjectName
-            Container.Bind<Foo>().FromNewComponentOnNewGameObject().WithGameObjectName("Foo1").AsSingle();
+            Container
+                .Bind<Foo>()
+                .FromNewComponentOnNewGameObject()
+                .WithGameObjectName("Foo1")
+                .AsSingle();
 
             // Bind to an interface instead
             Container.Bind<IFoo>().To<Foo>().FromNewComponentOnNewGameObject().AsSingle();
@@ -152,7 +156,10 @@ namespace Zenject
             // created
             // For this to work, there must be both a Foo MonoBehaviour and
             // a Bar MonoBehaviour somewhere on the prefab
-            Container.Bind(typeof(Foo), typeof(Bar)).FromComponentInNewPrefab(prefab).AsSingle();
+            Container
+                .Bind(typeof(Foo), typeof(Bar))
+                .FromComponentInNewPrefab(prefab)
+                .AsSingle();
 
             ///////////// FromComponentInNewPrefab (Transient)
 
@@ -249,7 +256,10 @@ namespace Zenject
             Container.Bind<IFoo>().To<Foo2>().AsSingle().WhenInjectedInto<Qux>();
 
             // Allow depending on Foo in only a few select classes
-            Container.Bind<Foo>().AsSingle().WhenInjectedInto(typeof(Bar), typeof(Qux), typeof(Baz));
+            Container
+                .Bind<Foo>()
+                .AsSingle()
+                .WhenInjectedInto(typeof(Bar), typeof(Qux), typeof(Baz));
 
             // Supply "my game" for any strings that are injected into the Gui class with the identifier "Title"
             Container.BindInstance("my game").WithId("Title").WhenInjectedInto<Gui>();
@@ -262,16 +272,20 @@ namespace Zenject
             // Note that this is usually not a good idea since the name of a field can change
             // easily and break the binding but shown here as an example of a more complex
             // condition
-            Container.BindInstance(5.0f).When(ctx =>
-                ctx.ObjectType == typeof(Gui) && ctx.MemberName == "width");
+            Container
+                .BindInstance(5.0f)
+                .When(ctx => ctx.ObjectType == typeof(Gui) && ctx.MemberName == "width");
 
             // Create a new 'Foo' for every class that is created as part of the
             // construction of the 'Bar' class
             // So if Bar has a constructor parameter of type Qux, and Qux has
             // a constructor parameter of type IFoo, a new Foo will be created
             // for that case
-            Container.Bind<IFoo>().To<Foo>().AsTransient().When(
-                ctx => ctx.AllObjectTypes.Contains(typeof(Bar)));
+            Container
+                .Bind<IFoo>()
+                .To<Foo>()
+                .AsTransient()
+                .When(ctx => ctx.AllObjectTypes.Contains(typeof(Bar)));
 
             ///////////// Complex conditions example
 
@@ -282,8 +296,22 @@ namespace Zenject
             Container.Bind<Bar>().WithId("Bar2").AsCached();
 
             // Here we use the 'ParentContexts' property of inject context to sync multiple corresponding identifiers
-            Container.BindInstance(foo1).When(c => c.ParentContexts.Where(x => x.MemberType == typeof(Bar) && Equals(x.Identifier, "Bar1")).Any());
-            Container.BindInstance(foo2).When(c => c.ParentContexts.Where(x => x.MemberType == typeof(Bar) && Equals(x.Identifier, "Bar2")).Any());
+            Container
+                .BindInstance(foo1)
+                .When(c =>
+                    c.ParentContexts.Where(x =>
+                            x.MemberType == typeof(Bar) && Equals(x.Identifier, "Bar1")
+                        )
+                        .Any()
+                );
+            Container
+                .BindInstance(foo2)
+                .When(c =>
+                    c.ParentContexts.Where(x =>
+                            x.MemberType == typeof(Bar) && Equals(x.Identifier, "Bar2")
+                        )
+                        .Any()
+                );
 
             // This results in:
             Assert.That(Container.ResolveId<Bar>("Bar1").Foo == foo1);
@@ -300,31 +328,27 @@ namespace Zenject
             Container.Bind<IFoo>().To<IBar>().FromResolve();
 
             // This will result in the same behaviour as the above
-            Container.Bind(typeof(Foo), typeof(IBar), typeof(IFoo)).To<Foo>().FromComponentInNewPrefab(fooPrefab).AsSingle();
+            Container
+                .Bind(typeof(Foo), typeof(IBar), typeof(IFoo))
+                .To<Foo>()
+                .FromComponentInNewPrefab(fooPrefab)
+                .AsSingle();
 
             InstallMore4();
         }
 
         public class FooInstaller : Installer<FooInstaller>
         {
-            public FooInstaller(string foo)
-            {
-            }
+            public FooInstaller(string foo) { }
 
-            public override void InstallBindings()
-            {
-            }
+            public override void InstallBindings() { }
         }
 
         public class FooInstallerWithArgs : Installer<string, FooInstallerWithArgs>
         {
-            public FooInstallerWithArgs(string foo)
-            {
-            }
+            public FooInstallerWithArgs(string foo) { }
 
-            public override void InstallBindings()
-            {
-            }
+            public override void InstallBindings() { }
         }
 
         void InstallMore4()
@@ -379,17 +403,11 @@ namespace Zenject
             Foo foo3 = Container.InstantiateComponent<Foo>(go);
         }
 
-        public interface IFoo2
-        {
-        }
+        public interface IFoo2 { }
 
-        public interface IFoo
-        {
-        }
+        public interface IFoo { }
 
-        public interface IBar : IFoo
-        {
-        }
+        public interface IBar : IFoo { }
 
         public class Foo : MonoBehaviour, IFoo, IFoo2, IBar
         {
@@ -404,34 +422,21 @@ namespace Zenject
             }
         }
 
-        public class Foo1 : IFoo
-        {
-        }
+        public class Foo1 : IFoo { }
 
-        public class Foo2 : IFoo
-        {
-        }
+        public class Foo2 : IFoo { }
 
-        public class Foo3 : IFoo
-        {
-        }
+        public class Foo3 : IFoo { }
 
-        public class Baz
-        {
-        }
+        public class Baz { }
 
-        public class Gui
-        {
-        }
+        public class Gui { }
 
         public class Bar : IBar
         {
             public Foo Foo
             {
-                get
-                {
-                    return null;
-                }
+                get { return null; }
             }
         }
     }

@@ -23,10 +23,14 @@ namespace Zenject.Asteroids
         bool _autoSpawn = true;
 
         public AsteroidManager(
-            Settings settings, Asteroid.Factory asteroidFactory, LevelHelper level)
+            Settings settings,
+            Asteroid.Factory asteroidFactory,
+            LevelHelper level
+        )
         {
             _settings = settings;
-            _timeIntervalBetweenSpawns = _settings.maxSpawnTime / (_settings.maxSpawns - _settings.startingSpawns);
+            _timeIntervalBetweenSpawns =
+                _settings.maxSpawnTime / (_settings.maxSpawns - _settings.startingSpawns);
             _timeToNextSpawn = _timeIntervalBetweenSpawns;
             _asteroidFactory = asteroidFactory;
             _level = level;
@@ -67,10 +71,9 @@ namespace Zenject.Asteroids
                 var sizePx = Random.Range(0.0f, 1.0f);
                 var speed = Random.Range(_settings.minSpeed, _settings.maxSpeed);
 
-                _cachedAttributes.Enqueue(new AsteroidAttributes {
-                    SizePx = sizePx,
-                    InitialSpeed = speed
-                });
+                _cachedAttributes.Enqueue(
+                    new AsteroidAttributes { SizePx = sizePx, InitialSpeed = speed }
+                );
 
                 speedTotal += speed;
                 sizeTotal += sizePx;
@@ -91,8 +94,15 @@ namespace Zenject.Asteroids
                 attributes.InitialSpeed *= speedScaleFactor;
             }
 
-            Assert.That(Mathf.Approximately(_cachedAttributes.Average(x => x.InitialSpeed), desiredAverageSpeed));
-            Assert.That(Mathf.Approximately(_cachedAttributes.Average(x => x.SizePx), desiredAverageSize));
+            Assert.That(
+                Mathf.Approximately(
+                    _cachedAttributes.Average(x => x.InitialSpeed),
+                    desiredAverageSpeed
+                )
+            );
+            Assert.That(
+                Mathf.Approximately(_cachedAttributes.Average(x => x.SizePx), desiredAverageSize)
+            );
         }
 
         void ResetAll()
@@ -176,11 +186,19 @@ namespace Zenject.Asteroids
                 }
                 case Side.Right:
                 {
-                    return new Vector3(_level.Right + scale, _level.Bottom + rand * _level.Height, 0);
+                    return new Vector3(
+                        _level.Right + scale,
+                        _level.Bottom + rand * _level.Height,
+                        0
+                    );
                 }
                 case Side.Left:
                 {
-                    return new Vector3(_level.Left - scale, _level.Bottom + rand * _level.Height, 0);
+                    return new Vector3(
+                        _level.Left - scale,
+                        _level.Bottom + rand * _level.Height,
+                        0
+                    );
                 }
             }
 
@@ -193,7 +211,7 @@ namespace Zenject.Asteroids
             Bottom,
             Left,
             Right,
-            Count
+            Count,
         }
 
         [Serializable]

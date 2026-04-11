@@ -20,7 +20,8 @@ namespace Zenject.SpaceFighter
             Settings settings,
             LevelBoundary levelBoundary,
             SignalBus signalBus,
-            EnemyFacade.Factory enemyFactory)
+            EnemyFacade.Factory enemyFactory
+        )
         {
             _enemyFactory = enemyFactory;
             _signalBus = signalBus;
@@ -44,8 +45,10 @@ namespace Zenject.SpaceFighter
         {
             _desiredNumEnemies += _settings.NumEnemiesIncreaseRate * Time.deltaTime;
 
-            if (_enemyCount < (int)_desiredNumEnemies
-                && Time.realtimeSinceStartup - _lastSpawnTime > _settings.MinDelayBetweenSpawns)
+            if (
+                _enemyCount < (int)_desiredNumEnemies
+                && Time.realtimeSinceStartup - _lastSpawnTime > _settings.MinDelayBetweenSpawns
+            )
             {
                 SpawnEnemy();
                 _enemyCount++;
@@ -77,28 +80,36 @@ namespace Zenject.SpaceFighter
                 {
                     return new Vector3(
                         _levelBoundary.Left + posOnSide * _levelBoundary.Width,
-                        _levelBoundary.Top + buffer, 0);
+                        _levelBoundary.Top + buffer,
+                        0
+                    );
                 }
                 case 1:
                 // right
                 {
                     return new Vector3(
                         _levelBoundary.Right + buffer,
-                        _levelBoundary.Top - posOnSide * _levelBoundary.Height, 0);
+                        _levelBoundary.Top - posOnSide * _levelBoundary.Height,
+                        0
+                    );
                 }
                 case 2:
                 // bottom
                 {
                     return new Vector3(
                         _levelBoundary.Left + posOnSide * _levelBoundary.Width,
-                        _levelBoundary.Bottom - buffer, 0);
+                        _levelBoundary.Bottom - buffer,
+                        0
+                    );
                 }
                 case 3:
                 // left
                 {
                     return new Vector3(
                         _levelBoundary.Left - buffer,
-                        _levelBoundary.Top - posOnSide * _levelBoundary.Height, 0);
+                        _levelBoundary.Top - posOnSide * _levelBoundary.Height,
+                        0
+                    );
                 }
             }
 
