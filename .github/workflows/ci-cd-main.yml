@@ -894,7 +894,7 @@ jobs:
           targetPlatform: ${{ matrix.buildTarget }}
           buildName: ${{ steps.load-build-config.outputs.project_name }}
           versioning: Tag
-          customParameters: -buildProfile "Assets/Settings/Build Profiles/${{ matrix.profile }}.asset"
+          customParameters: -buildProfile "Assets/Settings/BuildProfiles/${{ matrix.profile }}.asset"
           
       - name: 📦 确定产物名称并上传
         id: determine-artifact-name
