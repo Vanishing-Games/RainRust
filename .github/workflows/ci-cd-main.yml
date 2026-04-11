@@ -896,7 +896,7 @@ jobs:
             targetPlatform: ${{ matrix.buildTarget }}
             buildName: ${{ steps.load-build-config.outputs.project_name }}
             versioning: Tag
-            customParameters: -buildProfile "Assets/Settings/BuildProfiles/${{ matrix.profile }}.asset"
+            customParameters: -buildProfile "Assets/Settings/Build Profiles/${{ matrix.profile }}.asset"
         env:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
@@ -951,13 +951,7 @@ jobs:
             echo "- 失败原因: 请查看构建日志了解详细错误信息" >> $GITHUB_STEP_SUMMARY
           fi
 
-      - name: 🔓 释放 Unity 许可证
-        if: always()
-        uses: game-ci/unity-return-license@v2
-        env:
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+
 
   # =============================================================================
   # 阶段4: 部署到GitHub Release - 将构建产物作为附件发布
