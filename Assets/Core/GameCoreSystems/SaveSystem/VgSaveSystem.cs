@@ -434,6 +434,11 @@ namespace Core
             return await LoadSaveFileAsync(slotName, false);
         }
 
+        public async UniTask<bool> SaveSlotAsync(string slotName)
+        {
+            return await WriteSaveFileAsync(slotName, false);
+        }
+
         [SerializeField]
         [BoxGroup("Actions")]
         [ValueDropdown("GetSlotNames")]
