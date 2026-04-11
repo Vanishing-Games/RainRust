@@ -70,6 +70,12 @@ namespace Core
         }
 
 #if UNITY_EDITOR
+        [BoxGroup("Settings")]
+        [LabelText("Input Settings Asset")]
+#endif
+        public InputSettings inputSettings;
+
+#if UNITY_EDITOR
         private void InitializeDebugData()
         {
             m_InputActionStates.Clear();
@@ -166,9 +172,7 @@ namespace Core
             public bool isReleased;
         }
 
-        [BoxGroup("Settings")]
-        [LabelText("Input Settings Asset")]
-        public InputSettings inputSettings;
+
 
         [BoxGroup("Debug Display")]
         [LabelText("Show Real-Time Input")]
@@ -216,13 +220,6 @@ namespace Core
         [LabelText("Mouse Scroll Wheel")]
         [ProgressBar(-5, 5, ColorGetter = "GetScrollColor")]
         private float m_MouseScrollWheel;
-#else
-        public InputSettings inputSettings;
-
-        public string SystemName => "VgInputSystem";
-        public Type[] Dependencies => Array.Empty<Type>();
-
-        public void RegisterHooks(IGameCoreHookRegistry registry) { }
 #endif
     }
 }

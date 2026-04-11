@@ -51,7 +51,7 @@ namespace GameMain.RunTime
             {
                 mPCComponent.DeathTimer--;
                 if (mPCComponent.RespawnBlackMask != null)
-                    mPCComponent.RespawnBlackMask.active = false;
+                    mPCComponent.RespawnBlackMask.SetActive(false);
             }
 
             if (mPCComponent.DeathTimer == 0 && mPCComponent.RespawnTimer > 0)
@@ -66,7 +66,7 @@ namespace GameMain.RunTime
             {
                 SetStateMachine(PlayerStateMachine.NormalState, EccTag.NormalState);
                 if (mPCComponent.RespawnBlackMask != null)
-                    mPCComponent.RespawnBlackMask.active = true;
+                    mPCComponent.RespawnBlackMask.SetActive(true);
             }
         }
 

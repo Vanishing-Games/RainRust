@@ -16,7 +16,7 @@ namespace Core
 
     public class ResourceDirLoader : IResourceLoader
     {
-        public async Task<T> GetAsset<T>(string name)
+        public Task<T> GetAsset<T>(string name)
             where T : Object
         {
             var res = Resources.Load<T>(name);
@@ -27,7 +27,7 @@ namespace Core
                     LogTag.Addressables
                 );
 
-            return res;
+            return Task.FromResult(res);
         }
     }
 

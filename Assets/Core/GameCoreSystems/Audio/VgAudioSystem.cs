@@ -59,17 +59,17 @@ namespace Core
 
         internal void PlayManaged(EventReference fmodEvent, ManagedConfig config)
         {
-            if (m_ManagedInstances.ContainsKey(fmodEvent.Path))
+            if (m_ManagedInstances.ContainsKey(fmodEvent.Guid.ToString()))
             {
                 if (!config.RestartIfPlaying)
                     return;
-                StopManaged(fmodEvent.Path, config.StopMode);
+                StopManaged(fmodEvent.Guid.ToString(), config.StopMode);
             }
 
             var instance = RuntimeManager.CreateInstance(fmodEvent);
             instance.start();
-            m_ManagedInstances[fmodEvent.Path] = instance;
-            CLogger.LogInfo($"PlayManaged: {fmodEvent.Path}", LogTag.Audio);
+            m_ManagedInstances[fmodEvent.Guid.ToString()] = instance;
+            CLogger.LogInfo($"PlayManaged: {fmodEvent}", LogTag.Audio);
         }
 
         internal void PlayManaged3D(
@@ -78,18 +78,18 @@ namespace Core
             ManagedConfig config
         )
         {
-            if (m_ManagedInstances.ContainsKey(fmodEvent.Path))
+            if (m_ManagedInstances.ContainsKey(fmodEvent.Guid.ToString()))
             {
                 if (!config.RestartIfPlaying)
                     return;
-                StopManaged(fmodEvent.Path, config.StopMode);
+                StopManaged(fmodEvent.Guid.ToString(), config.StopMode);
             }
 
             var instance = RuntimeManager.CreateInstance(fmodEvent);
             instance.set3DAttributes(RuntimeUtils.To3DAttributes(position));
             instance.start();
-            m_ManagedInstances[fmodEvent.Path] = instance;
-            CLogger.LogInfo($"PlayManaged3D: {fmodEvent.Path}", LogTag.Audio);
+            m_ManagedInstances[fmodEvent.Guid.ToString()] = instance;
+            CLogger.LogInfo($"PlayManaged3D: {fmodEvent}", LogTag.Audio);
         }
 
         internal void PlayManagedCustom(
@@ -99,11 +99,11 @@ namespace Core
             ManagedConfig config
         )
         {
-            if (m_ManagedInstances.ContainsKey(fmodEvent.Path))
+            if (m_ManagedInstances.ContainsKey(fmodEvent.Guid.ToString()))
             {
                 if (!config.RestartIfPlaying)
                     return;
-                StopManaged(fmodEvent.Path, config.StopMode);
+                StopManaged(fmodEvent.Guid.ToString(), config.StopMode);
             }
 
             var instance = RuntimeManager.CreateInstance(fmodEvent);
@@ -116,8 +116,8 @@ namespace Core
                 instance.set3DAttributes(RuntimeUtils.To3DAttributes(position.Value));
 
             instance.start();
-            m_ManagedInstances[fmodEvent.Path] = instance;
-            CLogger.LogInfo($"PlayManagedCustom: {fmodEvent.Path}", LogTag.Audio);
+            m_ManagedInstances[fmodEvent.Guid.ToString()] = instance;
+            CLogger.LogInfo($"PlayManagedCustom: {fmodEvent}", LogTag.Audio);
         }
 
         internal void SetManagedParameter(string id, FmodParameterPair[] parameters)
@@ -262,8 +262,8 @@ namespace Core
                 )
                 .MakeGenericMethod(entry.Managed.StopEventType);
             var disposable = (IDisposable)
-                method.Invoke(this, new object[] { entry.FmodEvent.Path, entry.Managed.StopMode });
-            m_Subscriptions.Add((entry.FmodEvent.Path, disposable));
+                method.Invoke(this, new object[] { entry.FmodEvent.Guid.ToString(), entry.Managed.StopMode });
+            m_Subscriptions.Add((entry.FmodEvent.Guid.ToString(), disposable));
         }
 
         internal void RegisterStopSubscription(
