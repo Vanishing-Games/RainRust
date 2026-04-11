@@ -120,6 +120,34 @@ namespace GameMain.RunTime // 保持与 asmdef Root Namespace 一致
 }
 ```
 
+## 命令系统规范 (Commands)
+
+### 物理组织与目录结构
+- **Assembly 绑定**: 每个含有 `.asmdef` 的目录下必须建立 `Commands` 文件夹。
+- **镜像映射**: `Commands` 文件夹内的子目录结构必须与其对应的业务代码目录结构**完全镜像映射**。
+
+### 文件与类命名规范
+- **文件命名**: 仅与物理路径相关。文件名为 `Commands/` 目录后的相对路径连加，并以 `Commands.cs` 结尾。
+  - *示例*: `Commands/Level/` -> `LevelCommands.cs`
+  - *示例*: `Commands/GameFlow/` -> `GameFlowCommands.cs`
+- **内部组织**: 文件内部必须使用与文件名同名的 `public static class` 包裹所有具体的命令定义。
+- **命令命名**: 
+  - 遵循 `[动作][主体]Command` 格式。
+    - *示例*: `LoadLevelCommand`, `StartGameCommand`
+  - 命令必须具备上下文独立性：命令的名称必须自包含完整的业务语义，严禁依赖外层包裹的 static class 名称来暗示其含义。
+- **命名空间**: 命名空间必须与该 `.asmdef` 定义的 **Root Namespace** 保持一致，不额外增加 `.Commands` 后缀。
+
+### 代码组织示例
+```csharp
+namespace GameMain.RunTime // 保持与 asmdef Root Namespace 一致
+{
+    public static class LevelCommands // 与文件名 LevelCommands.cs 一致
+    {
+        public class LoadLevelCommand : ICommand { /* ... */ }
+    }
+}
+```
+
 ## 逻辑与库
 - **事件系统**: 使用 **R3** 作为事件库。
 - **函数式编程 (FP)**: 优先考虑函数式编程风格。基础库（如 `Result`）位于 `Assets/Core/FP`。

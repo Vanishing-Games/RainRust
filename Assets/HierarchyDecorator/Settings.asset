@@ -5664,15 +5664,15 @@ MonoBehaviour:
         isBuiltIn: 0
         script: {fileID: 11500000, guid: f625fc932515a438798036a41f7d1412, type: 3}
         hasToggle: 1
-      - displayName: VgLoadProgressManager
-        name: Core.VgLoadProgressManager, Core, Version=0.0.0.0, Culture=neutral,
+      - displayName: VgLoadingSplashManager
+        name: Core.VgLoadingSplashManager, Core, Version=0.0.0.0, Culture=neutral,
           PublicKeyToken=null
         content:
-          m_Text: VgLoadProgressManager
+          m_Text: VgLoadingSplashManager
           m_Image: {fileID: -8204150473280056172, guid: 0000000000000000d000000000000000,
             type: 0}
-          m_Tooltip: VgLoadProgressManager
-          m_TextWithWhitespace: "VgLoadProgressManager\u200B"
+          m_Tooltip: VgLoadingSplashManager
+          m_TextWithWhitespace: "VgLoadingSplashManager\u200B"
         shown: 0
         excluded: 0
         isBuiltIn: 0
@@ -5704,14 +5704,14 @@ MonoBehaviour:
         isBuiltIn: 0
         script: {fileID: 11500000, guid: 63716462085134ac5b3d7bffad1b6416, type: 3}
         hasToggle: 1
-      - displayName: VgInputManager
-        name: Core.VgInputManager, Core, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      - displayName: VgInputSystem
+        name: Core.VgInputSystem, Core, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
         content:
-          m_Text: VgInputManager
+          m_Text: VgInputSystem
           m_Image: {fileID: -8204150473280056172, guid: 0000000000000000d000000000000000,
             type: 0}
-          m_Tooltip: VgInputManager
-          m_TextWithWhitespace: "VgInputManager\u200B"
+          m_Tooltip: VgInputSystem
+          m_TextWithWhitespace: "VgInputSystem\u200B"
         shown: 0
         excluded: 0
         isBuiltIn: 0
@@ -5773,14 +5773,14 @@ MonoBehaviour:
         isBuiltIn: 0
         script: {fileID: 11500000, guid: c3cc1b407f337e641ad32a2e91d5b478, type: 3}
         hasToggle: 1
-      - displayName: SaveManager
-        name: Core.SaveManager, Core, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      - displayName: VgSaveSystem
+        name: Core.VgSaveSystem, Core, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
         content:
-          m_Text: SaveManager
+          m_Text: VgSaveSystem
           m_Image: {fileID: -8204150473280056172, guid: 0000000000000000d000000000000000,
             type: 0}
-          m_Tooltip: SaveManager
-          m_TextWithWhitespace: "SaveManager\u200B"
+          m_Tooltip: VgSaveSystem
+          m_TextWithWhitespace: "VgSaveSystem\u200B"
         shown: 0
         excluded: 0
         isBuiltIn: 0
@@ -5927,3 +5927,4 @@ MonoBehaviour:
         hasToggle: 1
     unityVersion: 6000.3.1f1
     unityCount: 372
+

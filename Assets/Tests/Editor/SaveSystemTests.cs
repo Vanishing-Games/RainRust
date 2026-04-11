@@ -51,22 +51,22 @@
 //             public Node Next;
 //         }
 
-//         private SaveManager m_SaveManager;
+//         private VgSaveSystem m_VgSaveSystem;
 //         private StatsManager m_StatsManager;
 //         private string m_TestSaveDir;
 
 //         [SetUp]
 //         public void SetUp()
 //         {
-//             // Create a new SaveManager instance
-//             var go = new GameObject("SaveManager");
-//             m_SaveManager = go.AddComponent<SaveManager>();
+//             // Create a new VgSaveSystem instance
+//             var go = new GameObject("VgSaveSystem");
+//             m_VgSaveSystem = go.AddComponent<VgSaveSystem>();
 
 //             // Create StatsManager
 //             var goStats = new GameObject("StatsManager");
 //             m_StatsManager = goStats.AddComponent<StatsManager>();
 
-//             m_TestSaveDir = m_SaveManager.SaveDirectory;
+//             m_TestSaveDir = m_VgSaveSystem.SaveDirectory;
 //             if (Directory.Exists(m_TestSaveDir))
 //                 Directory.Delete(m_TestSaveDir, true);
 //             Directory.CreateDirectory(m_TestSaveDir);
@@ -75,8 +75,8 @@
 //         [TearDown]
 //         public void TearDown()
 //         {
-//             if (m_SaveManager != null)
-//                 GameObject.DestroyImmediate(m_SaveManager.gameObject);
+//             if (m_VgSaveSystem != null)
+//                 GameObject.DestroyImmediate(m_VgSaveSystem.gameObject);
 
 //             if (m_StatsManager != null)
 //                 GameObject.DestroyImmediate(m_StatsManager.gameObject);
@@ -91,10 +91,10 @@
 //         public void Register_ValidSavable_AddsToManager()
 //         {
 //             var savable = new MockSavable { SaveID = "TestID" };
-//             m_SaveManager.Register(savable);
+//             m_VgSaveSystem.Register(savable);
 
 //             savable.State = "TestState";
-//             m_SaveManager.Save("test_slot");
+//             m_VgSaveSystem.Save("test_slot");
 
 //             var file = Path.Combine(m_TestSaveDir, "test_slot.json");
 //             Assert.IsTrue(File.Exists(file), "Save file should be created");
@@ -112,15 +112,15 @@
 //             };
 //             savable.State = list;
 
-//             m_SaveManager.Register(savable);
-//             m_SaveManager.Save("poly_slot");
+//             m_VgSaveSystem.Register(savable);
+//             m_VgSaveSystem.Save("poly_slot");
 
 //             savable.State = null;
-//             m_SaveManager.Load("poly_slot");
+//             m_VgSaveSystem.Load("poly_slot");
 
 //             // Newtonsoft.Json with TypeNameHandling.Auto should restore the actual types
 //             // However, in tests, if they are JArrays/JObjects we might need to cast
-//             // But SaveManager uses ISavable.RestoreState(object state)
+//             // But VgSaveSystem uses ISavable.RestoreState(object state)
 
 //             var restoredList = (savable.State as IEnumerable<object>).Cast<BaseData>().ToList();
 //             Assert.IsInstanceOf<DerivedA>(restoredList[0]);
@@ -139,10 +139,10 @@
 //             n2.Next = n1; // Circular!
 
 //             savable.State = n1;
-//             m_SaveManager.Register(savable);
+//             m_VgSaveSystem.Register(savable);
 
 //             // Should not throw StackOverflowException because ReferenceLoopHandling.Ignore is set
-//             Assert.DoesNotThrow(() => m_SaveManager.Save("circular_slot"));
+//             Assert.DoesNotThrow(() => m_VgSaveSystem.Save("circular_slot"));
 //         }
 
 //         [Test]
@@ -159,7 +159,7 @@
 //                 slot = e.Slot;
 //             });
 
-//             m_SaveManager.Save("event_test");
+//             m_VgSaveSystem.Save("event_test");
 
 //             Assert.IsTrue(received);
 //             Assert.IsTrue(success);
@@ -169,7 +169,7 @@
 //         [Test]
 //         public void Load_PublishesSuccessEvent()
 //         {
-//             m_SaveManager.Save("event_test_load");
+//             m_VgSaveSystem.Save("event_test_load");
 
 //             bool received = false;
 //             bool success = false;
@@ -180,7 +180,7 @@
 //                 success = e.Success;
 //             });
 
-//             m_SaveManager.Load("event_test_load");
+//             m_VgSaveSystem.Load("event_test_load");
 
 //             Assert.IsTrue(received);
 //             Assert.IsTrue(success);
@@ -191,7 +191,7 @@
 //         {
 //             StatsManager.Increment(StatKeys.GameDuration, 123.45f);
 
-//             m_SaveManager.Save("time_test");
+//             m_VgSaveSystem.Save("time_test");
 
 //             var path = Path.Combine(m_TestSaveDir, "time_test.json");
 //             var json = File.ReadAllText(path);
@@ -204,10 +204,10 @@
 //             var s1 = new MockSavable { SaveID = "Dup", State = "State1" };
 //             var s2 = new MockSavable { SaveID = "Dup", State = "State2" };
 
-//             m_SaveManager.Register(s1);
-//             m_SaveManager.Register(s2);
+//             m_VgSaveSystem.Register(s1);
+//             m_VgSaveSystem.Register(s2);
 
-//             m_SaveManager.Save("dup_test");
+//             m_VgSaveSystem.Save("dup_test");
 
 //             var file = Path.Combine(m_TestSaveDir, "dup_test.json");
 //             string content = File.ReadAllText(file);
@@ -231,7 +231,7 @@
 //                 success = e.Success;
 //             });
 
-//             m_SaveManager.Load(slot);
+//             m_VgSaveSystem.Load(slot);
 
 //             Assert.IsTrue(received);
 //             Assert.IsFalse(success, "Load should fail for corrupted file");
@@ -253,7 +253,7 @@
 //             string json = Newtonsoft.Json.JsonConvert.SerializeObject(container, settings);
 //             File.WriteAllText(Path.Combine(m_TestSaveDir, slot + ".json"), json);
 
-//             Assert.DoesNotThrow(() => m_SaveManager.Load(slot));
+//             Assert.DoesNotThrow(() => m_VgSaveSystem.Load(slot));
 //         }
 
 //         [Test]
@@ -263,7 +263,7 @@
 //             // If slotName is "../slot", it goes up!
 
 //             var trickySlot = "sub_folder/test_slot";
-//             m_SaveManager.Save(trickySlot);
+//             m_VgSaveSystem.Save(trickySlot);
 
 //             var expectedPath = Path.Combine(m_TestSaveDir, trickySlot + ".json");
 //             Assert.IsTrue(File.Exists(expectedPath), "Should support subfolders in slot names");
@@ -273,11 +273,11 @@
 //         public void Save_NullData_SerializesAsNull()
 //         {
 //             var savable = new MockSavable { SaveID = "NullID", State = null };
-//             m_SaveManager.Register(savable);
-//             m_SaveManager.Save("null_test");
+//             m_VgSaveSystem.Register(savable);
+//             m_VgSaveSystem.Save("null_test");
 
 //             savable.State = "Something Else";
-//             m_SaveManager.Load("null_test");
+//             m_VgSaveSystem.Load("null_test");
 
 //             Assert.IsNull(savable.State, "Should restore as null");
 //         }
@@ -286,13 +286,14 @@
 //         public void Unregister_Savable_StopsSavingIt()
 //         {
 //             var savable = new MockSavable { SaveID = "UnregID", State = "State" };
-//             m_SaveManager.Register(savable);
-//             m_SaveManager.Unregister(savable);
+//             m_VgSaveSystem.Register(savable);
+//             m_VgSaveSystem.Unregister(savable);
 
-//             m_SaveManager.Save("unreg_test");
+//             m_VgSaveSystem.Save("unreg_test");
 
 //             var file = Path.Combine(m_TestSaveDir, "unreg_test.json");
 //             Assert.IsFalse(File.ReadAllText(file).Contains("UnregID"));
 //         }
 //     }
 // }
+

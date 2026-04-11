@@ -1,64 +1,66 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Windows.Input;
 using UnityEngine;
 
 namespace Core
 {
-    public class InstantiateGoCommand : ICommand<GameObject>, IUndoableCommand<bool>
+    public static class GameObjectCommands
     {
-        public InstantiateGoCommand(GameObject prefab)
-            : this(prefab, Vector3.zero, Quaternion.identity, Vector3.one) { }
-
-        public InstantiateGoCommand(GameObject prefab, Vector3 position)
-            : this(prefab, position, Quaternion.identity, Vector3.one) { }
-
-        public InstantiateGoCommand(GameObject prefab, Vector3 position, Quaternion rotation)
-            : this(prefab, position, rotation, Vector3.one) { }
-
-        public InstantiateGoCommand(
-            GameObject prefab,
-            Vector3 position,
-            Quaternion rotation,
-            Vector3 scale
-        )
+        public class InstantiateGoCommand : ICommand<GameObject>, IUndoableCommand<bool>
         {
-            mPrefab = prefab;
-            mPosition = position;
-            mRotation = rotation;
-            mScale = scale;
-        }
+            public InstantiateGoCommand(GameObject prefab)
+                : this(prefab, Vector3.zero, Quaternion.identity, Vector3.one) { }
 
-        public GameObject Execute()
-        {
-            if (mPrefab == null)
+            public InstantiateGoCommand(GameObject prefab, Vector3 position)
+                : this(prefab, position, Quaternion.identity, Vector3.one) { }
+
+            public InstantiateGoCommand(GameObject prefab, Vector3 position, Quaternion rotation)
+                : this(prefab, position, rotation, Vector3.one) { }
+
+            public InstantiateGoCommand(
+                GameObject prefab,
+                Vector3 position,
+                Quaternion rotation,
+                Vector3 scale
+            )
             {
-                CLogger.LogError("InstantiateGoCommand: Prefab is null!", LogTag.Command);
-                return null;
+                m_Prefab = prefab;
+                m_Position = position;
+                m_Rotation = rotation;
+                m_Scale = scale;
             }
 
-            mInstance = Object.Instantiate(mPrefab, mPosition, mRotation);
-            if (mInstance != null)
+            public GameObject Execute()
             {
-                mInstance.transform.localScale = mScale;
-            }
-            return mInstance;
-        }
+                if (m_Prefab == null)
+                {
+                    CLogger.LogError("InstantiateGoCommand: Prefab is null!", LogTag.Command);
+                    return null;
+                }
 
-        public bool Undo()
-        {
-            if (mInstance != null)
+                m_Instance = Object.Instantiate(m_Prefab, m_Position, m_Rotation);
+                if (m_Instance != null)
+                {
+                    m_Instance.transform.localScale = m_Scale;
+                }
+                return m_Instance;
+            }
+
+            public bool Undo()
             {
-                Object.Destroy(mInstance);
-                return true;
+                if (m_Instance != null)
+                {
+                    Object.Destroy(m_Instance);
+                    return true;
+                }
+                return false;
             }
-            return false;
-        }
 
-        private GameObject mPrefab;
-        private Vector3 mPosition;
-        private Quaternion mRotation;
-        private Vector3 mScale;
-        private GameObject mInstance;
+            private readonly GameObject m_Prefab;
+            private readonly Vector3 m_Position;
+            private readonly Quaternion m_Rotation;
+            private readonly Vector3 m_Scale;
+            private GameObject m_Instance;
+        }
     }
 }

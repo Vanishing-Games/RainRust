@@ -37,11 +37,16 @@ namespace GameMain.RunTime
 
             if (AutoFindNearest)
             {
-                new FastLevelTestCommand(testPos).Execute();
+                new InitInvokerCommands.FastLevelTestCommand(testPos).Execute();
             }
             else
             {
-                new ManualFastLevelTestCommand(testPos, chapterId, levelId, SpawnIndex).Execute();
+                new InitInvokerCommands.ManualFastLevelTestCommand(
+                    testPos,
+                    chapterId,
+                    levelId,
+                    SpawnIndex
+                ).Execute();
             }
         }
     }

@@ -2,8 +2,16 @@ namespace Core
 {
     public static class GameCoreEvents
     {
-        public struct GameCoreQuickStartEvent : IEvent { }
+        public struct LevelClearEvent : IEvent
+        {
+            public string NextChapterId;
+            public string NextLevelId;
 
-        public abstract class GameCoreCustomInitEvent : IEvent { }
+            public LevelClearEvent(string nextChapterId, string nextLevelId)
+            {
+                NextChapterId = nextChapterId;
+                NextLevelId = nextLevelId;
+            }
+        }
     }
 }

@@ -7,34 +7,37 @@ using UnityEngine.AddressableAssets;
 
 namespace Core
 {
-    public class PrintAddressableInfoCommand : ITriggerCommand
+    public static class AddressableCommands
     {
-        public bool Execute()
+        public class PrintAddressableInfoCommand : ITriggerCommand
         {
-            AddressableResourceLoader.PrintAddressableInfo();
-            return true;
-        }
-    }
-
-    public class LoadAddressableCommand<T> : IAsyncCommand<T>
-        where T : Object
-    {
-        public LoadAddressableCommand(string addressableName)
-        {
-            mAddress = addressableName;
+            public bool Execute()
+            {
+                AddressableResourceLoader.PrintAddressableInfo();
+                return true;
+            }
         }
 
-        public Task<T> ExecuteAsync()
+        public class LoadAddressableCommand<T> : IAsyncCommand<T>
+            where T : Object
         {
-            return AddressableResourceLoader.GetAsset<T>(mAddress);
-        }
+            public LoadAddressableCommand(string addressableName)
+            {
+                m_Address = addressableName;
+            }
 
-        public T Execute()
-        {
-            var handle = AddressableResourceLoader.GetAsset<T>(mAddress);
-            return handle.Result;
-        }
+            public Task<T> ExecuteAsync()
+            {
+                return AddressableResourceLoader.GetAsset<T>(m_Address);
+            }
 
-        private string mAddress;
+            public T Execute()
+            {
+                var handle = AddressableResourceLoader.GetAsset<T>(m_Address);
+                return handle.Result;
+            }
+
+            private string m_Address;
+        }
     }
 }

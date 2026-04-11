@@ -10,7 +10,7 @@ namespace Core
     {
         private bool GameRunInEditorCheck()
         {
-            bool hasUnityLifecycleMethods = AppDomain
+            var allSubclasses = AppDomain
                 .CurrentDomain.GetAssemblies()
                 .SelectMany(a =>
                 {
@@ -23,28 +23,38 @@ namespace Core
                         return e.Types.Where(t => t != null);
                     }
                 })
-                .Any(t =>
+                .Where(t =>
                     t != null
                     && t.BaseType?.IsGenericType == true
-                    && t.BaseType.GetGenericTypeDefinition() == typeof(CoreModuleManagerBase<,,>)
-                    && t.GetMethods(
-                            BindingFlags.Instance
-                                | BindingFlags.Public
-                                | BindingFlags.NonPublic
-                                | BindingFlags.DeclaredOnly
-                        )
-                        .Any(m => UnityLifecycleMethods.Contains(m.Name))
-                );
+                    && t.BaseType.GetGenericTypeDefinition() == typeof(CoreModuleManagerBase<>)
+                )
+                .ToList();
 
-            if (hasUnityLifecycleMethods)
+            bool hasOffending = false;
+            foreach (var t in allSubclasses)
             {
-                CLogger.LogError(
-                    $"Game Running Condition failed, beacause unity lifecycle methods are found in class inherit from CoreModuleManagerBase",
-                    LogTag.GameRunCheck
-                );
+                var methods = t.GetMethods(
+                        BindingFlags.Instance
+                            | BindingFlags.Public
+                            | BindingFlags.NonPublic
+                            | BindingFlags.DeclaredOnly
+                    )
+                    .Select(m => m.Name)
+                    .ToList();
+
+                var offending = methods.Where(m => UnityLifecycleMethods.Contains(m)).ToList();
+
+                if (offending.Count > 0)
+                {
+                    CLogger.LogError(
+                        $"Game Running Condition failed: Class '{t.FullName}' declares Unity lifecycle methods: {string.Join(", ", offending)}. All declared methods: {string.Join(", ", methods)}",
+                        LogTag.GameRunCheck
+                    );
+                    hasOffending = true;
+                }
             }
 
-            return !hasUnityLifecycleMethods;
+            return !hasOffending;
         }
 
         private static readonly string[] UnityLifecycleMethods =
@@ -60,6 +70,5 @@ namespace Core
         };
     }
 }
-
 
 #endif
