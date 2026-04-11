@@ -642,11 +642,8 @@ jobs:
   unity-tests:
     name: 🧪 Unity单元测试
     runs-on: ubuntu-latest
-    needs: [flow-prediction, code-style-check]
-    if: |
-      always() && 
-      needs.flow-prediction.outputs.should_run_tests == 'true' && 
-      (needs.code-style-check.result == 'success' || needs.code-style-check.result == 'skipped')
+    needs: flow-prediction
+    if: needs.flow-prediction.outputs.should_run_tests == 'true'
     
     steps:
       - name: 检出代码
@@ -798,11 +795,8 @@ jobs:
   # =============================================================================
   build-tests:
     name: 🔨 构建测试
-    needs: [flow-prediction, unity-tests] 
-    if: |
-      always() &&
-      needs.flow-prediction.outputs.should_run_build == 'true' &&
-      (needs.unity-tests.result == 'success' || needs.unity-tests.result == 'skipped')
+    needs: flow-prediction
+    if: needs.flow-prediction.outputs.should_run_build == 'true'
     strategy:
       fail-fast: false
       matrix:

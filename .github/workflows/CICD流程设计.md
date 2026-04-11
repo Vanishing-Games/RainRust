@@ -79,11 +79,32 @@ flowchart LR
     end
 
     subgraph release_flow ["Release发布流程 (Tag触发)"]
-        C0_R["流程预测"] --> B_R["代码检测"] --> A1_R["单元测试"] --> A2_R["4个Profile构建"] --> A3_R["发布 GitHub Release"] --> C1_R["执行详情"]
+        C0_R["流程预测"]
+        B_R["代码检测"]
+        A1_R["单元测试"]
+        A2_R["4个Profile构建"]
+        A3_R["发布 GitHub Release"]
+        C1_R["执行详情"]
+
+        C0_R --> B_R
+        C0_R --> A1_R
+        C0_R --> A2_R
+        A2_R --> A3_R
+        B_R --> C1_R
+        A1_R --> C1_R
+        A3_R --> C1_R
     end
 
     subgraph pr_flow ["PR验证流程"]
-        C0_P["流程预测"] --> B_P["代码检测"] --> A1_P["单元测试"] --> C1_P["执行详情"]
+        C0_P["流程预测"]
+        B_P["代码检测"]
+        A1_P["单元测试"]
+        C1_P["执行详情"]
+
+        C0_P --> B_P
+        C0_P --> A1_P
+        B_P --> C1_P
+        A1_P --> C1_P
     end
 
     subgraph schedule_flow ["定时构建流程"]
