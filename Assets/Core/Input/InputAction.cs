@@ -17,6 +17,7 @@ namespace Core
     {
         Jump,
         Grab,
+        Pause,
     }
 
     public enum InputDeviceType
