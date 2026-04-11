@@ -12,7 +12,7 @@ namespace Core
             );
 
             var sceneLoader = new SceneLoader();
-            await sceneLoader.LoadScene(new SceneLoadInfo("GameStartScene"));
+            await sceneLoader.LoadScene(new SceneLoadInfo("GameMenu"));
 
             CLogger.LogInfo(
                 "[LoadMainMenuSceneStep] Main menu scene loaded.",
