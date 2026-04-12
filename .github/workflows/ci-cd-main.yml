@@ -830,7 +830,7 @@ jobs:
           fi
 
       - name: 🔄 归还 Unity License
-        uses: game-ci/unity-return-license@v4
+        uses: game-ci/unity-return-license@v2
         if: always()
         env:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
@@ -988,7 +988,7 @@ jobs:
           retention-days: ${{ steps.load-build-config.outputs.retention_days }}
 
       - name: 🔄 归还 Unity License
-        uses: game-ci/unity-return-license@v4
+        uses: game-ci/unity-return-license@v2
         if: always()
         env:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
