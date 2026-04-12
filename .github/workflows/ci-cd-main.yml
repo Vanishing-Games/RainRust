@@ -122,8 +122,13 @@ jobs:
           
           # 获取事件类型和相关信息
           EVENT_NAME="${{ github.event_name }}"
-          REF_NAME="${{ github.ref_name }}" 
-          BRANCH_NAME="${{ github.head_ref || github.ref_name }}"
+          REF_NAME="${{ github.ref_name }}"
+          # PR 事件用 base_ref（目标分支）判断，push/tag 事件用 ref_name
+          if [[ "$EVENT_NAME" == "pull_request" ]]; then
+            BRANCH_NAME="${{ github.base_ref }}"
+          else
+            BRANCH_NAME="${{ github.ref_name }}"
+          fi
           
           # 检查是否为重复触发（同时有PR和push事件）
           if [[ "$EVENT_NAME" == "push" && "$REF_NAME" == "develop" ]]; then
@@ -968,6 +973,7 @@ jobs:
 
       - name: 📦 上传构建产物
         uses: actions/upload-artifact@v4
+        if: steps.load-build-config.outputs.build_type != 'preview'
         with:
           name: ${{ steps.determine-artifact-name.outputs.artifact_name }}
           path: build/
