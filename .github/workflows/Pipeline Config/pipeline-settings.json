@@ -10,9 +10,10 @@
     "branches": {
       "release_tag": {
         "pattern": "v*.*.*",
-        "description": "Git Tag 触发正式版本发布",
-        "triggers": ["unit_tests", "build_tests", "code_style", "deploy_release"],
-        "buildType": "release"
+        "description": "Git Tag 触发完整流水线。vx.y.z-release 格式额外触发 Release 发布和 GitHub Pages 部署",
+        "triggers": ["unit_tests", "build_tests", "code_style", "deploy_release", "deploy_pages"],
+        "buildType": "release",
+        "note": "vx.y.z → 完整流水线无部署；vx.y.z-release → 完整流水线+Release+Pages"
       },
       "release_branch": {
         "pattern": "release/**",
@@ -99,7 +100,7 @@
     },
     "build_tests": {
       "name": "构建测试",
-      "description": "构建项目的4个Build Profile版本",
+      "description": "构建项目的5个Build Profile版本（串行执行，避免License并发超限）",
       "timeout": 60,
       "failureAction": "warn_only",
       "settings": {
@@ -107,7 +108,8 @@
           "Windows-Debug",
           "Windows-Release",
           "Mac-Debug",
-          "Mac-Release"
+          "Mac-Release",
+          "Web-Release"
         ],
         "retentionDays": 7
       }
@@ -124,12 +126,22 @@
     },
     "deploy_release": {
       "name": "发布 GitHub Release",
-      "description": "将构建产物作为附件发布到 GitHub Release",
+      "description": "将构建产物作为附件发布到 GitHub Release（仅 vx.y.z-release 格式 tag）",
       "timeout": 15,
       "failureAction": "warn_only",
       "settings": {
         "artifactNamePattern": "{项目名称}_{Profile}_v{版本}.zip",
-        "tagRequirement": "v*.*.*"
+        "tagRequirement": "v*.*.*-release"
+      }
+    },
+    "deploy_pages": {
+      "name": "部署到 GitHub Pages",
+      "description": "将 WebGL 构建产物部署到 GitHub Pages（仅 vx.y.z-release 格式 tag）",
+      "timeout": 15,
+      "failureAction": "warn_only",
+      "settings": {
+        "profile": "Web-Release",
+        "tagRequirement": "v*.*.*-release"
       }
     }
   },

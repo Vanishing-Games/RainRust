@@ -1,47 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-8369841512264043447
-MonoBehaviour:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 15009, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: Graphics Settings
-  m_EditorClassIdentifier: UnityEditor.dll::UnityEditor.Build.Profile.BuildProfileGraphicsSettings
-  m_LightmapStripping: 0
-  m_LightmapKeepPlain: 1
-  m_LightmapKeepDirCombined: 1
-  m_LightmapKeepDynamicPlain: 1
-  m_LightmapKeepDynamicDirCombined: 1
-  m_LightmapKeepShadowMask: 1
-  m_LightmapKeepSubtractive: 1
-  m_FogStripping: 0
-  m_FogKeepLinear: 1
-  m_FogKeepExp: 1
-  m_FogKeepExp2: 1
-  m_InstancingStripping: 0
-  m_BrgStripping: 0
-  m_LogWhenShaderIsCompiled: 0
-  m_CameraRelativeLightCulling: 0
-  m_CameraRelativeShadowCulling: 0
-  m_VideoShadersIncludeMode: 2
-  m_AlwaysIncludedShaders:
-  - {fileID: 7, guid: 0000000000000000f000000000000000, type: 0}
-  - {fileID: 15104, guid: 0000000000000000f000000000000000, type: 0}
-  - {fileID: 15105, guid: 0000000000000000f000000000000000, type: 0}
-  - {fileID: 15106, guid: 0000000000000000f000000000000000, type: 0}
-  - {fileID: 10753, guid: 0000000000000000f000000000000000, type: 0}
-  - {fileID: 10770, guid: 0000000000000000f000000000000000, type: 0}
-  - {fileID: 10783, guid: 0000000000000000f000000000000000, type: 0}
-  m_LightProbeOutsideHullStrategy: 0
-  m_PreloadedShaders: []
-  m_PreloadShadersBatchTimeLimit: -1
-  m_ShaderBuildSettings:
-    keywordDeclarationOverrides: []
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -52,35 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 15003, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: Windows-Debug
+  m_Name: Web-Release
   m_EditorClassIdentifier: UnityEditor.dll::UnityEditor.Build.Profile.BuildProfile
   m_AssetVersion: 1
-  m_BuildTarget: 19
-  m_Subtarget: 2
-  m_PlatformId: 4e3c793746204150860bf175a9a41a05
+  m_BuildTarget: 20
+  m_Subtarget: 0
+  m_PlatformId: 84a3bb9e7420477f885e98145999eb20
   m_PlatformBuildProfile:
-    rid: 2912364668616441987
-  m_OverrideGlobalSceneList: 1
-  m_Scenes:
-  - m_enabled: 1
-    m_path: Assets/GameMain/Scenes/Build/GameEntry.unity
-  - m_enabled: 1
-    m_path: Assets/GameMain/Scenes/Build/GameMenu.unity
-  - m_enabled: 1
-    m_path: Assets/GameMain/Scenes/Build/GameLevel.unity
-  m_HasScriptingDefines: 1
-  m_ScriptingDefines:
-  - ODIN_INSPECTOR
-  - ODIN_INSPECTOR_3
-  - ODIN_INSPECTOR_3_1
-  - ODIN_INSPECTOR_3_2
-  - ODIN_INSPECTOR_3_3
-  - DOTWEEN
-  - AMPLIFY_SHADER_EDITOR
-  - ES3_TMPRO
-  - ES3_UGUI
-  - BUILD_MODE_DEBUG
-  - ENABLE_DEBUG_LOG
+    rid: 2912364681426894929
+  m_OverrideGlobalSceneList: 0
+  m_Scenes: []
+  m_HasScriptingDefines: 0
+  m_ScriptingDefines: []
   m_PlayerSettingsYaml:
     m_Settings:
     - line: '| PlayerSettings:'
@@ -96,7 +37,8 @@ MonoBehaviour:
     - line: '|   accelerometerFrequency: 60'
     - line: '|   companyName: Vanishing Games'
     - line: '|   productName: RainRust'
-    - line: '|   defaultCursor: {instanceID: 0}'
+    - line: '|   defaultCursor: {fileID: 2800000, guid: 65973a71dc3456443991a66aa97e3dc9,
+        type: 3}'
     - line: '|   cursorHotspot: {x: 0, y: 0}'
     - line: '|   m_SplashScreenBackgroundColor: {r: 0.13725491, g: 0.12156863, b:
         0.1254902, a: 1}'
@@ -122,7 +64,10 @@ MonoBehaviour:
     - line: '|     y: 0'
     - line: '|     width: 1'
     - line: '|     height: 1'
-    - line: '|   m_SplashScreenLogos: []'
+    - line: '|   m_SplashScreenLogos:'
+    - line: '|   - logo: {fileID: 8077670792589657989, guid: b7e0ab3a3355526468e0aea60f5e5c71,
+        type: 3}'
+    - line: '|     duration: 2'
     - line: '|   m_VirtualRealitySplashScreen: {instanceID: 0}'
     - line: '|   m_HolographicTrackingLossScreen: {instanceID: 0}'
     - line: '|   defaultScreenWidth: 1024'
@@ -191,7 +136,7 @@ MonoBehaviour:
     - line: '|   xboxEnableFitness: 0'
     - line: '|   visibleInBackground: 1'
     - line: '|   allowFullscreenSwitch: 1'
-    - line: '|   fullscreenMode: 1'
+    - line: '|   fullscreenMode: 2'
     - line: '|   xboxSpeechDB: 0'
     - line: '|   xboxEnableHeadOrientation: 0'
     - line: '|   xboxEnableGuest: 0'
@@ -226,7 +171,7 @@ MonoBehaviour:
     - line: '|   loadStoreDebugModeEnabled: 0'
     - line: '|   visionOSBundleVersion: 1.0'
     - line: '|   tvOSBundleVersion: 1.0'
-    - line: '|   bundleVersion: v0.0.1-test6-8-g71d56b03-dirty'
+    - line: '|   bundleVersion: v0.4.1-dirty'
     - line: '|   preloadedAssets: []'
     - line: '|   metroInputSource: 0'
     - line: '|   wsaTransparentSwapchain: 0'
@@ -249,9 +194,9 @@ MonoBehaviour:
     - line: '|   androidMaxAspectRatio: 2.1'
     - line: '|   androidMinAspectRatio: 1'
     - line: '|   applicationIdentifier:'
-    - line: '|     Android: com.UnityTechnologies.com.unity.template.urpblank'
-    - line: '|     Standalone: com.Unity-Technologies.com.unity.template.urp-blank'
-    - line: '|     iPhone: com.Unity-Technologies.com.unity.template.urp-blank'
+    - line: '|     Android: com.vanishinggames.rainrust'
+    - line: '|     Standalone: com.vanishinggames.rainrust'
+    - line: '|     iPhone: com.vanishinggames.rainrust'
     - line: '|   buildNumber:'
     - line: '|     Standalone: 0'
     - line: '|     VisionOS: 0'
@@ -379,7 +324,65 @@ MonoBehaviour:
     - line: '|   AndroidAppBundleSizeToValidate: 150'
     - line: '|   AndroidReportGooglePlayAppDependencies: 1'
     - line: '|   androidSymbolsSizeThreshold: 800'
-    - line: '|   m_BuildTargetIcons: []'
+    - line: '|   m_BuildTargetIcons:'
+    - line: '|   - m_BuildTarget: Standalone'
+    - line: '|     m_Icons:'
+    - line: '|     - serializedVersion: 2'
+    - line: '|       m_Icon: {fileID: 2800000, guid: 6bf01e8baaf2e114892879c49ac0c40c,
+        type: 3}'
+    - line: '|       m_Width: 1024'
+    - line: '|       m_Height: 1024'
+    - line: '|       m_Kind: 0'
+    - line: '|     - serializedVersion: 2'
+    - line: '|       m_Icon: {fileID: 2800000, guid: 6bf01e8baaf2e114892879c49ac0c40c,
+        type: 3}'
+    - line: '|       m_Width: 512'
+    - line: '|       m_Height: 512'
+    - line: '|       m_Kind: 0'
+    - line: '|     - serializedVersion: 2'
+    - line: '|       m_Icon: {fileID: 2800000, guid: 6bf01e8baaf2e114892879c49ac0c40c,
+        type: 3}'
+    - line: '|       m_Width: 256'
+    - line: '|       m_Height: 256'
+    - line: '|       m_Kind: 0'
+    - line: '|     - serializedVersion: 2'
+    - line: '|       m_Icon: {fileID: 2800000, guid: 6bf01e8baaf2e114892879c49ac0c40c,
+        type: 3}'
+    - line: '|       m_Width: 128'
+    - line: '|       m_Height: 128'
+    - line: '|       m_Kind: 0'
+    - line: '|     - serializedVersion: 2'
+    - line: '|       m_Icon: {fileID: 2800000, guid: 6bf01e8baaf2e114892879c49ac0c40c,
+        type: 3}'
+    - line: '|       m_Width: 64'
+    - line: '|       m_Height: 64'
+    - line: '|       m_Kind: 0'
+    - line: '|     - serializedVersion: 2'
+    - line: '|       m_Icon: {fileID: 2800000, guid: 6bf01e8baaf2e114892879c49ac0c40c,
+        type: 3}'
+    - line: '|       m_Width: 48'
+    - line: '|       m_Height: 48'
+    - line: '|       m_Kind: 0'
+    - line: '|     - serializedVersion: 2'
+    - line: '|       m_Icon: {fileID: 2800000, guid: 6bf01e8baaf2e114892879c49ac0c40c,
+        type: 3}'
+    - line: '|       m_Width: 32'
+    - line: '|       m_Height: 32'
+    - line: '|       m_Kind: 0'
+    - line: '|     - serializedVersion: 2'
+    - line: '|       m_Icon: {fileID: 2800000, guid: 6bf01e8baaf2e114892879c49ac0c40c,
+        type: 3}'
+    - line: '|       m_Width: 16'
+    - line: '|       m_Height: 16'
+    - line: '|       m_Kind: 0'
+    - line: '|   - m_BuildTarget: '
+    - line: '|     m_Icons:'
+    - line: '|     - serializedVersion: 2'
+    - line: '|       m_Icon: {fileID: 2800000, guid: 6bf01e8baaf2e114892879c49ac0c40c,
+        type: 3}'
+    - line: '|       m_Width: 128'
+    - line: '|       m_Height: 128'
+    - line: '|       m_Kind: 0'
     - line: '|   m_BuildTargetPlatformIcons:'
     - line: '|   - m_BuildTarget: iPhone'
     - line: '|     m_Icons:'
@@ -607,9 +610,19 @@ MonoBehaviour:
     - line: '|       m_Height: 720'
     - line: '|       m_Kind: 1'
     - line: '|       m_SubKind: '
+    - line: '|   - m_BuildTarget: VisionOS'
+    - line: '|     m_Icons:'
+    - line: '|     - m_Textures: []'
+    - line: '|       m_Width: 1024'
+    - line: '|       m_Height: 1024'
+    - line: '|       m_Kind: 0'
+    - line: '|       m_SubKind: '
     - line: '|   m_BuildTargetBatching:'
     - line: '|   - m_BuildTarget: Standalone'
     - line: '|     m_StaticBatching: 1'
+    - line: '|     m_DynamicBatching: 0'
+    - line: '|   - m_BuildTarget: WebGL'
+    - line: '|     m_StaticBatching: 0'
     - line: '|     m_DynamicBatching: 0'
     - line: '|   m_BuildTargetShaderSettings: []'
     - line: '|   m_BuildTargetGraphicsJobs: []'
@@ -649,6 +662,9 @@ MonoBehaviour:
     - line: '|   - serializedVersion: 3'
     - line: '|     m_BuildTarget: Android'
     - line: '|     m_Formats: 03000000'
+    - line: '|   - serializedVersion: 3'
+    - line: '|     m_BuildTarget: WebGL'
+    - line: '|     m_Formats: 05000000'
     - line: '|   playModeTestRunnerEnabled: 0'
     - line: '|   runPlayModeTestAsEditModeTest: 0'
     - line: '|   actionOnDotNetUnhandledException: 1'
@@ -909,10 +925,10 @@ MonoBehaviour:
     - line: '|   webGLMemoryGeometricGrowthStep: 0.2'
     - line: '|   webGLMemoryGeometricGrowthCap: 96'
     - line: '|   webGLPowerPreference: 2'
-    - line: '|   webGLWebAssemblyTable: 0'
-    - line: '|   webGLWebAssemblyBigInt: 0'
+    - line: '|   webGLWebAssemblyTable: 1'
+    - line: '|   webGLWebAssemblyBigInt: 1'
     - line: '|   webGLCloseOnQuit: 0'
-    - line: '|   webWasm2023: 0'
+    - line: '|   webWasm2023: 1'
     - line: '|   webEnableSubmoduleStrippingCompatibility: 0'
     - line: '|   scriptingDefineSymbols:'
     - line: '|     Android: DOTWEEN;ES3_TMPRO;ES3_UGUI'
@@ -928,7 +944,7 @@ MonoBehaviour:
     - line: '|     Stadia: DOTWEEN'
     - line: '|     Standalone: ODIN_INSPECTOR;ODIN_INSPECTOR_3;ODIN_INSPECTOR_3_1;ODIN_INSPECTOR_3_2;ODIN_INSPECTOR_3_3;DOTWEEN;AMPLIFY_SHADER_EDITOR;ES3_TMPRO;ES3_UGUI;BUILD_MODE_DEBUG;BUILD_MODE_RELEASE'
     - line: '|     VisionOS: DOTWEEN;ES3_TMPRO;ES3_UGUI'
-    - line: '|     WebGL: DOTWEEN;ES3_TMPRO;ES3_UGUI'
+    - line: '|     WebGL: DOTWEEN;ES3_TMPRO;ES3_UGUI;ODIN_INSPECTOR;ODIN_INSPECTOR_3;ODIN_INSPECTOR_3_1;ODIN_INSPECTOR_3_2;ODIN_INSPECTOR_3_3;AMPLIFY_SHADER_EDITOR'
     - line: '|     Windows Store Apps: DOTWEEN;ES3_TMPRO;ES3_UGUI'
     - line: '|     XboxOne: DOTWEEN;ES3_TMPRO;ES3_UGUI'
     - line: '|     iPhone: DOTWEEN;ES3_TMPRO;ES3_UGUI'
@@ -936,8 +952,10 @@ MonoBehaviour:
     - line: '|   additionalCompilerArguments: {}'
     - line: '|   platformArchitecture: {}'
     - line: '|   scriptingBackend: {}'
-    - line: '|   il2cppCompilerConfiguration: {}'
-    - line: '|   il2cppCodeGeneration: {}'
+    - line: '|   il2cppCompilerConfiguration:'
+    - line: '|     WebGL: 2'
+    - line: '|   il2cppCodeGeneration:'
+    - line: '|     WebGL: 1'
     - line: '|   il2cppStacktraceInformation: {}'
     - line: '|   managedStrippingLevel:'
     - line: '|     EmbeddedLinux: 1'
@@ -1066,41 +1084,24 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 2912364668616441987
-      type: {class: WindowsPlatformSettings, ns: UnityEditor.WindowsStandalone, asm: UnityEditor.WindowsStandalone.Extensions}
+    - rid: 2912364681426894929
+      type: {class: WebGLPlatformSettings, ns: UnityEditor.WebGL, asm: UnityEditor.WebGL.Extensions}
       data:
-        m_Development: 1
+        m_Development: 0
         m_ConnectProfiler: 0
-        m_BuildWithDeepProfilingSupport: 1
-        m_AllowDebugging: 1
+        m_BuildWithDeepProfilingSupport: 0
+        m_AllowDebugging: 0
         m_WaitForManagedDebugger: 0
         m_ManagedDebuggerFixedPort: 0
         m_ExplicitNullChecks: 0
         m_ExplicitDivideByZeroChecks: 0
         m_ExplicitArrayBoundsChecks: 0
-        m_CompressionType: 0
+        m_CompressionType: -1
         m_InstallInBuildFolder: 0
         m_InsightsSettingsContainer:
           m_BuildProfileEngineDiagnosticsState: 2
         m_AdaptivePerformanceEnabled: 0
-        m_WindowsBuildAndRunDeployTarget: 0
-        m_Architecture: 0
-        m_CreateSolution: 0
-        m_CopyPDBFiles: 0
-        m_WindowsDevicePortalAddress: 
-        m_WindowsDevicePortalUsername: 
---- !u!114 &1689134276496252865
-MonoBehaviour:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 15010, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: Quality Settings
-  m_EditorClassIdentifier: UnityEditor.dll::UnityEditor.Build.Profile.BuildProfileQualitySettings
-  m_DefaultQualityLevel: Default
-  m_QualityLevels:
-  - Default
+        m_CodeOptimization: 3
+        m_WebGLClientBrowserPath: 
+        m_WebGLClientBrowserType: 0
+        m_WebGLTextureSubtarget: 1

@@ -68,12 +68,17 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       should_run_tests: ${{ steps.predict.outputs.should_run_tests }}
-      should_run_build: ${{ steps.predict.outputs.should_run_build }}  
+      should_run_build: ${{ steps.predict.outputs.should_run_build }}
       should_run_style: ${{ steps.predict.outputs.should_run_style }}
       should_run_deploy: ${{ steps.predict.outputs.should_run_deploy }}
+      should_deploy_pages: ${{ steps.predict.outputs.should_deploy_pages }}
       build_type: ${{ steps.predict.outputs.build_type }}
       pipeline_description: ${{ steps.predict.outputs.pipeline_description }}
       skip_reason: ${{ steps.predict.outputs.skip_reason }}
+      test_retry_count: ${{ steps.predict.outputs.test_retry_count }}
+      build_retry_count: ${{ steps.predict.outputs.build_retry_count }}
+      test_retry_delay: ${{ steps.predict.outputs.test_retry_delay }}
+      build_retry_delay: ${{ steps.predict.outputs.build_retry_delay }}
     
     steps:
       - name: 检出代码
@@ -121,8 +126,13 @@ jobs:
           
           # 获取事件类型和相关信息
           EVENT_NAME="${{ github.event_name }}"
-          REF_NAME="${{ github.ref_name }}" 
-          BRANCH_NAME="${{ github.head_ref || github.ref_name }}"
+          REF_NAME="${{ github.ref_name }}"
+          # PR 事件用 base_ref（目标分支）判断，push/tag 事件用 ref_name
+          if [[ "$EVENT_NAME" == "pull_request" ]]; then
+            BRANCH_NAME="${{ github.base_ref }}"
+          else
+            BRANCH_NAME="${{ github.ref_name }}"
+          fi
           
           # 检查是否为重复触发（同时有PR和push事件）
           if [[ "$EVENT_NAME" == "push" && "$REF_NAME" == "develop" ]]; then
@@ -203,30 +213,43 @@ jobs:
           # 根据分支和事件类型决定执行的步骤
           SHOULD_RUN_TESTS=true
           SHOULD_RUN_BUILD=false
-          SHOULD_RUN_STYLE=true  
+          SHOULD_RUN_STYLE=true
           SHOULD_RUN_DEPLOY=false
+          SHOULD_DEPLOY_PAGES=false
           BUILD_TYPE="preview"
           PIPELINE_DESC=""
-          
+
           if [[ "$SKIP_ALL" == "true" ]]; then
             # 完全跳过
             SHOULD_RUN_TESTS=false
             SHOULD_RUN_BUILD=false
             SHOULD_RUN_STYLE=false
             SHOULD_RUN_DEPLOY=false
+            SHOULD_DEPLOY_PAGES=false
             PIPELINE_DESC="❌ 跳过所有CI/CD流程"
-            
-          elif [[ "$EVENT_NAME" == "push" && "$GITHUB_REF_TYPE" == "tag" && "$REF_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+ ]]; then
-            # Git Tag 触发 - 正式版本发布流程
+
+          elif [[ "$EVENT_NAME" == "push" && "$GITHUB_REF_TYPE" == "tag" && "$REF_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+-release$ ]]; then
+            # vx.y.z-release 格式 Tag - 正式发布到 Release + GitHub Pages
             SHOULD_RUN_TESTS=true
             SHOULD_RUN_BUILD=true
             SHOULD_RUN_STYLE=true
             SHOULD_RUN_DEPLOY=true
+            SHOULD_DEPLOY_PAGES=true
             BUILD_TYPE="release"
-            # 提取纯版本号 (v1.2.3 -> 1.2.3)
-            RELEASE_VERSION="${REF_NAME#v}"
-            PIPELINE_DESC="🚀 Release正式发布流程 (版本: $RELEASE_VERSION) (代码检测 → 单元测试 → 构建测试 → 发布Release)"
+            # 提取纯版本号 (v1.2.3-release -> 1.2.3)
+            RELEASE_VERSION=$(echo "$REF_NAME" | sed 's/^v//;s/-release$//')
+            PIPELINE_DESC="🚀 Release正式发布流程 (版本: $RELEASE_VERSION) (代码检测 → 单元测试 → 构建测试 → 发布Release → 部署Pages)"
             echo "release_version=$RELEASE_VERSION" >> $GITHUB_OUTPUT
+
+          elif [[ "$EVENT_NAME" == "push" && "$GITHUB_REF_TYPE" == "tag" && "$REF_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            # 纯 vx.y.z 格式 Tag - 完整流水线但不部署
+            SHOULD_RUN_TESTS=true
+            SHOULD_RUN_BUILD=true
+            SHOULD_RUN_STYLE=true
+            SHOULD_RUN_DEPLOY=false
+            SHOULD_DEPLOY_PAGES=false
+            BUILD_TYPE="release_candidate"
+            PIPELINE_DESC="🏷️ Tag验证流程 (代码检测 → 单元测试 → 构建测试)"
 
           elif [[ "$BRANCH_NAME" =~ ^release/ ]]; then
             # Release分支 - 完整CI/CD流程
@@ -339,22 +362,46 @@ jobs:
           echo "  构建类型: $BUILD_TYPE"
           echo "  执行描述: $PIPELINE_DESC"
           echo "  单元测试: $SHOULD_RUN_TESTS"
-          echo "  构建测试: $SHOULD_RUN_BUILD"  
+          echo "  构建测试: $SHOULD_RUN_BUILD"
           echo "  代码检查: $SHOULD_RUN_STYLE"
-          echo "  Pages部署: $SHOULD_RUN_DEPLOY"
-          
+          echo "  Release发布: $SHOULD_RUN_DEPLOY"
+          echo "  Pages部署: $SHOULD_DEPLOY_PAGES"
+
           if [[ -n "$SKIP_REASON" ]]; then
             echo "  跳过原因: $SKIP_REASON"
           fi
-          
+
+          # 确定重试次数和延迟 (优化加速策略)
+          TEST_RETRY_COUNT=1
+          BUILD_RETRY_COUNT=1
+          TEST_RETRY_DELAY=30000
+          BUILD_RETRY_DELAY=30000
+
+          if [[ "$BUILD_TYPE" == "release" || "$BUILD_TYPE" == "release_candidate" ]]; then
+            # Tag 触发或 Release 分支，优先保证成功，允许重试
+            TEST_RETRY_COUNT=3
+            BUILD_RETRY_COUNT=3
+            TEST_RETRY_DELAY=60000
+            BUILD_RETRY_DELAY=60000
+            echo "🚀 检测到正式发布或验证流程，启用重试机制 (Count: 3)"
+          else
+            # 普通 PR 或 develop 推送，追求速度，不重试
+            echo "⚡ 检测到普通开发流程，禁用重试以加速反馈"
+          fi
+
           # 输出到GitHub Actions
           echo "should_run_tests=$SHOULD_RUN_TESTS" >> $GITHUB_OUTPUT
           echo "should_run_build=$SHOULD_RUN_BUILD" >> $GITHUB_OUTPUT
-          echo "should_run_style=$SHOULD_RUN_STYLE" >> $GITHUB_OUTPUT  
+          echo "should_run_style=$SHOULD_RUN_STYLE" >> $GITHUB_OUTPUT
           echo "should_run_deploy=$SHOULD_RUN_DEPLOY" >> $GITHUB_OUTPUT
+          echo "should_deploy_pages=${SHOULD_DEPLOY_PAGES:-false}" >> $GITHUB_OUTPUT
           echo "build_type=$BUILD_TYPE" >> $GITHUB_OUTPUT
           echo "pipeline_description=$PIPELINE_DESC" >> $GITHUB_OUTPUT
           echo "skip_reason=$SKIP_REASON" >> $GITHUB_OUTPUT
+          echo "test_retry_count=$TEST_RETRY_COUNT" >> $GITHUB_OUTPUT
+          echo "build_retry_count=$BUILD_RETRY_COUNT" >> $GITHUB_OUTPUT
+          echo "test_retry_delay=$TEST_RETRY_DELAY" >> $GITHUB_OUTPUT
+          echo "build_retry_delay=$BUILD_RETRY_DELAY" >> $GITHUB_OUTPUT
 
       - name: 📊 生成流程摘要
         run: |
@@ -413,9 +460,15 @@ jobs:
           fi
           
           if [[ "${{ steps.predict.outputs.should_run_deploy }}" == "true" ]]; then
-            echo "| 🚀 Pages部署 | ✅ 执行 | 部署构建产物到GitHub Pages |" >> $GITHUB_STEP_SUMMARY
+            echo "| 🚀 Release发布 | ✅ 执行 | 发布构建产物到GitHub Release |" >> $GITHUB_STEP_SUMMARY
           else
-            echo "| 🚀 Pages部署 | ⏭️ 跳过 | - |" >> $GITHUB_STEP_SUMMARY
+            echo "| 🚀 Release发布 | ⏭️ 跳过 | - |" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          if [[ "${{ steps.predict.outputs.should_deploy_pages }}" == "true" ]]; then
+            echo "| 🌐 Pages部署 | ✅ 执行 | 部署WebGL到GitHub Pages |" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "| 🌐 Pages部署 | ⏭️ 跳过 | - |" >> $GITHUB_STEP_SUMMARY
           fi
           
           echo "" >> $GITHUB_STEP_SUMMARY
@@ -640,11 +693,20 @@ jobs:
   # 阶段2: 单元测试 - 运行Unity项目中的单元测试
   # =============================================================================
   unity-tests:
-    name: 🧪 Unity单元测试
+    name: 🧪 Unity单元测试 (${{ matrix.testMode }})
     runs-on: ubuntu-latest
     needs: flow-prediction
     if: needs.flow-prediction.outputs.should_run_tests == 'true'
     timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        testMode: [EditMode, PlayMode]
+        include:
+          - testMode: EditMode
+            license_account: primary
+          - testMode: PlayMode
+            license_account: backup
     
     steps:
       - name: 检出代码
@@ -659,7 +721,6 @@ jobs:
           LFS_PASS: ${{ secrets.LFS_PASSWORD }}
         run: |
           echo "🔧 设置 LFS URL (使用认证)..."
-          # 使用嵌入凭据的 URL 格式，Secrets 会被 GitHub 自动遮掩 (Masked)
           git config lfs.url "http://${LFS_USER}:${LFS_PASS}@vanishxiao.top:3000/vanish/Rian_Rust_lfs.git/info/lfs"
           git lfs install
           git lfs pull
@@ -668,175 +729,199 @@ jobs:
         id: load-test-config  
         run: |
           echo "🔧 加载单元测试配置..."
-          
           CONFIG_FILE=".github/workflows/Pipeline Config/pipeline-settings.json"
-          
-          # 提取测试配置
-          EDIT_MODE_PATH=$(jq -r '.jobs.unit_tests.settings.testPaths.editMode' "$CONFIG_FILE")
-          PLAY_MODE_PATH=$(jq -r '.jobs.unit_tests.settings.testPaths.playMode' "$CONFIG_FILE")
-          GENERATE_COVERAGE=$(jq -r '.jobs.unit_tests.settings.generateCoverage' "$CONFIG_FILE")
-          QUIET_MODE=$(jq -r '.jobs.unit_tests.settings.quietMode' "$CONFIG_FILE")
           UNITY_VERSION=$(jq -r '.project.unityVersion' "$CONFIG_FILE")
-          
-          echo "Unity版本: $UNITY_VERSION"
-          echo "EditMode测试路径: $EDIT_MODE_PATH"
-          echo "PlayMode测试路径: $PLAY_MODE_PATH"  
-          echo "生成覆盖率: $GENERATE_COVERAGE"
-          echo "静默模式: $QUIET_MODE"
-          
           echo "unity_version=$UNITY_VERSION" >> $GITHUB_OUTPUT
-          echo "edit_mode_path=$EDIT_MODE_PATH" >> $GITHUB_OUTPUT
-          echo "play_mode_path=$PLAY_MODE_PATH" >> $GITHUB_OUTPUT
-          echo "generate_coverage=$GENERATE_COVERAGE" >> $GITHUB_OUTPUT
-          echo "quiet_mode=$QUIET_MODE" >> $GITHUB_OUTPUT
-
-          # 确定重试次数和延迟
-          RETRY_COUNT=3
-          RETRY_DELAY=30000
-          BUILD_TYPE="${{ needs.flow-prediction.outputs.build_type }}"
-          if [[ "$BUILD_TYPE" == "release" ]]; then
-            RETRY_COUNT=10
-            RETRY_DELAY=120000
-            echo "🚀 检测到正式发布流程，增加测试重试次数至 $RETRY_COUNT，延迟至 $RETRY_DELAY ms"
-          fi
-          echo "retry_count=$RETRY_COUNT" >> $GITHUB_OUTPUT
-          echo "retry_delay=$RETRY_DELAY" >> $GITHUB_OUTPUT
 
       - name: 💾 缓存Unity Library
         uses: actions/cache@v4
         with:
           path: Library
-          key: Library-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          key: Library-Tests-${{ matrix.testMode }}-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
           restore-keys: |
+            Library-Tests-${{ matrix.testMode }}-
             Library-
 
-      - name: 🧪 运行EditMode测试
+      - name: 🧪 运行 Unity 测试 [首选账号]
         uses: Wandalen/wretry.action@v3.8.0
-        id: edit-tests
+        id: run-tests-first
+        continue-on-error: true
         with:
           action: game-ci/unity-test-runner@v4
-          attempt_limit: ${{ steps.load-test-config.outputs.retry_count }}
-          attempt_delay: ${{ steps.load-test-config.outputs.retry_delay }}
+          attempt_limit: 1  # 首选账号只试1次，不行就立刻回退，节省时间
           with: |
             unityVersion: ${{ steps.load-test-config.outputs.unity_version }}
-            testMode: EditMode
-            artifactsPath: artifacts/editmode
+            testMode: ${{ matrix.testMode }}
+            artifactsPath: artifacts/${{ matrix.testMode }}
         env:
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ matrix.license_account == 'backup' && secrets.UNITY_EMAIL_BACKUP || secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ matrix.license_account == 'backup' && secrets.UNITY_PASSWORD_BACKUP || secrets.UNITY_PASSWORD }}
+          UNITY_LICENSE: ${{ matrix.license_account == 'backup' && secrets.UNITY_LICENSE_BACKUP || secrets.UNITY_LICENSE }}
 
-      - name: 🎮 运行PlayMode测试  
+      - name: 🔄 归还 首选 Unity License
+        uses: game-ci/unity-return-license@v2
+        if: always()
+        continue-on-error: true
+        env:
+          UNITY_EMAIL: ${{ matrix.license_account == 'backup' && secrets.UNITY_EMAIL_BACKUP || secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ matrix.license_account == 'backup' && secrets.UNITY_PASSWORD_BACKUP || secrets.UNITY_PASSWORD }}
+          UNITY_LICENSE: ${{ matrix.license_account == 'backup' && secrets.UNITY_LICENSE_BACKUP || secrets.UNITY_LICENSE }}
+
+      - name: 🧪 运行 Unity 测试 [备用回退]
         uses: Wandalen/wretry.action@v3.8.0
-        id: play-tests
+        id: run-tests-fallback
+        if: steps.run-tests-first.outcome == 'failure'
         with:
           action: game-ci/unity-test-runner@v4
-          attempt_limit: ${{ steps.load-test-config.outputs.retry_count }}
-          attempt_delay: ${{ steps.load-test-config.outputs.retry_delay }}
+          # 回退时，另一个账号可能正忙，所以即使是普通PR也要重试以排队（容灾模式）
+          attempt_limit: 5
+          attempt_delay: 30000
           with: |
             unityVersion: ${{ steps.load-test-config.outputs.unity_version }}
-            testMode: PlayMode
-            artifactsPath: artifacts/playmode
+            testMode: ${{ matrix.testMode }}
+            artifactsPath: artifacts/${{ matrix.testMode }}
         env:
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          # 翻转账号逻辑：如果是 backup 则用 primary，反之亦然
+          UNITY_EMAIL: ${{ matrix.license_account == 'backup' && secrets.UNITY_EMAIL || secrets.UNITY_EMAIL_BACKUP }}
+          UNITY_PASSWORD: ${{ matrix.license_account == 'backup' && secrets.UNITY_PASSWORD || secrets.UNITY_PASSWORD_BACKUP }}
+          UNITY_LICENSE: ${{ matrix.license_account == 'backup' && secrets.UNITY_LICENSE || secrets.UNITY_LICENSE_BACKUP }}
+
+      - name: 🔄 归还 备用 Unity License
+        uses: game-ci/unity-return-license@v2
+        if: always()
+        continue-on-error: true
+        env:
+          UNITY_EMAIL: ${{ matrix.license_account == 'backup' && secrets.UNITY_EMAIL || secrets.UNITY_EMAIL_BACKUP }}
+          UNITY_PASSWORD: ${{ matrix.license_account == 'backup' && secrets.UNITY_PASSWORD || secrets.UNITY_PASSWORD_BACKUP }}
+          UNITY_LICENSE: ${{ matrix.license_account == 'backup' && secrets.UNITY_LICENSE || secrets.UNITY_LICENSE_BACKUP }}
 
       - name: 📊 解析测试结果并生成摘要
         if: always()
         run: |
-          echo "🔍 正在解析测试结果 XML..."
-          
-          # 解析函数
-          parse_xml() {
-            local file=$1
-            if [ -f "$file" ]; then
-              local p=$(grep -oP 'passed="\d+"' "$file" | head -1 | grep -oP '\d+' || echo "0")
-              local f=$(grep -oP 'failed="\d+"' "$file" | head -1 | grep -oP '\d+' || echo "0")
-              local s=$(grep -oP 'skipped="\d+"' "$file" | head -1 | grep -oP '\d+' || echo "0")
-              local t=$(grep -oP 'total="\d+"' "$file" | head -1 | grep -oP '\d+' || echo "0")
-              echo "$p,$f,$s,$t"
-            else
-              echo "0,0,0,0"
-            fi
-          }
-          
-          EDIT_RES=$(parse_xml "artifacts/editmode/editmode.xml")
-          PLAY_RES=$(parse_xml "artifacts/playmode/playmode.xml")
-          
-          IFS=',' read -r EP EF ES ET <<< "$EDIT_RES"
-          IFS=',' read -r PP PF PS PT <<< "$PLAY_RES"
-          
-          TOTAL_F=$((EF + PF))
-          
-          echo "## 🧪 Unity单元测试详情" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          
-          if [ $TOTAL_F -eq 0 ]; then
-            echo "✅ **测试状态:** 全部通过" >> $GITHUB_STEP_SUMMARY
+          # 1. 确定运行状态
+          if [[ "${{ steps.run-tests-first.outcome }}" == "success" || "${{ steps.run-tests-fallback.outcome }}" == "success" ]]; then
+            RUN_STATUS="✅ 运行成功"
+            SUCCESS=true
           else
-            echo "❌ **测试状态:** 发现 **$TOTAL_F** 个失败项" >> $GITHUB_STEP_SUMMARY
+            RUN_STATUS="❌ 运行失败"
+            SUCCESS=false
           fi
+
+          # 2. 寻找结果文件 (全向搜索)
+          SEARCH_DIR="artifacts/${{ matrix.testMode }}"
+          FILE=$(find "$SEARCH_DIR" -type f -name "*.xml" | head -1)
+
+          echo "## 🧪 Unity单元测试详情 - ${{ matrix.testMode }}" >> $GITHUB_STEP_SUMMARY
+          echo "| 属性 | 信息 |" >> $GITHUB_STEP_SUMMARY
+          echo "| :--- | :--- |" >> $GITHUB_STEP_SUMMARY
+          echo "| 测试状态 | $RUN_STATUS |" >> $GITHUB_STEP_SUMMARY
+          echo "| 测试模式 | \`${{ matrix.testMode }}\` |" >> $GITHUB_STEP_SUMMARY
           
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| 模式 | 总数 | 通过 | 失败 | 跳过 | 通过率 |" >> $GITHUB_STEP_SUMMARY
-          echo "| :--- | :---: | :---: | :---: | :---: | :---: |" >> $GITHUB_STEP_SUMMARY
-          
-          calc_rate() {
-            if [ "$2" -gt 0 ]; then echo "$(( $1 * 100 / $2 ))%"; else echo "-"; fi
-          }
-          
-          echo "| EditMode | $ET | $EP | $EF | $ES | $(calc_rate $EP $ET) |" >> $GITHUB_STEP_SUMMARY
-          echo "| PlayMode | $PT | $PP | $PF | $PS | $(calc_rate $PP $PT) |" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          
-          echo "<details><summary>点击查看配置详情</summary>" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "- **Unity版本:** \`${{ steps.load-test-config.outputs.unity_version }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "- **覆盖率报告:** \`${{ steps.load-test-config.outputs.generate_coverage }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "</details>" >> $GITHUB_STEP_SUMMARY
-          
-          # 如果有失败测试且不是跳过的，则退出码设为 1
-          if [ $TOTAL_F -gt 0 ]; then
-            echo "🚨 发现测试失败，将标记 Job 为失败。"
-            exit 1
+          if [ -f "$FILE" ]; then
+            # 使用更健壮的正则，并确保 grep 失败不中断脚本
+            p=$(grep -oP 'passed="\d+"' "$FILE" | head -1 | grep -oP '\d+' || echo "0")
+            f=$(grep -oP 'failed="\d+"' "$FILE" | head -1 | grep -oP '\d+' || echo "0")
+            s=$(grep -oP 'skipped="\d+"' "$FILE" | head -1 | grep -oP '\d+' || echo "0")
+            t=$(grep -oP 'total="\d+"' "$FILE" | head -1 | grep -oP '\d+' || echo "0")
+            dur=$(grep -oP 'duration="\d+(\.\d+)?"' "$FILE" | head -1 | grep -oP '\d+(\.\d+)?' || echo "0")
+            
+            echo "| 使用账号 | ${{ matrix.license_account }} |" >> $GITHUB_STEP_SUMMARY
+            echo "| 总耗时 | ${dur}s |" >> $GITHUB_STEP_SUMMARY
+            echo "| 结果文件 | \`$(basename "$FILE")\` |" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            
+            echo "### 📈 统计数据" >> $GITHUB_STEP_SUMMARY
+            echo "| 状态 | 数量 |" >> $GITHUB_STEP_SUMMARY
+            echo "| :--- | :---: |" >> $GITHUB_STEP_SUMMARY
+            echo "| ✅ 通过 | $p |" >> $GITHUB_STEP_SUMMARY
+            echo "| ❌ 失败 | **$f** |" >> $GITHUB_STEP_SUMMARY
+            echo "| ⏭️ 跳过 | $s |" >> $GITHUB_STEP_SUMMARY
+            echo "| 📊 总计 | $t |" >> $GITHUB_STEP_SUMMARY
+
+            # 如果有失败测试，列出前20个
+            if [ "$f" -gt 0 ]; then
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "### 🚨 失败用例列表" >> $GITHUB_STEP_SUMMARY
+              echo "| # | 测试用例名称 |" >> $GITHUB_STEP_SUMMARY
+              echo "| :--- | :--- |" >> $GITHUB_STEP_SUMMARY
+              
+              # 提取失败的测试用例名
+              grep -oP 'test-case[^>]*result="Failed"[^>]*name="\K[^"]+' "$FILE" > failed_list.txt || true
+              
+              i=1
+              while read -r line; do
+                echo "| $i | \`$line\` |" >> $GITHUB_STEP_SUMMARY
+                ((i++))
+                if [ $i -gt 20 ]; then break; fi
+              done < failed_list.txt
+              
+              if [ "$(wc -l < failed_list.txt)" -gt 20 ]; then
+                echo "| ... | 更多失败项请下载 Artifacts 查看 |" >> $GITHUB_STEP_SUMMARY
+              fi
+              # 确实有测试失败，标记 Job 失败
+              exit 1
+            fi
+          else
+            echo "| 错误 | ⚠️ 未找到结果文件 |" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### 🔍 调试信息" >> $GITHUB_STEP_SUMMARY
+            echo "在目录 \`$SEARCH_DIR\` 下未发现 XML 结果。目录结构如下：" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            ls -R "$SEARCH_DIR" || echo "目录不存在" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            
+            # 如果 Runner 报成功但没文件，通常是由于路径配置错误或 Unity 意外退出
+            if [ "$SUCCESS" = true ]; then
+              echo "❌ 虽然 Unity 返回成功，但未生成测试报告，请检查日志。"
+              exit 1
+            fi
           fi
 
       - name: 📊 上传测试结果
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: unity-test-results
+          name: unity-test-results-${{ matrix.testMode }}
           path: artifacts/
 
   # =============================================================================
   # 阶段3: 构建测试 - 构建Windows和macOS版本  
   # =============================================================================
   build-tests:
-    name: 🔨 构建测试
-    needs: flow-prediction
+    name: 🔨 构建测试 (${{ matrix.profile }})
+    needs: [flow-prediction]
     if: needs.flow-prediction.outputs.should_run_build == 'true'
     timeout-minutes: 60
     strategy:
       fail-fast: false
+      max-parallel: 4  # 提高并发，总共 2 个 License，每个支持 2 台，共 4 台并发槽位
       matrix:
         include:
           - os: ubuntu-latest
             buildTarget: StandaloneWindows64
             profile: Windows-Debug
             displayName: Windows (Debug)
+            license_account: primary
           - os: ubuntu-latest
             buildTarget: StandaloneWindows64
             profile: Windows-Release
             displayName: Windows (Release)
-          - os: macos-latest  
+            license_account: backup
+          - os: macos-latest
             buildTarget: StandaloneOSX
             profile: Mac-Debug
             displayName: macOS (Debug)
-          - os: macos-latest  
+            license_account: primary
+          - os: macos-latest
             buildTarget: StandaloneOSX
             profile: Mac-Release
             displayName: macOS (Release)
+            license_account: backup
+          - os: ubuntu-latest
+            buildTarget: WebGL
+            profile: Web-Release
+            displayName: WebGL (Release)
+            license_account: primary
     
     runs-on: ${{ matrix.os }}
     
@@ -907,13 +992,13 @@ jobs:
             Library-${{ matrix.buildTarget }}-
             Library-
 
-      - name: 🔨 Unity构建
+      - name: 🔨 Unity构建 [首选账号]
         uses: Wandalen/wretry.action@v3.8.0
-        id: unity-build
+        id: run-build-first
+        continue-on-error: true
         with:
           action: game-ci/unity-builder@v4
-          attempt_limit: ${{ steps.load-build-config.outputs.retry_count }}
-          attempt_delay: ${{ steps.load-build-config.outputs.retry_delay }}
+          attempt_limit: 1  # 首选账号只试1次，快进快出
           with: |
             unityVersion: ${{ steps.load-build-config.outputs.unity_version }}
             targetPlatform: ${{ matrix.buildTarget }}
@@ -921,26 +1006,62 @@ jobs:
             versioning: Tag
             customParameters: -buildProfile Assets/Settings/BuildProfiles/${{ matrix.profile }}.asset
         env:
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ matrix.license_account == 'backup' && secrets.UNITY_EMAIL_BACKUP || secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ matrix.license_account == 'backup' && secrets.UNITY_PASSWORD_BACKUP || secrets.UNITY_PASSWORD }}
+          UNITY_LICENSE: ${{ matrix.license_account == 'backup' && secrets.UNITY_LICENSE_BACKUP || secrets.UNITY_LICENSE }}
+
+      - name: 🔄 归还 首选 Unity License
+        uses: game-ci/unity-return-license@v2
+        if: always()
+        continue-on-error: true
+        env:
+          UNITY_EMAIL: ${{ matrix.license_account == 'backup' && secrets.UNITY_EMAIL_BACKUP || secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ matrix.license_account == 'backup' && secrets.UNITY_PASSWORD_BACKUP || secrets.UNITY_PASSWORD }}
+          UNITY_LICENSE: ${{ matrix.license_account == 'backup' && secrets.UNITY_LICENSE_BACKUP || secrets.UNITY_LICENSE }}
+
+      - name: 🔨 Unity构建 [备用回退]
+        uses: Wandalen/wretry.action@v3.8.0
+        id: run-build-fallback
+        if: steps.run-build-first.outcome == 'failure'
+        with:
+          action: game-ci/unity-builder@v4
+          # 回退时进行排队
+          attempt_limit: 5
+          attempt_delay: 30000
+          with: |
+            unityVersion: ${{ steps.load-build-config.outputs.unity_version }}
+            targetPlatform: ${{ matrix.buildTarget }}
+            buildName: ${{ steps.load-build-config.outputs.project_name }}
+            versioning: Tag
+            customParameters: -buildProfile Assets/Settings/BuildProfiles/${{ matrix.profile }}.asset
+        env:
+          UNITY_EMAIL: ${{ matrix.license_account == 'backup' && secrets.UNITY_EMAIL || secrets.UNITY_EMAIL_BACKUP }}
+          UNITY_PASSWORD: ${{ matrix.license_account == 'backup' && secrets.UNITY_PASSWORD || secrets.UNITY_PASSWORD_BACKUP }}
+          UNITY_LICENSE: ${{ matrix.license_account == 'backup' && secrets.UNITY_LICENSE || secrets.UNITY_LICENSE_BACKUP }}
+
+      - name: 🔄 归还 备用 Unity License
+        uses: game-ci/unity-return-license@v2
+        if: always()
+        continue-on-error: true
+        env:
+          UNITY_EMAIL: ${{ matrix.license_account == 'backup' && secrets.UNITY_EMAIL || secrets.UNITY_EMAIL_BACKUP }}
+          UNITY_PASSWORD: ${{ matrix.license_account == 'backup' && secrets.UNITY_PASSWORD || secrets.UNITY_PASSWORD_BACKUP }}
+          UNITY_LICENSE: ${{ matrix.license_account == 'backup' && secrets.UNITY_LICENSE || secrets.UNITY_LICENSE_BACKUP }}
           
       - name: 📦 确定产物名称并上传
         id: determine-artifact-name
+        if: steps.run-build-first.outcome == 'success' || steps.run-build-fallback.outcome == 'success'
         run: |
-          # 确定产物名称
           VERSION_SUFFIX="v${{ github.run_number }}"
           if [[ -n "${{ steps.load-build-config.outputs.release_version }}" ]]; then
             VERSION_SUFFIX="v${{ steps.load-build-config.outputs.release_version }}"
           fi
-
           ARTIFACT_NAME="${{ steps.load-build-config.outputs.project_name }}_${{ matrix.profile }}_${VERSION_SUFFIX}"
-          echo "产物名称: $ARTIFACT_NAME"
-          
           echo "artifact_name=$ARTIFACT_NAME" >> $GITHUB_OUTPUT
 
       - name: 📦 上传构建产物
         uses: actions/upload-artifact@v4
+        if: (steps.run-build-first.outcome == 'success' || steps.run-build-fallback.outcome == 'success') && needs.flow-prediction.outputs.build_type != 'preview'
         with:
           name: ${{ steps.determine-artifact-name.outputs.artifact_name }}
           path: build/
@@ -949,30 +1070,15 @@ jobs:
       - name: 📋 构建结果摘要
         if: always()
         run: |
-          # 检查前面步骤的状态
-          BUILD_STATUS="${{ steps.unity-build.conclusion || 'unknown' }}"
-          
           echo "## 🔨 构建测试结果 - ${{ matrix.displayName }}" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          
-          if [[ "$BUILD_STATUS" == "success" ]]; then
+          if [[ "${{ steps.run-build-first.outcome }}" == "success" || "${{ steps.run-build-fallback.outcome }}" == "success" ]]; then
             echo "✅ **构建状态:** 成功" >> $GITHUB_STEP_SUMMARY
-          elif [[ "$BUILD_STATUS" == "failure" ]]; then
-            echo "❌ **构建状态:** 失败" >> $GITHUB_STEP_SUMMARY
           else
-            echo "⚠️ **构建状态:** $BUILD_STATUS" >> $GITHUB_STEP_SUMMARY
+            echo "❌ **构建状态:** 失败" >> $GITHUB_STEP_SUMMARY
           fi
-          
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**构建信息:**" >> $GITHUB_STEP_SUMMARY
           echo "- 平台: \`${{ matrix.displayName }}\`" >> $GITHUB_STEP_SUMMARY
           echo "- 目标: \`${{ matrix.buildTarget }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "- 类型: \`${{ steps.load-build-config.outputs.build_type }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "- 产物名称: \`${{ steps.determine-artifact-name.outputs.artifact_name }}\`" >> $GITHUB_STEP_SUMMARY
-          
-          if [[ "$BUILD_STATUS" == "failure" ]]; then
-            echo "- 失败原因: 请查看构建日志了解详细错误信息" >> $GITHUB_STEP_SUMMARY
-          fi
+          echo "- 初始账号: \`${{ matrix.license_account }}\`" >> $GITHUB_STEP_SUMMARY
 
 
 
@@ -1032,21 +1138,89 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: ./release-assets/*.zip
-          name: Release ${{ github.ref_name }}
+          name: Release v${{ needs.flow-prediction.outputs.release_version }}
           tag_name: ${{ github.ref }}
-          draft: true
+          draft: false
           prerelease: false
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   # =============================================================================
-  # 阶段5: 执行详情汇总 - 汇总整个流水线的执行情况
+  # 阶段5: 部署到 GitHub Pages - WebGL 版本部署
+  # =============================================================================
+  deploy-pages:
+    name: 🌐 部署到 GitHub Pages
+    runs-on: ubuntu-latest
+    needs: [flow-prediction, build-tests]
+    if: |
+      always() &&
+      github.event_name == 'push' && github.ref_type == 'tag' &&
+      needs.flow-prediction.outputs.should_deploy_pages == 'true' &&
+      needs.build-tests.result == 'success'
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    permissions:
+      pages: write
+      id-token: write
+
+    steps:
+      - name: 📥 下载 WebGL 构建产物
+        uses: actions/download-artifact@v4
+        with:
+          pattern: "*_Web-Release_*"
+          path: ./web-build
+          merge-multiple: true
+
+      - name: 🔍 查找 WebGL 输出目录
+        id: find-webgl
+        run: |
+          echo "🔍 查找 index.html ..."
+          WEBGL_INDEX=$(find ./web-build -name "index.html" -type f | head -1)
+          if [ -z "$WEBGL_INDEX" ]; then
+            echo "❌ 未找到 index.html，构建产物结构:"
+            find ./web-build -type f | head -30
+            exit 1
+          fi
+          WEBGL_DIR=$(dirname "$WEBGL_INDEX")
+          echo "webgl_dir=$WEBGL_DIR" >> $GITHUB_OUTPUT
+          echo "✅ WebGL 输出目录: $WEBGL_DIR"
+
+      - name: ⚙️ 配置 GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: 📦 上传 Pages 产物
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ${{ steps.find-webgl.outputs.webgl_dir }}
+
+      - name: 🚀 部署到 GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: 📊 Pages 部署摘要
+        if: always()
+        run: |
+          echo "## 🌐 GitHub Pages 部署" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [[ "${{ steps.deployment.conclusion }}" == "success" ]]; then
+            echo "✅ **部署成功**" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "🔗 **访问地址:** ${{ steps.deployment.outputs.page_url }}" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **部署失败**，请检查日志。" >> $GITHUB_STEP_SUMMARY
+          fi
+
+  # =============================================================================
+  # 阶段6: 执行详情汇总 - 汇总整个流水线的执行情况
   # =============================================================================
   execution-summary:
     name: 📊 执行详情汇总
     runs-on: ubuntu-latest
-    needs: [flow-prediction, code-style-check, unity-tests, build-tests, deploy-release]
+    needs: [flow-prediction, code-style-check, unity-tests, build-tests, deploy-release, deploy-pages]
     if: always()
     
     steps:
@@ -1057,15 +1231,17 @@ jobs:
           # 收集各阶段状态
           FLOW_STATUS="${{ needs.flow-prediction.result }}"
           STYLE_STATUS="${{ needs.code-style-check.result }}"
-          TEST_STATUS="${{ needs.unity-tests.result }}" 
+          TEST_STATUS="${{ needs.unity-tests.result }}"
           BUILD_STATUS="${{ needs.build-tests.result }}"
           DEPLOY_STATUS="${{ needs.deploy-release.result }}"
-          
+          PAGES_STATUS="${{ needs.deploy-pages.result }}"
+
           echo "流程预测: $FLOW_STATUS"
           echo "代码检查: $STYLE_STATUS"
           echo "单元测试: $TEST_STATUS"
-          echo "构建测试: $BUILD_STATUS"  
+          echo "构建测试: $BUILD_STATUS"
           echo "Release发布: $DEPLOY_STATUS"
+          echo "Pages部署: $PAGES_STATUS"
           
           # 生成详细的执行摘要
           echo "# 🚀 CI/CD流水线执行详情" >> $GITHUB_STEP_SUMMARY
@@ -1113,10 +1289,10 @@ jobs:
             echo "| 🧪 单元测试 | ⏭️ 跳过 | - | 根据触发条件跳过 |" >> $GITHUB_STEP_SUMMARY
           fi
           
-          # 构建测试  
+          # 构建测试
           if [[ "${{ needs.flow-prediction.outputs.should_run_build }}" == "true" ]]; then
             if [[ "$BUILD_STATUS" == "success" ]]; then
-              echo "| 🔨 构建测试 | ✅ 成功 | 已完成 | 4个Profile版本构建成功 |" >> $GITHUB_STEP_SUMMARY
+              echo "| 🔨 构建测试 | ✅ 成功 | 已完成 | 5个Profile版本构建成功 |" >> $GITHUB_STEP_SUMMARY
             elif [[ "$BUILD_STATUS" == "failure" ]]; then
               echo "| 🔨 构建测试 | ⚠️ 警告 | 已完成 | 构建失败但不影响流程 |" >> $GITHUB_STEP_SUMMARY
             else
@@ -1125,37 +1301,52 @@ jobs:
           else
             echo "| 🔨 构建测试 | ⏭️ 跳过 | - | 根据触发条件跳过 |" >> $GITHUB_STEP_SUMMARY
           fi
-          
+
           # Release发布
           if [[ "${{ needs.flow-prediction.outputs.should_run_deploy }}" == "true" ]]; then
             if [[ "$DEPLOY_STATUS" == "success" ]]; then
               echo "| 🚀 Release发布 | ✅ 成功 | 已完成 | 构建产物已发布到 GitHub Release |" >> $GITHUB_STEP_SUMMARY
-            elif [[ "$DEPLOY_STATUS" == "failure" ]]; then  
+            elif [[ "$DEPLOY_STATUS" == "failure" ]]; then
               echo "| 🚀 Release发布 | ⚠️ 警告 | 已完成 | 发布失败但不影响流程 |" >> $GITHUB_STEP_SUMMARY
             elif [[ "$DEPLOY_STATUS" == "skipped" ]]; then
-              echo "| 🚀 Release发布 | ⏭️ 跳过 | - | 非Tag推送或跳过部署 |" >> $GITHUB_STEP_SUMMARY
+              echo "| 🚀 Release发布 | ⏭️ 跳过 | - | 非release tag或跳过部署 |" >> $GITHUB_STEP_SUMMARY
             else
               echo "| 🚀 Release发布 | ⚠️ 异常 | 已完成 | 状态: $DEPLOY_STATUS |" >> $GITHUB_STEP_SUMMARY
             fi
           else
             echo "| 🚀 Release发布 | ⏭️ 跳过 | - | 根据触发条件跳过 |" >> $GITHUB_STEP_SUMMARY
           fi
-          
+
+          # Pages部署
+          if [[ "${{ needs.flow-prediction.outputs.should_deploy_pages }}" == "true" ]]; then
+            if [[ "$PAGES_STATUS" == "success" ]]; then
+              echo "| 🌐 Pages部署 | ✅ 成功 | 已完成 | WebGL已部署到 GitHub Pages |" >> $GITHUB_STEP_SUMMARY
+            elif [[ "$PAGES_STATUS" == "failure" ]]; then
+              echo "| 🌐 Pages部署 | ⚠️ 警告 | 已完成 | Pages部署失败 |" >> $GITHUB_STEP_SUMMARY
+            elif [[ "$PAGES_STATUS" == "skipped" ]]; then
+              echo "| 🌐 Pages部署 | ⏭️ 跳过 | - | 构建失败或条件不满足 |" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "| 🌐 Pages部署 | ⚠️ 异常 | 已完成 | 状态: $PAGES_STATUS |" >> $GITHUB_STEP_SUMMARY
+            fi
+          else
+            echo "| 🌐 Pages部署 | ⏭️ 跳过 | - | 非 vx.y.z-release tag |" >> $GITHUB_STEP_SUMMARY
+          fi
+
           echo "" >> $GITHUB_STEP_SUMMARY
-          
+
           # 总体状态判断
-          if [[ "$FLOW_STATUS" == "success" && 
+          if [[ "$FLOW_STATUS" == "success" &&
                 ("$STYLE_STATUS" == "success" || "$STYLE_STATUS" == "skipped") &&
                 ("$TEST_STATUS" == "success" || "$TEST_STATUS" == "skipped") ]]; then
             echo "## ✅ 流水线执行成功" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "🎉 所有必需的步骤都已成功完成！" >> $GITHUB_STEP_SUMMARY
           else
-            echo "## ❌ 流水线执行失败" >> $GITHUB_STEP_SUMMARY  
+            echo "## ❌ 流水线执行失败" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "⚠️ 部分步骤执行失败，请检查上述详情。" >> $GITHUB_STEP_SUMMARY
           fi
-          
+
           if [[ -n "${{ needs.flow-prediction.outputs.skip_reason }}" ]]; then
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "**跳过信息:** ${{ needs.flow-prediction.outputs.skip_reason }}" >> $GITHUB_STEP_SUMMARY
@@ -1169,7 +1360,7 @@ jobs:
           fi
 
           # 以下只要执行且失败就算失败（skipped 不算）
-          for STATUS in "$STYLE_STATUS" "$TEST_STATUS" "$BUILD_STATUS" "$DEPLOY_STATUS"
+          for STATUS in "$STYLE_STATUS" "$TEST_STATUS" "$BUILD_STATUS" "$DEPLOY_STATUS" "$PAGES_STATUS"
           do
             if [[ "$STATUS" == "failure" ]]; then
               FAILED=1
