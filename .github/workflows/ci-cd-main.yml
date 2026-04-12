@@ -798,69 +798,83 @@ jobs:
       - name: 📊 解析测试结果并生成摘要
         if: always()
         run: |
-          # 确定测试状态
+          # 1. 确定运行状态
           if [[ "${{ steps.run-tests-first.outcome }}" == "success" || "${{ steps.run-tests-fallback.outcome }}" == "success" ]]; then
             RUN_STATUS="✅ 运行成功"
+            SUCCESS=true
           else
             RUN_STATUS="❌ 运行失败"
+            SUCCESS=false
           fi
 
-          # 确定使用的账号
-          USED_ACCOUNT="首选账号 (${{ matrix.license_account }})"
-          if [[ "${{ steps.run-tests-first.outcome }}" == "failure" && "${{ steps.run-tests-fallback.outcome }}" == "success" ]]; then
-            USED_ACCOUNT="备用回退账号"
-          fi
+          # 2. 寻找结果文件 (全向搜索)
+          SEARCH_DIR="artifacts/${{ matrix.testMode }}"
+          FILE=$(find "$SEARCH_DIR" -type f -name "*.xml" | head -1)
 
           echo "## 🧪 Unity单元测试详情 - ${{ matrix.testMode }}" >> $GITHUB_STEP_SUMMARY
           echo "| 属性 | 信息 |" >> $GITHUB_STEP_SUMMARY
           echo "| :--- | :--- |" >> $GITHUB_STEP_SUMMARY
-          echo "| 状态 | $RUN_STATUS |" >> $GITHUB_STEP_SUMMARY
-          echo "| 模式 | \`${{ matrix.testMode }}\` |" >> $GITHUB_STEP_SUMMARY
-          echo "| 使用账号 | $USED_ACCOUNT |" >> $GITHUB_STEP_SUMMARY
-
-          # 寻找结果文件 (处理大小写不敏感问题)
-          SEARCH_DIR="artifacts/${{ matrix.testMode }}"
-          FILE=$(find "$SEARCH_DIR" -maxdepth 1 -iname "${{ matrix.testMode }}.xml" | head -1)
-
+          echo "| 测试状态 | $RUN_STATUS |" >> $GITHUB_STEP_SUMMARY
+          echo "| 测试模式 | \`${{ matrix.testMode }}\` |" >> $GITHUB_STEP_SUMMARY
+          
           if [ -f "$FILE" ]; then
+            # 使用更健壮的正则，并确保 grep 失败不中断脚本
             p=$(grep -oP 'passed="\d+"' "$FILE" | head -1 | grep -oP '\d+' || echo "0")
             f=$(grep -oP 'failed="\d+"' "$FILE" | head -1 | grep -oP '\d+' || echo "0")
             s=$(grep -oP 'skipped="\d+"' "$FILE" | head -1 | grep -oP '\d+' || echo "0")
             t=$(grep -oP 'total="\d+"' "$FILE" | head -1 | grep -oP '\d+' || echo "0")
-            time=$(grep -oP 'duration="\d+\.\d+"' "$FILE" | head -1 | grep -oP '\d+\.\d+' || echo "0")
+            dur=$(grep -oP 'duration="\d+(\.\d+)?"' "$FILE" | head -1 | grep -oP '\d+(\.\d+)?' || echo "0")
             
-            echo "| 总耗时 | ${time}s |" >> $GITHUB_STEP_SUMMARY
+            echo "| 使用账号 | ${{ matrix.license_account }} |" >> $GITHUB_STEP_SUMMARY
+            echo "| 总耗时 | ${dur}s |" >> $GITHUB_STEP_SUMMARY
+            echo "| 结果文件 | \`$(basename "$FILE")\` |" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
+            
             echo "### 📈 统计数据" >> $GITHUB_STEP_SUMMARY
-            echo "| 结果 | 数量 |" >> $GITHUB_STEP_SUMMARY
+            echo "| 状态 | 数量 |" >> $GITHUB_STEP_SUMMARY
             echo "| :--- | :---: |" >> $GITHUB_STEP_SUMMARY
             echo "| ✅ 通过 | $p |" >> $GITHUB_STEP_SUMMARY
             echo "| ❌ 失败 | **$f** |" >> $GITHUB_STEP_SUMMARY
             echo "| ⏭️ 跳过 | $s |" >> $GITHUB_STEP_SUMMARY
             echo "| 📊 总计 | $t |" >> $GITHUB_STEP_SUMMARY
-            
-            # 如果有失败的测试，列出它们
+
+            # 如果有失败测试，列出前20个
             if [ "$f" -gt 0 ]; then
               echo "" >> $GITHUB_STEP_SUMMARY
               echo "### 🚨 失败用例列表" >> $GITHUB_STEP_SUMMARY
-              echo "| 测试名称 | 错误信息 |" >> $GITHUB_STEP_SUMMARY
+              echo "| # | 测试用例名称 |" >> $GITHUB_STEP_SUMMARY
               echo "| :--- | :--- |" >> $GITHUB_STEP_SUMMARY
-              # 简单提取失败的 test-case 名称和 message
-              grep -zPo '<test-case[^>]*result="Failed"[^>]*name="\K[^"]*' "$FILE" | tr '\0' '\n' > failed_names.txt
-              # 限制展示前 10 个失败项，避免摘要过长
-              head -n 10 failed_names.txt | while read name; do
-                echo "| \`$name\` | 详情请查看 Artifacts 中的完整 XML |" >> $GITHUB_STEP_SUMMARY
-              done
-              if [ "$(wc -l < failed_names.txt)" -gt 10 ]; then
-                echo "| ... | 还有更多失败项未列出 |" >> $GITHUB_STEP_SUMMARY
+              
+              # 提取失败的测试用例名
+              grep -oP 'test-case[^>]*result="Failed"[^>]*name="\K[^"]+' "$FILE" > failed_list.txt || true
+              
+              i=1
+              while read -r line; do
+                echo "| $i | \`$line\` |" >> $GITHUB_STEP_SUMMARY
+                ((i++))
+                if [ $i -gt 20 ]; then break; fi
+              done < failed_list.txt
+              
+              if [ "$(wc -l < failed_list.txt)" -gt 20 ]; then
+                echo "| ... | 更多失败项请下载 Artifacts 查看 |" >> $GITHUB_STEP_SUMMARY
               fi
+              # 确实有测试失败，标记 Job 失败
               exit 1
             fi
           else
-            echo "### ⚠️ 异常" >> $GITHUB_STEP_SUMMARY
-            echo "❌ 未找到测试结果文件。请检查 Unity 构建日志是否存在 Crash 或 License 激活失败。" >> $GITHUB_STEP_SUMMARY
-            # 只有在运行步骤显示成功但没文件时才报错退出，如果是运行步骤本身就失败了，上面的 RUN_STATUS 已经体现了
-            if [[ "$RUN_STATUS" == "✅ 运行成功" ]]; then exit 1; fi
+            echo "| 错误 | ⚠️ 未找到结果文件 |" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### 🔍 调试信息" >> $GITHUB_STEP_SUMMARY
+            echo "在目录 \`$SEARCH_DIR\` 下未发现 XML 结果。目录结构如下：" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            ls -R "$SEARCH_DIR" || echo "目录不存在" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            
+            # 如果 Runner 报成功但没文件，通常是由于路径配置错误或 Unity 意外退出
+            if [ "$SUCCESS" = true ]; then
+              echo "❌ 虽然 Unity 返回成功，但未生成测试报告，请检查日志。"
+              exit 1
+            fi
           fi
 
       - name: 📊 上传测试结果
