@@ -898,6 +898,11 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
+            buildTarget: WebGL
+            profile: Web-Release
+            displayName: WebGL (Release)
+            license_account: primary
+          - os: ubuntu-latest
             buildTarget: StandaloneWindows64
             profile: Windows-Debug
             displayName: Windows (Debug)
@@ -917,11 +922,6 @@ jobs:
             profile: Mac-Release
             displayName: macOS (Release)
             license_account: backup
-          - os: ubuntu-latest
-            buildTarget: WebGL
-            profile: Web-Release
-            displayName: WebGL (Release)
-            license_account: primary
     
     runs-on: ${{ matrix.os }}
     
