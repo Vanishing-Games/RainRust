@@ -835,7 +835,7 @@ jobs:
   # =============================================================================
   build-tests:
     name: 🔨 构建测试 (${{ matrix.profile }})
-    needs: [flow-prediction, unity-tests]
+    needs: [flow-prediction]
     if: needs.flow-prediction.outputs.should_run_build == 'true'
     timeout-minutes: 60
     strategy:
