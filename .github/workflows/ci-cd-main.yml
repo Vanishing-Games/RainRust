@@ -737,13 +737,14 @@ jobs:
           restore-keys: |
             Library-
 
-      - name: 🧪 运行EditMode测试
+      - name: 🧪 运行EditMode测试 [主账号]
         uses: Wandalen/wretry.action@v3.8.0
-        id: edit-tests
+        id: edit-tests-primary
+        continue-on-error: true
         with:
           action: game-ci/unity-test-runner@v4
-          attempt_limit: ${{ steps.load-test-config.outputs.retry_count }}
-          attempt_delay: ${{ steps.load-test-config.outputs.retry_delay }}
+          attempt_limit: 1
+          attempt_delay: 5000
           with: |
             unityVersion: ${{ steps.load-test-config.outputs.unity_version }}
             testMode: EditMode
@@ -753,9 +754,54 @@ jobs:
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
 
-      - name: 🎮 运行PlayMode测试  
+      - name: 🎮 运行PlayMode测试 [主账号]
         uses: Wandalen/wretry.action@v3.8.0
-        id: play-tests
+        id: play-tests-primary
+        continue-on-error: true
+        if: steps.edit-tests-primary.outcome == 'success'
+        with:
+          action: game-ci/unity-test-runner@v4
+          attempt_limit: 1
+          attempt_delay: 5000
+          with: |
+            unityVersion: ${{ steps.load-test-config.outputs.unity_version }}
+            testMode: PlayMode
+            artifactsPath: artifacts/playmode
+        env:
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+
+      - name: 🔄 归还主账号 Unity License
+        uses: game-ci/unity-return-license@v2
+        if: always()
+        continue-on-error: true
+        env:
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+
+      - name: 🧪 运行EditMode测试 [备用账号]
+        uses: Wandalen/wretry.action@v3.8.0
+        id: edit-tests-backup
+        if: steps.edit-tests-primary.outcome == 'failure'
+        with:
+          action: game-ci/unity-test-runner@v4
+          attempt_limit: ${{ steps.load-test-config.outputs.retry_count }}
+          attempt_delay: ${{ steps.load-test-config.outputs.retry_delay }}
+          with: |
+            unityVersion: ${{ steps.load-test-config.outputs.unity_version }}
+            testMode: EditMode
+            artifactsPath: artifacts/editmode
+        env:
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL_BACKUP }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD_BACKUP }}
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE_BACKUP }}
+
+      - name: 🎮 运行PlayMode测试 [备用账号]
+        uses: Wandalen/wretry.action@v3.8.0
+        id: play-tests-backup
+        if: steps.edit-tests-primary.outcome == 'failure' || steps.play-tests-primary.outcome == 'failure'
         with:
           action: game-ci/unity-test-runner@v4
           attempt_limit: ${{ steps.load-test-config.outputs.retry_count }}
@@ -765,9 +811,9 @@ jobs:
             testMode: PlayMode
             artifactsPath: artifacts/playmode
         env:
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL_BACKUP }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD_BACKUP }}
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE_BACKUP }}
 
       - name: 📊 解析测试结果并生成摘要
         if: always()
@@ -823,19 +869,34 @@ jobs:
           echo "- **覆盖率报告:** \`${{ steps.load-test-config.outputs.generate_coverage }}\`" >> $GITHUB_STEP_SUMMARY
           echo "</details>" >> $GITHUB_STEP_SUMMARY
           
-          # 如果有失败测试且不是跳过的，则退出码设为 1
+          # 检查主/备账号是否有至少一方成功运行各测试模式
+          EDIT_OK=false
+          PLAY_OK=false
+          [[ "${{ steps.edit-tests-primary.outcome }}" == "success" || "${{ steps.edit-tests-backup.outcome }}" == "success" ]] && EDIT_OK=true
+          [[ "${{ steps.play-tests-primary.outcome }}" == "success" || "${{ steps.play-tests-backup.outcome }}" == "success" ]] && PLAY_OK=true
+
+          if [[ "$EDIT_OK" == "false" ]]; then
+            echo "🚨 EditMode 测试失败（主备账号均失败或均未运行）"
+            exit 1
+          fi
+          if [[ "$PLAY_OK" == "false" ]]; then
+            echo "🚨 PlayMode 测试失败（主备账号均失败或均未运行）"
+            exit 1
+          fi
+          # 如果有失败测试，则退出码设为 1
           if [ $TOTAL_F -gt 0 ]; then
             echo "🚨 发现测试失败，将标记 Job 为失败。"
             exit 1
           fi
 
-      - name: 🔄 归还 Unity License
+      - name: 🔄 归还备用账号 Unity License
         uses: game-ci/unity-return-license@v2
         if: always()
+        continue-on-error: true
         env:
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL_BACKUP }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD_BACKUP }}
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE_BACKUP }}
 
       - name: 📊 上传测试结果
         uses: actions/upload-artifact@v4
@@ -947,9 +1008,38 @@ jobs:
             Library-${{ matrix.buildTarget }}-
             Library-
 
-      - name: 🔨 Unity构建
+      - name: 🔨 Unity构建 [主账号]
         uses: Wandalen/wretry.action@v3.8.0
-        id: unity-build
+        id: build-primary
+        continue-on-error: true
+        with:
+          action: game-ci/unity-builder@v4
+          attempt_limit: 1
+          attempt_delay: 5000
+          with: |
+            unityVersion: ${{ steps.load-build-config.outputs.unity_version }}
+            targetPlatform: ${{ matrix.buildTarget }}
+            buildName: ${{ steps.load-build-config.outputs.project_name }}
+            versioning: Tag
+            customParameters: -buildProfile Assets/Settings/BuildProfiles/${{ matrix.profile }}.asset
+        env:
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+
+      - name: 🔄 归还主账号 Unity License
+        uses: game-ci/unity-return-license@v2
+        if: always()
+        continue-on-error: true
+        env:
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+
+      - name: 🔨 Unity构建 [备用账号]
+        uses: Wandalen/wretry.action@v3.8.0
+        id: build-backup
+        if: steps.build-primary.outcome == 'failure'
         with:
           action: game-ci/unity-builder@v4
           attempt_limit: ${{ steps.load-build-config.outputs.retry_count }}
@@ -961,9 +1051,9 @@ jobs:
             versioning: Tag
             customParameters: -buildProfile Assets/Settings/BuildProfiles/${{ matrix.profile }}.asset
         env:
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL_BACKUP }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD_BACKUP }}
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE_BACKUP }}
           
       - name: 📦 确定产物名称并上传
         id: determine-artifact-name
@@ -981,25 +1071,34 @@ jobs:
 
       - name: 📦 上传构建产物
         uses: actions/upload-artifact@v4
-        if: steps.load-build-config.outputs.build_type != 'preview'
+        if: (steps.build-primary.outcome == 'success' || steps.build-backup.outcome == 'success') && steps.load-build-config.outputs.build_type != 'preview'
         with:
           name: ${{ steps.determine-artifact-name.outputs.artifact_name }}
           path: build/
           retention-days: ${{ steps.load-build-config.outputs.retention_days }}
 
-      - name: 🔄 归还 Unity License
+      - name: 🔄 归还备用账号 Unity License
         uses: game-ci/unity-return-license@v2
         if: always()
+        continue-on-error: true
         env:
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL_BACKUP }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD_BACKUP }}
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE_BACKUP }}
 
       - name: 📋 构建结果摘要
         if: always()
         run: |
-          # 检查前面步骤的状态
-          BUILD_STATUS="${{ steps.unity-build.conclusion || 'unknown' }}"
+          # 检查主/备账号构建状态
+          BUILD_STATUS="failure"
+          USED_ACCOUNT="主账号"
+          if [[ "${{ steps.build-primary.conclusion }}" == "success" ]]; then
+            BUILD_STATUS="success"
+            USED_ACCOUNT="主账号"
+          elif [[ "${{ steps.build-backup.conclusion }}" == "success" ]]; then
+            BUILD_STATUS="success"
+            USED_ACCOUNT="备用账号"
+          fi
           
           echo "## 🔨 构建测试结果 - ${{ matrix.displayName }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
@@ -1018,7 +1117,8 @@ jobs:
           echo "- 目标: \`${{ matrix.buildTarget }}\`" >> $GITHUB_STEP_SUMMARY
           echo "- 类型: \`${{ steps.load-build-config.outputs.build_type }}\`" >> $GITHUB_STEP_SUMMARY
           echo "- 产物名称: \`${{ steps.determine-artifact-name.outputs.artifact_name }}\`" >> $GITHUB_STEP_SUMMARY
-          
+          echo "- 使用账号: \`${USED_ACCOUNT}\`" >> $GITHUB_STEP_SUMMARY
+
           if [[ "$BUILD_STATUS" == "failure" ]]; then
             echo "- 失败原因: 请查看构建日志了解详细错误信息" >> $GITHUB_STEP_SUMMARY
           fi
