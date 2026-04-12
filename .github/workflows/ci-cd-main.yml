@@ -829,6 +829,14 @@ jobs:
             exit 1
           fi
 
+      - name: 🔄 归还 Unity License
+        uses: game-ci/unity-return-license@v4
+        if: always()
+        env:
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+
       - name: 📊 上传测试结果
         uses: actions/upload-artifact@v4
         if: always()
@@ -978,6 +986,14 @@ jobs:
           name: ${{ steps.determine-artifact-name.outputs.artifact_name }}
           path: build/
           retention-days: ${{ steps.load-build-config.outputs.retention_days }}
+
+      - name: 🔄 归还 Unity License
+        uses: game-ci/unity-return-license@v4
+        if: always()
+        env:
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
 
       - name: 📋 构建结果摘要
         if: always()
