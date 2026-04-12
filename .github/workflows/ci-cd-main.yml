@@ -68,9 +68,10 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       should_run_tests: ${{ steps.predict.outputs.should_run_tests }}
-      should_run_build: ${{ steps.predict.outputs.should_run_build }}  
+      should_run_build: ${{ steps.predict.outputs.should_run_build }}
       should_run_style: ${{ steps.predict.outputs.should_run_style }}
       should_run_deploy: ${{ steps.predict.outputs.should_run_deploy }}
+      should_deploy_pages: ${{ steps.predict.outputs.should_deploy_pages }}
       build_type: ${{ steps.predict.outputs.build_type }}
       pipeline_description: ${{ steps.predict.outputs.pipeline_description }}
       skip_reason: ${{ steps.predict.outputs.skip_reason }}
@@ -203,30 +204,43 @@ jobs:
           # 根据分支和事件类型决定执行的步骤
           SHOULD_RUN_TESTS=true
           SHOULD_RUN_BUILD=false
-          SHOULD_RUN_STYLE=true  
+          SHOULD_RUN_STYLE=true
           SHOULD_RUN_DEPLOY=false
+          SHOULD_DEPLOY_PAGES=false
           BUILD_TYPE="preview"
           PIPELINE_DESC=""
-          
+
           if [[ "$SKIP_ALL" == "true" ]]; then
             # 完全跳过
             SHOULD_RUN_TESTS=false
             SHOULD_RUN_BUILD=false
             SHOULD_RUN_STYLE=false
             SHOULD_RUN_DEPLOY=false
+            SHOULD_DEPLOY_PAGES=false
             PIPELINE_DESC="❌ 跳过所有CI/CD流程"
-            
-          elif [[ "$EVENT_NAME" == "push" && "$GITHUB_REF_TYPE" == "tag" && "$REF_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+ ]]; then
-            # Git Tag 触发 - 正式版本发布流程
+
+          elif [[ "$EVENT_NAME" == "push" && "$GITHUB_REF_TYPE" == "tag" && "$REF_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+-release$ ]]; then
+            # vx.y.z-release 格式 Tag - 正式发布到 Release + GitHub Pages
             SHOULD_RUN_TESTS=true
             SHOULD_RUN_BUILD=true
             SHOULD_RUN_STYLE=true
             SHOULD_RUN_DEPLOY=true
+            SHOULD_DEPLOY_PAGES=true
             BUILD_TYPE="release"
-            # 提取纯版本号 (v1.2.3 -> 1.2.3)
-            RELEASE_VERSION="${REF_NAME#v}"
-            PIPELINE_DESC="🚀 Release正式发布流程 (版本: $RELEASE_VERSION) (代码检测 → 单元测试 → 构建测试 → 发布Release)"
+            # 提取纯版本号 (v1.2.3-release -> 1.2.3)
+            RELEASE_VERSION=$(echo "$REF_NAME" | sed 's/^v//;s/-release$//')
+            PIPELINE_DESC="🚀 Release正式发布流程 (版本: $RELEASE_VERSION) (代码检测 → 单元测试 → 构建测试 → 发布Release → 部署Pages)"
             echo "release_version=$RELEASE_VERSION" >> $GITHUB_OUTPUT
+
+          elif [[ "$EVENT_NAME" == "push" && "$GITHUB_REF_TYPE" == "tag" && "$REF_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            # 纯 vx.y.z 格式 Tag - 完整流水线但不部署
+            SHOULD_RUN_TESTS=true
+            SHOULD_RUN_BUILD=true
+            SHOULD_RUN_STYLE=true
+            SHOULD_RUN_DEPLOY=false
+            SHOULD_DEPLOY_PAGES=false
+            BUILD_TYPE="release_candidate"
+            PIPELINE_DESC="🏷️ Tag验证流程 (代码检测 → 单元测试 → 构建测试)"
 
           elif [[ "$BRANCH_NAME" =~ ^release/ ]]; then
             # Release分支 - 完整CI/CD流程
@@ -339,19 +353,21 @@ jobs:
           echo "  构建类型: $BUILD_TYPE"
           echo "  执行描述: $PIPELINE_DESC"
           echo "  单元测试: $SHOULD_RUN_TESTS"
-          echo "  构建测试: $SHOULD_RUN_BUILD"  
+          echo "  构建测试: $SHOULD_RUN_BUILD"
           echo "  代码检查: $SHOULD_RUN_STYLE"
-          echo "  Pages部署: $SHOULD_RUN_DEPLOY"
-          
+          echo "  Release发布: $SHOULD_RUN_DEPLOY"
+          echo "  Pages部署: $SHOULD_DEPLOY_PAGES"
+
           if [[ -n "$SKIP_REASON" ]]; then
             echo "  跳过原因: $SKIP_REASON"
           fi
-          
+
           # 输出到GitHub Actions
           echo "should_run_tests=$SHOULD_RUN_TESTS" >> $GITHUB_OUTPUT
           echo "should_run_build=$SHOULD_RUN_BUILD" >> $GITHUB_OUTPUT
-          echo "should_run_style=$SHOULD_RUN_STYLE" >> $GITHUB_OUTPUT  
+          echo "should_run_style=$SHOULD_RUN_STYLE" >> $GITHUB_OUTPUT
           echo "should_run_deploy=$SHOULD_RUN_DEPLOY" >> $GITHUB_OUTPUT
+          echo "should_deploy_pages=${SHOULD_DEPLOY_PAGES:-false}" >> $GITHUB_OUTPUT
           echo "build_type=$BUILD_TYPE" >> $GITHUB_OUTPUT
           echo "pipeline_description=$PIPELINE_DESC" >> $GITHUB_OUTPUT
           echo "skip_reason=$SKIP_REASON" >> $GITHUB_OUTPUT
@@ -413,9 +429,15 @@ jobs:
           fi
           
           if [[ "${{ steps.predict.outputs.should_run_deploy }}" == "true" ]]; then
-            echo "| 🚀 Pages部署 | ✅ 执行 | 部署构建产物到GitHub Pages |" >> $GITHUB_STEP_SUMMARY
+            echo "| 🚀 Release发布 | ✅ 执行 | 发布构建产物到GitHub Release |" >> $GITHUB_STEP_SUMMARY
           else
-            echo "| 🚀 Pages部署 | ⏭️ 跳过 | - |" >> $GITHUB_STEP_SUMMARY
+            echo "| 🚀 Release发布 | ⏭️ 跳过 | - |" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          if [[ "${{ steps.predict.outputs.should_deploy_pages }}" == "true" ]]; then
+            echo "| 🌐 Pages部署 | ✅ 执行 | 部署WebGL到GitHub Pages |" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "| 🌐 Pages部署 | ⏭️ 跳过 | - |" >> $GITHUB_STEP_SUMMARY
           fi
           
           echo "" >> $GITHUB_STEP_SUMMARY
@@ -819,6 +841,7 @@ jobs:
     timeout-minutes: 60
     strategy:
       fail-fast: false
+      max-parallel: 1  # 限制并发激活数，避免 Unity 序列号激活超限 (错误码 20111)
       matrix:
         include:
           - os: ubuntu-latest
@@ -829,14 +852,18 @@ jobs:
             buildTarget: StandaloneWindows64
             profile: Windows-Release
             displayName: Windows (Release)
-          - os: macos-latest  
+          - os: macos-latest
             buildTarget: StandaloneOSX
             profile: Mac-Debug
             displayName: macOS (Debug)
-          - os: macos-latest  
+          - os: macos-latest
             buildTarget: StandaloneOSX
             profile: Mac-Release
             displayName: macOS (Release)
+          - os: ubuntu-latest
+            buildTarget: WebGL
+            profile: Web-Release
+            displayName: WebGL (Release)
     
     runs-on: ${{ matrix.os }}
     
@@ -1032,21 +1059,89 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: ./release-assets/*.zip
-          name: Release ${{ github.ref_name }}
+          name: Release v${{ needs.flow-prediction.outputs.release_version }}
           tag_name: ${{ github.ref }}
-          draft: true
+          draft: false
           prerelease: false
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   # =============================================================================
-  # 阶段5: 执行详情汇总 - 汇总整个流水线的执行情况
+  # 阶段5: 部署到 GitHub Pages - WebGL 版本部署
+  # =============================================================================
+  deploy-pages:
+    name: 🌐 部署到 GitHub Pages
+    runs-on: ubuntu-latest
+    needs: [flow-prediction, build-tests]
+    if: |
+      always() &&
+      github.event_name == 'push' && github.ref_type == 'tag' &&
+      needs.flow-prediction.outputs.should_deploy_pages == 'true' &&
+      needs.build-tests.result == 'success'
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    permissions:
+      pages: write
+      id-token: write
+
+    steps:
+      - name: 📥 下载 WebGL 构建产物
+        uses: actions/download-artifact@v4
+        with:
+          pattern: "*_Web-Release_*"
+          path: ./web-build
+          merge-multiple: true
+
+      - name: 🔍 查找 WebGL 输出目录
+        id: find-webgl
+        run: |
+          echo "🔍 查找 index.html ..."
+          WEBGL_INDEX=$(find ./web-build -name "index.html" -type f | head -1)
+          if [ -z "$WEBGL_INDEX" ]; then
+            echo "❌ 未找到 index.html，构建产物结构:"
+            find ./web-build -type f | head -30
+            exit 1
+          fi
+          WEBGL_DIR=$(dirname "$WEBGL_INDEX")
+          echo "webgl_dir=$WEBGL_DIR" >> $GITHUB_OUTPUT
+          echo "✅ WebGL 输出目录: $WEBGL_DIR"
+
+      - name: ⚙️ 配置 GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: 📦 上传 Pages 产物
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ${{ steps.find-webgl.outputs.webgl_dir }}
+
+      - name: 🚀 部署到 GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: 📊 Pages 部署摘要
+        if: always()
+        run: |
+          echo "## 🌐 GitHub Pages 部署" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [[ "${{ steps.deployment.conclusion }}" == "success" ]]; then
+            echo "✅ **部署成功**" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "🔗 **访问地址:** ${{ steps.deployment.outputs.page_url }}" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **部署失败**，请检查日志。" >> $GITHUB_STEP_SUMMARY
+          fi
+
+  # =============================================================================
+  # 阶段6: 执行详情汇总 - 汇总整个流水线的执行情况
   # =============================================================================
   execution-summary:
     name: 📊 执行详情汇总
     runs-on: ubuntu-latest
-    needs: [flow-prediction, code-style-check, unity-tests, build-tests, deploy-release]
+    needs: [flow-prediction, code-style-check, unity-tests, build-tests, deploy-release, deploy-pages]
     if: always()
     
     steps:
@@ -1057,15 +1152,17 @@ jobs:
           # 收集各阶段状态
           FLOW_STATUS="${{ needs.flow-prediction.result }}"
           STYLE_STATUS="${{ needs.code-style-check.result }}"
-          TEST_STATUS="${{ needs.unity-tests.result }}" 
+          TEST_STATUS="${{ needs.unity-tests.result }}"
           BUILD_STATUS="${{ needs.build-tests.result }}"
           DEPLOY_STATUS="${{ needs.deploy-release.result }}"
-          
+          PAGES_STATUS="${{ needs.deploy-pages.result }}"
+
           echo "流程预测: $FLOW_STATUS"
           echo "代码检查: $STYLE_STATUS"
           echo "单元测试: $TEST_STATUS"
-          echo "构建测试: $BUILD_STATUS"  
+          echo "构建测试: $BUILD_STATUS"
           echo "Release发布: $DEPLOY_STATUS"
+          echo "Pages部署: $PAGES_STATUS"
           
           # 生成详细的执行摘要
           echo "# 🚀 CI/CD流水线执行详情" >> $GITHUB_STEP_SUMMARY
@@ -1113,10 +1210,10 @@ jobs:
             echo "| 🧪 单元测试 | ⏭️ 跳过 | - | 根据触发条件跳过 |" >> $GITHUB_STEP_SUMMARY
           fi
           
-          # 构建测试  
+          # 构建测试
           if [[ "${{ needs.flow-prediction.outputs.should_run_build }}" == "true" ]]; then
             if [[ "$BUILD_STATUS" == "success" ]]; then
-              echo "| 🔨 构建测试 | ✅ 成功 | 已完成 | 4个Profile版本构建成功 |" >> $GITHUB_STEP_SUMMARY
+              echo "| 🔨 构建测试 | ✅ 成功 | 已完成 | 5个Profile版本构建成功 |" >> $GITHUB_STEP_SUMMARY
             elif [[ "$BUILD_STATUS" == "failure" ]]; then
               echo "| 🔨 构建测试 | ⚠️ 警告 | 已完成 | 构建失败但不影响流程 |" >> $GITHUB_STEP_SUMMARY
             else
@@ -1125,37 +1222,52 @@ jobs:
           else
             echo "| 🔨 构建测试 | ⏭️ 跳过 | - | 根据触发条件跳过 |" >> $GITHUB_STEP_SUMMARY
           fi
-          
+
           # Release发布
           if [[ "${{ needs.flow-prediction.outputs.should_run_deploy }}" == "true" ]]; then
             if [[ "$DEPLOY_STATUS" == "success" ]]; then
               echo "| 🚀 Release发布 | ✅ 成功 | 已完成 | 构建产物已发布到 GitHub Release |" >> $GITHUB_STEP_SUMMARY
-            elif [[ "$DEPLOY_STATUS" == "failure" ]]; then  
+            elif [[ "$DEPLOY_STATUS" == "failure" ]]; then
               echo "| 🚀 Release发布 | ⚠️ 警告 | 已完成 | 发布失败但不影响流程 |" >> $GITHUB_STEP_SUMMARY
             elif [[ "$DEPLOY_STATUS" == "skipped" ]]; then
-              echo "| 🚀 Release发布 | ⏭️ 跳过 | - | 非Tag推送或跳过部署 |" >> $GITHUB_STEP_SUMMARY
+              echo "| 🚀 Release发布 | ⏭️ 跳过 | - | 非release tag或跳过部署 |" >> $GITHUB_STEP_SUMMARY
             else
               echo "| 🚀 Release发布 | ⚠️ 异常 | 已完成 | 状态: $DEPLOY_STATUS |" >> $GITHUB_STEP_SUMMARY
             fi
           else
             echo "| 🚀 Release发布 | ⏭️ 跳过 | - | 根据触发条件跳过 |" >> $GITHUB_STEP_SUMMARY
           fi
-          
+
+          # Pages部署
+          if [[ "${{ needs.flow-prediction.outputs.should_deploy_pages }}" == "true" ]]; then
+            if [[ "$PAGES_STATUS" == "success" ]]; then
+              echo "| 🌐 Pages部署 | ✅ 成功 | 已完成 | WebGL已部署到 GitHub Pages |" >> $GITHUB_STEP_SUMMARY
+            elif [[ "$PAGES_STATUS" == "failure" ]]; then
+              echo "| 🌐 Pages部署 | ⚠️ 警告 | 已完成 | Pages部署失败 |" >> $GITHUB_STEP_SUMMARY
+            elif [[ "$PAGES_STATUS" == "skipped" ]]; then
+              echo "| 🌐 Pages部署 | ⏭️ 跳过 | - | 构建失败或条件不满足 |" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "| 🌐 Pages部署 | ⚠️ 异常 | 已完成 | 状态: $PAGES_STATUS |" >> $GITHUB_STEP_SUMMARY
+            fi
+          else
+            echo "| 🌐 Pages部署 | ⏭️ 跳过 | - | 非 vx.y.z-release tag |" >> $GITHUB_STEP_SUMMARY
+          fi
+
           echo "" >> $GITHUB_STEP_SUMMARY
-          
+
           # 总体状态判断
-          if [[ "$FLOW_STATUS" == "success" && 
+          if [[ "$FLOW_STATUS" == "success" &&
                 ("$STYLE_STATUS" == "success" || "$STYLE_STATUS" == "skipped") &&
                 ("$TEST_STATUS" == "success" || "$TEST_STATUS" == "skipped") ]]; then
             echo "## ✅ 流水线执行成功" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "🎉 所有必需的步骤都已成功完成！" >> $GITHUB_STEP_SUMMARY
           else
-            echo "## ❌ 流水线执行失败" >> $GITHUB_STEP_SUMMARY  
+            echo "## ❌ 流水线执行失败" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "⚠️ 部分步骤执行失败，请检查上述详情。" >> $GITHUB_STEP_SUMMARY
           fi
-          
+
           if [[ -n "${{ needs.flow-prediction.outputs.skip_reason }}" ]]; then
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "**跳过信息:** ${{ needs.flow-prediction.outputs.skip_reason }}" >> $GITHUB_STEP_SUMMARY
@@ -1169,7 +1281,7 @@ jobs:
           fi
 
           # 以下只要执行且失败就算失败（skipped 不算）
-          for STATUS in "$STYLE_STATUS" "$TEST_STATUS" "$BUILD_STATUS" "$DEPLOY_STATUS"
+          for STATUS in "$STYLE_STATUS" "$TEST_STATUS" "$BUILD_STATUS" "$DEPLOY_STATUS" "$PAGES_STATUS"
           do
             if [[ "$STATUS" == "failure" ]]; then
               FAILED=1
