@@ -1123,7 +1123,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: ./artifacts
-          pattern: ${{ steps.load-deploy-config.outputs.project_name }}_*
+          pattern: ${{ steps.load-deploy-config.outputs.project_name }}-*
 
       - name: 📦 准备发布附件 (Zip)
         id: prepare-assets
@@ -1179,7 +1179,7 @@ jobs:
       - name: 📥 下载 WebGL 构建产物
         uses: actions/download-artifact@v4
         with:
-          pattern: "*_Web-Release_*"
+          pattern: "*-Web-*-Release"
           path: ./web-build
           merge-multiple: true
 
