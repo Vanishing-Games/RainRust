@@ -575,6 +575,13 @@ PlayerSettings:
       m_Height: 720
       m_Kind: 1
       m_SubKind: 
+  - m_BuildTarget: VisionOS
+    m_Icons:
+    - m_Textures: []
+      m_Width: 1024
+      m_Height: 1024
+      m_Kind: 0
+      m_SubKind: 
   m_BuildTargetBatching:
   - m_BuildTarget: Standalone
     m_StaticBatching: 1
@@ -896,7 +903,7 @@ PlayerSettings:
     Stadia: DOTWEEN
     Standalone: ODIN_INSPECTOR;ODIN_INSPECTOR_3;ODIN_INSPECTOR_3_1;ODIN_INSPECTOR_3_2;ODIN_INSPECTOR_3_3;DOTWEEN;AMPLIFY_SHADER_EDITOR;ES3_TMPRO;ES3_UGUI;BUILD_MODE_DEBUG;BUILD_MODE_RELEASE
     VisionOS: DOTWEEN;ES3_TMPRO;ES3_UGUI
-    WebGL: DOTWEEN;ES3_TMPRO;ES3_UGUI
+    WebGL: DOTWEEN;ES3_TMPRO;ES3_UGUI;ODIN_INSPECTOR;ODIN_INSPECTOR_3;ODIN_INSPECTOR_3_1;ODIN_INSPECTOR_3_2;ODIN_INSPECTOR_3_3;AMPLIFY_SHADER_EDITOR
     Windows Store Apps: DOTWEEN;ES3_TMPRO;ES3_UGUI
     XboxOne: DOTWEEN;ES3_TMPRO;ES3_UGUI
     iPhone: DOTWEEN;ES3_TMPRO;ES3_UGUI

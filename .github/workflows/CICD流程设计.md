@@ -18,11 +18,12 @@
 
 ### 构建测试
 
-构建项目的 4 个 Build Profile 版本：
+构建项目的 5 个 Build Profile 版本（串行执行，避免 Unity License 并发激活超限）：
 - Windows-Debug
 - Windows-Release
 - Mac-Debug
 - Mac-Release
+- Web-Release（WebGL）
 
 构建失败时会发出警告，但在预览构建中不一定会终止流水线。
 
@@ -34,13 +35,26 @@
 
 ## CD
 
+### Tag 触发版本管理
+
+| Tag 格式 | 触发流程 | 说明 |
+|----------|----------|------|
+| `vx.y.z` | 完整流水线（Style + Test + Build） | 验证版本，不部署 |
+| `vx.y.z-release` | 完整流水线 + Release 发布 + Pages 部署 | 正式对外发布 |
+
 ### 产物发布到 GitHub Releases
 
-当推送 Git Tag（格式为 `v*.*.*`）时，流水线会进入正式发布流程。
-成功构建的 4 个 Profile 产物会被压缩为 `.zip` 文件并作为附件发布到 GitHub Releases。
+当推送 `vx.y.z-release` 格式的 Git Tag（例如 `v1.0.0-release`）时，流水线进入正式发布流程。
+成功构建的 5 个 Profile 产物会被压缩为 `.zip` 文件并作为附件发布到 GitHub Releases（非 Draft）。
 
 产物命名格式为：
 `{项目名称}_{BuildProfile}_v{版本号}.zip`
+
+### 部署到 GitHub Pages
+
+当推送 `vx.y.z-release` 格式的 Git Tag 时，WebGL（Web-Release）构建产物会自动部署到 GitHub Pages。
+
+> **前提**：需在仓库 Settings → Pages → Source 中选择 "GitHub Actions"。
 
 ## 流水线情况
 
@@ -72,27 +86,46 @@
 ```mermaid
 flowchart LR
     subgraph triggers ["触发条件"]
-        D["推送 Git Tag (v*.*.*)"]
+        D1["推送 Git Tag (vx.y.z)"]
+        D2["推送 Git Tag (vx.y.z-release)"]
         E["develop/main 分支有新的 PR 或更新"]
         F["develop 分支直接推送"]
         G["北京时间每周日晚上7点定时任务"]
     end
 
-    subgraph release_flow ["Release发布流程 (Tag触发)"]
+    subgraph tag_flow ["Tag验证流程 (vx.y.z)"]
+        C0_T["流程预测"]
+        B_T["代码检测"]
+        A1_T["单元测试"]
+        A2_T["5个Profile构建(串行)"]
+        C1_T["执行详情"]
+
+        C0_T --> B_T
+        C0_T --> A1_T
+        C0_T --> A2_T
+        B_T --> C1_T
+        A1_T --> C1_T
+        A2_T --> C1_T
+    end
+
+    subgraph release_flow ["Release发布流程 (vx.y.z-release)"]
         C0_R["流程预测"]
         B_R["代码检测"]
         A1_R["单元测试"]
-        A2_R["4个Profile构建"]
+        A2_R["5个Profile构建(串行)"]
         A3_R["发布 GitHub Release"]
+        A4_R["部署 GitHub Pages"]
         C1_R["执行详情"]
 
         C0_R --> B_R
         C0_R --> A1_R
         C0_R --> A2_R
         A2_R --> A3_R
+        A2_R --> A4_R
         B_R --> C1_R
         A1_R --> C1_R
         A3_R --> C1_R
+        A4_R --> C1_R
     end
 
     subgraph pr_flow ["PR验证流程"]
@@ -111,7 +144,8 @@ flowchart LR
         C0_S["流程预测"] --> A2_S["构建测试"] --> C1_S["执行详情"]
     end
 
-    D --> C0_R
+    D1 --> C0_T
+    D2 --> C0_R
     E --> C0_P
     F --> C0_P
     G --> C0_S
