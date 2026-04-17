@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using R3;
 using UnityHFSM;
@@ -45,37 +46,42 @@ namespace Core
             m_Fsm.Trigger(GameFlowTrigger.ExitToMenu);
         }
 
-        internal async UniTask OnSceneEntryPointReady(SceneEntryPoint entry)
-        {
-            if (IsBootedFromEntry)
-            {
-                CLogger.LogInfo(
-                    $"[GameCore] Scene ready (managed flow), state: {entry.TargetState}",
-                    LogTag.GameCoreStart
-                );
-                return;
-            }
-
-            CLogger.LogInfo(
-                $"[GameCore] EntryPoint detected: {entry.TargetState}",
-                LogTag.GameCoreStart
-            );
-
-            if (entry.TargetState == GameFlowState.Booting)
-            {
-                IsBootedFromEntry = true;
-                m_Fsm.RequestStateChange(GameFlowState.Booting, forceInstantly: true);
-            }
-            else
-            {
-                await RunStandaloneBootstrap(entry);
-            }
-        }
-
         internal void OnFlowUpdate() => m_Fsm.OnLogic();
 
-        private void InitFlow()
+        private async Task InitFlow()
         {
+#if UNITY_EDITOR
+            if (m_GameCoreMode == GameCoreMode.EditorFast)
+            {
+                CLogger.LogInfo(
+                    "[GameCore] Editor Fast Mode Enabled: Skipping Booting and MainMenu, going directly to Loading state.",
+                    LogTag.GameCoreStart
+                );
+                m_Fsm = new StateMachine<string, GameFlowState, GameFlowTrigger>();
+                m_Fsm.AddState(
+                    GameFlowState.Loading,
+                    onEnter: async _ =>
+                    {
+                        await RunBooting();
+                        await RunLoading();
+                    }
+                );
+                m_Fsm.AddState(
+                    GameFlowState.InLevel,
+                    onEnter: _ => SubscribeInLevelEvents(),
+                    onExit: _ => UnsubscribeInLevelEvents()
+                );
+                m_Fsm.AddTriggerTransition(
+                    GameFlowTrigger.LoadComplete,
+                    GameFlowState.Loading,
+                    GameFlowState.InLevel
+                );
+                m_Fsm.SetStartState(GameFlowState.Loading);
+                m_Fsm.Init();
+                return;
+            }
+#endif
+
             m_Systems ??= new CoreSystemRegistry();
             m_Systems.OnBootStart(new ShowLogoStep().Execute, order: 10);
             m_Systems.OnBootStart(new LoadMainMenuSceneStep().Execute, order: 100);
@@ -187,17 +193,6 @@ namespace Core
                 LogTag.GameCoreStart
             );
             RequestLoadLevel(e.NextChapterId, e.NextLevelId, 0);
-        }
-
-        private async UniTask RunStandaloneBootstrap(SceneEntryPoint entry)
-        {
-            CLogger.LogInfo(
-                $"[GameCore] Standalone bootstrap for: {entry.TargetState}",
-                LogTag.GameCoreStart
-            );
-            await m_Systems.InitializeAllAsync();
-            m_LoadContext = entry.GetStandaloneContext();
-            m_Fsm.RequestStateChange(GameFlowState.Loading, forceInstantly: true);
         }
 
         public GameFlowState CurrentState => m_Fsm.ActiveStateName;
