@@ -13,5 +13,7 @@ MonoBehaviour:
   m_Name: PickFilterSettings
   m_EditorClassIdentifier: UnityPickFilter::UnityPickFilter.PickFilterSettings
   AutoApply: 1
+  ConflictPolicy: 0
+  OnlyApplyToLeaves: 1
   RuleSets:
-  - {fileID: 11400000, guid: ea234774fc28cf247992aa56650c0f70, type: 2}
+  - {fileID: 11400000, guid: f5e768ccecf0a6241b6c28d9ce709d06, type: 2}
