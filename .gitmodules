@@ -4,3 +4,6 @@
 [submodule "Assets/ThirdParty/Capabilities-System"]
 	path = Assets/ThirdParty/Capabilities-System
 	url = git@github.com:Vanishing-Games/Capabilities-System.git
+[submodule "Assets/Editor/UnityPickFilter"]
+	path = Assets/Editor/UnityPickFilter
+	url = https://github.com/Vanishing-Games/UnityPickFilter
