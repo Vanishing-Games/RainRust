@@ -45,6 +45,19 @@ namespace Core
             }
         }
 
+        public static void Decrement(string key, float amount = 1)
+        {
+            if (Instance.m_Stats.TryGetValue(key, out var stat))
+            {
+                Instance.UpdateStat(key, stat.Value - amount);
+            }
+            else
+            {
+                Instance.RegisterStat(key, StatType.Counter);
+                Instance.UpdateStat(key, Instance.m_Stats[key].Value - amount);
+            }
+        }
+
         public static void SetMax(string key, float value)
         {
             if (Instance.m_Stats.TryGetValue(key, out var stat))
@@ -66,7 +79,7 @@ namespace Core
             return Instance.m_Stats.TryGetValue(key, out var stat) ? stat.Value : 0;
         }
 
-        public void RegisterStat(string key, StatType type, string displayName = "")
+        private void RegisterStat(string key, StatType type, string displayName = "")
         {
             if (!m_Stats.ContainsKey(key))
             {
