@@ -265,7 +265,7 @@ namespace GameMain.RunTime
         }
 
         public BeeState currentState;
-        private SpriteRenderer sr;
+        public SpriteRenderer sr;
         private Rigidbody2D rb;
         private BoxCollider2D bc;
         public Transform ts;

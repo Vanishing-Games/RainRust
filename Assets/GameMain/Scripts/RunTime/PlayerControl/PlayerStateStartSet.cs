@@ -97,6 +97,9 @@ namespace GameMain.RunTime
                 && mPCComponent.ThrowCdInputTimer > 0
             )
                 mPCComponent.ThrowCdInputTimer--;
+            //抓跳后再抓cd计时器
+            if (mPCComponent.CanGrabCDTimer > 0 && !mPCComponent.IsJumping)
+                mPCComponent.CanGrabCDTimer--;
         }
 
         bool CanThrowCheck()
