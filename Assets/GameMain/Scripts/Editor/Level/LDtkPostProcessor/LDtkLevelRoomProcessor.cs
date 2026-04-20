@@ -50,7 +50,8 @@ namespace GameMain.Editor
                 .Tap(ApplyCameraFollow)
                 .Tap(ApplyFixedCameraSettings)
                 .Tap(ApplyConfinerSettings)
-                .Tap(ApplyLayerTagSettings);
+                .Tap(ApplyLayerTagSettings)
+        .Tap(AddLevelBoundsTrigger);
 
         private void ApplyCameraModeFields(RoomContext ctx)
         {
@@ -155,6 +156,21 @@ namespace GameMain.Editor
 
             EditorUtility.SetDirty(logicMapLayer);
             EditorUtility.SetDirty(ctx.VCam);
+        }
+
+        private void AddLevelBoundsTrigger(RoomContext ctx)
+        {
+            Bounds bounds = ctx.Level.BorderBounds;
+            Vector2 localCenter = (Vector2)(bounds.center - ctx.Level.transform.position);
+
+            var col = ctx.Level.gameObject.AddComponent<BoxCollider2D>();
+            col.isTrigger = true;
+            col.offset = localCenter;
+            col.size = bounds.size;
+            ctx.Level.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
+
+            ctx.Level.gameObject.AddComponent<LevelBoundsTrigger>();
+            EditorUtility.SetDirty(ctx.Level.gameObject);
         }
 
         private void ApplyLayerTagSettings(RoomContext ctx)

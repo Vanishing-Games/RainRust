@@ -10,44 +10,28 @@ namespace GameMain.RunTime
     public class FastLevelTestInvoker : MonoBehaviour
     {
         [Title("快速关卡测试配置")]
-        [LabelText("自动寻找最近出生点")]
-        public bool AutoFindNearest = true;
+        [LabelText("手动指定关卡")]
+        public bool ManualLevel = false;
 
-        [HideIf("AutoFindNearest")]
-        [LabelText("出生点 Index")]
-        public int SpawnIndex = 0;
-
-        [HideIf("AutoFindNearest")]
+        [ShowIf("ManualLevel")]
         [LabelText("关卡Id")]
         public string levelId;
 
-        [HideIf("AutoFindNearest")]
+        [ShowIf("ManualLevel")]
         [LabelText("章节Id")]
         public string chapterId;
 
         private void Start()
         {
-            // 优先获取场景中 Player 的位置作为测试参考点
             Vector3 testPos = transform.position;
             GameObject player = GameObject.FindWithTag("Player");
             if (player != null)
-            {
                 testPos = player.transform.position;
-            }
 
-            if (AutoFindNearest)
-            {
-                new InitInvokerCommands.FastLevelTestCommand(testPos).Execute();
-            }
+            if (ManualLevel)
+                new InitInvokerCommands.ManualFastLevelTestCommand(testPos, chapterId, levelId).Execute();
             else
-            {
-                new InitInvokerCommands.ManualFastLevelTestCommand(
-                    testPos,
-                    chapterId,
-                    levelId,
-                    SpawnIndex
-                ).Execute();
-            }
+                new InitInvokerCommands.FastLevelTestCommand(testPos).Execute();
         }
     }
 }

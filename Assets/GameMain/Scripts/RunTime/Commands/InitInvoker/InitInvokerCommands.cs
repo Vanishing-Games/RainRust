@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using Core;
 using LDtkUnity;
 using UnityEngine;
@@ -9,7 +7,7 @@ namespace GameMain.RunTime
     public static class InitInvokerCommands
     {
         /// <summary>
-        /// 快速关卡测试命令 (自动寻找最近的 Transition)
+        /// 快速关卡测试命令 (自动根据位置寻找关卡)
         /// </summary>
         public class FastLevelTestCommand : ITriggerCommand
         {
@@ -21,11 +19,10 @@ namespace GameMain.RunTime
             public bool Execute()
             {
                 CLogger.LogInfo(
-                    $"[FastLevelTestCommand] Executing fast level test at {m_TestPosition} (Auto nearest)...",
+                    $"[FastLevelTestCommand] Executing fast level test at {m_TestPosition}...",
                     LogTag.LevelManager
                 );
 
-                // 1. 查找关卡
                 LDtkComponentLevel currentLevel = FastLevelTestHelper.FindLevelByPosition(
                     m_TestPosition
                 );
@@ -39,26 +36,11 @@ namespace GameMain.RunTime
                     return false;
                 }
 
-                // 2. 查找最近的 Transition
-                LevelTransition nearestTransition = FastLevelTestHelper.FindNearestTransition(
-                    currentLevel,
-                    m_TestPosition
-                );
-
-                if (nearestTransition == null)
-                {
-                    CLogger.LogError(
-                        $"[FastLevelTestCommand] No LevelTransition found in level {currentLevel.Identifier}",
-                        LogTag.LevelManager
-                    );
-                    return false;
-                }
-
-                // 3. 启动
-                LevelManager.Instance.StartLevel(nearestTransition);
+                var world = currentLevel.GetComponentInParent<LDtkComponentWorld>(true);
+                LevelManager.Instance.StartLevel(world.Identifier, currentLevel.Identifier);
 
                 CLogger.LogInfo(
-                    $"[FastLevelTestCommand] Started: Level={currentLevel.Identifier}, Nearest={nearestTransition.name} at {nearestTransition.transform.position}",
+                    $"[FastLevelTestCommand] Started: Level={currentLevel.Identifier}",
                     LogTag.LevelManager
                 );
 
@@ -69,51 +51,50 @@ namespace GameMain.RunTime
         }
 
         /// <summary>
-        /// 快速关卡测试命令 (手动指定关卡或 Index)
+        /// 快速关卡测试命令 (手动指定关卡)
         /// </summary>
         public class ManualFastLevelTestCommand : ITriggerCommand
         {
             public ManualFastLevelTestCommand(
                 Vector3 testPosition,
                 string chapterId,
-                string levelId,
-                int index
+                string levelId
             )
             {
                 m_TestPosition = testPosition;
                 m_ChapterId = chapterId;
                 m_LevelId = levelId;
-                m_Index = index;
             }
 
-            public ManualFastLevelTestCommand(Vector3 testPosition, int index)
+            public ManualFastLevelTestCommand(Vector3 testPosition)
             {
                 m_TestPosition = testPosition;
-                m_Index = index;
             }
 
             public bool Execute()
             {
                 CLogger.LogInfo(
-                    $"[ManualFastLevelTestCommand] Executing (Chapter={m_ChapterId}, Level={m_LevelId}, Index={m_Index})...",
+                    $"[ManualFastLevelTestCommand] Executing (Chapter={m_ChapterId}, Level={m_LevelId})...",
                     LogTag.LevelManager
                 );
 
-                // 1. 识别目标 Level (优先使用 ID)
                 LDtkComponentLevel targetLevel = null;
+
                 if (!string.IsNullOrEmpty(m_LevelId))
                 {
-                    targetLevel = LDtkComponentLevel.Levels.FirstOrDefault(l =>
-                        l.Identifier == m_LevelId
-                        && (string.IsNullOrEmpty(m_ChapterId) || l.Parent.Identifier == m_ChapterId)
-                    );
+                    foreach (var level in LDtkComponentLevel.Levels)
+                    {
+                        if (level.Identifier != m_LevelId)
+                            continue;
+                        if (!string.IsNullOrEmpty(m_ChapterId) && level.Parent.Identifier != m_ChapterId)
+                            continue;
+                        targetLevel = level;
+                        break;
+                    }
                 }
 
-                // Fallback: 使用位置识别
                 if (targetLevel == null)
-                {
                     targetLevel = FastLevelTestHelper.FindLevelByPosition(m_TestPosition);
-                }
 
                 if (targetLevel == null)
                 {
@@ -124,40 +105,11 @@ namespace GameMain.RunTime
                     return false;
                 }
 
-                // 2. 识别目标 Transition
-                LevelTransition targetTransition = null;
-
-                // 必须匹配 LevelTransition.Index 属性
-                var transitions = targetLevel.GetComponentsInChildren<LevelTransition>(true);
-                targetTransition = transitions.FirstOrDefault(t => t.Index == m_Index);
-
-                // 如果还是没找到，或者没指定有效 Index，寻找最近的
-                if (targetTransition == null)
-                {
-                    CLogger.LogWarn(
-                        $"[ManualFastLevelTestCommand] Transition with Index {m_Index} not found in level {targetLevel.Identifier}, falling back to nearest transition.",
-                        LogTag.LevelManager
-                    );
-                    targetTransition = FastLevelTestHelper.FindNearestTransition(
-                        targetLevel,
-                        m_TestPosition
-                    );
-                }
-
-                if (targetTransition == null)
-                {
-                    CLogger.LogError(
-                        $"[ManualFastLevelTestCommand] No transition found in level {targetLevel.Identifier}",
-                        LogTag.LevelManager
-                    );
-                    return false;
-                }
-
-                // 3. 启动
-                LevelManager.Instance.StartLevel(targetTransition);
+                var world = targetLevel.GetComponentInParent<LDtkComponentWorld>(true);
+                LevelManager.Instance.StartLevel(world.Identifier, targetLevel.Identifier);
 
                 CLogger.LogInfo(
-                    $"[ManualFastLevelTestCommand] Started: Level={targetLevel.Identifier}, Transition={targetTransition.name}",
+                    $"[ManualFastLevelTestCommand] Started: Level={targetLevel.Identifier}",
                     LogTag.LevelManager
                 );
 
@@ -167,12 +119,8 @@ namespace GameMain.RunTime
             private readonly Vector3 m_TestPosition;
             private readonly string m_ChapterId;
             private readonly string m_LevelId;
-            private readonly int m_Index;
         }
 
-        /// <summary>
-        /// 内部工具类
-        /// </summary>
         internal static class FastLevelTestHelper
         {
             public static LDtkComponentLevel FindLevelByPosition(Vector3 position)
@@ -180,44 +128,9 @@ namespace GameMain.RunTime
                 foreach (var level in LDtkComponentLevel.Levels)
                 {
                     if (level.BorderBounds.Contains(position))
-                    {
                         return level;
-                    }
                 }
                 return null;
-            }
-
-            public static LevelTransition FindNearestTransition(
-                LDtkComponentLevel level,
-                Vector3 position
-            )
-            {
-                var transitions = level.GetComponentsInChildren<LevelTransition>(true);
-                if (transitions.Length == 0)
-                    return null;
-
-                LevelTransition nearest = null;
-                float minDistance = float.MaxValue;
-
-                foreach (var t in transitions)
-                {
-                    Vector3 targetPos = t.transform.position;
-
-                    // 如果有 Collider，使用 Collider 的中心点作为计算参考
-                    var box = t.GetComponent<BoxCollider2D>();
-                    if (box != null)
-                    {
-                        targetPos = t.transform.TransformPoint(box.offset);
-                    }
-
-                    float dist = Vector2.Distance(position, targetPos);
-                    if (dist < minDistance)
-                    {
-                        minDistance = dist;
-                        nearest = t;
-                    }
-                }
-                return nearest;
             }
         }
     }

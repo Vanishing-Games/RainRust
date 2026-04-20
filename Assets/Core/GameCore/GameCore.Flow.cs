@@ -20,9 +20,9 @@ namespace Core
             command.Execute().Forget();
         }
 
-        public void RequestLoadLevel(string chapterId, string levelId, int spawnIndex = 0)
+        public void RequestLoadLevel(string chapterId, string levelId)
         {
-            m_LoadContext = LoadContext.ForLevel(chapterId, levelId, spawnIndex);
+            m_LoadContext = LoadContext.ForLevel(chapterId, levelId);
             m_Fsm.Trigger(
                 m_Fsm.ActiveStateName == GameFlowState.InLevel
                     ? GameFlowTrigger.SwitchLevel
@@ -192,7 +192,7 @@ namespace Core
                 $"Level Clear! Next: {e.NextChapterId}/{e.NextLevelId}",
                 LogTag.GameCoreStart
             );
-            RequestLoadLevel(e.NextChapterId, e.NextLevelId, 0);
+            RequestLoadLevel(e.NextChapterId, e.NextLevelId);
         }
 
         public GameFlowState CurrentState => m_Fsm.ActiveStateName;

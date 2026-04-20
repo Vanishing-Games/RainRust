@@ -36,6 +36,10 @@ ScriptedImporter:
     _asset: {instanceID: 0}
   - _key: MovePlatformerPathPoint
     _asset: {instanceID: 0}
+  - _key: BackgroundChain
+    _asset: {instanceID: 0}
+  - _key: CameraOverrideArea
+    _asset: {instanceID: 0}
   _enumGenerate: 1
   _enumPath: gm_ldtk_project/GmLDtkEnums.cs
   _enumNamespace: GameMain.LDtk
