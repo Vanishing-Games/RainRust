@@ -8521,7 +8521,7 @@
 				},
 				{
 					"identifier": "EntityPrefab",
-					"doc": null,
+					"doc": "Editor/",
 					"__type": "String",
 					"uid": 481,
 					"type": "F_String",
@@ -10991,6 +10991,44 @@
 								],
 								"__worldX": -4992,
 								"__worldY": 2816
+							},
+							{
+								"__identifier": "MovePlatformerPathPoint",
+								"__grid": [38,11],
+								"__pivot": [0,0],
+								"__tags": [],
+								"__tile": null,
+								"__smartColor": "#733E39",
+								"iid": "d1221e80-21a0-11f1-ae87-f3d927a2a7f2",
+								"width": 128,
+								"height": 128,
+								"defUid": 465,
+								"px": [4864,1408],
+								"fieldInstances": [
+									{ "__identifier": "AutoUnityEntity", "__type": "Bool", "__value": true, "__tile": null, "defUid": 468, "realEditorValues": [] },
+									{ "__identifier": "EntityPrefab", "__type": "String", "__value": "RunTime/GamePlay/MovePlatformerPathPoint", "__tile": null, "defUid": 469, "realEditorValues": [] }
+								],
+								"__worldX": -1024,
+								"__worldY": 2688
+							},
+							{
+								"__identifier": "MovePlatformerPathPoint",
+								"__grid": [27,11],
+								"__pivot": [0,0],
+								"__tags": [],
+								"__tile": null,
+								"__smartColor": "#733E39",
+								"iid": "d2872cc0-21a0-11f1-ae87-9976b718b90a",
+								"width": 128,
+								"height": 128,
+								"defUid": 465,
+								"px": [3456,1408],
+								"fieldInstances": [
+									{ "__identifier": "AutoUnityEntity", "__type": "Bool", "__value": true, "__tile": null, "defUid": 468, "realEditorValues": [] },
+									{ "__identifier": "EntityPrefab", "__type": "String", "__value": "RunTime/GamePlay/MovePlatformerPathPoint", "__tile": null, "defUid": 469, "realEditorValues": [] }
+								],
+								"__worldX": -2432,
+								"__worldY": 2688
 							}
 						]
 					},
