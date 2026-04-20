@@ -51,7 +51,7 @@ namespace GameMain.Editor
                 .Tap(ApplyFixedCameraSettings)
                 .Tap(ApplyConfinerSettings)
                 .Tap(ApplyLayerTagSettings)
-        .Tap(AddLevelBoundsTrigger);
+                .Tap(AddLevelBoundsTrigger);
 
         private void ApplyCameraModeFields(RoomContext ctx)
         {

@@ -25,8 +25,18 @@ namespace GameMain.RunTime
                 return;
 
             var room = GetComponentInParent<LevelRoom>();
-            if (room != null && room.BorderBounds.Contains(playerCollider.bounds.center))
+            if (room != null && PlayerIsInLevelBounds(playerCollider))
                 levelManager.SwitchLevel(level);
+        }
+
+        private bool PlayerIsInLevelBounds(Collider2D playerCollider)
+        {
+            var collider = GetComponentInParent<BoxCollider2D>();
+            if (collider == null)
+                return false;
+
+            var bounds = collider.bounds;
+            return bounds.Contains(playerCollider.bounds.center);
         }
     }
 }

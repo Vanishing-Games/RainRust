@@ -6,7 +6,7 @@ using UnityEngine;
 namespace GameMain.RunTime
 {
     [RequireComponent(typeof(BoxCollider2D))]
-    public class CameraOverrideArea : MonoBehaviour
+    public class CameraOverrideArea : ScalableEntity
     {
         private void Awake()
         {

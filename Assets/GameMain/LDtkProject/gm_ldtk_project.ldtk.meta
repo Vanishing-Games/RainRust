@@ -26,8 +26,6 @@ ScriptedImporter:
   - _key: BGMap_2
     _asset: {fileID: 11400000, guid: 5cdbd6b9014c8484fa8b17bb9c8dbc86, type: 2}
   _entities:
-  - _key: LevelTransition
-    _asset: {instanceID: 0}
   - _key: SavePoint
     _asset: {instanceID: 0}
   - _key: EntityPlaceHolder0
