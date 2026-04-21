@@ -7,16 +7,15 @@ namespace GameMain.RunTime
     {
         public class LoadLevelCommand : IGameFlowCommand
         {
-            public LoadLevelCommand(string chapterId, string levelId, int levelSpawnPointIndex)
+            public LoadLevelCommand(string chapterId, string levelId)
             {
                 m_ChapterId = chapterId;
                 m_LevelId = levelId;
-                m_LevelSpawnPointIndex = levelSpawnPointIndex;
             }
 
             public UniTask Execute()
             {
-                GameCore.Instance.RequestLoadLevel(m_ChapterId, m_LevelId, m_LevelSpawnPointIndex);
+                GameCore.Instance.RequestLoadLevel(m_ChapterId, m_LevelId);
                 return UniTask.CompletedTask;
             }
 
@@ -24,7 +23,6 @@ namespace GameMain.RunTime
 
             private readonly string m_ChapterId;
             private readonly string m_LevelId;
-            private readonly int m_LevelSpawnPointIndex;
         }
 
         public class StartLevelCommand : ITriggerCommand

@@ -4,7 +4,7 @@ using UnityEngine;
 namespace GameMain.RunTime
 {
     [RequireComponent(typeof(MovePlatformerLdtkLoadHandler))]
-    public class MovePlatformer : MonoBehaviour
+    public class MovePlatformer : ScalableEntity
     {
         public enum LoopType
         {

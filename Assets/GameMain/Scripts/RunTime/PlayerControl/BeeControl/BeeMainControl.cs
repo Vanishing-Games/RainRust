@@ -13,13 +13,16 @@ namespace GameMain.RunTime
     public class BeeMainControl : MonoBehaviour
     {
         // Start is called once before the first execution of Update after the MonoBehaviour is created
+        void Awake()
+        {
+            m_RigidBody = GetComponent<Rigidbody2D>();
+            m_BoxCollider = GetComponent<BoxCollider2D>();
+            m_SpriteRenderer = GetComponent<SpriteRenderer>();
+        }
+
         void Start()
         {
             player = GameObject.FindWithTag("Player").transform;
-            rb = GetComponent<Rigidbody2D>();
-            ts = GetComponent<Transform>();
-            bc = GetComponent<BoxCollider2D>();
-            sr = GetComponent<SpriteRenderer>();
         }
 
         // Update is called once per frame
@@ -39,7 +42,7 @@ namespace GameMain.RunTime
                     FollowStUpdate();
                     break;
             }
-            currentSpeed = rb.linearVelocity.magnitude;
+            currentSpeed = m_RigidBody.linearVelocity.magnitude;
         }
 
         public void ChangeState(BeeState toState)
@@ -93,13 +96,13 @@ namespace GameMain.RunTime
         //跟随状态管理
         void FollowStEnter()
         {
-            bc.enabled = false;
+            m_BoxCollider.enabled = false;
         }
 
         void FollowStUpdate()
         {
             //改变虫子的朝向
-            ts.localScale = new Vector3(
+            transform.localScale = new Vector3(
                 Mathf.Sign(this.transform.position.x - player.position.x),
                 1,
                 1
@@ -114,18 +117,18 @@ namespace GameMain.RunTime
             //近距离跟随
             else if (targetDistance() <= FlashMoveDistance)
             {
-                MoveTowardsTarget(rb, FollowPoint, FollowSpeedMult);
+                MoveTowardsTarget(m_RigidBody, FollowPoint, FollowSpeedMult);
             }
             //围绕近距离跟随时的浮动值移动(先不考虑)
             else
             {
-                rb.linearVelocity = Vector2.zero;
+                m_RigidBody.linearVelocity = Vector2.zero;
             }
         }
 
         void FollowStExit()
         {
-            bc.enabled = true;
+            m_BoxCollider.enabled = true;
         }
 
         //悬挂状态管理
@@ -144,18 +147,18 @@ namespace GameMain.RunTime
         //外部调用
         public void BeeThrow(Vector2 ThrowVelocity, bool isFaceRight)
         {
-            sr.enabled = true;
+            m_SpriteRenderer.enabled = true;
             ChangeState(BeeState.ThrowedSt);
-            rb.linearVelocity = ThrowVelocity;
+            m_RigidBody.linearVelocity = ThrowVelocity;
             FaceDirSet(isFaceRight);
         }
 
         public void FaceDirSet(bool isFaceRight)
         {
             if (isFaceRight)
-                ts.localScale = new Vector3(-1, 1, 1);
+                transform.localScale = new Vector3(-1, 1, 1);
             else
-                ts.localScale = new Vector3(1, 1, 1);
+                transform.localScale = new Vector3(1, 1, 1);
         }
 
         public void FlashToPosition(Vector3 positon, bool isHidden)
@@ -164,9 +167,9 @@ namespace GameMain.RunTime
 
             this.transform.position = positon;
             if (isHidden)
-                sr.enabled = false;
+                m_SpriteRenderer.enabled = false;
             else
-                sr.enabled = true;
+                m_SpriteRenderer.enabled = true;
         }
 
         //其他函数
@@ -265,10 +268,9 @@ namespace GameMain.RunTime
         }
 
         public BeeState currentState;
-        public SpriteRenderer sr;
-        private Rigidbody2D rb;
-        private BoxCollider2D bc;
-        public Transform ts;
+        public SpriteRenderer m_SpriteRenderer;
+        public Rigidbody2D m_RigidBody;
+        public BoxCollider2D m_BoxCollider;
         private Transform player;
         private Vector2 PlayerPosition;
 

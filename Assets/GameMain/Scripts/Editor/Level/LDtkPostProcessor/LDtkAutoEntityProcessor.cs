@@ -28,6 +28,11 @@ namespace GameMain.Editor
                 runtimeContainer.SetParent(root.transform);
                 runtimeContainer.localPosition = Vector3.zero;
             }
+            else
+            {
+                for (int i = runtimeContainer.childCount - 1; i >= 0; i--)
+                    Object.DestroyImmediate(runtimeContainer.GetChild(i).gameObject);
+            }
 
             LDtkComponentEntity[] entities = root.GetComponentsInChildren<LDtkComponentEntity>();
             foreach (var ldtkEntity in entities)
@@ -79,6 +84,23 @@ namespace GameMain.Editor
                 if (newEntity.TryGetComponent<LDtkEntityDataHandler>(out var handler))
                 {
                     ProcessFields(fields, handler);
+                }
+
+                if (fields.TryGetBool("EntityResizable", out bool resizable) && resizable)
+                {
+                    var resizableEntity = newEntity.GetComponentInChildren<ILdtkResizableEntity>();
+                    if (resizableEntity != null)
+                    {
+                        Vector2 size = ldtkEntity.Size;
+                        resizableEntity.ReSize(Mathf.RoundToInt(size.x), Mathf.RoundToInt(size.y));
+                    }
+                    else
+                    {
+                        CLogger.LogError(
+                            $"[LDtkAutoEntity] Entity {ldtkEntity.Identifier} has EntityResizable=true but no ILdtkResizableEntity found on prefab '{prefabAsset.name}'.",
+                            LogTag.LDtkAutoEntityProcessor
+                        );
+                    }
                 }
 
                 ldtkEntity.gameObject.SetActive(false);

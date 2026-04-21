@@ -28,7 +28,7 @@ namespace GameMain.RunTime
                     }
                     else
                     {
-                        StartLevel(ctx.ChapterId, ctx.LevelId, ctx.SpawnIndex);
+                        StartLevel(ctx.ChapterId, ctx.LevelId);
                     }
                 }
             });
@@ -45,7 +45,7 @@ namespace GameMain.RunTime
             InitLevelManager();
             if (!string.IsNullOrEmpty(ctx.ChapterId) && !string.IsNullOrEmpty(ctx.LevelId))
             {
-                SetUp(ctx.ChapterId, ctx.LevelId, ctx.SpawnIndex);
+                SetUp(ctx.ChapterId, ctx.LevelId);
             }
             else
             {
@@ -69,65 +69,25 @@ namespace GameMain.RunTime
             StartLevelInternal();
         }
 
-        public void StartLevel(string chapterId, string levelId, int levelSpawnPointIndex)
+        public void StartLevel(string chapterId, string levelId)
         {
             InitLevelManager();
-            if (!SetUp(chapterId, levelId, levelSpawnPointIndex))
+            if (!SetUp(chapterId, levelId))
                 return;
 
             var player = GameMain.GetPlayer();
-            if (player != null && m_CurrentLevelTransition != null)
+            if (player != null)
             {
-                player.transform.position = m_CurrentLevelTransition.GetPlayerFeetSpawnPoint();
+                var center = m_CurrentLevel.BorderBounds.center;
+                player.transform.position = new Vector3(center.x, center.y, player.transform.position.z);
             }
 
             StartLevelInternal();
         }
-
-        public void StartLevel(LevelTransition transition)
-        {
-            if (transition == null)
-            {
-                CLogger.LogError("StartLevel: Transition is null", LogTag.LevelManager);
-                return;
-            }
-
-            var level = transition.GetComponentInParent<LDtkComponentLevel>(true);
-            if (level == null)
-            {
-                CLogger.LogError("StartLevel: Transition is not in a level", LogTag.LevelManager);
-                return;
-            }
-
-            InitLevelManager();
-
-            m_CurrentLevel = level;
-            m_CurrentLevelTransition = transition;
-            m_CurrentWorld = level.GetComponentInParent<LDtkComponentWorld>(true);
-
-            var player = GameMain.GetPlayer();
-            if (player != null && m_CurrentLevelTransition != null)
-            {
-                player.transform.position = m_CurrentLevelTransition.GetPlayerFeetSpawnPoint();
-            }
-
-            StartLevelInternal();
-        }
-
-        internal int GetCurrentMaxPriority() => ++m_CurrentMaxPriority;
 
         public LDtkComponentLevel CurrentLevel => m_CurrentLevel;
-        public LevelTransition CurrentTransition => m_CurrentLevelTransition;
 
-        public void ClearCurrentTransition()
-        {
-            m_CurrentLevelTransition = null;
-        }
-
-        internal LevelTransition GetCurrentTransition()
-        {
-            return m_CurrentLevelTransition;
-        }
+        internal int GetCurrentMaxPriority() => ++m_CurrentMaxPriority;
 
         private void StartLevelInternal()
         {
@@ -169,10 +129,6 @@ namespace GameMain.RunTime
                 m_CurrentLevel != null ? m_CurrentLevel.Identifier : "None"
             );
             DebugUIManager.Log(
-                "Transition",
-                m_CurrentLevelTransition != null ? m_CurrentLevelTransition.name : "None"
-            );
-            DebugUIManager.Log(
                 "Camera Mode",
                 m_CurrentRoom != null ? m_CurrentRoom.CameraMode : "None"
             );
@@ -210,40 +166,7 @@ namespace GameMain.RunTime
             if (ldtkProjects.Length > 0)
             {
                 m_LdtkProject = ldtkProjects[0];
-                LinkUnresolvedTransitions();
                 BuildSpatialIndex();
-            }
-        }
-
-        private void LinkUnresolvedTransitions()
-        {
-            var allEntities = FindObjectsByType<LDtkComponentEntity>(
-                FindObjectsInactive.Include,
-                FindObjectsSortMode.None
-            );
-            var iidToTransition = new Dictionary<string, LevelTransition>();
-            foreach (var entity in allEntities)
-            {
-                if (entity.TryGetComponent<LevelTransition>(out var t))
-                    iidToTransition[entity.Iid] = t;
-            }
-
-            var allTransitions = FindObjectsByType<LevelTransition>(
-                FindObjectsInactive.Include,
-                FindObjectsSortMode.None
-            );
-            foreach (var transition in allTransitions)
-            {
-                if (transition.Target != null || string.IsNullOrEmpty(transition.TargetIid))
-                    continue;
-
-                if (iidToTransition.TryGetValue(transition.TargetIid, out var target))
-                    transition.Target = target;
-                else
-                    CLogger.LogError(
-                        $"运行时无法解析关卡出入口 {transition.name} 的目标 IID: {transition.TargetIid}",
-                        LogTag.LevelManager
-                    );
             }
         }
 
@@ -255,28 +178,22 @@ namespace GameMain.RunTime
             foreach (var world in m_LdtkProject.Worlds)
                 m_WorldLevelsMap[world] = world.GetComponentsInChildren<LDtkComponentLevel>(true);
 
-            var allTransitions = FindObjectsByType<LevelTransition>(
-                FindObjectsInactive.Include,
-                FindObjectsSortMode.None
-            );
-            foreach (var transition in allTransitions)
+            foreach (var world in m_LdtkProject.Worlds)
             {
-                if (transition.Target == null)
-                    continue;
-
-                var levelA = transition.GetComponentInParent<LDtkComponentLevel>(true);
-                var levelB = transition.Target.GetComponentInParent<LDtkComponentLevel>(true);
-
-                if (levelA == null || levelB == null || levelA == levelB)
-                    continue;
-
-                if (!m_LevelNeighborMap.TryGetValue(levelA, out var neighborsA))
-                    m_LevelNeighborMap[levelA] = neighborsA = new HashSet<LDtkComponentLevel>();
-                neighborsA.Add(levelB);
-
-                if (!m_LevelNeighborMap.TryGetValue(levelB, out var neighborsB))
-                    m_LevelNeighborMap[levelB] = neighborsB = new HashSet<LDtkComponentLevel>();
-                neighborsB.Add(levelA);
+                foreach (var level in world.GetComponentsInChildren<LDtkComponentLevel>(true))
+                {
+                    var room = level.GetComponent<LevelRoom>();
+                    if (room == null)
+                        continue;
+                    var neighbors = new HashSet<LDtkComponentLevel>();
+                    foreach (var neighborRoom in room.Neighbors)
+                    {
+                        var neighborLevel = neighborRoom.GetComponent<LDtkComponentLevel>();
+                        if (neighborLevel != null)
+                            neighbors.Add(neighborLevel);
+                    }
+                    m_LevelNeighborMap[level] = neighbors;
+                }
             }
         }
 
@@ -327,7 +244,6 @@ namespace GameMain.RunTime
 
             m_CurrentWorld = level.GetComponentInParent<LDtkComponentWorld>(true);
             m_CurrentLevel = level;
-            m_CurrentLevelTransition = null;
 
             var player = GameMain.GetPlayer();
             if (player != null)
@@ -338,7 +254,7 @@ namespace GameMain.RunTime
             return true;
         }
 
-        private bool SetUp(string chapterId, string levelId, int levelSpawnPointIndex)
+        private bool SetUp(string chapterId, string levelId)
         {
             m_CurrentWorld = GetChapter(chapterId);
             if (m_CurrentWorld == null)
@@ -351,16 +267,6 @@ namespace GameMain.RunTime
             if (m_CurrentLevel == null)
             {
                 CLogger.LogError("Can't Find Level: " + levelId, LogTag.LevelManager);
-                return false;
-            }
-
-            m_CurrentLevelTransition = GetLevelTransition(levelSpawnPointIndex);
-            if (m_CurrentLevelTransition == null)
-            {
-                CLogger.LogError(
-                    "Can't Find LevelTransition: " + levelSpawnPointIndex,
-                    LogTag.LevelManager
-                );
                 return false;
             }
 
@@ -401,75 +307,24 @@ namespace GameMain.RunTime
             return targetLevel;
         }
 
-        private LevelTransition GetLevelTransition(int levelSpawnPointIndex)
-        {
-            if (levelSpawnPointIndex < 0)
-            {
-                CLogger.LogError("Transition Id shouldn't below 0", LogTag.LevelManager);
-                return null;
-            }
-
-            List<LevelTransition> transitionsList = new();
-
-            foreach (var layer in m_CurrentLevel.LayerInstances)
-            {
-                if (layer == null)
-                    continue;
-
-                foreach (LDtkComponentEntity entity in layer.EntityInstances)
-                {
-                    if (entity != null && entity.Identifier == LDtkIdentifiers.LevelTransition)
-                    {
-                        if (entity.TryGetComponent<LevelTransition>(out var transition))
-                        {
-                            transitionsList.Add(transition);
-                        }
-                    }
-                }
-            }
-
-            if (transitionsList.Count > 0)
-            {
-                transitionsList.Sort((a, b) => a.Index.CompareTo(b.Index));
-
-                int clampedIndex = Mathf.Clamp(levelSpawnPointIndex, 0, transitionsList.Count - 1);
-                if (levelSpawnPointIndex != clampedIndex)
-                {
-                    CLogger.LogWarn(
-                        $"Spawn Index {levelSpawnPointIndex} is out of bounds for level {m_CurrentLevel.Identifier} (max {transitionsList.Count - 1}). Clamped to {clampedIndex}.",
-                        LogTag.LevelManager
-                    );
-                }
-                return transitionsList[clampedIndex];
-            }
-
-            CLogger.LogError(
-                $"No transition found in level {m_CurrentLevel.Identifier}",
-                LogTag.LevelManager
-            );
-            return null;
-        }
-
-        public void SwitchLevel(LevelTransition targetTransition)
+        public void SwitchLevel(LDtkComponentLevel level)
         {
             if (Time.frameCount == m_LastSwitchFrame)
                 return;
 
-            var level = targetTransition.GetComponentInParent<LDtkComponentLevel>();
             if (level == null)
             {
-                CLogger.LogError("LevelTransition is not in a level", LogTag.LevelManager);
+                CLogger.LogError("SwitchLevel: level is null", LogTag.LevelManager);
                 return;
             }
 
             if (m_CurrentLevel == level)
                 return;
 
-            var posDiff = GetTransitionPositionDiff(targetTransition);
+            var posDiff = level.BorderBounds.center - m_CurrentLevel.BorderBounds.center;
 
             m_LastSwitchFrame = Time.frameCount;
             m_CurrentLevel = level;
-            m_CurrentLevelTransition = targetTransition;
             m_CurrentWorld = level.GetComponentInParent<LDtkComponentWorld>();
 
             CLogger.LogInfo($"Switched to Level: {level.Identifier}", LogTag.LevelManager);
@@ -477,26 +332,13 @@ namespace GameMain.RunTime
             ActivateRoom(level);
             CullRooms();
 
-            if (posDiff.HasValue)
-            {
-                var posDiffValue = posDiff.Value;
-                MessageBroker.Global.Publish<LevelManagerEvents.LevelManagerLevelSwitchedEvent>(
-                    new(
-                        posDiffValue.x == 0
-                            ? LevelManagerEvents.LevelSwitchDirection.Vertical
-                            : LevelManagerEvents.LevelSwitchDirection.Horizontal
-                    )
-                );
-            }
-            else
-            {
-                CLogger.LogError(
-                    "SENDING LevelSwitchedEvent FAILED\n"
-                        + "Something went wrong when calculating level transition difference, maybe a null ref issue.",
-                    LogTag.LevelManager,
-                    LogTag.Event
-                );
-            }
+            var direction = Mathf.Abs(posDiff.x) >= Mathf.Abs(posDiff.y)
+                ? LevelManagerEvents.LevelSwitchDirection.Horizontal
+                : LevelManagerEvents.LevelSwitchDirection.Vertical;
+
+            MessageBroker.Global.Publish<LevelManagerEvents.LevelManagerLevelSwitchedEvent>(
+                new(direction)
+            );
 
 #if UNITY_EDITOR
             UpdateDebugUI();
@@ -529,23 +371,9 @@ namespace GameMain.RunTime
             return;
         }
 
-        private Vector3? GetTransitionPositionDiff(LevelTransition targetTransition)
-        {
-            if (targetTransition == null)
-                return null;
-
-            if (m_CurrentLevelTransition == null)
-                return null;
-
-            var tarPos = targetTransition.transform.position;
-            var curPos = m_CurrentLevelTransition.transform.position;
-            return tarPos - curPos;
-        }
-
         private int m_CurrentMaxPriority = 0;
         private int m_LastSwitchFrame = -1;
         private LevelRoom m_CurrentRoom = null;
-        private LevelTransition m_CurrentLevelTransition = null;
         private LDtkComponentLevel m_CurrentLevel = null;
         private LDtkComponentWorld m_CurrentWorld = null;
         private LDtkComponentProject m_LdtkProject = null;

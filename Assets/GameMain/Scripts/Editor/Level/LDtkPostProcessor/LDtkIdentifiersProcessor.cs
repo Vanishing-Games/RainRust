@@ -1,5 +1,7 @@
+using System;
 using System.IO;
 using System.Text;
+using Core;
 using LDtkUnity;
 using LDtkUnity.Editor;
 using UnityEditor;
@@ -113,7 +115,16 @@ namespace GameMain.Editor
                 }
             }
 
-            File.WriteAllText(filePath, sb.ToString(), Encoding.UTF8);
+            try
+            {
+                File.WriteAllText(filePath, sb.ToString(), Encoding.UTF8);
+            }
+            catch (Exception e)
+            {
+                CLogger.LogError($"Failed to write LDtkIdentifiers.cs: {e}", LogTag.LDtkIdentifiersProcessor);
+                return;
+            }
+
             AssetDatabase.Refresh();
         }
     }

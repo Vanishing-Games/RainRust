@@ -16,7 +16,7 @@ MonoBehaviour:
     SerializedFormat: 2
     SerializedBytes: 
     ReferencedUnityObjects:
-    - {fileID: 5815949917639876861, guid: 363255cabd3a98f468fc6271501f5650, type: 3}
+    - {fileID: 0}
     - {fileID: 0}
     - {fileID: 4617050201057846497, guid: 0c3005ee9d8ee5f428bfd0d79fd3e630, type: 3}
     - {fileID: 1101348923189505887, guid: 6166ac3a75e0b164eaffce69cb9f5866, type: 3}

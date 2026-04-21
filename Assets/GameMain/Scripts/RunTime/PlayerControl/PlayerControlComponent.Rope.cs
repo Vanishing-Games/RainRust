@@ -19,6 +19,6 @@ namespace GameMain.RunTime
 
         /// <returns>抓钩的终点位置</returns>
         public Vector3 GetGrapplePosition() =>
-            BeeToThrow ? BeeToThrow.ts.position : mTransform.position;
+            BeeToThrow ? BeeToThrow.transform.position : mTransform.position;
     }
 }

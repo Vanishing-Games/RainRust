@@ -20,7 +20,7 @@ namespace GameMain.RunTime
 
         protected override void OnActivate()
         {
-            DashDir = (mPCComponent.BeeToThrow.ts.position - DashPlayerOffsetPos).normalized;
+            DashDir = (mPCComponent.BeeToThrow.transform.position - DashPlayerOffsetPos).normalized;
             mPCComponent.DashTimer = mPCComponent.DashTime;
             mPCComponent.DashWaitTimer = mPCComponent.DashWaitTime;
         }

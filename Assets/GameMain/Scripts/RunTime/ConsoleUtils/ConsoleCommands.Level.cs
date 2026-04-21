@@ -10,19 +10,16 @@ namespace GameMain.RunTime
             new LevelManagerCommands.StartLevelCommand(savePointName).Execute();
         }
 
-        [ConsoleMethod(
-            "start_level_by_index",
-            "Directly start a level by chapterId, levelId and spawnIndex"
-        )]
-        public static void StartLevelByIndex(string chapterId, string levelId, int spawnIndex)
+        [ConsoleMethod("start_level_by_id", "Directly start a level by chapterId and levelId")]
+        public static void StartLevelById(string chapterId, string levelId)
         {
-            LevelManager.Instance.StartLevel(chapterId, levelId, spawnIndex);
+            LevelManager.Instance.StartLevel(chapterId, levelId);
         }
 
         [ConsoleMethod("load_level", "Load a level via LoadManager with pipeline process")]
-        public static void LoadLevel(string chapterId, string levelId, int spawnIndex)
+        public static void LoadLevel(string chapterId, string levelId)
         {
-            new LevelManagerCommands.LoadLevelCommand(chapterId, levelId, spawnIndex).Execute();
+            new LevelManagerCommands.LoadLevelCommand(chapterId, levelId).Execute();
         }
 
         [ConsoleMethod("end_level", "End current level")]
