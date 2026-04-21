@@ -11,6 +11,10 @@ Shader "RainRust/RainRustLighting"
         [Header(RainRust Custom Pipeline)]
         [Toggle(_EMIT_LIGHTING)] _EmitLighting("Emit Lighting", Float) = 1.0
         [Toggle(_ACCEPT_LIGHTING)] _AcceptLighting("Accept Lighting(Toggle on cause this is useless)", Float) = 1.0
+
+        [Header(RainRust Light Source Adjustments)]
+        _Brightness("Light Source Brightness", Range(0, 1)) = 1.0
+        _ColorOffset("Light Source Color Offset", Color) = (0, 0, 0, 0)
         
         [Header(URP 2D)]
         [Toggle(_USE_URP_RENDERING)] _UseURPRendering("Use URP Rendering", Float) = 1.0
@@ -59,6 +63,8 @@ Shader "RainRust/RainRustLighting"
         float4 _Color;
         float4 _RendererColor;
         float2 _Flip;
+        float  _Brightness;
+        float4 _ColorOffset;
 
         float4 UnityPixelSnap(float4 pos)
         {
@@ -122,9 +128,11 @@ Shader "RainRust/RainRustLighting"
             float4 frag(Varyings input) : SV_Target
             {
                 #if !defined(_EMIT_LIGHTING)
-                discard; 
+                discard;
                 #endif
-                return frag_common(input);
+                float4 color = frag_common(input);
+                color.rgb = color.rgb * _Brightness + _ColorOffset.rgb;
+                return color;
             }
             ENDHLSL
         }
