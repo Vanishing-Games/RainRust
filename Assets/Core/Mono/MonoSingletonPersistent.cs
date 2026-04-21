@@ -9,39 +9,36 @@ namespace Core
     public class MonoSingletonPersistent<T> : MonoBehaviour
         where T : MonoBehaviour
     {
-        private static T instance;
-        private static readonly object lockObject = new();
-
         public static T Instance
         {
             get
             {
-                lock (lockObject)
+                lock (m_LockObject)
                 {
-                    if (instance == null)
+                    if (m_Instance == null)
                     {
-                        instance = FindFirstObjectByType<T>();
+                        m_Instance = FindFirstObjectByType<T>();
 
-                        if (instance == null)
+                        if (m_Instance == null)
                         {
                             GameObject singletonObject = new(typeof(T).Name);
-                            instance = singletonObject.AddComponent<T>();
-                            DontDestroyMe(instance.transform);
+                            m_Instance = singletonObject.AddComponent<T>();
+                            DontDestroyMe(m_Instance.transform);
                         }
                     }
-                    return instance;
+                    return m_Instance;
                 }
             }
         }
 
         protected virtual void Awake()
         {
-            if (instance == null)
+            if (m_Instance == null)
             {
-                instance = this as T;
+                m_Instance = this as T;
                 DontDestroyMe(transform);
             }
-            else if (instance != this)
+            else if (m_Instance != this)
             {
                 Destroy(gameObject);
             }
@@ -54,5 +51,8 @@ namespace Core
             else
                 DontDestroyMe(me.parent);
         }
+
+        private static T m_Instance;
+        private static readonly object m_LockObject = new();
     }
 }

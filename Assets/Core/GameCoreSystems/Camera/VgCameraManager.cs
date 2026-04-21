@@ -7,9 +7,6 @@ namespace Core
 {
     public class VgCameraManager : CoreModuleManagerBase<VgCameraManager>, ICoreModuleSystem
     {
-        public string SystemName => "VgCameraManager";
-        public Type[] Dependencies => Array.Empty<Type>();
-
         public void RegisterHooks(IGameCoreHookRegistry registry)
         {
             registry.OnBootStart(async () =>
@@ -49,6 +46,9 @@ namespace Core
                 CLogger.LogWarn("Loading Camera is not set in VgCameraManager", LogTag.Loading);
             }
         }
+
+        public string SystemName => "VgCameraManager";
+        public Type[] Dependencies => Array.Empty<Type>();
 
         [SerializeField]
         private Camera m_MainCamera;

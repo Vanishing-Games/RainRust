@@ -11,28 +11,28 @@ namespace Core
     public class MonoSingletonLasy<T> : MonoBehaviour
         where T : MonoBehaviour
     {
-        private static T instance;
-        private static readonly object lockObject = new();
-
         public static T Instance
         {
             get
             {
-                lock (lockObject)
+                lock (m_LockObject)
                 {
-                    if (instance == null)
+                    if (m_Instance == null)
                     {
-                        instance = FindFirstObjectByType<T>();
+                        m_Instance = FindFirstObjectByType<T>();
 
-                        if (instance == null)
+                        if (m_Instance == null)
                         {
                             GameObject singletonObject = new(typeof(T).Name);
-                            instance = singletonObject.AddComponent<T>();
+                            m_Instance = singletonObject.AddComponent<T>();
                         }
                     }
-                    return instance;
+                    return m_Instance;
                 }
             }
         }
+
+        private static T m_Instance;
+        private static readonly object m_LockObject = new();
     }
 }

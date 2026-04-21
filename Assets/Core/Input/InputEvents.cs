@@ -87,35 +87,29 @@ namespace Core
 
     public class InputBuffer
     {
-        private struct InputRecord
-        {
-            public InputAction action;
-            public float timestamp;
-        }
-
         public InputBuffer(float bufferTime = 0.5f)
         {
-            this.bufferTime = bufferTime;
+            this.m_BufferTime = bufferTime;
         }
 
         public void AddInput(InputAction action)
         {
-            buffer.Add(new InputRecord { action = action, timestamp = Time.time });
+            m_Buffer.Add(new InputRecord { action = action, timestamp = Time.time });
 
             CleanOldInputs();
         }
 
         public bool HasSequence(params InputAction[] sequence)
         {
-            if (sequence.Length == 0 || buffer.Count < sequence.Length)
+            if (sequence.Length == 0 || m_Buffer.Count < sequence.Length)
                 return false;
 
             CleanOldInputs();
 
             int sequenceIndex = 0;
-            for (int i = buffer.Count - 1; i >= 0 && sequenceIndex < sequence.Length; i--)
+            for (int i = m_Buffer.Count - 1; i >= 0 && sequenceIndex < sequence.Length; i--)
             {
-                if (buffer[i].action == sequence[sequence.Length - 1 - sequenceIndex])
+                if (m_Buffer[i].action == sequence[sequence.Length - 1 - sequenceIndex])
                 {
                     sequenceIndex++;
                 }
@@ -128,9 +122,9 @@ namespace Core
         {
             CleanOldInputs();
 
-            for (int i = buffer.Count - 1; i >= 0; i--)
+            for (int i = m_Buffer.Count - 1; i >= 0; i--)
             {
-                if (buffer[i].action == action && Time.time - buffer[i].timestamp <= withinTime)
+                if (m_Buffer[i].action == action && Time.time - m_Buffer[i].timestamp <= withinTime)
                     return true;
             }
 
@@ -139,17 +133,24 @@ namespace Core
 
         public void Clear()
         {
-            buffer.Clear();
+            m_Buffer.Clear();
         }
 
         private void CleanOldInputs()
         {
             float currentTime = Time.time;
-            buffer.RemoveAll(record => currentTime - record.timestamp > bufferTime);
+            m_Buffer.RemoveAll(record => currentTime - record.timestamp > m_BufferTime);
         }
 
-        public int Count => buffer.Count;
-        private readonly System.Collections.Generic.List<InputRecord> buffer = new();
-        private readonly float bufferTime;
+        public int Count => m_Buffer.Count;
+
+        private struct InputRecord
+        {
+            public InputAction action;
+            public float timestamp;
+        }
+
+        private readonly System.Collections.Generic.List<InputRecord> m_Buffer = new();
+        private readonly float m_BufferTime;
     }
 }

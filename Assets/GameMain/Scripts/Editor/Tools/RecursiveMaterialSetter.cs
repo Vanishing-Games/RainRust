@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Core;
 using Sirenix.OdinInspector;
 using Sirenix.OdinInspector.Editor;
 using UnityEditor;
@@ -13,16 +14,6 @@ namespace GameMain.Editor.Tools
         {
             GetWindow<RecursiveMaterialSetter>("Material Setter").Show();
         }
-
-        [Title("Settings")]
-        [Required("请指定一个根物体"), SceneObjectsOnly]
-        [LabelText("目标物体")]
-        public GameObject targetRoot;
-
-        [Required("请指定要设置的材质")]
-        [InlineEditor]
-        [LabelText("目标材质")]
-        public Material targetMaterial;
 
         [Button(ButtonSizes.Large, Name = "执行材质替换")]
         [GUIColor(0.3f, 0.8f, 0.3f)]
@@ -66,8 +57,9 @@ namespace GameMain.Editor.Tools
             // 保存更改
             EditorUtility.SetDirty(targetRoot);
 
-            Debug.Log(
-                $"<color=green>[MaterialSetter]</color> 已成功将 <b>{count}</b> 个 Renderer 的材质设置为 <i>{targetMaterial.name}</i>"
+            CLogger.LogInfo(
+                $"[MaterialSetter] 已成功将 <b>{count}</b> 个 Renderer 的材质设置为 <i>{targetMaterial.name}</i>",
+                LogTag.Editor
             );
             EditorUtility.DisplayDialog("完成", $"已成功处理了 {count} 个 Renderer。", "确定");
         }
@@ -75,5 +67,15 @@ namespace GameMain.Editor.Tools
         [Button(ButtonSizes.Large, Name = "设置所有Volume的Layer")]
         [GUIColor(0.3f, 0.8f, 0.3f)]
         private void ApplyLayers() { }
+
+        [Title("Settings")]
+        [Required("请指定一个根物体"), SceneObjectsOnly]
+        [LabelText("目标物体")]
+        public GameObject targetRoot;
+
+        [Required("请指定要设置的材质")]
+        [InlineEditor]
+        [LabelText("目标材质")]
+        public Material targetMaterial;
     }
 }

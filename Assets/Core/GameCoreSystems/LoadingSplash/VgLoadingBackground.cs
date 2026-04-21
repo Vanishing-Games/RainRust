@@ -9,8 +9,6 @@ namespace Core
 {
     public class VgLoadingBackground : MonoProgressable
     {
-        private CancellationTokenSource _cancellationTokenSource;
-
         public override void Hide()
         {
             HideAsync().Forget();
@@ -23,19 +21,19 @@ namespace Core
 
         private async UniTaskVoid HideAsync()
         {
-            _cancellationTokenSource?.Cancel();
-            _cancellationTokenSource = new CancellationTokenSource();
+            m_CancellationTokenSource?.Cancel();
+            m_CancellationTokenSource = new CancellationTokenSource();
 
             try
             {
-                await WaitForAllTransitionsHidden(_cancellationTokenSource.Token);
+                await WaitForAllTransitionsHidden(m_CancellationTokenSource.Token);
                 gameObject.SetActive(false);
             }
             catch (OperationCanceledException) { }
             finally
             {
-                _cancellationTokenSource?.Dispose();
-                _cancellationTokenSource = null;
+                m_CancellationTokenSource?.Dispose();
+                m_CancellationTokenSource = null;
             }
         }
 
@@ -83,5 +81,7 @@ namespace Core
         }
 
         public override void UpdateProgress(float progress) { }
+
+        private CancellationTokenSource m_CancellationTokenSource;
     }
 }

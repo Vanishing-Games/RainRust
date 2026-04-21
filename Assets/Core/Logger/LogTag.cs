@@ -37,6 +37,7 @@ namespace Core
         public static readonly LogTag Rendering = new("Rendering");
         public static readonly LogTag Game = new("Game");
         public static readonly LogTag Fuck = new("Fuck");
+        public static readonly LogTag UI = new("UI");
 
         // ========== Second Tags ==========
         public static readonly LogTag AudioEntry = new("AudioEntry", Audio.Path);

@@ -5,9 +5,6 @@ namespace GameMain.RunTime
     [RequireComponent(typeof(Rigidbody2D))]
     public class ChainJointTrigger : MonoBehaviour
     {
-        private EntityChain m_ParentChain;
-        private Rigidbody2D m_Rigidbody;
-
         public void Initialize(EntityChain parent)
         {
             m_ParentChain = parent;
@@ -21,5 +18,8 @@ namespace GameMain.RunTime
                 m_ParentChain.HandleJointTriggerEnter(other, m_Rigidbody);
             }
         }
+
+        private EntityChain m_ParentChain;
+        private Rigidbody2D m_Rigidbody;
     }
 }

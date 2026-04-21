@@ -3,19 +3,19 @@ namespace Core
     public class Singleton<T>
         where T : new()
     {
-        private static readonly object lockObject = new();
-        private static T instance;
-
         public static T Instance
         {
             get
             {
-                lock (lockObject)
+                lock (m_LockObject)
                 {
-                    instance ??= new T();
-                    return instance;
+                    m_Instance ??= new T();
+                    return m_Instance;
                 }
             }
         }
+
+        private static readonly object m_LockObject = new();
+        private static T m_Instance;
     }
 }

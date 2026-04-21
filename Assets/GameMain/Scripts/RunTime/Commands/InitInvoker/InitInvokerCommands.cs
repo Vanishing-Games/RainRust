@@ -86,7 +86,10 @@ namespace GameMain.RunTime
                     {
                         if (level.Identifier != m_LevelId)
                             continue;
-                        if (!string.IsNullOrEmpty(m_ChapterId) && level.Parent.Identifier != m_ChapterId)
+                        if (
+                            !string.IsNullOrEmpty(m_ChapterId)
+                            && level.Parent.Identifier != m_ChapterId
+                        )
                             continue;
                         targetLevel = level;
                         break;

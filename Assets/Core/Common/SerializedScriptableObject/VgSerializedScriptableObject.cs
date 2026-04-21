@@ -9,17 +9,17 @@ namespace Core
     [ShowOdinSerializedPropertiesInInspector]
     public class VgSerializedScriptableObject : ScriptableObject, ISerializationCallbackReceiver
     {
-        [SerializeField, HideInInspector]
-        private SerializationData serializationData;
-
         void ISerializationCallbackReceiver.OnBeforeSerialize()
         {
-            UnitySerializationUtility.SerializeUnityObject(this, ref this.serializationData);
+            UnitySerializationUtility.SerializeUnityObject(this, ref this.m_SerializationData);
         }
 
         void ISerializationCallbackReceiver.OnAfterDeserialize()
         {
-            UnitySerializationUtility.DeserializeUnityObject(this, ref this.serializationData);
+            UnitySerializationUtility.DeserializeUnityObject(this, ref this.m_SerializationData);
         }
+
+        [SerializeField, HideInInspector]
+        private SerializationData m_SerializationData;
     }
 }

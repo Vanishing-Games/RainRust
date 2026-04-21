@@ -55,11 +55,8 @@ namespace Core
 
                 if (layer.clampModeY == ParallaxClampMode.None)
                 {
-                    // 计算摄像机在世界限制内的进度 t (0 到 1)
                     float t = Mathf.InverseLerp(layer.worldMinY, layer.worldMaxY, cameraPosition.y);
 
-                    // 根据进度插值算出偏移量：最低点时偏移 maxVerticalOffset，最高点时偏移 -maxVerticalOffset
-                    // (视觉效果：摄像机上升时，背景在视野中相对下沉)
                     float yOffset = Mathf.Lerp(
                         layer.maxVerticalOffset,
                         -layer.maxVerticalOffset,
@@ -135,7 +132,6 @@ namespace Core
                 if (layer.textureWidth <= 0)
                     continue;
 
-                // 根据 X 轴的 clampMode 决定生成几个 Sprite
                 int count = (layer.clampModeX == ParallaxClampMode.None) ? 1 : 3;
                 layer.renderers = new SpriteRenderer[count];
 
@@ -186,13 +182,13 @@ namespace Core
                     {
                         sr.sharedMaterial = m_BlurMaterial;
                         sr.GetPropertyBlock(m_PropertyBlock);
-                        m_PropertyBlock.SetFloat(BlurIntensityProperty, layer.blurIntensity);
-                        m_PropertyBlock.SetFloat(BlurModeProperty, layer.blurMode);
+                        m_PropertyBlock.SetFloat(m_BlurIntensityProperty, layer.blurIntensity);
+                        m_PropertyBlock.SetFloat(m_BlurModeProperty, layer.blurMode);
                         sr.SetPropertyBlock(m_PropertyBlock);
                     }
                     else
                     {
-                        sr.sharedMaterial = null; // Use default sprite material
+                        sr.sharedMaterial = null;
                     }
                 }
             }
@@ -228,33 +224,6 @@ namespace Core
                 }
             }
         }
-
-        private static readonly int BlurIntensityProperty = Shader.PropertyToID("_BlurIntensity");
-        private static readonly int BlurModeProperty = Shader.PropertyToID("_BlurMode");
-        private MaterialPropertyBlock m_PropertyBlock;
-
-        public List<ParallaxLayer> Layers
-        {
-            get => m_Layers;
-            set => m_Layers = value;
-        }
-
-        public Material BlurMaterial
-        {
-            get => m_BlurMaterial;
-            set => m_BlurMaterial = value;
-        }
-
-        [SerializeField]
-        private Camera m_TargetCamera;
-
-        [SerializeField]
-        private List<ParallaxLayer> m_Layers = new();
-
-        [SerializeField]
-        private Material m_BlurMaterial;
-
-        private Vector3 m_LastCameraPosition;
 
 #if UNITY_EDITOR
         private void OnValidate()
@@ -299,7 +268,7 @@ namespace Core
                     m_Layers[i].clampModeX = ParallaxClampMode.Repeat;
                     m_Layers[i].clampModeY = ParallaxClampMode.None;
 
-                    EditorUtility.SetDirty(m_Layers[i]); // 保证ScriptableObject的修改被保存
+                    EditorUtility.SetDirty(m_Layers[i]);
                 }
             }
 
@@ -322,7 +291,6 @@ namespace Core
 
             foreach (var renderer in allRenderers)
             {
-                // 跳过视差背景本身，避免递归干扰
                 if (
                     renderer.gameObject.CompareTag("BackGround")
                     || renderer.gameObject.layer == LayerMask.NameToLayer("BackGround")
@@ -340,7 +308,7 @@ namespace Core
 
             if (minY == float.MaxValue && maxY == float.MinValue)
             {
-                Debug.LogWarning("未能找到有效的渲染器来计算世界边界。");
+                CLogger.LogWarn("未能找到有效的渲染器来计算世界边界。", LogTag.Rendering);
                 return;
             }
 
@@ -357,13 +325,41 @@ namespace Core
                 }
             }
 
-            Debug.Log(
-                $"世界Y轴边界计算完成: MinY = {minY}, MaxY = {maxY}，已应用到所有 Y轴为 None 的图层。"
+            CLogger.LogInfo(
+                $"世界Y轴边界计算完成: MinY = {minY}, MaxY = {maxY}，已应用到所有 Y轴为 None 的图层。",
+                LogTag.Rendering
             );
         }
 
         [ContextMenu("生成图层对象")]
         private void GenerateLayerObjects() => Start();
 #endif
+
+        private static readonly int m_BlurIntensityProperty = Shader.PropertyToID("_BlurIntensity");
+        private static readonly int m_BlurModeProperty = Shader.PropertyToID("_BlurMode");
+        private MaterialPropertyBlock m_PropertyBlock;
+
+        [SerializeField]
+        private Camera m_TargetCamera;
+
+        [SerializeField]
+        private List<ParallaxLayer> m_Layers = new();
+
+        [SerializeField]
+        private Material m_BlurMaterial;
+
+        private Vector3 m_LastCameraPosition;
+
+        public List<ParallaxLayer> Layers
+        {
+            get => m_Layers;
+            set => m_Layers = value;
+        }
+
+        public Material BlurMaterial
+        {
+            get => m_BlurMaterial;
+            set => m_BlurMaterial = value;
+        }
     }
 }

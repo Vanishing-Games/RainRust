@@ -79,7 +79,11 @@ namespace GameMain.RunTime
             if (player != null)
             {
                 var center = m_CurrentLevel.BorderBounds.center;
-                player.transform.position = new Vector3(center.x, center.y, player.transform.position.z);
+                player.transform.position = new Vector3(
+                    center.x,
+                    center.y,
+                    player.transform.position.z
+                );
             }
 
             StartLevelInternal();
@@ -332,9 +336,10 @@ namespace GameMain.RunTime
             ActivateRoom(level);
             CullRooms();
 
-            var direction = Mathf.Abs(posDiff.x) >= Mathf.Abs(posDiff.y)
-                ? LevelManagerEvents.LevelSwitchDirection.Horizontal
-                : LevelManagerEvents.LevelSwitchDirection.Vertical;
+            var direction =
+                Mathf.Abs(posDiff.x) >= Mathf.Abs(posDiff.y)
+                    ? LevelManagerEvents.LevelSwitchDirection.Horizontal
+                    : LevelManagerEvents.LevelSwitchDirection.Vertical;
 
             MessageBroker.Global.Publish<LevelManagerEvents.LevelManagerLevelSwitchedEvent>(
                 new(direction)

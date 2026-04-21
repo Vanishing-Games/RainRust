@@ -37,36 +37,36 @@ namespace GameMain.RunTime
             VirtualCamera.Priority.Value = LevelManager.Instance.GetCurrentMaxPriority();
         }
 
-        [SerializeField, ReadOnly]
-        private CameraMode _cameraMode;
-
-        [SerializeField, ReadOnly]
-        private Bounds _borderBounds;
-
-        [SerializeField, ReadOnly]
-        private CinemachineCamera _virtualCamera;
-
-        [SerializeField, ReadOnly]
-        private List<LevelRoom> _neighbors = new();
-
         public CameraMode CameraMode
         {
-            get => _cameraMode;
-            set => _cameraMode = value;
+            get => m_CameraMode;
+            set => m_CameraMode = value;
         }
 
         public Bounds BorderBounds
         {
-            get => _borderBounds;
-            set => _borderBounds = value;
+            get => m_BorderBounds;
+            set => m_BorderBounds = value;
         }
 
         public CinemachineCamera VirtualCamera
         {
-            get => _virtualCamera;
-            set => _virtualCamera = value;
+            get => m_VirtualCamera;
+            set => m_VirtualCamera = value;
         }
 
-        public List<LevelRoom> Neighbors => _neighbors;
+        public List<LevelRoom> Neighbors => m_Neighbors;
+
+        [SerializeField, ReadOnly]
+        private CameraMode m_CameraMode;
+
+        [SerializeField, ReadOnly]
+        private Bounds m_BorderBounds;
+
+        [SerializeField, ReadOnly]
+        private CinemachineCamera m_VirtualCamera;
+
+        [SerializeField, ReadOnly]
+        private List<LevelRoom> m_Neighbors = new();
     }
 }

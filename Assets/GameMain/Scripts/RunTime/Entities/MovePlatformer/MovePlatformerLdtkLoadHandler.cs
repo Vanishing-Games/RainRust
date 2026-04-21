@@ -12,8 +12,6 @@ namespace GameMain.RunTime
     [RequireComponent(typeof(MovePlatformer))]
     public class MovePlatformerLdtkLoadHandler : LDtkEntityDataHandler
     {
-        private MovePlatformer m_Platformer;
-
         private void Awake()
         {
             m_Platformer = GetComponent<MovePlatformer>();
@@ -75,6 +73,6 @@ namespace GameMain.RunTime
             }
         }
 
-        // override OnSetEntityArray
+        private MovePlatformer m_Platformer;
     }
 }

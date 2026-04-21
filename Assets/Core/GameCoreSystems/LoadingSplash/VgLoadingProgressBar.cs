@@ -23,7 +23,6 @@ namespace Core
             var image = GetComponent<Image>();
             if (image != null && image.material != null)
             {
-                // Create a material instance to avoid modifying the asset
                 m_Material = new Material(image.material);
                 image.material = m_Material;
                 UpdateProgress(0f);

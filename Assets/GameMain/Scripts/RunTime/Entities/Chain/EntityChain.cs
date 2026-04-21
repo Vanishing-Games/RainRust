@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Core;
 using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
@@ -141,7 +142,10 @@ namespace GameMain.RunTime
 
             if (m_JointPrefab == null)
             {
-                Debug.LogError($"[EntityChain] JointPrefab is not set on {gameObject.name}.", this);
+                CLogger.LogError(
+                    $"[EntityChain] JointPrefab is not set on {gameObject.name}.",
+                    LogTag.Game
+                );
                 return;
             }
 
@@ -343,8 +347,6 @@ namespace GameMain.RunTime
         [SerializeField]
         private List<GameObject> m_Joints = new();
 
-        public IReadOnlyList<GameObject> Joints => m_Joints;
-
         private GameObject m_Anchor;
         private List<Rigidbody2D> m_JointRbs = new();
 
@@ -354,6 +356,8 @@ namespace GameMain.RunTime
         private List<Vector3> m_InitialLocalPos = new();
         private List<Vector3> m_TransitionStartPos = new();
         private List<Quaternion> m_TransitionStartRot = new();
+
+        public IReadOnlyList<GameObject> Joints => m_Joints;
     }
 
 #if UNITY_EDITOR

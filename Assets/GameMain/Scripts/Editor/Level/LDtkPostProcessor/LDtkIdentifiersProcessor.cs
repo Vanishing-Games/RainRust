@@ -121,7 +121,10 @@ namespace GameMain.Editor
             }
             catch (Exception e)
             {
-                CLogger.LogError($"Failed to write LDtkIdentifiers.cs: {e}", LogTag.LDtkIdentifiersProcessor);
+                CLogger.LogError(
+                    $"Failed to write LDtkIdentifiers.cs: {e}",
+                    LogTag.LDtkIdentifiersProcessor
+                );
                 return;
             }
 

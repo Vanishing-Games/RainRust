@@ -12,28 +12,28 @@ namespace Core
         [HorizontalGroup("Row"), LabelText("Frames"), OdinSerialize]
         public int Frames
         {
-            get => frames;
+            get => m_Frames;
             set
             {
-                frames = Mathf.Max(0, value);
-                seconds = frames / BASE_FPS;
+                m_Frames = Mathf.Max(0, value);
+                m_Seconds = m_Frames / BASE_FPS;
             }
         }
 
         [HorizontalGroup("Row"), LabelText("Seconds"), OdinSerialize]
         public float Seconds
         {
-            get => seconds;
+            get => m_Seconds;
             set
             {
-                seconds = Mathf.Max(0, value);
-                frames = Mathf.RoundToInt(seconds * BASE_FPS);
+                m_Seconds = Mathf.Max(0, value);
+                m_Frames = Mathf.RoundToInt(m_Seconds * BASE_FPS);
             }
         }
 
         public static implicit operator float(FramedFloat f)
         {
-            return f.seconds;
+            return f.m_Seconds;
         }
 
         public static implicit operator FramedFloat(float value)
@@ -42,7 +42,7 @@ namespace Core
         }
 
         public const float BASE_FPS = 60f;
-        private float seconds;
-        private int frames;
+        private float m_Seconds;
+        private int m_Frames;
     }
 }

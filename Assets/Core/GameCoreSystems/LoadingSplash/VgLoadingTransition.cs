@@ -12,103 +12,77 @@ namespace Core
         public static event Action OnAllTransitionsHidden;
         public static event Action OnAllTransitionsShown;
 
-        [Header("Animation Settings")]
-        [SerializeField]
-        private float animationDuration = 0.5f;
-
-        [SerializeField]
-        private Ease easeType = Ease.OutQuart;
-
-        [SerializeField]
-        private Vector3 showScale = Vector3.one;
-
-        [SerializeField]
-        private Vector3 hideScale = Vector3.zero;
-
-        [SerializeField]
-        private bool useFade = true;
-
-        private CanvasGroup canvasGroup;
-        private Tween currentTween;
-        private Queue<System.Action> animationQueue = new Queue<System.Action>();
-        private bool isProcessingQueue = false;
-        private static int activeHideTransitions = 0;
-        private static int completedHideTransitions = 0;
-        private static int activeShowTransitions = 0;
-        private static int completedShowTransitions = 0;
-
         private void Awake()
         {
-            canvasGroup = GetComponent<CanvasGroup>();
-            // Ensure DOTween is initialized to avoid "Couldn't load Modules system" errors
+            m_CanvasGroup = GetComponent<CanvasGroup>();
             DOTween.Init();
         }
 
         public override void Show()
         {
             CLogger.LogInfo($"Show called on {gameObject.name}", LogTag.Loading);
-            if (activeShowTransitions == 0 && completedShowTransitions == 0)
+            if (m_ActiveShowTransitions == 0 && m_CompletedShowTransitions == 0)
                 ResetCounters();
 
-            animationQueue.Enqueue(() => ExecuteShow());
+            m_AnimationQueue.Enqueue(() => ExecuteShow());
             ProcessQueue();
         }
 
         public override void Hide()
         {
-            if (activeHideTransitions == 0 && completedHideTransitions == 0)
+            if (m_ActiveHideTransitions == 0 && m_CompletedHideTransitions == 0)
                 ResetCounters();
 
-            animationQueue.Enqueue(() => ExecuteHide());
+            m_AnimationQueue.Enqueue(() => ExecuteHide());
             ProcessQueue();
         }
 
         private static void ResetCounters()
         {
-            activeHideTransitions = 0;
-            completedHideTransitions = 0;
-            activeShowTransitions = 0;
-            completedShowTransitions = 0;
+            m_ActiveHideTransitions = 0;
+            m_CompletedHideTransitions = 0;
+            m_ActiveShowTransitions = 0;
+            m_CompletedShowTransitions = 0;
         }
 
         private void ProcessQueue()
         {
-            if (isProcessingQueue || animationQueue.Count == 0)
+            if (m_IsProcessingQueue || m_AnimationQueue.Count == 0)
                 return;
 
-            isProcessingQueue = true;
-            var nextAction = animationQueue.Dequeue();
+            m_IsProcessingQueue = true;
+            var nextAction = m_AnimationQueue.Dequeue();
             nextAction?.Invoke();
         }
 
         private void ExecuteShow()
         {
-            transform.localScale = hideScale;
-            if (canvasGroup != null)
-                canvasGroup.alpha = 0f;
+            transform.localScale = m_HideScale;
+            if (m_CanvasGroup != null)
+                m_CanvasGroup.alpha = 0f;
 
-            if (currentTween != null && currentTween.IsActive())
-                currentTween.Kill();
+            if (m_CurrentTween != null && m_CurrentTween.IsActive())
+                m_CurrentTween.Kill();
 
             gameObject.SetActive(true);
-            activeShowTransitions++;
+            m_ActiveShowTransitions++;
 
             Sequence seq = DOTween.Sequence();
-            seq.Join(transform.DOScale(showScale, animationDuration).SetEase(easeType));
-            if (canvasGroup != null && useFade)
+            seq.Join(transform.DOScale(m_ShowScale, m_AnimationDuration).SetEase(m_EaseType));
+            if (m_CanvasGroup != null && m_UseFade)
                 seq.Join(
                     DOTween
                         .To(
-                            () => canvasGroup.alpha,
-                            x => canvasGroup.alpha = x,
+                            () => m_CanvasGroup.alpha,
+                            x => m_CanvasGroup.alpha = x,
                             1f,
-                            animationDuration
+                            m_AnimationDuration
                         )
-                        .SetEase(easeType)
+                        .SetEase(m_EaseType)
                 );
 
             bool completed = false;
-            currentTween = seq.OnComplete(() =>
+            m_CurrentTween = seq.OnComplete(() =>
             {
                 if (completed)
                     return;
@@ -116,16 +90,15 @@ namespace Core
                 FinishShow();
             });
 
-            // Fallback for DOTween errors
             UniTask
-                .Delay(TimeSpan.FromSeconds(animationDuration + 0.1f))
+                .Delay(TimeSpan.FromSeconds(m_AnimationDuration + 0.1f))
                 .ContinueWith(() =>
                 {
                     if (!completed)
                     {
                         completed = true;
-                        if (currentTween != null && currentTween.IsActive())
-                            currentTween.Kill();
+                        if (m_CurrentTween != null && m_CurrentTween.IsActive())
+                            m_CurrentTween.Kill();
                         FinishShow();
                     }
                 })
@@ -134,15 +107,15 @@ namespace Core
 
         private void FinishShow()
         {
-            currentTween = null;
-            isProcessingQueue = false;
-            completedShowTransitions++;
+            m_CurrentTween = null;
+            m_IsProcessingQueue = false;
+            m_CompletedShowTransitions++;
 
-            if (completedShowTransitions >= activeShowTransitions)
+            if (m_CompletedShowTransitions >= m_ActiveShowTransitions)
             {
                 OnAllTransitionsShown?.Invoke();
-                completedShowTransitions = 0;
-                activeShowTransitions = 0;
+                m_CompletedShowTransitions = 0;
+                m_ActiveShowTransitions = 0;
             }
 
             ProcessQueue();
@@ -150,27 +123,27 @@ namespace Core
 
         private void ExecuteHide()
         {
-            if (currentTween != null && currentTween.IsActive())
-                currentTween.Kill();
+            if (m_CurrentTween != null && m_CurrentTween.IsActive())
+                m_CurrentTween.Kill();
 
-            activeHideTransitions++;
+            m_ActiveHideTransitions++;
 
             Sequence seq = DOTween.Sequence();
-            seq.Join(transform.DOScale(hideScale, animationDuration).SetEase(easeType));
-            if (canvasGroup != null && useFade)
+            seq.Join(transform.DOScale(m_HideScale, m_AnimationDuration).SetEase(m_EaseType));
+            if (m_CanvasGroup != null && m_UseFade)
                 seq.Join(
                     DOTween
                         .To(
-                            () => canvasGroup.alpha,
-                            x => canvasGroup.alpha = x,
+                            () => m_CanvasGroup.alpha,
+                            x => m_CanvasGroup.alpha = x,
                             0f,
-                            animationDuration
+                            m_AnimationDuration
                         )
-                        .SetEase(easeType)
+                        .SetEase(m_EaseType)
                 );
 
             bool completed = false;
-            currentTween = seq.OnComplete(() =>
+            m_CurrentTween = seq.OnComplete(() =>
             {
                 if (completed)
                     return;
@@ -178,17 +151,15 @@ namespace Core
                 FinishHide();
             });
 
-            // Fallback: If DOTween fails to start or complete (e.g. module error),
-            // force completion after a safety margin.
             UniTask
-                .Delay(TimeSpan.FromSeconds(animationDuration + 0.1f))
+                .Delay(TimeSpan.FromSeconds(m_AnimationDuration + 0.1f))
                 .ContinueWith(() =>
                 {
                     if (!completed)
                     {
                         completed = true;
-                        if (currentTween != null && currentTween.IsActive())
-                            currentTween.Kill();
+                        if (m_CurrentTween != null && m_CurrentTween.IsActive())
+                            m_CurrentTween.Kill();
                         FinishHide();
                     }
                 })
@@ -199,15 +170,15 @@ namespace Core
         {
             CLogger.LogInfo($"FinishHide called on {gameObject.name}", LogTag.Loading);
             gameObject.SetActive(false);
-            currentTween = null;
-            isProcessingQueue = false;
-            completedHideTransitions++;
+            m_CurrentTween = null;
+            m_IsProcessingQueue = false;
+            m_CompletedHideTransitions++;
 
-            if (completedHideTransitions >= activeHideTransitions)
+            if (m_CompletedHideTransitions >= m_ActiveHideTransitions)
             {
                 OnAllTransitionsHidden?.Invoke();
-                completedHideTransitions = 0;
-                activeHideTransitions = 0;
+                m_CompletedHideTransitions = 0;
+                m_ActiveHideTransitions = 0;
             }
 
             ProcessQueue();
@@ -217,10 +188,35 @@ namespace Core
 
         private void OnDestroy()
         {
-            if (currentTween != null && currentTween.IsActive())
-                currentTween.Kill();
+            if (m_CurrentTween != null && m_CurrentTween.IsActive())
+                m_CurrentTween.Kill();
 
-            animationQueue.Clear();
+            m_AnimationQueue.Clear();
         }
+
+        [Header("Animation Settings")]
+        [SerializeField]
+        private float m_AnimationDuration = 0.5f;
+
+        [SerializeField]
+        private Ease m_EaseType = Ease.OutQuart;
+
+        [SerializeField]
+        private Vector3 m_ShowScale = Vector3.one;
+
+        [SerializeField]
+        private Vector3 m_HideScale = Vector3.zero;
+
+        [SerializeField]
+        private bool m_UseFade = true;
+
+        private CanvasGroup m_CanvasGroup;
+        private Tween m_CurrentTween;
+        private Queue<System.Action> m_AnimationQueue = new Queue<System.Action>();
+        private bool m_IsProcessingQueue = false;
+        private static int m_ActiveHideTransitions = 0;
+        private static int m_CompletedHideTransitions = 0;
+        private static int m_ActiveShowTransitions = 0;
+        private static int m_CompletedShowTransitions = 0;
     }
 }

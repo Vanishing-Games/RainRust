@@ -12,9 +12,6 @@ namespace Core
 {
     public class VgInputSystem : CoreModuleManagerBase<VgInputSystem>, ICoreModuleSystem
     {
-        public string SystemName => "VgInputSystem";
-        public Type[] Dependencies => Array.Empty<Type>();
-
         public void RegisterHooks(IGameCoreHookRegistry registry)
         {
             registry.OnBootStart(async () =>
@@ -68,12 +65,6 @@ namespace Core
                     break;
             }
         }
-
-#if UNITY_EDITOR
-        [BoxGroup("Settings")]
-        [LabelText("Input Settings Asset")]
-#endif
-        public InputSettings inputSettings;
 
 #if UNITY_EDITOR
         private void InitializeDebugData()
@@ -171,7 +162,18 @@ namespace Core
             [ShowInInspector, ReadOnly]
             public bool isReleased;
         }
+#endif
 
+        public string SystemName => "VgInputSystem";
+        public Type[] Dependencies => Array.Empty<Type>();
+
+#if UNITY_EDITOR
+        [BoxGroup("Settings")]
+        [LabelText("Input Settings Asset")]
+#endif
+        public InputSettings inputSettings;
+
+#if UNITY_EDITOR
         [BoxGroup("Debug Display")]
         [LabelText("Show Real-Time Input")]
         [ToggleLeft]

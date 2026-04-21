@@ -29,7 +29,11 @@ namespace GameMain.RunTime
                 testPos = player.transform.position;
 
             if (ManualLevel)
-                new InitInvokerCommands.ManualFastLevelTestCommand(testPos, chapterId, levelId).Execute();
+                new InitInvokerCommands.ManualFastLevelTestCommand(
+                    testPos,
+                    chapterId,
+                    levelId
+                ).Execute();
             else
                 new InitInvokerCommands.FastLevelTestCommand(testPos).Execute();
         }
