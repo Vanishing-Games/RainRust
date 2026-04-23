@@ -16,13 +16,18 @@ namespace GameMain.RunTime
         public const string BGMap = "BGMap";
 
         // Entity Identifiers
-        public const string LevelTransition = "LevelTransition"; // 关卡出入口
         public const string SavePoint = "SavePoint"; // Save point, where store player's level progress.
         public const string EntityPlaceHolder0 = "EntityPlaceHolder0";
         public const string MovePlatformer = "MovePlatformer";
         public const string MovePlatformerPathPoint = "MovePlatformerPathPoint";
+        public const string BackgroundChain = "BackgroundChain"; // the env item--chain.
+        public const string CameraOverrideArea = "CameraOverrideArea";
+        public const string SnakeHoney = "SnakeHoney";
+        public const string SnakeDoor = "SnakeDoor";
+        public const string SnakeSavePoint = "SnakeSavePoint";
 
         // Enum Identifiers
         public const string Enum_CameraMode = "CameraMode";
+
     }
 }
