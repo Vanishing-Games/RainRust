@@ -11379,9 +11379,9 @@
 								"height": 256,
 								"defUid": 459,
 								"px": [1024,2176],
-								"fieldInstances": [{ "__identifier": "SavePointNickName", "__type": "String", "__value": "Chapter1_SavePoint_01", "__tile": null, "defUid": 460, "realEditorValues": [{
+								"fieldInstances": [{ "__identifier": "SavePointNickName", "__type": "String", "__value": "Chapter_Platformer_SavePoint_01", "__tile": null, "defUid": 460, "realEditorValues": [{
 									"id": "V_String",
-									"params": ["Chapter1_SavePoint_01"]
+									"params": ["Chapter_Platformer_SavePoint_01"]
 								}] }],
 								"__worldX": -4864,
 								"__worldY": 3456
