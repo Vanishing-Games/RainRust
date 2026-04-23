@@ -33487,34 +33487,22 @@
 								"fieldInstances": [
 									{ "__identifier": "AutoUnityEntity", "__type": "Bool", "__value": true, "__tile": null, "defUid": 494, "realEditorValues": [] },
 									{ "__identifier": "EntityPrefab", "__type": "String", "__value": "RunTime/SnakeGame/SnakeDoor", "__tile": null, "defUid": 497, "realEditorValues": [] },
-									{ "__identifier": "_DoorHoneys", "__type": "Array<EntityRef>", "__value": [
-										{
-											"entityIid": "edba4890-21a0-11f1-a639-5b8e863a8db5",
-											"layerIid": "66cabc47-21a0-11f1-a639-c77dd6752b79",
-											"levelIid": "66cabc41-21a0-11f1-a639-492098722355",
-											"worldIid": "66cabc40-21a0-11f1-a639-7f1ac4cfb216"
-										},
-										{
-											"entityIid": "253f34d0-21a0-11f1-a639-e19583c652b8",
-											"layerIid": "66cabc47-21a0-11f1-a639-c77dd6752b79",
-											"levelIid": "66cabc41-21a0-11f1-a639-492098722355",
-											"worldIid": "66cabc40-21a0-11f1-a639-7f1ac4cfb216"
-										},
-										{
-											"entityIid": "45806380-21a0-11f1-859b-79da3f92a51a",
-											"layerIid": "66cabc47-21a0-11f1-a639-c77dd6752b79",
-											"levelIid": "66cabc41-21a0-11f1-a639-492098722355",
-											"worldIid": "66cabc40-21a0-11f1-a639-7f1ac4cfb216"
-										}
-									], "__tile": null, "defUid": 499, "realEditorValues": [ {
+									{ "__identifier": "_DoorHoneys", "__type": "Array<EntityRef>", "__value": [ {
+										"entityIid": "edba4890-21a0-11f1-a639-5b8e863a8db5",
+										"layerIid": "66cabc47-21a0-11f1-a639-c77dd6752b79",
+										"levelIid": "66cabc41-21a0-11f1-a639-492098722355",
+										"worldIid": "66cabc40-21a0-11f1-a639-7f1ac4cfb216"
+									}, {
+										"entityIid": "253f34d0-21a0-11f1-a639-e19583c652b8",
+										"layerIid": "66cabc47-21a0-11f1-a639-c77dd6752b79",
+										"levelIid": "66cabc41-21a0-11f1-a639-492098722355",
+										"worldIid": "66cabc40-21a0-11f1-a639-7f1ac4cfb216"
+									} ], "__tile": null, "defUid": 499, "realEditorValues": [ {
 										"id": "V_String",
 										"params": ["edba4890-21a0-11f1-a639-5b8e863a8db5"]
 									}, {
 										"id": "V_String",
 										"params": ["253f34d0-21a0-11f1-a639-e19583c652b8"]
-									}, {
-										"id": "V_String",
-										"params": ["45806380-21a0-11f1-859b-79da3f92a51a"]
 									} ] }
 								],
 								"__worldX": 1408,
@@ -33556,25 +33544,6 @@
 									{ "__identifier": "EntityPrefab", "__type": "String", "__value": "RunTime/SnakeGame/SnakeHoney", "__tile": null, "defUid": 498, "realEditorValues": [] }
 								],
 								"__worldX": 896,
-								"__worldY": 256
-							},
-							{
-								"__identifier": "SnakeHoney",
-								"__grid": [2,2],
-								"__pivot": [0,0],
-								"__tags": [],
-								"__tile": null,
-								"__smartColor": "#BE4A2F",
-								"iid": "45806380-21a0-11f1-859b-79da3f92a51a",
-								"width": 128,
-								"height": 128,
-								"defUid": 490,
-								"px": [256,256],
-								"fieldInstances": [
-									{ "__identifier": "AutoUnityEntity", "__type": "Bool", "__value": true, "__tile": null, "defUid": 493, "realEditorValues": [] },
-									{ "__identifier": "EntityPrefab", "__type": "String", "__value": "RunTime/SnakeGame/SnakeHoney", "__tile": null, "defUid": 498, "realEditorValues": [] }
-								],
-								"__worldX": 256,
 								"__worldY": 256
 							}
 						]
