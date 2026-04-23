@@ -102,6 +102,13 @@ namespace GameMain.Editor
                         );
                     }
                 }
+                else
+                {
+                    // 由于 LDtk 的实体默认锚点在左上角，而 Unity 的默认锚点在中心，如果不调整位置，可能会导致实体位置偏移。
+                    // 按照实体的大小调整位置，使其锚点与 LDtk 一致。
+                    Vector2 size = ldtkEntity.Size;
+                    newEntity.transform.position += new Vector3(size.x * 0.5f, -size.y * 0.5f, 0);
+                }
 
                 ldtkEntity.gameObject.SetActive(false);
             }
