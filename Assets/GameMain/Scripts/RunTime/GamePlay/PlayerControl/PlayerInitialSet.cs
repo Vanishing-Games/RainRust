@@ -19,14 +19,6 @@ namespace GameMain.RunTime
             mPCComponent.FacingDir = 1;
             StateTag = this;
             SetStateMachine(PlayerStateMachine.NormalState, EccTag.NormalState);
-            if (mPCComponent.AllBees[0] == null || mPCComponent.AllBees.Count == 0)
-            {
-                var tempbee = GameObject.Find("Bee");
-                if (mPCComponent.AllBees.Count == 0)
-                    mPCComponent.AllBees.Add(tempbee);
-                else
-                    mPCComponent.AllBees[0] = tempbee;
-            }
         }
 
         protected override bool OnShouldActivate()
