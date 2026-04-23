@@ -11002,26 +11002,6 @@
 								"__worldY": 3456
 							},
 							{
-								"__identifier": "CameraOverrideArea",
-								"__grid": [31,4],
-								"__pivot": [0,0],
-								"__tags": [],
-								"__tile": null,
-								"__smartColor": "#FEAE34",
-								"iid": "6b536c50-21a0-11f1-b9a8-53214915bb84",
-								"width": 1920,
-								"height": 1280,
-								"defUid": 483,
-								"px": [3968,512],
-								"fieldInstances": [
-									{ "__identifier": "AutoUnityEntity", "__type": "Bool", "__value": true, "__tile": null, "defUid": 485, "realEditorValues": [] },
-									{ "__identifier": "EntityResizable", "__type": "Bool", "__value": true, "__tile": null, "defUid": 487, "realEditorValues": [] },
-									{ "__identifier": "EntityPrefab", "__type": "String", "__value": "RunTime/Camera/CameraOverrideArea", "__tile": null, "defUid": 484, "realEditorValues": [] }
-								],
-								"__worldX": -1920,
-								"__worldY": 1792
-							},
-							{
 								"__identifier": "MovePlatformerPathPoint",
 								"__grid": [6,11],
 								"__pivot": [0,0],
@@ -11095,6 +11075,26 @@
 								],
 								"__worldX": -5248,
 								"__worldY": 2560
+							},
+							{
+								"__identifier": "CameraOverrideArea",
+								"__grid": [34,3],
+								"__pivot": [0,0],
+								"__tags": [],
+								"__tile": null,
+								"__smartColor": "#FEAE34",
+								"iid": "306749c0-21a0-11f1-af80-e1c0cb275aa5",
+								"width": 1280,
+								"height": 1280,
+								"defUid": 483,
+								"px": [4352,384],
+								"fieldInstances": [
+									{ "__identifier": "AutoUnityEntity", "__type": "Bool", "__value": true, "__tile": null, "defUid": 485, "realEditorValues": [] },
+									{ "__identifier": "EntityResizable", "__type": "Bool", "__value": true, "__tile": null, "defUid": 487, "realEditorValues": [] },
+									{ "__identifier": "EntityPrefab", "__type": "String", "__value": "RunTime/Camera/CameraOverrideArea", "__tile": null, "defUid": 484, "realEditorValues": [] }
+								],
+								"__worldX": -1536,
+								"__worldY": 1664
 							}
 						]
 					},

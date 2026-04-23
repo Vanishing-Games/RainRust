@@ -31,7 +31,7 @@ namespace GameMain.RunTime
         public GameObject PreWave;
 
         [BoxGroup("飞虫管理"), Tooltip("存储的飞虫"), ShowInInspector, OdinSerialize]
-        public List<GameObject> AllBees { get; set; }
+        public List<GameObject> AllBees = new List<GameObject>();
 
         [BoxGroup("飞虫管理"), Tooltip("将要被投掷的飞虫"), ShowInInspector, OdinSerialize]
         public BeeMainControl BeeToThrow { get; set; }
@@ -194,6 +194,9 @@ namespace GameMain.RunTime
         [BoxGroup("角色运行计时器"), Tooltip("口哨后摇计时器"), ShowInInspector, ReadOnly]
         public int WhistleAfterTimer { get; set; }
 
+        [BoxGroup("角色运行计时器"), Tooltip("抓跳后再抓cd计时器"), ShowInInspector, ReadOnly]
+        public int CanGrabCDTimer { get; set; }
+
         #endregion
 
         #region 死亡与重生相关
@@ -350,6 +353,12 @@ namespace GameMain.RunTime
         #endregion
 
         #region 抓住相关
+        [BoxGroup("抓住相关"), Tooltip("是否允许更宽松的抓住判定"), ShowInInspector, OdinSerialize]
+        public bool IsBroadGrab { get; set; }
+
+        [BoxGroup("抓住相关"), Tooltip("抓跳后再抓cd计时"), ShowInInspector, OdinSerialize]
+        public int CanGrabCDTime { get; set; }
+
         [BoxGroup("抓住相关"), Tooltip("抓住暂留的时长"), ShowInInspector, OdinSerialize]
         public int GrabStayTime { get; set; }
 
@@ -378,6 +387,7 @@ namespace GameMain.RunTime
 
         [BoxGroup("抓住相关"), Tooltip("抓住的范围的起点偏移点"), ShowInInspector, OdinSerialize]
         public Vector2 GrabRangeOffset { get; set; }
+
         #endregion
 
         #region 口哨相关

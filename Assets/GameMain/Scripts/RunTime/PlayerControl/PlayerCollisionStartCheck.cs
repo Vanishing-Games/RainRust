@@ -190,7 +190,12 @@ namespace GameMain.RunTime
                     + mPCComponent.GrabRangeOffset * new Vector2(mPCComponent.FacingDir, 1),
                 BoxRange,
                 0f,
-                new ContactFilter2D { layerMask = noSafeLayer, useLayerMask = true },
+                new ContactFilter2D
+                {
+                    layerMask = noSafeLayer,
+                    useLayerMask = true,
+                    useTriggers = true,
+                },
                 ColliderHitResults
             );
 
@@ -227,7 +232,12 @@ namespace GameMain.RunTime
                     + mPCComponent.GrabRangeOffset * new Vector2(mPCComponent.FacingDir, 1),
                 BoxRange,
                 0f,
-                new ContactFilter2D { layerMask = SafeLayer, useLayerMask = true },
+                new ContactFilter2D
+                {
+                    layerMask = SafeLayer,
+                    useLayerMask = true,
+                    useTriggers = true,
+                },
                 ColliderHitResults
             );
 
@@ -264,10 +274,22 @@ namespace GameMain.RunTime
         private RaycastHit2D[] DownHitResults = new RaycastHit2D[1];
         private Collider2D[] ColliderHitResults = new Collider2D[1];
 
-        private bool IsCanGrab() =>
-            !IsOnGround
-            && mPCComponent.CurrentState == PlayerStateMachine.NormalState
-            && mPCComponent.CtrlVelocity.y < mPCComponent.GrabThresholdSpeedY;
+        private bool IsCanGrab()
+        {
+            if (mPCComponent.IsBroadGrab)
+            {
+                return !IsOnGround
+                    && mPCComponent.CurrentState == PlayerStateMachine.NormalState
+                    && !mPCComponent.IsJumping
+                    && mPCComponent.CanGrabCDTimer == 0;
+            }
+            else
+            {
+                return !IsOnGround
+                    && mPCComponent.CurrentState == PlayerStateMachine.NormalState
+                    && mPCComponent.CtrlVelocity.y < mPCComponent.GrabThresholdSpeedY;
+            }
+        }
 
         private float PlayerColliderOffsetX => mPCComponent.mBoxCollider.size.x * 0.5f;
 

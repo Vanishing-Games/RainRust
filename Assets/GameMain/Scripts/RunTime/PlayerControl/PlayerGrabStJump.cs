@@ -28,6 +28,7 @@ namespace GameMain.RunTime
             Vector2 Velocity = mPCComponent.CtrlVelocity;
             Velocity.x = MoveX * MaxSpeedX;
             mPCComponent.CtrlVelocity = Velocity;
+            mPCComponent.CanGrabCDTimer = mPCComponent.CanGrabCDTime;
         }
 
         protected override bool OnShouldDeactivate()
