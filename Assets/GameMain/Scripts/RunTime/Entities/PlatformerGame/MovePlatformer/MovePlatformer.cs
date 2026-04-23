@@ -28,7 +28,7 @@ namespace GameMain.RunTime
 
         [Header("Path")]
         [SerializeField]
-        private List<Vector3> m_PathPoints = new();
+        private List<Vector3> PathPoints = new();
 
         private int m_CurrentPointIndex = 0;
         private bool m_IsMoving = false;
@@ -36,7 +36,7 @@ namespace GameMain.RunTime
         private float m_WaitTimer = 0.0f;
         private int m_Direction = 1;
 
-        public void SetPathPoints(List<Vector3> points) => m_PathPoints = points;
+        public void SetPathPoints(List<Vector3> points) => PathPoints = points;
 
         public void SetMoveSpeed(float speed) => m_MoveSpeed = speed;
 
@@ -48,7 +48,7 @@ namespace GameMain.RunTime
 
         private void Start()
         {
-            if (m_AutoStart && m_PathPoints != null && m_PathPoints.Count > 1)
+            if (m_AutoStart && PathPoints != null && PathPoints.Count > 1)
             {
                 StartMoving();
             }
@@ -56,7 +56,7 @@ namespace GameMain.RunTime
 
         public void StartMoving()
         {
-            if (m_PathPoints == null || m_PathPoints.Count < 2)
+            if (PathPoints == null || PathPoints.Count < 2)
             {
                 return;
             }
@@ -65,12 +65,12 @@ namespace GameMain.RunTime
             m_IsWaiting = false;
             m_CurrentPointIndex = 0;
             m_Direction = 1;
-            transform.position = m_PathPoints[0];
+            transform.position = PathPoints[0];
         }
 
         private void Update()
         {
-            if (!m_IsMoving || m_PathPoints == null || m_PathPoints.Count < 2)
+            if (!m_IsMoving || PathPoints == null || PathPoints.Count < 2)
                 return;
 
             if (m_IsWaiting)
@@ -85,7 +85,7 @@ namespace GameMain.RunTime
                 return;
             }
 
-            Vector3 target = m_PathPoints[m_CurrentPointIndex];
+            Vector3 target = PathPoints[m_CurrentPointIndex];
             transform.position = Vector3.MoveTowards(
                 transform.position,
                 target,
@@ -103,7 +103,7 @@ namespace GameMain.RunTime
             switch (m_LoopType)
             {
                 case LoopType.Once:
-                    if (m_CurrentPointIndex < m_PathPoints.Count - 1)
+                    if (m_CurrentPointIndex < PathPoints.Count - 1)
                     {
                         m_CurrentPointIndex++;
                     }
@@ -114,14 +114,14 @@ namespace GameMain.RunTime
                     break;
 
                 case LoopType.Loop:
-                    m_CurrentPointIndex = (m_CurrentPointIndex + 1) % m_PathPoints.Count;
+                    m_CurrentPointIndex = (m_CurrentPointIndex + 1) % PathPoints.Count;
                     break;
 
                 case LoopType.PingPong:
                     m_CurrentPointIndex += m_Direction;
-                    if (m_CurrentPointIndex >= m_PathPoints.Count)
+                    if (m_CurrentPointIndex >= PathPoints.Count)
                     {
-                        m_CurrentPointIndex = m_PathPoints.Count - 2;
+                        m_CurrentPointIndex = PathPoints.Count - 2;
                         m_Direction = -1;
                     }
                     else if (m_CurrentPointIndex < 0)
@@ -130,7 +130,7 @@ namespace GameMain.RunTime
                         m_Direction = 1;
                     }
 
-                    if (m_CurrentPointIndex < 0 || m_CurrentPointIndex >= m_PathPoints.Count)
+                    if (m_CurrentPointIndex < 0 || m_CurrentPointIndex >= PathPoints.Count)
                     {
                         m_IsMoving = false; // Safeguard
                     }
@@ -140,20 +140,20 @@ namespace GameMain.RunTime
 
         private void OnDrawGizmos()
         {
-            if (m_PathPoints == null || m_PathPoints.Count == 0)
+            if (PathPoints == null || PathPoints.Count == 0)
                 return;
 
             Gizmos.color = Color.cyan;
-            for (int i = 0; i < m_PathPoints.Count; i++)
+            for (int i = 0; i < PathPoints.Count; i++)
             {
-                Gizmos.DrawSphere(m_PathPoints[i], 0.1f);
-                if (i < m_PathPoints.Count - 1)
+                Gizmos.DrawSphere(PathPoints[i], 0.1f);
+                if (i < PathPoints.Count - 1)
                 {
-                    Gizmos.DrawLine(m_PathPoints[i], m_PathPoints[i + 1]);
+                    Gizmos.DrawLine(PathPoints[i], PathPoints[i + 1]);
                 }
                 else if (m_LoopType == LoopType.Loop)
                 {
-                    Gizmos.DrawLine(m_PathPoints[i], m_PathPoints[0]);
+                    Gizmos.DrawLine(PathPoints[i], PathPoints[0]);
                 }
             }
         }
