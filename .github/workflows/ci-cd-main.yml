@@ -742,13 +742,14 @@ jobs:
             Library-Tests-${{ matrix.testMode }}-
             Library-
 
-      - name: 🧪 运行 Unity 测试 [首选账号]
+      - name: 🧪 运行 Unity 测试
         uses: Wandalen/wretry.action@v3.8.0
-        id: run-tests-first
+        id: run-tests
         continue-on-error: true
         with:
           action: game-ci/unity-test-runner@v4
-          attempt_limit: 1  # 首选账号只试1次，不行就立刻回退，节省时间
+          attempt_limit: 3
+          attempt_delay: 60000
           with: |
             unityVersion: ${{ steps.load-test-config.outputs.unity_version }}
             testMode: ${{ matrix.testMode }}
@@ -758,7 +759,7 @@ jobs:
           UNITY_PASSWORD: ${{ matrix.license_account == 'backup' && secrets.UNITY_PASSWORD_BACKUP || secrets.UNITY_PASSWORD }}
           UNITY_LICENSE: ${{ matrix.license_account == 'backup' && secrets.UNITY_LICENSE_BACKUP || secrets.UNITY_LICENSE }}
 
-      - name: 🔄 归还 首选 Unity License
+      - name: 🔄 归还 Unity License
         uses: game-ci/unity-return-license@v2
         if: always()
         continue-on-error: true
@@ -767,39 +768,32 @@ jobs:
           UNITY_PASSWORD: ${{ matrix.license_account == 'backup' && secrets.UNITY_PASSWORD_BACKUP || secrets.UNITY_PASSWORD }}
           UNITY_LICENSE: ${{ matrix.license_account == 'backup' && secrets.UNITY_LICENSE_BACKUP || secrets.UNITY_LICENSE }}
 
-      - name: 🧪 运行 Unity 测试 [备用回退]
-        uses: Wandalen/wretry.action@v3.8.0
-        id: run-tests-fallback
-        if: steps.run-tests-first.outcome == 'failure'
-        with:
-          action: game-ci/unity-test-runner@v4
-          # 回退时，另一个账号可能正忙，所以即使是普通PR也要重试以排队（容灾模式）
-          attempt_limit: 5
-          attempt_delay: 30000
-          with: |
-            unityVersion: ${{ steps.load-test-config.outputs.unity_version }}
-            testMode: ${{ matrix.testMode }}
-            artifactsPath: artifacts/${{ matrix.testMode }}
-        env:
-          # 翻转账号逻辑：如果是 backup 则用 primary，反之亦然
-          UNITY_EMAIL: ${{ matrix.license_account == 'backup' && secrets.UNITY_EMAIL || secrets.UNITY_EMAIL_BACKUP }}
-          UNITY_PASSWORD: ${{ matrix.license_account == 'backup' && secrets.UNITY_PASSWORD || secrets.UNITY_PASSWORD_BACKUP }}
-          UNITY_LICENSE: ${{ matrix.license_account == 'backup' && secrets.UNITY_LICENSE || secrets.UNITY_LICENSE_BACKUP }}
-
-      - name: 🔄 归还 备用 Unity License
-        uses: game-ci/unity-return-license@v2
+      - name: 🔍 写出席位探测状态
         if: always()
-        continue-on-error: true
-        env:
-          UNITY_EMAIL: ${{ matrix.license_account == 'backup' && secrets.UNITY_EMAIL || secrets.UNITY_EMAIL_BACKUP }}
-          UNITY_PASSWORD: ${{ matrix.license_account == 'backup' && secrets.UNITY_PASSWORD || secrets.UNITY_PASSWORD_BACKUP }}
-          UNITY_LICENSE: ${{ matrix.license_account == 'backup' && secrets.UNITY_LICENSE || secrets.UNITY_LICENSE_BACKUP }}
+        run: |
+          mkdir -p seat-status
+          # 若 artifacts 目录存在且非空，说明 Unity 成功激活并运行了测试
+          if [ -d "artifacts/${{ matrix.testMode }}" ] && [ "$(ls -A "artifacts/${{ matrix.testMode }}" 2>/dev/null)" ]; then
+            echo "ok" > seat-status/${{ matrix.license_account }}_status.txt
+            echo "✅ ${{ matrix.license_account }} 账号席位状态：可用"
+          else
+            echo "failed" > seat-status/${{ matrix.license_account }}_status.txt
+            echo "❌ ${{ matrix.license_account }} 账号席位状态：不可用（激活失败或 Unity 未启动）"
+          fi
+
+      - name: ⬆️ 上传席位探测状态
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: seat-status-${{ matrix.license_account }}
+          path: seat-status/
+          retention-days: 1
 
       - name: 📊 解析测试结果并生成摘要
         if: always()
         run: |
           # 1. 确定运行状态
-          if [[ "${{ steps.run-tests-first.outcome }}" == "success" || "${{ steps.run-tests-fallback.outcome }}" == "success" ]]; then
+          if [[ "${{ steps.run-tests.outcome }}" == "success" ]]; then
             RUN_STATUS="✅ 运行成功"
             SUCCESS=true
           else
@@ -885,38 +879,170 @@ jobs:
           path: artifacts/
 
   # =============================================================================
-  # 阶段3: 构建测试 - 构建Windows和macOS版本  
+  # 席位路由 - 分析测试阶段席位探测结果，动态生成构建分配方案
+  # =============================================================================
+  seat-router:
+    name: 🎯 席位路由
+    runs-on: ubuntu-latest
+    needs: [flow-prediction, unity-tests]
+    if: |
+      always() &&
+      needs.flow-prediction.outputs.should_run_build == 'true' &&
+      (needs.unity-tests.result == 'success' || needs.unity-tests.result == 'failure' || needs.unity-tests.result == 'skipped')
+    outputs:
+      primary_ok: ${{ steps.route.outputs.primary_ok }}
+      backup_ok: ${{ steps.route.outputs.backup_ok }}
+      can_run: ${{ steps.route.outputs.can_run }}
+      route_mode: ${{ steps.route.outputs.route_mode }}
+      route_summary: ${{ steps.route.outputs.route_summary }}
+
+    steps:
+      - name: ⬇️ 下载席位探测状态（Primary）
+        uses: actions/download-artifact@v4
+        if: needs.unity-tests.result != 'skipped'
+        continue-on-error: true
+        with:
+          name: seat-status-primary
+          path: seat-status/primary
+
+      - name: ⬇️ 下载席位探测状态（Backup）
+        uses: actions/download-artifact@v4
+        if: needs.unity-tests.result != 'skipped'
+        continue-on-error: true
+        with:
+          name: seat-status-backup
+          path: seat-status/backup
+
+      - name: 🎯 分析席位并生成路由方案
+        id: route
+        run: |
+          TESTS_SKIPPED="${{ needs.unity-tests.result == 'skipped' }}"
+
+          if [[ "$TESTS_SKIPPED" == "true" ]]; then
+            # 测试被跳过时，无探测数据，默认两账号均可用
+            PRIMARY_OK=true
+            BACKUP_OK=true
+            echo "ℹ️ 测试阶段已跳过，无席位探测数据，默认两账号均可用"
+          else
+            # 读取探测状态文件
+            if [ -f "seat-status/primary/primary_status.txt" ] && \
+               [ "$(cat seat-status/primary/primary_status.txt 2>/dev/null)" == "ok" ]; then
+              PRIMARY_OK=true
+            else
+              PRIMARY_OK=false
+            fi
+
+            if [ -f "seat-status/backup/backup_status.txt" ] && \
+               [ "$(cat seat-status/backup/backup_status.txt 2>/dev/null)" == "ok" ]; then
+              BACKUP_OK=true
+            else
+              BACKUP_OK=false
+            fi
+          fi
+
+          # 生成路由方案
+          if [[ "$PRIMARY_OK" == "true" && "$BACKUP_OK" == "true" ]]; then
+            ROUTE_MODE=standard
+            CAN_RUN=true
+            ROUTE_SUMMARY="✅ 标准方案：两账号均可用 (Primary: WebGL+Win-Debug, Backup: Win-Release+Mac)"
+          elif [[ "$PRIMARY_OK" == "true" ]]; then
+            ROUTE_MODE=primary_only
+            CAN_RUN=true
+            ROUTE_SUMMARY="⚠️ 降级方案：仅 Primary 可用，构建串行执行 (max-parallel:1，WebGL 优先)"
+          elif [[ "$BACKUP_OK" == "true" ]]; then
+            ROUTE_MODE=backup_only
+            CAN_RUN=true
+            ROUTE_SUMMARY="⚠️ 降级方案：仅 Backup 可用，构建串行执行 (max-parallel:1，WebGL 优先)"
+          else
+            ROUTE_MODE=none
+            CAN_RUN=false
+            ROUTE_SUMMARY="❌ 两账号均无可用席位"
+          fi
+
+          echo "primary_ok=$PRIMARY_OK" >> $GITHUB_OUTPUT
+          echo "backup_ok=$BACKUP_OK" >> $GITHUB_OUTPUT
+          echo "can_run=$CAN_RUN" >> $GITHUB_OUTPUT
+          echo "route_mode=$ROUTE_MODE" >> $GITHUB_OUTPUT
+          echo "route_summary=$ROUTE_SUMMARY" >> $GITHUB_OUTPUT
+
+          echo "📊 路由决策："
+          echo "  Primary: $PRIMARY_OK"
+          echo "  Backup:  $BACKUP_OK"
+          echo "  模式:    $ROUTE_MODE"
+          echo "  摘要:    $ROUTE_SUMMARY"
+
+      - name: 📊 生成路由摘要
+        if: always()
+        run: |
+          echo "## 🎯 Unity License 席位路由" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| 账号 | 状态 |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Primary | ${{ steps.route.outputs.primary_ok == 'true' && '✅ 可用' || '❌ 不可用' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Backup  | ${{ steps.route.outputs.backup_ok == 'true' && '✅ 可用' || '❌ 不可用' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**路由方案：** ${{ steps.route.outputs.route_summary }}" >> $GITHUB_STEP_SUMMARY
+
+          if [[ "${{ steps.route.outputs.can_run }}" != "true" ]]; then
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "---" >> $GITHUB_STEP_SUMMARY
+            echo "## ❌ Unity License 席位耗尽" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "两个 Unity 账号的席位均已耗尽，可能是之前的流水线错误导致许可证未归还。" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### 解决步骤（约 5 分钟）" >> $GITHUB_STEP_SUMMARY
+            echo "1. 前往 https://id.unity.com 登录 **Primary** 账号" >> $GITHUB_STEP_SUMMARY
+            echo "2. 进入 \`Subscriptions & Services\` → \`Licenses\`" >> $GITHUB_STEP_SUMMARY
+            echo "3. 点击 \`Activations\` → \`Disable all Activations\`" >> $GITHUB_STEP_SUMMARY
+            echo "4. 对 **Backup** 账号重复以上步骤" >> $GITHUB_STEP_SUMMARY
+            echo "5. 重新触发此流水线" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+
+  # =============================================================================
+  # 阶段3: 构建测试 - 构建Windows和macOS版本
   # =============================================================================
   build-tests:
     name: 🔨 构建测试 (${{ matrix.profile }})
-    needs: [flow-prediction]
-    if: needs.flow-prediction.outputs.should_run_build == 'true'
+    needs: [flow-prediction, seat-router, unity-tests]
+    if: |
+      always() &&
+      needs.flow-prediction.outputs.should_run_build == 'true' &&
+      needs.seat-router.outputs.can_run == 'true' &&
+      (needs.unity-tests.result == 'success' || needs.unity-tests.result == 'failure' || needs.unity-tests.result == 'skipped')
     timeout-minutes: 60
     strategy:
       fail-fast: false
-      max-parallel: 4  # 提高并发，总共 2 个 License，每个支持 2 台，共 4 台并发槽位
+      # P/B 交替排列：同时运行的两个 job 最多 1P+1B，永远不超过每账号 2 席上限
+      # 降级模式（单账号）下所有 job 均使用相同账号，靠 attempt_delay 排队
+      max-parallel: 2
       matrix:
         include:
+          # 第1批 slot-A：WebGL（最高优先级，Primary）
           - os: ubuntu-latest
             buildTarget: WebGL
             profile: Web-Release
             displayName: WebGL (Release)
             license_account: primary
-          - os: ubuntu-latest
-            buildTarget: StandaloneWindows64
-            profile: Windows-Debug
-            displayName: Windows (Debug)
-            license_account: primary
+          # 第1批 slot-B：Windows Release（Backup）
           - os: ubuntu-latest
             buildTarget: StandaloneWindows64
             profile: Windows-Release
             displayName: Windows (Release)
             license_account: backup
+          # 第2批 slot-A：Windows Debug（Primary）
+          - os: ubuntu-latest
+            buildTarget: StandaloneWindows64
+            profile: Windows-Debug
+            displayName: Windows (Debug)
+            license_account: primary
+          # 第2批 slot-B：Mac Debug（Backup，从 primary 改为 backup）
           - os: macos-latest
             buildTarget: StandaloneOSX
             profile: Mac-Debug
             displayName: macOS (Debug)
-            license_account: primary
+            license_account: backup
+          # 第3批：Mac Release（Backup）
           - os: macos-latest
             buildTarget: StandaloneOSX
             profile: Mac-Release
@@ -992,13 +1118,13 @@ jobs:
             Library-${{ matrix.buildTarget }}-
             Library-
 
-      - name: 🔨 Unity构建 [首选账号]
+      - name: 🔨 Unity 构建
         uses: Wandalen/wretry.action@v3.8.0
-        id: run-build-first
-        continue-on-error: true
+        id: run-build
         with:
           action: game-ci/unity-builder@v4
-          attempt_limit: 1  # 首选账号只试1次，快进快出
+          attempt_limit: 3
+          attempt_delay: 60000   # 60s 间隔，等待其他 job 归还席位
           with: |
             unityVersion: ${{ steps.load-build-config.outputs.unity_version }}
             targetPlatform: ${{ matrix.buildTarget }}
@@ -1010,47 +1136,46 @@ jobs:
           UNITY_PASSWORD: ${{ matrix.license_account == 'backup' && secrets.UNITY_PASSWORD_BACKUP || secrets.UNITY_PASSWORD }}
           UNITY_LICENSE: ${{ matrix.license_account == 'backup' && secrets.UNITY_LICENSE_BACKUP || secrets.UNITY_LICENSE }}
 
-      - name: 🔄 归还 首选 Unity License
+      - name: 🔄 归还 Unity License (Linux)
         uses: game-ci/unity-return-license@v2
-        if: always()
+        if: always() && runner.os == 'Linux'
         continue-on-error: true
         env:
           UNITY_EMAIL: ${{ matrix.license_account == 'backup' && secrets.UNITY_EMAIL_BACKUP || secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ matrix.license_account == 'backup' && secrets.UNITY_PASSWORD_BACKUP || secrets.UNITY_PASSWORD }}
           UNITY_LICENSE: ${{ matrix.license_account == 'backup' && secrets.UNITY_LICENSE_BACKUP || secrets.UNITY_LICENSE }}
 
-      - name: 🔨 Unity构建 [备用回退]
-        uses: Wandalen/wretry.action@v3.8.0
-        id: run-build-fallback
-        if: steps.run-build-first.outcome == 'failure'
-        with:
-          action: game-ci/unity-builder@v4
-          # 回退时进行排队
-          attempt_limit: 5
-          attempt_delay: 30000
-          with: |
-            unityVersion: ${{ steps.load-build-config.outputs.unity_version }}
-            targetPlatform: ${{ matrix.buildTarget }}
-            buildName: ${{ steps.load-build-config.outputs.project_name }}
-            versioning: Tag
-            customParameters: -buildProfile Assets/Settings/BuildProfiles/${{ matrix.profile }}.asset
-        env:
-          UNITY_EMAIL: ${{ matrix.license_account == 'backup' && secrets.UNITY_EMAIL || secrets.UNITY_EMAIL_BACKUP }}
-          UNITY_PASSWORD: ${{ matrix.license_account == 'backup' && secrets.UNITY_PASSWORD || secrets.UNITY_PASSWORD_BACKUP }}
-          UNITY_LICENSE: ${{ matrix.license_account == 'backup' && secrets.UNITY_LICENSE || secrets.UNITY_LICENSE_BACKUP }}
-
-      - name: 🔄 归还 备用 Unity License
-        uses: game-ci/unity-return-license@v2
-        if: always()
+      - name: 🔄 归还 Unity License (macOS)
+        if: always() && runner.os == 'macOS'
         continue-on-error: true
         env:
-          UNITY_EMAIL: ${{ matrix.license_account == 'backup' && secrets.UNITY_EMAIL || secrets.UNITY_EMAIL_BACKUP }}
-          UNITY_PASSWORD: ${{ matrix.license_account == 'backup' && secrets.UNITY_PASSWORD || secrets.UNITY_PASSWORD_BACKUP }}
-          UNITY_LICENSE: ${{ matrix.license_account == 'backup' && secrets.UNITY_LICENSE || secrets.UNITY_LICENSE_BACKUP }}
+          UNITY_EMAIL: ${{ matrix.license_account == 'backup' && secrets.UNITY_EMAIL_BACKUP || secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ matrix.license_account == 'backup' && secrets.UNITY_PASSWORD_BACKUP || secrets.UNITY_PASSWORD }}
+        run: |
+          UNITY_VER="${{ steps.load-build-config.outputs.unity_version }}"
+          UNITY_EXE="/Applications/Unity/Hub/Editor/${UNITY_VER}/Unity.app/Contents/MacOS/Unity"
+          if [ -f "$UNITY_EXE" ]; then
+            echo "🔄 正在归还 macOS Unity 许可证..."
+            "$UNITY_EXE" -quit -batchmode -returnlicense \
+              -username "${UNITY_EMAIL}" \
+              -password "${UNITY_PASSWORD}" 2>&1 | tail -20 || true
+            echo "✅ 许可证归还完成"
+          else
+            echo "⚠️ 未在 ${UNITY_EXE} 找到 Unity，尝试扫描安装路径..."
+            FOUND=$(find /Applications/Unity -name "Unity" -type f 2>/dev/null | head -1)
+            if [ -n "$FOUND" ]; then
+              echo "🔍 发现 Unity：$FOUND"
+              "$FOUND" -quit -batchmode -returnlicense \
+                -username "${UNITY_EMAIL}" \
+                -password "${UNITY_PASSWORD}" 2>&1 | tail -20 || true
+            else
+              echo "❌ 未找到 Unity 可执行文件，许可证未归还（将在 Unity 服务器端自动过期）"
+            fi
+          fi
           
       - name: 📦 确定产物名称并上传
         id: determine-artifact-name
-        if: steps.run-build-first.outcome == 'success' || steps.run-build-fallback.outcome == 'success'
+        if: steps.run-build.outcome == 'success'
         run: |
           VERSION_SUFFIX="v${{ github.run_number }}"
           if [[ -n "${{ steps.load-build-config.outputs.release_version }}" ]]; then
@@ -1069,7 +1194,7 @@ jobs:
 
       - name: 📦 上传构建产物
         uses: actions/upload-artifact@v4
-        if: (steps.run-build-first.outcome == 'success' || steps.run-build-fallback.outcome == 'success') && needs.flow-prediction.outputs.build_type != 'preview'
+        if: steps.run-build.outcome == 'success' && needs.flow-prediction.outputs.build_type != 'preview'
         with:
           name: ${{ steps.determine-artifact-name.outputs.artifact_name }}
           path: build/
@@ -1079,7 +1204,7 @@ jobs:
         if: always()
         run: |
           echo "## 🔨 构建测试结果 - ${{ matrix.displayName }}" >> $GITHUB_STEP_SUMMARY
-          if [[ "${{ steps.run-build-first.outcome }}" == "success" || "${{ steps.run-build-fallback.outcome }}" == "success" ]]; then
+          if [[ "${{ steps.run-build.outcome }}" == "success" ]]; then
             echo "✅ **构建状态:** 成功" >> $GITHUB_STEP_SUMMARY
           else
             echo "❌ **构建状态:** 失败" >> $GITHUB_STEP_SUMMARY
@@ -1228,7 +1353,7 @@ jobs:
   execution-summary:
     name: 📊 执行详情汇总
     runs-on: ubuntu-latest
-    needs: [flow-prediction, code-style-check, unity-tests, build-tests, deploy-release, deploy-pages]
+    needs: [flow-prediction, code-style-check, unity-tests, seat-router, build-tests, deploy-release, deploy-pages]
     if: always()
     
     steps:
@@ -1240,6 +1365,7 @@ jobs:
           FLOW_STATUS="${{ needs.flow-prediction.result }}"
           STYLE_STATUS="${{ needs.code-style-check.result }}"
           TEST_STATUS="${{ needs.unity-tests.result }}"
+          ROUTER_STATUS="${{ needs.seat-router.result }}"
           BUILD_STATUS="${{ needs.build-tests.result }}"
           DEPLOY_STATUS="${{ needs.deploy-release.result }}"
           PAGES_STATUS="${{ needs.deploy-pages.result }}"
@@ -1247,6 +1373,7 @@ jobs:
           echo "流程预测: $FLOW_STATUS"
           echo "代码检查: $STYLE_STATUS"
           echo "单元测试: $TEST_STATUS"
+          echo "席位路由: $ROUTER_STATUS (${{ needs.seat-router.outputs.route_summary }})"
           echo "构建测试: $BUILD_STATUS"
           echo "Release发布: $DEPLOY_STATUS"
           echo "Pages部署: $PAGES_STATUS"
@@ -1296,7 +1423,21 @@ jobs:
           else
             echo "| 🧪 单元测试 | ⏭️ 跳过 | - | 根据触发条件跳过 |" >> $GITHUB_STEP_SUMMARY
           fi
-          
+
+          # 席位路由
+          if [[ "${{ needs.flow-prediction.outputs.should_run_build }}" == "true" ]]; then
+            ROUTE_SUMMARY="${{ needs.seat-router.outputs.route_summary }}"
+            if [[ "$ROUTER_STATUS" == "success" ]]; then
+              echo "| 🎯 席位路由 | ✅ 成功 | 已完成 | ${ROUTE_SUMMARY} |" >> $GITHUB_STEP_SUMMARY
+            elif [[ "$ROUTER_STATUS" == "failure" ]]; then
+              echo "| 🎯 席位路由 | ❌ 失败 | 已完成 | 两账号均无可用席位，请重置激活 |" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "| 🎯 席位路由 | ⏭️ 跳过 | - | 状态: $ROUTER_STATUS |" >> $GITHUB_STEP_SUMMARY
+            fi
+          else
+            echo "| 🎯 席位路由 | ⏭️ 跳过 | - | 构建已跳过 |" >> $GITHUB_STEP_SUMMARY
+          fi
+
           # 构建测试
           if [[ "${{ needs.flow-prediction.outputs.should_run_build }}" == "true" ]]; then
             if [[ "$BUILD_STATUS" == "success" ]]; then
@@ -1368,7 +1509,7 @@ jobs:
           fi
 
           # 以下只要执行且失败就算失败（skipped 不算）
-          for STATUS in "$STYLE_STATUS" "$TEST_STATUS" "$BUILD_STATUS" "$DEPLOY_STATUS" "$PAGES_STATUS"
+          for STATUS in "$STYLE_STATUS" "$TEST_STATUS" "$ROUTER_STATUS" "$BUILD_STATUS" "$DEPLOY_STATUS" "$PAGES_STATUS"
           do
             if [[ "$STATUS" == "failure" ]]; then
               FAILED=1
