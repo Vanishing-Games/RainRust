@@ -16,8 +16,6 @@ MonoBehaviour:
     SerializedFormat: 2
     SerializedBytes: 
     ReferencedUnityObjects:
-    - {fileID: 0}
-    - {fileID: 0}
     - {fileID: 4617050201057846497, guid: 0c3005ee9d8ee5f428bfd0d79fd3e630, type: 3}
     - {fileID: 1101348923189505887, guid: 6166ac3a75e0b164eaffce69cb9f5866, type: 3}
     SerializedBytesString: 
@@ -43,8 +41,8 @@ MonoBehaviour:
       Entry: 12
       Data: 1
     - Name: 
-      Entry: 10
-      Data: 0
+      Entry: 6
+      Data: 
     - Name: 
       Entry: 13
       Data: 
@@ -52,8 +50,8 @@ MonoBehaviour:
       Entry: 8
       Data: 
     - Name: BeeToThrow
-      Entry: 10
-      Data: 1
+      Entry: 6
+      Data: 
     - Name: RespawnBlackMask
       Entry: 6
       Data: 
@@ -251,10 +249,10 @@ MonoBehaviour:
       Data: 
     - Name: PreHook
       Entry: 10
-      Data: 2
+      Data: 0
     - Name: PreWave
       Entry: 10
-      Data: 3
+      Data: 1
     - Name: TagChangeEvent
       Entry: 7
       Data: 3|R3.Subject`1[[VanishingGames.ECC.Runtime.EccTag, VanishingGames.ECC.Runtime]],

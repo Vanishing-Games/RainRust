@@ -190,7 +190,12 @@ namespace GameMain.RunTime
                     + mPCComponent.GrabRangeOffset * new Vector2(mPCComponent.FacingDir, 1),
                 BoxRange,
                 0f,
-                new ContactFilter2D { layerMask = noSafeLayer, useLayerMask = true },
+                new ContactFilter2D
+                {
+                    layerMask = noSafeLayer,
+                    useLayerMask = true,
+                    useTriggers = true,
+                },
                 ColliderHitResults
             );
 
@@ -227,7 +232,12 @@ namespace GameMain.RunTime
                     + mPCComponent.GrabRangeOffset * new Vector2(mPCComponent.FacingDir, 1),
                 BoxRange,
                 0f,
-                new ContactFilter2D { layerMask = SafeLayer, useLayerMask = true },
+                new ContactFilter2D
+                {
+                    layerMask = SafeLayer,
+                    useLayerMask = true,
+                    useTriggers = true,
+                },
                 ColliderHitResults
             );
 

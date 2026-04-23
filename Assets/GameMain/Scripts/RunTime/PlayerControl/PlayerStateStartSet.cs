@@ -16,6 +16,24 @@ namespace GameMain.RunTime
             TickOrderInGroup = (uint)PlayerControlTickOrder.StateStartSet;
         }
 
+        protected override void OnActivate()
+        {
+            base.OnActivate();
+
+            BeeAddSubscription = MessageBroker.Global.Subscribe<BeeManagerEvents.BeeAddEvents>(
+                AddBeeToList
+            );
+            BeeRemoveSubscription =
+                MessageBroker.Global.Subscribe<BeeManagerEvents.BeeRemoveEvents>(RemoveBeeFromList);
+        }
+
+        protected override void OnDeactivate()
+        {
+            base.OnDeactivate();
+            BeeAddSubscription.Dispose();
+            BeeRemoveSubscription.Dispose();
+        }
+
         protected override bool OnShouldActivate()
         {
             return true;
@@ -102,6 +120,24 @@ namespace GameMain.RunTime
                 mPCComponent.CanGrabCDTimer--;
         }
 
+        void AddBeeToList(BeeManagerEvents.BeeAddEvents e)
+        {
+            Debug.Log(e.Bee);
+            if (!mPCComponent.AllBees.Contains(e.Bee))
+            {
+                mPCComponent.AllBees.Add(e.Bee);
+                Debug.Log("添加成功");
+            }
+        }
+
+        void RemoveBeeFromList(BeeManagerEvents.BeeRemoveEvents e)
+        {
+            if (mPCComponent.AllBees.Contains(e.Bee))
+            {
+                mPCComponent.AllBees.Remove(e.Bee);
+            }
+        }
+
         bool CanThrowCheck()
         {
             //BeeMainControl BeeToThrow = mPCComponent.AllBees.FirstOrDefault
@@ -112,16 +148,21 @@ namespace GameMain.RunTime
             //	});
             BeeMainControl BeeToThrow = null;
 
-            for (int i = 0; i < mPCComponent.AllBees.Count; i++)
+            if (mPCComponent.AllBees.Count > 0)
             {
-                Debug.Log(mPCComponent.AllBees[i].GetComponent<BeeMainControl>().currentState);
-                if (
-                    mPCComponent.AllBees[i].GetComponent<BeeMainControl>().currentState
-                    == BeeState.FollowSt
-                )
+                for (int i = 0; i < mPCComponent.AllBees.Count; i++)
                 {
-                    BeeToThrow = mPCComponent.AllBees[i].GetComponent<BeeMainControl>();
-                    break;
+                    if (mPCComponent.AllBees[i] != null)
+                    {
+                        if (
+                            mPCComponent.AllBees[i].GetComponent<BeeMainControl>().currentState
+                            == BeeState.FollowSt
+                        )
+                        {
+                            BeeToThrow = mPCComponent.AllBees[i].GetComponent<BeeMainControl>();
+                            break;
+                        }
+                    }
                 }
             }
 
@@ -136,5 +177,8 @@ namespace GameMain.RunTime
                 return false;
             }
         }
+
+        private IDisposable BeeAddSubscription;
+        private IDisposable BeeRemoveSubscription;
     }
 }

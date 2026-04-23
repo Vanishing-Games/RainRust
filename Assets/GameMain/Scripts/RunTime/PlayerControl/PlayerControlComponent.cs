@@ -31,7 +31,7 @@ namespace GameMain.RunTime
         public GameObject PreWave;
 
         [BoxGroup("飞虫管理"), Tooltip("存储的飞虫"), ShowInInspector, OdinSerialize]
-        public List<GameObject> AllBees { get; set; }
+        public List<GameObject> AllBees = new List<GameObject>();
 
         [BoxGroup("飞虫管理"), Tooltip("将要被投掷的飞虫"), ShowInInspector, OdinSerialize]
         public BeeMainControl BeeToThrow { get; set; }

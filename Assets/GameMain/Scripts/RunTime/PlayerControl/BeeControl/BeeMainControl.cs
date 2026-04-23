@@ -1,5 +1,7 @@
+using Core;
 using Sirenix.Serialization;
 using UnityEngine;
+using VanishingGames.ECC.Runtime;
 
 namespace GameMain.RunTime
 {
@@ -264,6 +266,7 @@ namespace GameMain.RunTime
             if (currentState == BeeState.StaySt && collision.transform.CompareTag("Wave"))
             {
                 ChangeState(BeeState.FollowSt);
+                MessageBroker.Global.Publish(new BeeManagerEvents.BeeAddEvents(this.gameObject));
             }
         }
 
