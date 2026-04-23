@@ -1,19 +1,10 @@
 fileFormatVersion: 2
-guid: 0b73aec8169c67947ab8f138ea1af799
+guid: 8ecd696e9bc9694459db69bd9b16df88
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -594982765983403662
-    second: Mee_0
-  - first:
-      213: 5050092539812314266
-    second: Mee_1
-  - first:
-      213: -4477703750812784230
-    second: Mee_2
-  - first:
-      213: 2831319270044211407
-    second: Mee_3
+      213: -8378081226611045607
+    second: zone-CP1_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -187,7 +178,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Mee_0
+      name: zone-CP1_0
       rect:
         serializedVersion: 2
         x: 0
@@ -202,74 +193,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 2717412a3523eb7f0800000000000000
-      internalID: -594982765983403662
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Mee_1
-      rect:
-        serializedVersion: 2
-        x: 8
-        y: 0
-        width: 8
-        height: 7
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: a9cfc5e8868851640800000000000000
-      internalID: 5050092539812314266
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Mee_2
-      rect:
-        serializedVersion: 2
-        x: 16
-        y: 0
-        width: 8
-        height: 8
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: a99ae5b99200cd1c0800000000000000
-      internalID: -4477703750812784230
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Mee_3
-      rect:
-        serializedVersion: 2
-        x: 24
-        y: 1
-        width: 8
-        height: 7
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: fc814b800edda4720800000000000000
-      internalID: 2831319270044211407
+      spriteID: 91bca7c63831bbb80800000000000000
+      internalID: -8378081226611045607
       vertices: []
       indices: 
       edges: []
@@ -288,10 +213,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Mee_0: -594982765983403662
-      Mee_1: 5050092539812314266
-      Mee_2: -4477703750812784230
-      Mee_3: 2831319270044211407
+      zone-CP1_0: -8378081226611045607
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
