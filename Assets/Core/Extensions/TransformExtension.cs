@@ -25,9 +25,9 @@ namespace Core
             }
         }
 
-        public static void SetPositionInWorldCoord (this Transform transform,Vector3 worldPosition)
-        {
-            
-        }
+        public static void SetPositionInWorldCoord(
+            this Transform transform,
+            Vector3 worldPosition
+        ) { }
     }
 }

@@ -28,7 +28,11 @@ namespace GameMain.Editor
                 root.GetComponentsInChildren<LDtkComponentEntity>();
 
             var pending =
-                new List<(RunTime.AutoLdtkEntity entity, LDtkFields fields, LDtkComponentEntity ldtkEntity)>();
+                new List<(
+                    RunTime.AutoLdtkEntity entity,
+                    LDtkFields fields,
+                    LDtkComponentEntity ldtkEntity
+                )>();
 
             var pivotByIdentifier = projectJson.Defs.Entities.ToDictionary(
                 e => e.Identifier,
