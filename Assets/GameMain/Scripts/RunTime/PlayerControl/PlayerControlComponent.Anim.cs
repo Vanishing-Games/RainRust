@@ -48,7 +48,7 @@ namespace GameMain.RunTime
 
             mAnim.SetBool(
                 "WhistleAfter",
-                WhistleStayTimer == 0 && WhistleAfterTimer > 0 && !InputAct2
+                WhistleStayTimer == 0 && WhistleAfterTimer > 0 && IsInputEnd
             );
 
             mAnim.SetBool("IsSlide", WallSlideCheck());
