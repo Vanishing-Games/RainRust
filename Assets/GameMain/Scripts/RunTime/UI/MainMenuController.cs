@@ -176,7 +176,7 @@ namespace GameMain.RunTime
             Debug.Log($"Creating new save: {newSlotName}");
             VgSaveSystem.Instance.SetCurrentSlot(newSlotName);
 
-            var command = new GameFlowCommands.StartGameCommand("Chapter_Platformer", "level0");
+            var command = new GameFlowCommands.StartGameCommand("Chapter_Snake", "level_20");
             command.Execute().Forget();
         }
 
@@ -186,7 +186,7 @@ namespace GameMain.RunTime
             bool success = await VgSaveSystem.Instance.LoadSlotAsync(slotName);
             if (success)
             {
-                var command = new GameFlowCommands.StartGameCommand("Chapter_Platformer", "level0");
+                var command = new GameFlowCommands.StartGameCommand("Chapter_Snake", "level0");
                 command.Execute().Forget();
             }
         }

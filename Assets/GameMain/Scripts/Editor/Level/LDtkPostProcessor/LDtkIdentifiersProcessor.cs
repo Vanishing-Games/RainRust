@@ -103,7 +103,8 @@ namespace GameMain.Editor
             sb.AppendLine("    }");
             sb.AppendLine("}");
 
-            string filePath = "Assets/GameMain/Scripts/RunTime/GameCoreSystems/LevelManager/LDtkIdentifiers.cs";
+            string filePath =
+                "Assets/GameMain/Scripts/RunTime/GameCoreSystems/LevelManager/LDtkIdentifiers.cs";
 
             // Only write if changed to avoid unnecessary re-imports
             if (File.Exists(filePath))
@@ -126,7 +127,10 @@ namespace GameMain.Editor
             }
             catch (Exception e)
             {
-                CLogger.LogError($"Failed to write LDtkIdentifiers.cs: {e}", LogTag.LDtkIdentifiersProcessor);
+                CLogger.LogError(
+                    $"Failed to write LDtkIdentifiers.cs: {e}",
+                    LogTag.LDtkIdentifiersProcessor
+                );
                 return;
             }
 
