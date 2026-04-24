@@ -24,10 +24,5 @@ namespace Core
                 transform.localPosition += localOffset;
             }
         }
-
-        public static void SetPositionInWorldCoord(
-            this Transform transform,
-            Vector3 worldPosition
-        ) { }
     }
 }
