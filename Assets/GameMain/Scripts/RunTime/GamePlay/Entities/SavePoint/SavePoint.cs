@@ -4,9 +4,6 @@ using UnityEngine;
 
 namespace GameMain.RunTime
 {
-    /// <summary>
-    /// 存档点实体：演示新管线的使用
-    /// </summary>
     public class SavePoint : LDtkTriggerEntity
     {
         [LDtkField]
@@ -52,7 +49,6 @@ namespace GameMain.RunTime
                 PointName = $"{worldId}_{levelId}_{LdtkIid}";
             }
 
-            // 确保在导入阶段也同步一下初始视觉
             if (m_SpriteRenderer != null && m_UnsavedSprite != null)
             {
                 m_SpriteRenderer.sprite = m_UnsavedSprite;
@@ -75,7 +71,6 @@ namespace GameMain.RunTime
         private void OnSaveTriggered()
         {
             CLogger.LogInfo($"Player reached save point: {PointName} ({NickName})", LogTag.Game);
-            // 假设 VgSaveSystem 已存在
             VgSaveSystem.Instance.WriteSlotSaveAsync().Forget();
         }
 
