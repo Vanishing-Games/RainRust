@@ -50,6 +50,24 @@ namespace GameMain.RunTime
             private readonly Vector3 m_TestPosition;
         }
 
+        public class ManualFastLevelTestBySavePointCommand : ITriggerCommand
+        {
+            public ManualFastLevelTestBySavePointCommand(string savePointName) { }
+
+            public bool Execute()
+            {
+                CLogger.LogInfo(
+                    $"[ManualFastLevelTestBySavePointCommand] Executing (SavePoint={m_SavePointName})...",
+                    LogTag.LevelManager
+                );
+
+                LevelManager.Instance.StartLevel(m_SavePointName);
+                return true;
+            }
+
+            private readonly string m_SavePointName;
+        }
+
         /// <summary>
         /// 快速关卡测试命令 (手动指定关卡)
         /// </summary>
@@ -86,7 +104,10 @@ namespace GameMain.RunTime
                     {
                         if (level.Identifier != m_LevelId)
                             continue;
-                        if (!string.IsNullOrEmpty(m_ChapterId) && level.Parent.Identifier != m_ChapterId)
+                        if (
+                            !string.IsNullOrEmpty(m_ChapterId)
+                            && level.Parent.Identifier != m_ChapterId
+                        )
                             continue;
                         targetLevel = level;
                         break;

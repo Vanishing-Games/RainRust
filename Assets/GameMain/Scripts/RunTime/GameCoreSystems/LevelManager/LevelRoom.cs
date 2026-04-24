@@ -25,7 +25,7 @@ namespace GameMain.RunTime
 
             if (CameraMode == CameraMode.Follow)
             {
-                VirtualCamera.Follow = GameMain.GetPlayer().transform;
+                VirtualCamera.Follow = GameMain.TryGetPlayer().transform;
             }
             else
             {

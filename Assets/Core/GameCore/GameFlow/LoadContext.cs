@@ -6,33 +6,26 @@ namespace Core
         public readonly string ChapterId;
         public readonly string LevelId;
         public readonly string SavePointName;
-        public readonly bool IsStandalone;
 
         private LoadContext(
             GameFlowState destination,
             string chapterId,
             string levelId,
-            string savePointName,
-            bool isStandalone
+            string savePointName
         )
         {
             Destination = destination;
             ChapterId = chapterId;
             LevelId = levelId;
             SavePointName = savePointName;
-            IsStandalone = isStandalone;
         }
 
         public static LoadContext ForLevel(string chapterId, string levelId) =>
-            new(GameFlowState.InLevel, chapterId, levelId, null, false);
+            new(GameFlowState.InLevel, chapterId, levelId, null);
 
         public static LoadContext ForSavePoint(string savePointName) =>
-            new(GameFlowState.InLevel, null, null, savePointName, false);
+            new(GameFlowState.InLevel, null, null, savePointName);
 
-        public static LoadContext ForMainMenu() =>
-            new(GameFlowState.MainMenu, null, null, null, false);
-
-        public static LoadContext ForStandalone(string chapterId, string levelId) =>
-            new(GameFlowState.InLevel, chapterId, levelId, null, true);
+        public static LoadContext ForMainMenu() => new(GameFlowState.MainMenu, null, null, null);
     }
 }

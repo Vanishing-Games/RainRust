@@ -9,8 +9,14 @@ namespace GameMain.RunTime
 {
     public class LevelManager : CoreModuleManagerBase<LevelManager>, ICoreModuleSystem
     {
-        public string SystemName => "LevelManager";
-        public Type[] Dependencies => new[] { typeof(VgSceneManager), typeof(VgSaveSystem) };
+        public class LevelLoadInfo
+        {
+            public string ChapterId;
+            public string LevelId;
+            public string SavePointName;
+            public string SavePointNickName;
+            public Vector3 SpawnPosition;
+        }
 
         public void RegisterHooks(IGameCoreHookRegistry registry)
         {
@@ -18,18 +24,13 @@ namespace GameMain.RunTime
             {
                 if (ctx.Destination == GameFlowState.InLevel)
                 {
+                    LevelLoadInfo loadInfo = new();
                     if (!string.IsNullOrEmpty(ctx.SavePointName))
-                    {
-                        StartLevel(ctx.SavePointName);
-                    }
-                    else if (ctx.IsStandalone)
-                    {
-                        await SetupExistingLevel(ctx);
-                    }
+                        loadInfo = GetLevelInfoFromSavePointName(ctx.SavePointName);
                     else
-                    {
-                        StartLevel(ctx.ChapterId, ctx.LevelId);
-                    }
+                        loadInfo = GetLevelInfoFromChapterAndLevelId(ctx.ChapterId, ctx.LevelId);
+
+                    StartLevel(loadInfo);
                 }
             });
 
@@ -40,52 +41,31 @@ namespace GameMain.RunTime
             });
         }
 
-        private async UniTask SetupExistingLevel(LoadContext ctx)
+        public void StartLevel(LevelLoadInfo loadInfo)
         {
-            InitLevelManager();
-            if (!string.IsNullOrEmpty(ctx.ChapterId) && !string.IsNullOrEmpty(ctx.LevelId))
+            if (loadInfo == null)
             {
-                SetUp(ctx.ChapterId, ctx.LevelId);
+                CLogger.LogError("Failed to start level with load info: null", LogTag.LevelManager);
+                return;
             }
-            else
-            {
-                var levels = FindObjectsByType<LDtkComponentLevel>(FindObjectsSortMode.None);
-                if (levels.Length > 0)
-                {
-                    m_CurrentLevel = levels[0];
-                    m_CurrentWorld = m_CurrentLevel.GetComponentInParent<LDtkComponentWorld>(true);
-                    ActivateRoom(m_CurrentLevel);
-                }
-            }
-            StartLevelInternal();
-            await UniTask.CompletedTask;
-        }
 
-        public void StartLevel(string savePointName)
-        {
+            EndLevel();
+
+            m_PlayerManager.SpawnPlayer(loadInfo);
+
             InitLevelManager();
-            if (!SetUpWithSavePoint(savePointName))
+            if (!SetUp(loadInfo.ChapterId, loadInfo.LevelId))
                 return;
             StartLevelInternal();
         }
 
-        public void StartLevel(string chapterId, string levelId)
-        {
-            InitLevelManager();
-            if (!SetUp(chapterId, levelId))
-                return;
+        public void StartLevel(string savePointName) =>
+            StartLevel(GetLevelInfoFromSavePointName(savePointName));
 
-            var player = GameMain.GetPlayer();
-            if (player != null)
-            {
-                var center = m_CurrentLevel.BorderBounds.center;
-                player.transform.position = new Vector3(center.x, center.y, player.transform.position.z);
-            }
+        public void StartLevel(string chapterId, string levelId) =>
+            StartLevel(GetLevelInfoFromChapterAndLevelId(chapterId, levelId));
 
-            StartLevelInternal();
-        }
-
-        public LDtkComponentLevel CurrentLevel => m_CurrentLevel;
+        public LDtkComponentLevel GetCurrentLevel() => m_CurrentLevel;
 
         internal int GetCurrentMaxPriority() => ++m_CurrentMaxPriority;
 
@@ -139,6 +119,8 @@ namespace GameMain.RunTime
         {
             if (m_CurrentWorld == null)
                 return;
+
+            m_PlayerManager.DespawnPlayer();
 
             MessageBroker.Global.Publish<LevelManagerEvents.LevelManagerPreExitChapterEvent>(
                 new(m_CurrentWorld.Identifier)
@@ -197,6 +179,106 @@ namespace GameMain.RunTime
             }
         }
 
+        private LevelLoadInfo GetLevelInfoFromSavePointName(string savePointName)
+        {
+            if (m_LdtkProject == null)
+                InitLevelManager();
+
+            var allSavePoints = FindObjectsByType<SavePoint>(
+                FindObjectsInactive.Include,
+                FindObjectsSortMode.None
+            );
+            SavePoint targetSavePoint = null;
+
+            foreach (var sp in allSavePoints)
+            {
+                if (sp.NickName == savePointName)
+                {
+                    targetSavePoint = sp;
+                    break;
+                }
+            }
+
+            if (targetSavePoint == null)
+            {
+                foreach (var sp in allSavePoints)
+                {
+                    if (sp.PointName == savePointName)
+                    {
+                        targetSavePoint = sp;
+                        break;
+                    }
+                }
+            }
+
+            if (targetSavePoint == null)
+            {
+                CLogger.LogError($"Can't Find SavePoint: {savePointName}", LogTag.LevelManager);
+                return null;
+            }
+
+            var level = targetSavePoint.GetComponentInParent<LDtkComponentLevel>(true);
+            if (level == null)
+            {
+                CLogger.LogError(
+                    $"SavePoint {savePointName} is not in a level",
+                    LogTag.LevelManager
+                );
+                return null;
+            }
+
+            m_CurrentWorld = level.GetComponentInParent<LDtkComponentWorld>(true);
+            m_CurrentLevel = level;
+
+            var player = GameMain.TryGetPlayer();
+            if (player != null)
+            {
+                player.transform.position = targetSavePoint.transform.position;
+            }
+
+            return new LevelLoadInfo
+            {
+                ChapterId = m_CurrentWorld.Identifier,
+                LevelId = m_CurrentLevel.Identifier,
+                SavePointName = targetSavePoint.PointName,
+                SavePointNickName = targetSavePoint.NickName,
+                SpawnPosition = targetSavePoint.transform.position,
+            };
+        }
+
+        private LevelLoadInfo GetLevelInfoFromChapterAndLevelId(string chapterId, string levelId)
+        {
+            if (m_LdtkProject == null)
+                InitLevelManager();
+
+            var chapter = GetChapter(chapterId);
+            if (chapter == null)
+            {
+                CLogger.LogError("Can't Find Chapter: " + chapterId, LogTag.LevelManager);
+                return null;
+            }
+            m_CurrentWorld = chapter;
+
+            var level = GetLevel(levelId);
+            if (level == null)
+            {
+                CLogger.LogError("Can't Find Level: " + levelId, LogTag.LevelManager);
+                return null;
+            }
+            m_CurrentLevel = level;
+
+            var center = level.BorderBounds.center;
+
+            return new LevelLoadInfo
+            {
+                ChapterId = chapterId,
+                LevelId = levelId,
+                SavePointName = null,
+                SavePointNickName = null,
+                SpawnPosition = center,
+            };
+        }
+
         private bool SetUpWithSavePoint(string savePointName)
         {
             var allSavePoints = FindObjectsByType<SavePoint>(
@@ -245,7 +327,7 @@ namespace GameMain.RunTime
             m_CurrentWorld = level.GetComponentInParent<LDtkComponentWorld>(true);
             m_CurrentLevel = level;
 
-            var player = GameMain.GetPlayer();
+            var player = GameMain.TryGetPlayer();
             if (player != null)
             {
                 player.transform.position = targetSavePoint.transform.position;
@@ -332,9 +414,10 @@ namespace GameMain.RunTime
             ActivateRoom(level);
             CullRooms();
 
-            var direction = Mathf.Abs(posDiff.x) >= Mathf.Abs(posDiff.y)
-                ? LevelManagerEvents.LevelSwitchDirection.Horizontal
-                : LevelManagerEvents.LevelSwitchDirection.Vertical;
+            var direction =
+                Mathf.Abs(posDiff.x) >= Mathf.Abs(posDiff.y)
+                    ? LevelManagerEvents.LevelSwitchDirection.Horizontal
+                    : LevelManagerEvents.LevelSwitchDirection.Vertical;
 
             MessageBroker.Global.Publish<LevelManagerEvents.LevelManagerLevelSwitchedEvent>(
                 new(direction)
@@ -371,8 +454,11 @@ namespace GameMain.RunTime
             return;
         }
 
+        public string SystemName => "LevelManager";
+        public Type[] Dependencies => new[] { typeof(VgSceneManager), typeof(VgSaveSystem) };
         private int m_CurrentMaxPriority = 0;
         private int m_LastSwitchFrame = -1;
+        private PlayerManager m_PlayerManager = new();
         private LevelRoom m_CurrentRoom = null;
         private LDtkComponentLevel m_CurrentLevel = null;
         private LDtkComponentWorld m_CurrentWorld = null;

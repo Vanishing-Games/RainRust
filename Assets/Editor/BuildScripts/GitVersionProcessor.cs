@@ -1,11 +1,11 @@
 using System;
 using System.Diagnostics;
+using System.IO;
 using UnityEditor;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
-using System.IO;
 
 namespace Editor.BuildScripts
 {
@@ -16,7 +16,7 @@ namespace Editor.BuildScripts
         public void OnPreprocessBuild(BuildReport report)
         {
             string version = GetGitVersion();
-            
+
             // Only update PlayerSettings if different to avoid dirtying BuildProfile unnecessarily
             if (PlayerSettings.bundleVersion != version)
             {
@@ -90,12 +90,13 @@ namespace Editor.BuildScripts
             {
                 Directory.CreateDirectory(folderPath);
             }
-            
+
             string filePath = Path.Combine(folderPath, "BuildVersionInfo.json");
             string buildTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-            
+
             // Use JSON structure to match the data class in BuildVersionInfo.cs
-            string content = $@"{{
+            string content =
+                $@"{{
     ""Version"": ""{version}"",
     ""BuildTime"": ""{buildTime}""
 }}";
@@ -106,7 +107,7 @@ namespace Editor.BuildScripts
                 // But buildTime always changes, so we write it anyway.
                 // Writing to a .json file is safe as it doesn't trigger a domain reload.
                 File.WriteAllText(filePath, content);
-                
+
                 // AssetDatabase.ImportAsset on non-scripts is generally safe during pre-build.
                 AssetDatabase.ImportAsset(filePath);
             }
