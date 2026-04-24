@@ -10,11 +10,9 @@ namespace GameMain.RunTime
     {
         protected virtual void Awake()
         {
-            var col = GetComponent<BoxCollider2D>();
-            if (col != null)
+            if (TryGetComponent<BoxCollider2D>(out var col))
             {
                 col.isTrigger = true;
-                // Collider 尺寸应对应 Prefab 的基准格数大小
                 col.size = BaseGridSize;
             }
         }

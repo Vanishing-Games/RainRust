@@ -7,7 +7,7 @@ namespace GameMain.RunTime
     /// <summary>
     /// 移动平台：演示 SolidEntity 和复杂字段映射
     /// </summary>
-    public class MovePlatformer : LDtkSolidEntity
+    public class MovePlatformer : AutoLdtkEntity
     {
         public enum LoopType
         {
