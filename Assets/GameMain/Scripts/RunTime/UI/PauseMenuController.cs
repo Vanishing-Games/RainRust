@@ -204,7 +204,10 @@ namespace GameMain.RunTime
                 if (success)
                 {
                     SetPaused(false);
-                    var command = new GameFlowCommands.StartGameCommand("Chapter1", "level0");
+                    var command = new GameFlowCommands.StartGameCommand(
+                        "Chapter_Snake",
+                        "level_20"
+                    );
                     command.Execute().Forget();
                 }
             }

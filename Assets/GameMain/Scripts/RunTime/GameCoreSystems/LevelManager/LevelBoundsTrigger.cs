@@ -21,7 +21,7 @@ namespace GameMain.RunTime
         {
             var level = GetComponentInParent<LDtkComponentLevel>();
             var levelManager = LevelManager.Instance;
-            if (level == null || level == levelManager.CurrentLevel)
+            if (level == null || level == levelManager.GetCurrentLevel())
                 return;
 
             var room = GetComponentInParent<LevelRoom>();

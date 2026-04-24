@@ -14,10 +14,14 @@ namespace Core
             m_Systems.Register(system);
         }
 
-        public void Send(IGameFlowCommand command)
+        public void RequestLoadLevel(string savePointName)
         {
-            CLogger.LogInfo($"[GameCore] >> {command.CommandName}", LogTag.GameCoreStart);
-            command.Execute().Forget();
+            m_LoadContext = LoadContext.ForSavePoint(savePointName);
+            m_Fsm.Trigger(
+                m_Fsm.ActiveStateName == GameFlowState.InLevel
+                    ? GameFlowTrigger.SwitchLevel
+                    : GameFlowTrigger.StartGame
+            );
         }
 
         public void RequestLoadLevel(string chapterId, string levelId)
@@ -188,11 +192,8 @@ namespace Core
 
         private void OnLevelClear(GameCoreEvents.LevelClearEvent e)
         {
-            CLogger.LogInfo(
-                $"Level Clear! Next: {e.NextChapterId}/{e.NextLevelId}",
-                LogTag.GameCoreStart
-            );
-            RequestLoadLevel(e.NextChapterId, e.NextLevelId);
+            CLogger.LogInfo($"Level Clear! Next: {e.NextSavePointName}", LogTag.GameCoreStart);
+            RequestLoadLevel(e.NextSavePointName);
         }
 
         public GameFlowState CurrentState => m_Fsm.ActiveStateName;

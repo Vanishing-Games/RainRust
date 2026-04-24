@@ -16,7 +16,7 @@ namespace Core
                 {
                     await m_Loader.LoadScene(new SceneLoadInfo("GameMenu"));
                 }
-                else if (ctx.Destination == GameFlowState.InLevel && !ctx.IsStandalone)
+                else if (ctx.Destination == GameFlowState.InLevel)
                 {
                     await m_Loader.LoadScene(new SceneLoadInfo("GameLevel"));
                 }

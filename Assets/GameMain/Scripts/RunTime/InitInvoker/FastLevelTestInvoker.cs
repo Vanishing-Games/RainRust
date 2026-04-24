@@ -14,6 +14,14 @@ namespace GameMain.RunTime
         public bool ManualLevel = false;
 
         [ShowIf("ManualLevel")]
+        [LabelText("指定存档点")]
+        public bool bySavePoint;
+
+        [ShowIf("bySavePoint")]
+        [LabelText("存档点名称")]
+        public string savePointName;
+
+        [ShowIf("ManualLevel")]
         [LabelText("关卡Id")]
         public string levelId;
 
@@ -29,7 +37,14 @@ namespace GameMain.RunTime
                 testPos = player.transform.position;
 
             if (ManualLevel)
-                new InitInvokerCommands.ManualFastLevelTestCommand(testPos, chapterId, levelId).Execute();
+                if (bySavePoint)
+                    new InitInvokerCommands.ManualFastLevelTestBySavePointCommand(savePointName);
+                else
+                    new InitInvokerCommands.ManualFastLevelTestCommand(
+                        testPos,
+                        chapterId,
+                        levelId
+                    ).Execute();
             else
                 new InitInvokerCommands.FastLevelTestCommand(testPos).Execute();
         }

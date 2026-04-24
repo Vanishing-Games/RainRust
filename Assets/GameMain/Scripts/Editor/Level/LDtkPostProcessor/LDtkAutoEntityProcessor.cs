@@ -1,219 +1,324 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using Core;
 using GameMain.RunTime;
 using LDtkUnity;
 using LDtkUnity.Editor;
 using UnityEditor;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace GameMain.Editor
 {
     public class LDtkAutoEntityProcessor : LDtkPostprocessor
     {
-        public override int GetPostprocessOrder() => 10;
+        public override int GetPostprocessOrder() => 100;
 
         protected override void OnPostprocessLevel(GameObject root, LdtkJson projectJson)
         {
             if (!root.TryGetComponent<LDtkComponentLevel>(out var level))
-            {
                 return;
-            }
 
-            Transform runtimeContainer = root.transform.Find("RuntimeEntities");
-            if (runtimeContainer == null)
+            Transform runtimeContainer = GetOrCreateRuntimeContainer(root);
+            LDtkComponentEntity[] ldtkEntities =
+                root.GetComponentsInChildren<LDtkComponentEntity>();
+
+            var pending =
+                new List<(
+                    RunTime.AutoLdtkEntity entity,
+                    LDtkFields fields,
+                    LDtkComponentEntity ldtkEntity
+                )>();
+
+            var pivotByIdentifier = projectJson.Defs.Entities.ToDictionary(
+                e => e.Identifier,
+                e => e.UnityPivot
+            );
+
+            // Pass 1: instantiate all prefabs and register IIDs so entity refs can resolve in pass 2
+            foreach (var ldtkEntity in ldtkEntities)
             {
-                runtimeContainer = new GameObject("RuntimeEntities").transform;
-                runtimeContainer.SetParent(root.transform);
-                runtimeContainer.localPosition = Vector3.zero;
-            }
-            else
-            {
-                for (int i = runtimeContainer.childCount - 1; i >= 0; i--)
-                    Object.DestroyImmediate(runtimeContainer.GetChild(i).gameObject);
-            }
-
-            LDtkComponentEntity[] entities = root.GetComponentsInChildren<LDtkComponentEntity>();
-            foreach (var ldtkEntity in entities)
-            {
-                if (!ldtkEntity.TryGetComponent<LDtkFields>(out var fields))
-                {
+                if (!ldtkEntity.gameObject.activeSelf)
                     continue;
-                }
 
-                if (!fields.TryGetBool("AutoUnityEntity", out bool autoProcess) || !autoProcess)
-                {
-                    continue;
-                }
+                ldtkEntity.gameObject.SetActive(false);
 
-                if (
-                    !fields.TryGetString("EntityPrefab", out string prefabRelPath)
-                    || string.IsNullOrEmpty(prefabRelPath)
-                )
-                {
-                    CLogger.LogWarn(
-                        $"[LDtkAutoEntity] Entity {ldtkEntity.Identifier} marked for auto-process but 'EntityPrefab' is missing or empty.",
-                        LogTag.LDtkAutoEntityProcessor
-                    );
-                    continue;
-                }
+                ldtkEntity.TryGetComponent<LDtkFields>(out var fields);
 
-                string fullPrefabPath = Path.Combine("Assets/Prefabs", prefabRelPath + ".prefab")
-                    .Replace("\\", "/");
-                GameObject prefabAsset = AssetDatabase.LoadAssetAtPath<GameObject>(fullPrefabPath);
-
+                string identifier = ldtkEntity.Identifier;
+                GameObject prefabAsset = FindEntityPrefab(identifier, fields);
                 if (prefabAsset == null)
                 {
                     CLogger.LogError(
-                        $"[LDtkAutoEntity] Cannot find prefab at path: {fullPrefabPath}",
+                        $"[LDtkAutoEntity] Prefab '{identifier}' not found in 'Assets/Prefabs/RunTime'.",
                         LogTag.LDtkAutoEntityProcessor
                     );
                     continue;
                 }
 
-                GameObject newEntity = (GameObject)
+                GameObject instance = (GameObject)
                     PrefabUtility.InstantiatePrefab(prefabAsset, runtimeContainer);
-                newEntity.transform.SetPositionAndRotation(
-                    ldtkEntity.transform.position,
-                    ldtkEntity.transform.rotation
-                );
-                newEntity.transform.localScale = ldtkEntity.transform.localScale;
-                newEntity.name = $"{prefabAsset.name}_{ldtkEntity.Iid.Iid}";
 
-                if (newEntity.TryGetComponent<LDtkEntityDataHandler>(out var handler))
+                SetInstanceTransform(instance, ldtkEntity);
+
+                instance.name = $"{identifier}_{ldtkEntity.Iid.Iid}";
+
+                RuntimeEntityRegistry.Register(ldtkEntity.Iid.Iid, instance);
+
+                if (!instance.TryGetComponent<AutoLdtkEntity>(out var entityComp))
                 {
-                    ProcessFields(fields, handler);
-                }
-
-                if (fields.TryGetBool("EntityResizable", out bool resizable) && resizable)
-                {
-                    var resizableEntity = newEntity.GetComponentInChildren<ILdtkResizableEntity>();
-                    if (resizableEntity != null)
-                    {
-                        Vector2 size = ldtkEntity.Size;
-                        resizableEntity.ReSize(Mathf.RoundToInt(size.x), Mathf.RoundToInt(size.y));
-                    }
-                    else
-                    {
-                        CLogger.LogError(
-                            $"[LDtkAutoEntity] Entity {ldtkEntity.Identifier} has EntityResizable=true but no ILdtkResizableEntity found on prefab '{prefabAsset.name}'.",
-                            LogTag.LDtkAutoEntityProcessor
-                        );
-                    }
-                }
-
-                ldtkEntity.gameObject.SetActive(false);
-            }
-        }
-
-        private void ProcessFields(LDtkFields fields, LDtkEntityDataHandler handler)
-        {
-            handler.ClearRecords();
-
-            foreach (var field in fields.Fields)
-            {
-                if (!field.Identifier.StartsWith("_"))
-                {
+                    CLogger.LogError(
+                        $"[LDtkAutoEntity] Prefab '{identifier}' has no LDtkEntity component.",
+                        LogTag.LDtkAutoEntityProcessor
+                    );
+                    Object.DestroyImmediate(instance);
                     continue;
                 }
 
-                var record = new LDtkEntityDataHandler.DataRecord
-                {
-                    Identifier = field.Identifier,
-                    Type = field.Type,
-                    IsArray = field.IsArray,
-                };
+                entityComp.LdtkIid = ldtkEntity.Iid.Iid;
+                entityComp.Level = ldtkEntity.GetComponentInParent<LDtkComponentLevel>();
+                entityComp.World = ldtkEntity.GetComponentInParent<LDtkComponentWorld>();
 
-                if (!field.IsArray)
-                {
-                    ExtractSingleFieldValue(fields, field, record);
-                }
-                else
-                {
-                    ExtractArrayFieldValue(fields, field, record);
-                }
-
-                handler.AddRecord(record);
+                pending.Add((entityComp, fields, ldtkEntity));
             }
 
-            EditorUtility.SetDirty(handler);
-        }
-
-        private void ExtractSingleFieldValue(
-            LDtkFields fields,
-            LDtkField field,
-            LDtkEntityDataHandler.DataRecord record
-        )
-        {
-            string id = field.Identifier;
-            switch (field.Type)
+            // Pass 2: inject fields (entity refs now resolvable) then sync and post-import
+            foreach (var (entityComp, fields, ldtkEntity) in pending)
             {
-                case LDtkFieldType.Int:
-                    record.IntValue = fields.GetInt(id);
-                    break;
-                case LDtkFieldType.Float:
-                    record.FloatValue = fields.GetFloat(id);
-                    break;
-                case LDtkFieldType.Bool:
-                    record.BoolValue = fields.GetBool(id);
-                    break;
-                case LDtkFieldType.String:
-                case LDtkFieldType.Multiline:
-                case LDtkFieldType.FilePath:
-                    record.StringValue = fields.GetString(id);
-                    break;
-                case LDtkFieldType.Color:
-                    record.ColorValue = fields.GetColor(id);
-                    break;
-                case LDtkFieldType.Enum:
-                    record.StringValue = fields.GetValueAsString(id);
-                    break;
-                case LDtkFieldType.Point:
-                    record.VectorValue = fields.GetPoint(id);
-                    break;
-                case LDtkFieldType.EntityRef:
-                    record.EntityRef = fields.GetEntityReference(id);
-                    break;
+                if (fields != null)
+                {
+                    InjectLDtkFields(entityComp, fields);
+                }
+
+                if (entityComp.OnSyncFromLdtk(ldtkEntity))
+                {
+                    entityComp.OnPostImport();
+                    EditorUtility.SetDirty(entityComp);
+                }
             }
         }
 
-        private void ExtractArrayFieldValue(
-            LDtkFields fields,
-            LDtkField field,
-            LDtkEntityDataHandler.DataRecord record
-        )
+        private void SetInstanceTransform(GameObject instance, LDtkComponentEntity entity)
         {
-            string id = field.Identifier;
-            switch (field.Type)
+            var autoEntity = instance.GetComponent<AutoLdtkEntity>();
+            if (autoEntity == null || autoEntity.CanResize)
+                return;
+
+            var upLeftWorldPos = entity.transform.position;
+            var basicSize = autoEntity.BaseGridSize;
+            var entitySize = entity.Size;
+            var scale = entitySize / basicSize;
+            var finalPos =
+                upLeftWorldPos
+                + new Vector3(entitySize.x * 0.5f, entitySize.y * -0.5f)
+                - new Vector3(scale.x * 0.5f, scale.y * -0.5f, 0);
+
+            instance.transform.position = finalPos;
+        }
+
+        private Transform GetOrCreateRuntimeContainer(GameObject root)
+        {
+            Transform container = root.transform.Find("RuntimeEntities");
+            if (container == null)
             {
-                case LDtkFieldType.Int:
-                    record.IntArray = fields.GetIntArray(id).ToList();
-                    break;
-                case LDtkFieldType.Float:
-                    record.FloatArray = fields.GetFloatArray(id).ToList();
-                    break;
-                case LDtkFieldType.Bool:
-                    record.BoolArray = fields.GetBoolArray(id).ToList();
-                    break;
-                case LDtkFieldType.String:
-                case LDtkFieldType.Multiline:
-                case LDtkFieldType.FilePath:
-                    record.StringArray = fields.GetStringArray(id).ToList();
-                    break;
-                case LDtkFieldType.Color:
-                    record.ColorArray = fields.GetColorArray(id).ToList();
-                    break;
-                case LDtkFieldType.Enum:
-                    record.StringArray = fields.GetValuesAsStrings(id).ToList();
-                    break;
-                case LDtkFieldType.Point:
-                    record.VectorArray = fields.GetPointArray(id).ToList();
-                    break;
-                case LDtkFieldType.EntityRef:
-                    record.EntityRefArray = fields.GetEntityReferenceArray(id).ToList();
-                    break;
+                container = new GameObject("RuntimeEntities").transform;
+                container.SetParent(root.transform);
+                container.localPosition = Vector3.zero;
             }
+            else
+            {
+                for (int i = container.childCount - 1; i >= 0; i--)
+                    Object.DestroyImmediate(container.GetChild(i).gameObject);
+            }
+            return container;
+        }
+
+        private GameObject FindEntityPrefab(string identifier, LDtkFields fields)
+        {
+            if (
+                fields != null
+                && fields.TryGetString("EntityPrefab", out string manualPath)
+                && !string.IsNullOrEmpty(manualPath)
+            )
+            {
+                string fullPath = Path.Combine("Assets/Prefabs", manualPath + ".prefab")
+                    .Replace("\\", "/");
+                var asset = AssetDatabase.LoadAssetAtPath<GameObject>(fullPath);
+                if (asset != null)
+                    return asset;
+                CLogger.LogError(
+                    $"[LDtkAutoEntity] Manual Prefab path not found: {fullPath}",
+                    LogTag.LDtkAutoEntityProcessor
+                );
+            }
+
+            string[] guids = AssetDatabase.FindAssets(
+                $"{identifier} t:Prefab",
+                new[] { "Assets/Prefabs/RunTime" }
+            );
+            foreach (var guid in guids)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guid);
+                if (
+                    Path.GetFileNameWithoutExtension(path)
+                        .Equals(identifier, StringComparison.OrdinalIgnoreCase)
+                )
+                    return AssetDatabase.LoadAssetAtPath<GameObject>(path);
+            }
+
+            return null;
+        }
+
+        private void InjectLDtkFields(RunTime.AutoLdtkEntity target, LDtkFields ldtkFields)
+        {
+            var type = target.GetType();
+            var fields = type.GetFields(
+                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance
+            );
+
+            foreach (var field in fields)
+            {
+                var attr = field.GetCustomAttribute<RunTime.LDtkFieldAttribute>();
+                if (attr == null)
+                    continue;
+
+                string ldtkKey = attr.CustomIdentifier ?? field.Name;
+                if (!ldtkFields.ContainsField(ldtkKey))
+                {
+                    if (ldtkFields.ContainsField("_" + ldtkKey))
+                        ldtkKey = "_" + ldtkKey;
+                    else
+                    {
+                        CLogger.LogWarn(
+                            $"[LDtkAutoEntity] Field '{ldtkKey}' not found in LDtk entity {target.name}",
+                            LogTag.LDtkAutoEntityProcessor
+                        );
+                        continue;
+                    }
+                }
+
+                try
+                {
+                    object value = GetValueFromLDtk(ldtkFields, ldtkKey, field.FieldType);
+                    if (value != null)
+                        field.SetValue(target, value);
+                }
+                catch (Exception e)
+                {
+                    CLogger.LogError(
+                        $"[LDtkAutoEntity] Failed to inject field '{ldtkKey}' into {target.name}: {e.Message}",
+                        LogTag.LDtkAutoEntityProcessor
+                    );
+                }
+            }
+        }
+
+        private object GetValueFromLDtk(LDtkFields fields, string key, Type targetType)
+        {
+            if (targetType.IsGenericType && targetType.GetGenericTypeDefinition() == typeof(List<>))
+            {
+                Type elementType = targetType.GetGenericArguments()[0];
+                return GetArrayValue(fields, key, elementType);
+            }
+            if (targetType.IsArray)
+            {
+                Type elementType = targetType.GetElementType();
+                var list = GetArrayValue(fields, key, elementType);
+                if (list == null)
+                    return null;
+                MethodInfo toArrayMethod = typeof(Enumerable)
+                    .GetMethod("ToArray")
+                    .MakeGenericMethod(elementType);
+                return toArrayMethod.Invoke(null, new[] { list });
+            }
+
+            if (targetType == typeof(int))
+                return fields.GetInt(key);
+            if (targetType == typeof(float))
+                return fields.GetFloat(key);
+            if (targetType == typeof(bool))
+                return fields.GetBool(key);
+            if (targetType == typeof(string))
+                return fields.GetString(key);
+            if (targetType == typeof(Color))
+                return fields.GetColor(key);
+            if (targetType == typeof(Vector2))
+                return fields.GetPoint(key);
+            if (targetType.IsEnum)
+            {
+                string enumStr = fields.GetValueAsString(key);
+                try
+                {
+                    return Enum.Parse(targetType, enumStr, true);
+                }
+                catch
+                {
+                    return null;
+                }
+            }
+            if (targetType == typeof(GameObject))
+            {
+                var @ref = fields.GetEntityReference(key);
+                return @ref != null
+                    ? RunTime.RuntimeEntityRegistry.GetEntity(@ref.EntityIid)
+                    : null;
+            }
+            if (typeof(Component).IsAssignableFrom(targetType))
+            {
+                var @ref = fields.GetEntityReference(key);
+                if (@ref == null)
+                    return null;
+                var go = RunTime.RuntimeEntityRegistry.GetEntity(@ref.EntityIid);
+                return go?.GetComponent(targetType);
+            }
+
+            return null;
+        }
+
+        private object GetArrayValue(LDtkFields fields, string key, Type elementType)
+        {
+            if (elementType == typeof(int))
+                return fields.GetIntArray(key).ToList();
+            if (elementType == typeof(float))
+                return fields.GetFloatArray(key).ToList();
+            if (elementType == typeof(bool))
+                return fields.GetBoolArray(key).ToList();
+            if (elementType == typeof(string))
+                return fields.GetStringArray(key).ToList();
+            if (elementType == typeof(Color))
+                return fields.GetColorArray(key).ToList();
+            if (elementType == typeof(Vector2))
+                return fields.GetPointArray(key).ToList();
+            if (
+                elementType == typeof(GameObject)
+                || typeof(Component).IsAssignableFrom(elementType)
+            )
+            {
+                var refs = fields.GetEntityReferenceArray(key);
+                if (refs == null)
+                    return null;
+                var list = (IList)
+                    Activator.CreateInstance(typeof(List<>).MakeGenericType(elementType));
+                foreach (var r in refs)
+                {
+                    var go = RunTime.RuntimeEntityRegistry.GetEntity(r.EntityIid);
+                    if (go == null)
+                        continue;
+                    object item =
+                        elementType == typeof(GameObject)
+                            ? (object)go
+                            : go.GetComponent(elementType);
+                    if (item != null)
+                        list.Add(item);
+                }
+                return list;
+            }
+
+            return null;
         }
     }
 }
