@@ -34,11 +34,8 @@ namespace GameMain.RunTime
         public Vector2 MinGridSize = Vector2.zero;
 
         [ShowIf("CanResize")]
-        public Vector2 MaxGridSize = new Vector2(999, 999);
+        public Vector2 MaxGridSize = new (999, 999);
 
-        /// <summary>
-        /// 当从 LDtk 导入并同步数据时触发。ldtkGridSize 单位为格 (e.g. (2,1))。
-        /// </summary>
         public virtual bool OnSyncFromLdtk(LDtkComponentEntity ldtkEntity)
         {
             var ldtkGridSize = ldtkEntity.Size;
