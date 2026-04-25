@@ -1,12 +1,9 @@
 using Core;
-using Core.Extensions;
 using GameMain.RunTime;
 using LDtkUnity;
 using LDtkUnity.Editor;
-using Unity.Cinemachine;
 using UnityEditor;
 using UnityEngine;
-using CameraMode = GameMain.LDtk.CameraMode;
 
 namespace GameMain.Editor
 {
@@ -22,33 +19,21 @@ namespace GameMain.Editor
             );
 
             LevelRoom[] allRooms = root.GetComponentsInChildren<LevelRoom>();
-            CLogger.LogVerbose("Find rooms: " + allRooms, LogTag.LDtkLevelRoomProcessor);
+
             foreach (var room in allRooms)
             {
-                CLogger.LogVerbose("Processing Room:" + room, LogTag.LDtkLevelRoomProcessor);
                 room.Neighbors.Clear();
-                LevelTransition[] transitions = room.GetComponentsInChildren<LevelTransition>();
-                foreach (var transition in transitions)
-                {
-                    room.Transitions.Add(transition);
 
-                    if (transition.Target != null)
-                    {
-                        LevelRoom neighborRoom =
-                            transition.Target.GetComponentInParent<LevelRoom>();
-                        if (neighborRoom != null && neighborRoom != room)
-                        {
-                            if (!room.Neighbors.Contains(neighborRoom))
-                            {
-                                room.Neighbors.Add(neighborRoom);
-                            }
-                        }
-                    }
+                Bounds expanded = room.BorderBounds;
+                expanded.Expand(new Vector3(1f, 1f, 1000f));
+
+                foreach (var other in allRooms)
+                {
+                    if (other == room)
+                        continue;
+                    if (expanded.Intersects(other.BorderBounds))
+                        room.Neighbors.Add(other);
                 }
-                CLogger.LogVerbose(
-                    "End Processing Room:" + room + "With neighbors found:\n" + room.Neighbors,
-                    LogTag.LDtkLevelRoomProcessor
-                );
 
                 EditorUtility.SetDirty(room);
             }

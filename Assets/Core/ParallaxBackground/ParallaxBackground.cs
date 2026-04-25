@@ -83,11 +83,6 @@ namespace Core
 
         private void InitializeLayers()
         {
-            if (m_BlurShader == null)
-            {
-                m_BlurShader = Shader.Find("Vanish/Sprite-Blur");
-            }
-
             m_PropertyBlock ??= new MaterialPropertyBlock();
 
             for (int i = transform.childCount - 1; i >= 0; i--)
@@ -174,16 +169,6 @@ namespace Core
         {
             m_PropertyBlock ??= new MaterialPropertyBlock();
 
-            if (m_BlurShader == null)
-            {
-                m_BlurShader = Shader.Find("Vanish/Sprite-Blur");
-            }
-
-            if (m_BlurShader != null && m_BlurMaterial == null)
-            {
-                m_BlurMaterial = new Material(m_BlurShader);
-            }
-
             if (m_Layers == null)
                 return;
 
@@ -197,7 +182,7 @@ namespace Core
                     if (sr == null)
                         continue;
 
-                    if (layer.blurIntensity > 0 && m_BlurShader != null)
+                    if (layer.blurIntensity > 0 && m_BlurMaterial != null)
                     {
                         sr.sharedMaterial = m_BlurMaterial;
                         sr.GetPropertyBlock(m_PropertyBlock);
@@ -247,12 +232,17 @@ namespace Core
         private static readonly int BlurIntensityProperty = Shader.PropertyToID("_BlurIntensity");
         private static readonly int BlurModeProperty = Shader.PropertyToID("_BlurMode");
         private MaterialPropertyBlock m_PropertyBlock;
-        private Material m_BlurMaterial;
 
         public List<ParallaxLayer> Layers
         {
             get => m_Layers;
             set => m_Layers = value;
+        }
+
+        public Material BlurMaterial
+        {
+            get => m_BlurMaterial;
+            set => m_BlurMaterial = value;
         }
 
         [SerializeField]
@@ -262,7 +252,7 @@ namespace Core
         private List<ParallaxLayer> m_Layers = new();
 
         [SerializeField]
-        private Shader m_BlurShader;
+        private Material m_BlurMaterial;
 
         private Vector3 m_LastCameraPosition;
 

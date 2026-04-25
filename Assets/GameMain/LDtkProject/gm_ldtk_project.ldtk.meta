@@ -26,15 +26,19 @@ ScriptedImporter:
   - _key: BGMap_2
     _asset: {fileID: 11400000, guid: 5cdbd6b9014c8484fa8b17bb9c8dbc86, type: 2}
   _entities:
-  - _key: LevelTransition
+  - _key: Ae_SavePoint
     _asset: {instanceID: 0}
-  - _key: SavePoint
+  - _key: Ae_MovePlatformer
     _asset: {instanceID: 0}
-  - _key: EntityPlaceHolder0
+  - _key: Ae_MovePlatformerPathPoint
     _asset: {instanceID: 0}
-  - _key: MovePlatformer
+  - _key: Ae_CameraOverrideArea
     _asset: {instanceID: 0}
-  - _key: MovePlatformerPathPoint
+  - _key: Ae_SnakeHoney
+    _asset: {instanceID: 0}
+  - _key: Ae_SnakeDoor
+    _asset: {instanceID: 0}
+  - _key: Ae_LevelClearPoint
     _asset: {instanceID: 0}
   _enumGenerate: 1
   _enumPath: gm_ldtk_project/GmLDtkEnums.cs

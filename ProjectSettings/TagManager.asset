@@ -36,8 +36,8 @@ TagManager:
   - Respawn
   - Effect
   - 
-  - 
-  - 
+  - LightObject
+  - TileWall
   - 
   - 
   - 
@@ -75,6 +75,9 @@ TagManager:
     locked: 0
   - name: Effect
     uniqueID: 529500037
+    locked: 0
+  - name: LightObject
+    uniqueID: 3217202177
     locked: 0
   m_RenderingLayers:
   - Default

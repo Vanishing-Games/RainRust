@@ -898,6 +898,11 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
+            buildTarget: WebGL
+            profile: Web-Release
+            displayName: WebGL (Release)
+            license_account: primary
+          - os: ubuntu-latest
             buildTarget: StandaloneWindows64
             profile: Windows-Debug
             displayName: Windows (Debug)
@@ -917,11 +922,6 @@ jobs:
             profile: Mac-Release
             displayName: macOS (Release)
             license_account: backup
-          - os: ubuntu-latest
-            buildTarget: WebGL
-            profile: Web-Release
-            displayName: WebGL (Release)
-            license_account: primary
     
     runs-on: ${{ matrix.os }}
     
@@ -1056,7 +1056,15 @@ jobs:
           if [[ -n "${{ steps.load-build-config.outputs.release_version }}" ]]; then
             VERSION_SUFFIX="v${{ steps.load-build-config.outputs.release_version }}"
           fi
-          ARTIFACT_NAME="${{ steps.load-build-config.outputs.project_name }}_${{ matrix.profile }}_${VERSION_SUFFIX}"
+          
+          # 解析平台和配置
+          # profile 格式通常为 Platform-Configuration (例如 Windows-Debug)
+          PLATFORM=$(echo "${{ matrix.profile }}" | cut -d'-' -f1)
+          CONFIG=$(echo "${{ matrix.profile }}" | cut -d'-' -f2)
+          
+          PROJECT_NAME="${{ steps.load-build-config.outputs.project_name }}"
+          ARTIFACT_NAME="${PROJECT_NAME}-${PLATFORM}-${VERSION_SUFFIX}-${CONFIG}"
+          
           echo "artifact_name=$ARTIFACT_NAME" >> $GITHUB_OUTPUT
 
       - name: 📦 上传构建产物
@@ -1115,7 +1123,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: ./artifacts
-          pattern: ${{ steps.load-deploy-config.outputs.project_name }}_*
+          pattern: ${{ steps.load-deploy-config.outputs.project_name }}-*
 
       - name: 📦 准备发布附件 (Zip)
         id: prepare-assets
@@ -1138,7 +1146,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: ./release-assets/*.zip
-          name: Release v${{ needs.flow-prediction.outputs.release_version }}
+          name: v${{ needs.flow-prediction.outputs.release_version }} Release
           tag_name: ${{ github.ref }}
           draft: false
           prerelease: false
@@ -1171,7 +1179,7 @@ jobs:
       - name: 📥 下载 WebGL 构建产物
         uses: actions/download-artifact@v4
         with:
-          pattern: "*_Web-Release_*"
+          pattern: "*-Web-*-Release"
           path: ./web-build
           merge-multiple: true
 

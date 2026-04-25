@@ -1,5 +1,7 @@
+using System;
 using System.IO;
 using System.Text;
+using Core;
 using LDtkUnity;
 using LDtkUnity.Editor;
 using UnityEditor;
@@ -101,7 +103,8 @@ namespace GameMain.Editor
             sb.AppendLine("    }");
             sb.AppendLine("}");
 
-            string filePath = "Assets/GameMain/Scripts/RunTime/Level/LDtkIdentifiers.cs";
+            string filePath =
+                "Assets/GameMain/Scripts/RunTime/GameCoreSystems/LevelManager/LDtkIdentifiers.cs";
 
             // Only write if changed to avoid unnecessary re-imports
             if (File.Exists(filePath))
@@ -113,7 +116,24 @@ namespace GameMain.Editor
                 }
             }
 
-            File.WriteAllText(filePath, sb.ToString(), Encoding.UTF8);
+            try
+            {
+                string directory = Path.GetDirectoryName(filePath);
+                if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
+                {
+                    Directory.CreateDirectory(directory);
+                }
+                File.WriteAllText(filePath, sb.ToString(), Encoding.UTF8);
+            }
+            catch (Exception e)
+            {
+                CLogger.LogError(
+                    $"Failed to write LDtkIdentifiers.cs: {e}",
+                    LogTag.LDtkIdentifiersProcessor
+                );
+                return;
+            }
+
             AssetDatabase.Refresh();
         }
     }

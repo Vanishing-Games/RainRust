@@ -4,13 +4,11 @@ namespace Core
     {
         public struct LevelClearEvent : IEvent
         {
-            public string NextChapterId;
-            public string NextLevelId;
+            public string NextSavePointName;
 
-            public LevelClearEvent(string nextChapterId, string nextLevelId)
+            public LevelClearEvent(string nextSavePointName)
             {
-                NextChapterId = nextChapterId;
-                NextLevelId = nextLevelId;
+                NextSavePointName = nextSavePointName;
             }
         }
     }

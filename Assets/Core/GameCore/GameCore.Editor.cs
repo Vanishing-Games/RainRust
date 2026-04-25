@@ -8,6 +8,12 @@ namespace Core
 {
     public partial class GameCore : MonoSingletonPersistent<GameCore>
     {
+        public enum GameCoreMode
+        {
+            RunTime,
+            EditorFast,
+        }
+
         private bool GameRunInEditorCheck()
         {
             var allSubclasses = AppDomain
@@ -68,6 +74,8 @@ namespace Core
             "OnDisable",
             "OnDestroy",
         };
+
+        public GameCoreMode m_GameCoreMode = GameCoreMode.RunTime;
     }
 }
 

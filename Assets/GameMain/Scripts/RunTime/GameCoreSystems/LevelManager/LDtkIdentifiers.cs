@@ -6,6 +6,7 @@ namespace GameMain.RunTime
     public static class LDtkIdentifiers
     {
         // Layer Identifiers
+        public const string AutoLayer_Zone = "AutoLayer_Zone";
         public const string AutoTiles_Wall_A = "AutoTiles_Wall_A"; // 自动绘制的瓦片层, 包含地面、平台等
         public const string AutoTiles_Wall_B = "AutoTiles_Wall_B"; // 自动绘制的瓦片层, 包含地面、平台等
         public const string AutoTiles_BG_A = "AutoTiles_BG_A"; // 自动绘制的瓦片层, 包含地面、平台等
@@ -16,13 +17,16 @@ namespace GameMain.RunTime
         public const string BGMap = "BGMap";
 
         // Entity Identifiers
-        public const string LevelTransition = "LevelTransition"; // 关卡出入口
-        public const string SavePoint = "SavePoint"; // Save point, where store player's level progress.
-        public const string EntityPlaceHolder0 = "EntityPlaceHolder0";
-        public const string MovePlatformer = "MovePlatformer";
-        public const string MovePlatformerPathPoint = "MovePlatformerPathPoint";
+        public const string Ae_SavePoint = "Ae_SavePoint"; // Save point, where store player's level progress.
+        public const string Ae_MovePlatformer = "Ae_MovePlatformer";
+        public const string Ae_MovePlatformerPathPoint = "Ae_MovePlatformerPathPoint";
+        public const string Ae_CameraOverrideArea = "Ae_CameraOverrideArea";
+        public const string Ae_SnakeHoney = "Ae_SnakeHoney";
+        public const string Ae_SnakeDoor = "Ae_SnakeDoor";
+        public const string Ae_LevelClearPoint = "Ae_LevelClearPoint";
 
         // Enum Identifiers
         public const string Enum_CameraMode = "CameraMode";
+
     }
 }
