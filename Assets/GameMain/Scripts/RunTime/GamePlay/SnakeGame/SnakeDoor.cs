@@ -39,6 +39,7 @@ namespace GameMain.RunTime
         private void Start()
         {
             CheckConditions();
+            m_BoxCollider = GetComponent<BoxCollider2D>();
         }
 
         private void OnDestroy()
@@ -54,12 +55,18 @@ namespace GameMain.RunTime
             bool allCollected =
                 m_AssociatedHoneys.Count > 0
                 && m_AssociatedHoneys.All(h => h.State != HoneyState.Uncollected);
+            m_Animator.SetFloat("KeyNum", m_AssociatedHoneys.Count);
+            m_Animator.SetFloat(
+                "KeyHas",
+                m_AssociatedHoneys.Count(h => h.State != HoneyState.Uncollected)
+            );
             SetDoorOpen(allCollected);
         }
 
         private void SetDoorOpen(bool isOpen)
         {
-            gameObject.SetActive(!isOpen);
+            //gameObject.SetActive(!isOpen);
+            m_BoxCollider.enabled = !isOpen;
         }
 
         private void OnSnakeDeath()
@@ -77,6 +84,11 @@ namespace GameMain.RunTime
         [LDtkField("AssociatedHoneys")]
         [SerializeField]
         private List<SnakeHoney> m_AssociatedHoneys = new();
+
+        [SerializeField]
+        private Animator m_Animator;
+
+        private BoxCollider2D m_BoxCollider;
 
         private DisposableBag m_Disposables = new();
         private bool m_IsPermanentlyOpen;

@@ -18,6 +18,14 @@ namespace GameMain.RunTime
         Corner,
     }
 
+    public enum SnakeState
+    {
+        Stay,
+        Move,
+        Charge,
+        Dead,
+    }
+
     public class PlayerSnake : MonoBehaviour
     {
         private void OnEnable()
@@ -25,11 +33,16 @@ namespace GameMain.RunTime
             MessageBroker
                 .Global.Subscribe<GamePlaySnakeGameEvents.SnakeSaveEvent>(_ => OnSave())
                 .AddTo(ref m_Disposables);
+            m_CheckSub =
+                MessageBroker.Global.Subscribe<GamePlaySnakeGameEvents.SnakeCheckPointEvent>(
+                    OnCheckPoint
+                );
         }
 
         private void OnDisable()
         {
             m_Disposables.Dispose();
+            m_CheckSub.Dispose();
         }
 
         private void Start()
@@ -38,17 +51,46 @@ namespace GameMain.RunTime
             EnsureTailsContainer();
             if (m_StartPos == Vector3.zero)
                 m_StartPos = transform.position;
+            m_CheckPos = m_StartPos;
         }
 
         private void Update()
         {
             HandleInput();
+            StateManager();
+        }
 
-            m_Timer += Time.deltaTime;
-            if (m_Timer >= m_MoveInterval)
+        void StateManager()
+        {
+            if (m_State == SnakeState.Stay)
             {
-                m_Timer -= m_MoveInterval;
-                Move();
+                m_Timer = 0;
+                if (m_InputDir != Vector2.zero)
+                {
+                    m_LastDirection = m_InputDir;
+                    m_CurrentDirection = m_InputDir;
+                    m_State = SnakeState.Move;
+                }
+            }
+            else if (m_State == SnakeState.Move)
+            {
+                float moveInterval;
+                if (m_InputDir == m_CurrentDirection)
+                    moveInterval = m_FastMoveInterval;
+                else
+                    moveInterval = m_MoveInterval;
+
+                m_Timer += Time.deltaTime;
+                if (m_Timer >= moveInterval)
+                {
+                    m_Timer = 0;
+                    Move();
+                }
+            }
+            else if (m_State == SnakeState.Charge) { }
+            else if (m_State == SnakeState.Dead)
+            {
+                Die();
             }
         }
 
@@ -69,7 +111,14 @@ namespace GameMain.RunTime
 
         private void LoadTailLibrary()
         {
-            m_TailLibrary[TailType.Line] = Resources.LoadAll<GameObject>(m_LineTailPath).ToList();
+            if (!m_TailLibrary.ContainsKey(TailType.Line))
+                m_TailLibrary[TailType.Line] = new List<GameObject>();
+            for (int i = 0; i < m_LineTailPathList.Count; i++)
+            {
+                var assets = Resources.LoadAll<GameObject>(m_LineTailPathList[i]);
+                m_TailLibrary[TailType.Line].AddRange(assets);
+            }
+            //m_TailLibrary[TailType.Line] = Resources.LoadAll<GameObject>(m_LineTailPath).ToList();
             m_TailLibrary[TailType.Corner] = Resources
                 .LoadAll<GameObject>(m_CornerTailPath)
                 .ToList();
@@ -88,12 +137,16 @@ namespace GameMain.RunTime
         }
 
         // ================= 输入 =================
-
+        [SerializeField]
         private Vector2Int? m_PendingDirection;
+
+        [SerializeField]
+        private Vector2Int m_InputDir;
 
         private Vector2? HandleInput()
         {
             Vector2 input = VgInput.GetMovementVector();
+            m_InputDir = Vector2Int.RoundToInt(input);
             if (input.sqrMagnitude < 0.1f)
                 return null;
 
@@ -133,7 +186,7 @@ namespace GameMain.RunTime
 
             if (IsBlocked(dir))
             {
-                Die();
+                m_State = SnakeState.Dead;
                 return;
             }
 
@@ -152,8 +205,20 @@ namespace GameMain.RunTime
             Vector3 rayStart = origin + (Vector3)dir * startOffset;
             float distance = 0.5f;
 
-            RaycastHit2D[] hits = Physics2D.RaycastAll(rayStart, dir, distance, m_ObstacleLayer);
+            Physics2D.SyncTransforms();
+            Vector2 boxSize = new Vector2(0.5f, 0.5f); // 假设检测区是 0.5x0.5 的正方形
 
+            RaycastHit2D[] hits = Physics2D.BoxCastAll(
+                rayStart,
+                boxSize,
+                0f,
+                dir,
+                distance,
+                m_ObstacleLayer
+            );
+
+            //RaycastHit2D[] hits = Physics2D.RaycastAll(rayStart, dir, distance, m_ObstacleLayer);
+            Debug.Log(hits.Length);
             foreach (var hit in hits)
             {
                 if (hit.collider == null)
@@ -178,6 +243,7 @@ namespace GameMain.RunTime
         // ================= 尾巴 =================
 
         private Vector2Int m_LastDirection = Vector2Int.up;
+        private int lastRandomIndex;
 
         private TailType GetTailType()
         {
@@ -194,7 +260,18 @@ namespace GameMain.RunTime
             if (!m_TailLibrary.TryGetValue(type, out var list) || list.IsNullOrEmpty())
                 return;
 
-            GameObject prefab = list[0]; // 可改为随机
+            Debug.Log(list.Count);
+            int randomNum = UnityEngine.Random.Range(0, list.Count);
+            if (list.Count > 1)
+            {
+                do
+                {
+                    randomNum = UnityEngine.Random.Range(0, list.Count);
+                } while (randomNum == lastRandomIndex);
+            }
+
+            GameObject prefab = list[randomNum]; // 可改为随机
+            lastRandomIndex = randomNum;
 
             GameObject tailObj = Instantiate(
                 prefab,
@@ -229,6 +306,17 @@ namespace GameMain.RunTime
                 angle = 90;
 
             tail.transform.rotation = Quaternion.Euler(0, 0, angle);
+            if (m_LastDirection != m_CurrentDirection)
+            {
+                if (dir == Vector2.up && m_LastDirection == Vector2.left)
+                    tail.transform.rotation = Quaternion.Euler(0, 180, angle);
+                else if (dir == Vector2.right && m_LastDirection == Vector2.up)
+                    tail.transform.rotation = Quaternion.Euler(180, 0, angle);
+                else if (dir == Vector2.down && m_LastDirection == Vector2.right)
+                    tail.transform.rotation = Quaternion.Euler(0, 180, angle);
+                else if (dir == Vector2.left && m_LastDirection == Vector2.down)
+                    tail.transform.rotation = Quaternion.Euler(180, 0, angle);
+            }
         }
 
         // ================= 生命周期 =================
@@ -238,9 +326,15 @@ namespace GameMain.RunTime
             CLogger.LogInfo("Snake Died!", LogTag.Game);
             MessageBroker.Global.Publish(new GamePlaySnakeGameEvents.SnakeDeathEvent());
 
-            transform.position = m_StartPos;
+            Respawn();
 
             ResetSnake();
+        }
+
+        void Respawn()
+        {
+            transform.position = m_CheckPos;
+            m_State = SnakeState.Stay;
         }
 
         private void OnSave()
@@ -251,6 +345,11 @@ namespace GameMain.RunTime
                 tail.SetPermanent();
 
             m_ActiveTails.Clear();
+        }
+
+        private void OnCheckPoint(GamePlaySnakeGameEvents.SnakeCheckPointEvent e)
+        {
+            m_CheckPos = e.Postion;
         }
 
         private void ResetSnake()
@@ -277,6 +376,10 @@ namespace GameMain.RunTime
         private float m_MoveInterval = 0.5f;
 
         [SerializeField]
+        private float m_FastMoveInterval = 0.5f;
+
+        [SerializeField]
+        private List<string> m_LineTailPathList = new();
         private string m_LineTailPath = "SnakeTails/LineTail";
 
         [SerializeField]
@@ -330,14 +433,20 @@ namespace GameMain.RunTime
 
         // ================= 状态 =================
 
+        private SnakeState m_State = SnakeState.Stay;
+
         private Vector2Int m_CurrentDirection = Vector2Int.up;
         private float m_Timer;
         private Vector3 m_StartPos;
+        private Vector3 m_CheckPos;
 
         private List<SnakeTail> m_ActiveTails = new();
+
+        [SerializeField]
         private Dictionary<TailType, List<GameObject>> m_TailLibrary = new();
 
         private DisposableBag m_Disposables = new();
+        private IDisposable m_CheckSub;
         private Transform m_TailContainer;
     }
 }
