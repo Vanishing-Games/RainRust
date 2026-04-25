@@ -19,7 +19,6 @@ namespace GameMain.Editor
             public LDtkComponentLevel Level;
             public LevelRoom Room;
             public CinemachineCamera VCam = null;
-
             public RoomContext(LDtkComponentLevel level, LevelRoom levelRoom)
             {
                 Level = level;

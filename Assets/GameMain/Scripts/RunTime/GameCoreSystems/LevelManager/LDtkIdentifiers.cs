@@ -6,6 +6,7 @@ namespace GameMain.RunTime
     public static class LDtkIdentifiers
     {
         // Layer Identifiers
+        public const string AutoLayer_Zone = "AutoLayer_Zone";
         public const string AutoTiles_Wall_A = "AutoTiles_Wall_A"; // 自动绘制的瓦片层, 包含地面、平台等
         public const string AutoTiles_Wall_B = "AutoTiles_Wall_B"; // 自动绘制的瓦片层, 包含地面、平台等
         public const string AutoTiles_BG_A = "AutoTiles_BG_A"; // 自动绘制的瓦片层, 包含地面、平台等
