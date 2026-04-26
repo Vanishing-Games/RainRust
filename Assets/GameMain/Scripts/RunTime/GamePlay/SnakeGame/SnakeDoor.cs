@@ -66,8 +66,7 @@ namespace GameMain.RunTime
         private void SetDoorOpen(bool isOpen)
         {
             //gameObject.SetActive(!isOpen);
-            m_BoxCollider.enabled = !
-				isOpen;
+            m_BoxCollider.enabled = !isOpen;
         }
 
         private void OnSnakeDeath()
