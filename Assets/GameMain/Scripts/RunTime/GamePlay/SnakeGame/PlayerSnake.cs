@@ -56,12 +56,19 @@ namespace GameMain.RunTime
 
         private void Update()
         {
+            m_InputAct = Input.GetButton("Act");
             HandleInput();
             StateManager();
         }
 
         void StateManager()
         {
+            //if (m_State == SnakeState.Move && m_InputAct)
+            //{
+            //    m_State = SnakeState.Charge;
+            //    m_Timer = 0;
+            //}
+
             if (m_State == SnakeState.Stay)
             {
                 m_Timer = 0;
@@ -87,7 +94,45 @@ namespace GameMain.RunTime
                     Move();
                 }
             }
-            else if (m_State == SnakeState.Charge) { }
+            else if (m_State == SnakeState.Charge)
+            {
+                if (m_InputAct)
+                {
+                    m_Timer += Time.deltaTime;
+                }
+                else if (!m_InputAct)
+                {
+                    if (m_Timer < m_MinChargeTime)
+                    {
+                        m_Timer = 0f;
+                        m_State = SnakeState.Move;
+                    }
+                    else if (m_Timer < m_MaxChargeTime)
+                    {
+                        m_Timer = 0f;
+                        m_State = SnakeState.Move;
+                        GameObject temp = Instantiate(
+                            m_Wave,
+                            transform.position,
+                            Quaternion.identity
+                        );
+                        ZoneWaveControl zoneWave = temp.GetComponent<ZoneWaveControl>();
+                        zoneWave.rMult = m_Timer - m_MinChargeTime + zoneWave.minMult;
+                    }
+                    else
+                    {
+                        m_Timer = 0f;
+                        m_State = SnakeState.Move;
+                        GameObject temp = Instantiate(
+                            m_Wave,
+                            transform.position,
+                            Quaternion.identity
+                        );
+                        ZoneWaveControl zoneWave = temp.GetComponent<ZoneWaveControl>();
+                        zoneWave.rMult = zoneWave.maxMult;
+                    }
+                }
+            }
             else if (m_State == SnakeState.Dead)
             {
                 Die();
@@ -142,6 +187,9 @@ namespace GameMain.RunTime
 
         [SerializeField]
         private Vector2Int m_InputDir;
+
+        [SerializeField]
+        private bool m_InputAct = false;
 
         private Vector2? HandleInput()
         {
@@ -218,7 +266,6 @@ namespace GameMain.RunTime
             );
 
             //RaycastHit2D[] hits = Physics2D.RaycastAll(rayStart, dir, distance, m_ObstacleLayer);
-            Debug.Log(hits.Length);
             foreach (var hit in hits)
             {
                 if (hit.collider == null)
@@ -326,6 +373,10 @@ namespace GameMain.RunTime
             CLogger.LogInfo("Snake Died!", LogTag.Game);
             MessageBroker.Global.Publish(new GamePlaySnakeGameEvents.SnakeDeathEvent());
 
+            //GameObject temp = Instantiate(m_Wave, transform.position, Quaternion.identity);
+            //ZoneWaveControl zoneWave = temp.GetComponent<ZoneWaveControl>();
+            //zoneWave.rMult = zoneWave.minMult;
+
             Respawn();
 
             ResetSnake();
@@ -379,11 +430,20 @@ namespace GameMain.RunTime
         private float m_FastMoveInterval = 0.5f;
 
         [SerializeField]
+        private float m_MinChargeTime = 0.5f;
+
+        [SerializeField]
+        private float m_MaxChargeTime = 1.5f;
+
+        [SerializeField]
         private List<string> m_LineTailPathList = new();
         private string m_LineTailPath = "SnakeTails/LineTail";
 
         [SerializeField]
         private string m_CornerTailPath = "SnakeTails/CornerTail";
+
+        [SerializeField]
+        private GameObject m_Wave;
 
         [SerializeField]
         private LayerMask m_ObstacleLayer;

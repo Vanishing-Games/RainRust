@@ -51,13 +51,13 @@ namespace GameMain.Editor
 
                         break;
                     case LDtkIdentifiers.AutoTiles_BG_A:
-                        layer.gameObject.SetLayerRecursively(LayerMask.NameToLayer("AutoTile"));
+                        layer.gameObject.SetLayerRecursively(LayerMask.NameToLayer("TileWall"));
                         layer.gameObject.SetTagRecursively("AutoTile");
                         layer.gameObject.SetSortingLayerRecursively("BackGroundTile");
 
                         break;
                     case LDtkIdentifiers.AutoTiles_BG_B:
-                        layer.gameObject.SetLayerRecursively(LayerMask.NameToLayer("AutoTile"));
+                        layer.gameObject.SetLayerRecursively(LayerMask.NameToLayer("TileWall"));
                         layer.gameObject.SetTagRecursively("AutoTile");
                         layer.gameObject.SetSortingLayerRecursively("BackGroundTile");
 
@@ -69,6 +69,12 @@ namespace GameMain.Editor
 
                         break;
                     case LDtkIdentifiers.AutoTiles_Wall_B:
+                        layer.gameObject.SetLayerRecursively(LayerMask.NameToLayer("AutoTile"));
+                        layer.gameObject.SetTagRecursively("AutoTile");
+                        layer.gameObject.SetSortingLayerRecursively("AutoTile");
+
+                        break;
+                    case LDtkIdentifiers.AutoLayer_Zone:
                         layer.gameObject.SetLayerRecursively(LayerMask.NameToLayer("AutoTile"));
                         layer.gameObject.SetTagRecursively("AutoTile");
                         layer.gameObject.SetSortingLayerRecursively("AutoTile");

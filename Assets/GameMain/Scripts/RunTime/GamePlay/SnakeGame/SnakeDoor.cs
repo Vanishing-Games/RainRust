@@ -38,8 +38,8 @@ namespace GameMain.RunTime
 
         private void Start()
         {
-            CheckConditions();
             m_BoxCollider = GetComponent<BoxCollider2D>();
+            CheckConditions();
         }
 
         private void OnDestroy()
