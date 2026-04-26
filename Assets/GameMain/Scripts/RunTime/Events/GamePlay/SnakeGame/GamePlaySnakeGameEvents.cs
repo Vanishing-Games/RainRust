@@ -1,4 +1,6 @@
+using System.Numerics;
 using Core;
+using UnityEngine;
 
 namespace GameMain.RunTime
 {
@@ -7,6 +9,16 @@ namespace GameMain.RunTime
         public struct SnakeDeathEvent : IEvent { }
 
         public struct SnakeSaveEvent : IEvent { }
+
+        public struct SnakeCheckPointEvent : IEvent
+        {
+            public UnityEngine.Vector3 Postion;
+
+            public SnakeCheckPointEvent(UnityEngine.Vector3 postion)
+            {
+                Postion = postion;
+            }
+        }
 
         public struct HoneyCollectedEvent : IEvent
         {

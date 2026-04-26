@@ -38,10 +38,14 @@ namespace GameMain.RunTime
             mPCComponent.WhistleBeforeTimer = 0;
             mPCComponent.WhistleStayTimer = 0;
             mPCComponent.WhistleAfterTimer = 0;
+            mPCComponent.IsInputEnd = false;
         }
 
         protected override void OnTick(float deltaTime)
         {
+            if (!mPCComponent.InputAct2)
+                mPCComponent.IsInputEnd = true;
+
             if (mPCComponent.WhistleBeforeTimer > 0)
                 mPCComponent.WhistleBeforeTimer--;
 
@@ -49,7 +53,7 @@ namespace GameMain.RunTime
                 mPCComponent.WhistleStayTimer--;
 
             //条件待修改
-            if (!mPCComponent.InputAct2 && mPCComponent.WhistleStayTimer == 0)
+            if (mPCComponent.IsInputEnd && mPCComponent.WhistleStayTimer == 0)
             {
                 //只在第一帧生成一次
                 if (mPCComponent.WhistleAfterTimer == mPCComponent.WhistleAfterTime)

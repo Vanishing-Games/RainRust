@@ -403,6 +403,9 @@ namespace GameMain.RunTime
         [BoxGroup("口哨相关"), Tooltip("口哨后摇时间"), ShowInInspector, OdinSerialize]
         public int WhistleAfterTime { get; set; }
 
+        [BoxGroup("口哨相关"), Tooltip("口哨后摇结束确认变量"), ShowInInspector, ReadOnly]
+        public bool IsInputEnd { get; set; }
+
         #endregion
 
         #region 投掷与拉动相关

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: LDtk_background_Chapter1_07
   m_EditorClassIdentifier: Core::Core.ParallaxLayer
   serializationData:
-    SerializedFormat: 0
+    SerializedFormat: 2
     SerializedBytes: 
     ReferencedUnityObjects: []
     SerializedBytesString: 
