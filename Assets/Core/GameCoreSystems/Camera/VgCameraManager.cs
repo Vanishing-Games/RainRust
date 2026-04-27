@@ -1,6 +1,5 @@
 using System;
 using Cysharp.Threading.Tasks;
-using R3;
 using Unity.Cinemachine;
 using UnityEngine;
 
@@ -60,7 +59,6 @@ namespace Core
         [SerializeField]
         private Camera m_LoadingCamera;
 
-        private DisposableBag m_Disposables = new();
         public Camera MainCamera => m_MainCamera;
         public CinemachineBrain CinemachineBrain => m_CinemachineBrain;
         public Camera LoadingCamera => m_LoadingCamera;
