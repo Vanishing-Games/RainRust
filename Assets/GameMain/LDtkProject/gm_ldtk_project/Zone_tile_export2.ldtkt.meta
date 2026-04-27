@@ -11,6 +11,726 @@ ScriptedImporter:
   _reimportOnDependencyChange: 1
   _pixelsPerUnit: 128
   _overrideTexture: {instanceID: 0}
-  _sprites: []
+  _sprites:
+  - name: Zone_tile_export2_0
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 0
+      y: 384
+      width: 128
+      height: 128
+    spriteID: e978a2af26a6710439cb3320f240ab6d
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: Zone_tile_export2_1
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 128
+      y: 384
+      width: 128
+      height: 128
+    spriteID: c0c574f1a7f809d4898170814cba947f
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: Zone_tile_export2_2
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 256
+      y: 384
+      width: 128
+      height: 128
+    spriteID: ca30e647065fe2446bd40baee8a4c82c
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: Zone_tile_export2_3
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 384
+      y: 384
+      width: 128
+      height: 128
+    spriteID: afd2b1f25bd291643a5f70eba74f5ced
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: Zone_tile_export2_4
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 512
+      y: 384
+      width: 128
+      height: 128
+    spriteID: d20d9cb1ac1eeab4c9c3b887cd049d94
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: Zone_tile_export2_5
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 640
+      y: 384
+      width: 128
+      height: 128
+    spriteID: d6c177b5721568847aa0fd38eb6b8def
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: Zone_tile_export2_6
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 768
+      y: 384
+      width: 128
+      height: 128
+    spriteID: 81f2747dfb9bc304daf4d79816e20c7a
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: Zone_tile_export2_7
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 896
+      y: 384
+      width: 128
+      height: 128
+    spriteID: d44d91d419de369409145027aa9b43b6
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: Zone_tile_export2_8
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1024
+      y: 384
+      width: 128
+      height: 128
+    spriteID: 8c7635b0d9342444ebb1ab9484b6344c
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: Zone_tile_export2_9
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1152
+      y: 384
+      width: 128
+      height: 128
+    spriteID: 5d5e6e0c2d9192847ac32f571eac4d23
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: Zone_tile_export2_10
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1280
+      y: 384
+      width: 128
+      height: 128
+    spriteID: 0abce19e3c0c89b488095f632de8d4db
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: Zone_tile_export2_11
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1408
+      y: 384
+      width: 128
+      height: 128
+    spriteID: ab1faa77d78f7b849b3e31af4c58bf22
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: Zone_tile_export2_12
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 0
+      y: 256
+      width: 128
+      height: 128
+    spriteID: 23777e95f5ee83841b0df68a47944d35
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: Zone_tile_export2_13
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 128
+      y: 256
+      width: 128
+      height: 128
+    spriteID: b5c835ff6491af447886e6da6072544b
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: Zone_tile_export2_14
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 256
+      y: 256
+      width: 128
+      height: 128
+    spriteID: ef47be5d727b55c478ea3c8226f351dd
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: Zone_tile_export2_15
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 384
+      y: 256
+      width: 128
+      height: 128
+    spriteID: f9095b80ff345f54da85357267596c15
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: Zone_tile_export2_16
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 512
+      y: 256
+      width: 128
+      height: 128
+    spriteID: de384a6ed21ff344497947d136238bb4
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: Zone_tile_export2_17
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 640
+      y: 256
+      width: 128
+      height: 128
+    spriteID: e79268e3a2a3ae14ab42bb8a5e09f6e2
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: Zone_tile_export2_18
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 768
+      y: 256
+      width: 128
+      height: 128
+    spriteID: 7371916e2ba616b4cb0a2fe2da9c934b
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: Zone_tile_export2_19
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 896
+      y: 256
+      width: 128
+      height: 128
+    spriteID: 3be8ff829ffbd6244bdae90d54b0fb5c
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: Zone_tile_export2_20
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1024
+      y: 256
+      width: 128
+      height: 128
+    spriteID: 2af449afba108644583fd0f878489e70
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: Zone_tile_export2_21
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1152
+      y: 256
+      width: 128
+      height: 128
+    spriteID: 2212a0851a60a0b47bc9cdeb783e015c
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: Zone_tile_export2_22
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1280
+      y: 256
+      width: 128
+      height: 128
+    spriteID: 0976ca6178e7c0c4698602fe59667539
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: Zone_tile_export2_23
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1408
+      y: 256
+      width: 128
+      height: 128
+    spriteID: 338113c9ccd47d5428233a977dd432db
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: Zone_tile_export2_24
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 0
+      y: 128
+      width: 128
+      height: 128
+    spriteID: 6f8870bed42ac4e4d91ad8558172b261
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: Zone_tile_export2_25
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 128
+      y: 128
+      width: 128
+      height: 128
+    spriteID: e587e7de89ce3cd4faafa3e84800ba44
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: Zone_tile_export2_26
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 256
+      y: 128
+      width: 128
+      height: 128
+    spriteID: c813dcd5f6bf9a84d91847c481c529ba
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: Zone_tile_export2_27
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 384
+      y: 128
+      width: 128
+      height: 128
+    spriteID: 4bb83adea7bf0b441a2cc30e0c10faad
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: Zone_tile_export2_28
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 512
+      y: 128
+      width: 128
+      height: 128
+    spriteID: 5637112557f9fb548bedf1a131e90243
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: Zone_tile_export2_29
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 640
+      y: 128
+      width: 128
+      height: 128
+    spriteID: a3fee48f0bbabfb4faa599f05dbd0069
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: Zone_tile_export2_30
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 768
+      y: 128
+      width: 128
+      height: 128
+    spriteID: 8d5e9913299efeb48944e40c10107bcb
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: Zone_tile_export2_31
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 896
+      y: 128
+      width: 128
+      height: 128
+    spriteID: d867ca2e438409d40a51dc87e7737933
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: Zone_tile_export2_32
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1024
+      y: 128
+      width: 128
+      height: 128
+    spriteID: e0a00c08985a80c46b48c1f56f3b2acc
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: Zone_tile_export2_33
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1152
+      y: 128
+      width: 128
+      height: 128
+    spriteID: 719bca6a164b1eb49ba446fa58b32cea
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: Zone_tile_export2_34
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1280
+      y: 128
+      width: 128
+      height: 128
+    spriteID: 65d116a0e0c43f645955400e415b2c73
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: Zone_tile_export2_35
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1408
+      y: 128
+      width: 128
+      height: 128
+    spriteID: f33dfcd6707e3694bbf2ea369bbfb158
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: Zone_tile_export2_36
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 128
+      height: 128
+    spriteID: 5be571b814e6b2948ad7b9aefd4dca72
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: Zone_tile_export2_37
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 128
+      y: 0
+      width: 128
+      height: 128
+    spriteID: 81ddc7ae7a4851e4983e2d8da9cf81a2
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: Zone_tile_export2_38
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 256
+      y: 0
+      width: 128
+      height: 128
+    spriteID: 86c23989396c44d43858104d343362c9
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: Zone_tile_export2_39
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 384
+      y: 0
+      width: 128
+      height: 128
+    spriteID: f8b6885f4d2d31548a6fa065d6c860bc
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: Zone_tile_export2_40
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 512
+      y: 0
+      width: 128
+      height: 128
+    spriteID: 8185a4e6daf9a80439ff502c4146b420
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: Zone_tile_export2_41
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 640
+      y: 0
+      width: 128
+      height: 128
+    spriteID: 3fde9851fc9c3384c8dd8ea3353c8eb2
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: Zone_tile_export2_42
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 768
+      y: 0
+      width: 128
+      height: 128
+    spriteID: 05b5ea8fc9a68d84f957a6f54b563d09
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: Zone_tile_export2_43
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 896
+      y: 0
+      width: 128
+      height: 128
+    spriteID: 721c6025b8bb28f4cb7520571a3bedc2
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: Zone_tile_export2_44
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1024
+      y: 0
+      width: 128
+      height: 128
+    spriteID: e85b78c2b5cb3bc458ff1aee10e5c4f5
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: Zone_tile_export2_45
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1152
+      y: 0
+      width: 128
+      height: 128
+    spriteID: c3da04103d8ca5f4d91e8fe5aa70c4a2
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: Zone_tile_export2_46
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1280
+      y: 0
+      width: 128
+      height: 128
+    spriteID: eae40c88e93ecf64ea46863160f5a312
+    spriteOutline: []
+    tessellationDetail: 0
+  - name: Zone_tile_export2_47
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1408
+      y: 0
+      width: 128
+      height: 128
+    spriteID: afbebf1d4d4b5dd45a51876db21aed9c
+    spriteOutline: []
+    tessellationDetail: 0
   _secondaryTextures: []
   _artifacts: {instanceID: 0}

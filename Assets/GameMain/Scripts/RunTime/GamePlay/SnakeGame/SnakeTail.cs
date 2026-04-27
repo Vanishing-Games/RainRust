@@ -74,7 +74,7 @@ namespace GameMain.RunTime
             if (m_SpriteRenderer != null)
             {
                 var color = m_SpriteRenderer.color;
-                color.a = 0.5f;
+                color.a = 0.08f;
                 m_SpriteRenderer.color = color;
             }
         }

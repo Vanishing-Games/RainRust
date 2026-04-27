@@ -72,14 +72,16 @@ namespace GameMain.Editor
             ctx.VCam = vCam;
             ctx.Room.VirtualCamera = vCam;
 
-            // Default settings
-            if (ctx.Level.GetComponentInParent<LDtkComponentWorld>().Identifier == "Chapter_Snake")
-            { }
-
             vCam.Lens.ModeOverride = LensSettings.OverrideModes.Orthographic;
             vCam.Lens.OrthographicSize = 11.25f; // This matches half of 22.5 (close to 23)
             vCam.Lens.NearClipPlane = 0.1f;
             vCam.Lens.FarClipPlane = 5000f;
+
+            // Default settings
+            if (ctx.Level.GetComponentInParent<LDtkComponentWorld>().Identifier == "Chapter_Snake")
+            {
+                vCam.Lens.OrthographicSize = 8f;
+            }
 
             EditorUtility.SetDirty(ctx.Room);
             return ctx;
