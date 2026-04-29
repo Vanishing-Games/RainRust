@@ -34,7 +34,7 @@ namespace GameMain.RunTime
         public Vector2 MinGridSize = Vector2.zero;
 
         [ShowIf("CanResize")]
-        public Vector2 MaxGridSize = new (999, 999);
+        public Vector2 MaxGridSize = new(999, 999);
 
         public virtual bool OnSyncFromLdtk(LDtkComponentEntity ldtkEntity)
         {

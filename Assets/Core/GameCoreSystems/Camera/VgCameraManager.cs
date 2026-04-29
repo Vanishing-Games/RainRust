@@ -83,11 +83,12 @@ namespace Core
         public void SetChapterRetroMode(string chapterId)
         {
             m_IsSnakeChapter = chapterId == "Chapter_Snake";
-            m_TargetAspectRatio = m_IsSnakeChapter
-                ? m_SnakeAspectRatio
-                : m_DefaultAspectRatio;
-            
-            CLogger.LogInfo($"Camera switching to {(m_IsSnakeChapter ? "Retro (1:1)" : "Standard (16:9)")} mode for chapter: {chapterId}", LogTag.VgCameraManager);
+            m_TargetAspectRatio = m_IsSnakeChapter ? m_SnakeAspectRatio : m_DefaultAspectRatio;
+
+            CLogger.LogInfo(
+                $"Camera switching to {(m_IsSnakeChapter ? "Retro (1:1)" : "Standard (16:9)")} mode for chapter: {chapterId}",
+                LogTag.VgCameraManager
+            );
             UpdateCameraViewport();
         }
 
@@ -95,7 +96,10 @@ namespace Core
         {
             if (m_BorderCanvasPrefab == null)
             {
-                CLogger.LogWarn("Border Canvas Prefab is not assigned in VgCameraManager", LogTag.VgCameraManager);
+                CLogger.LogWarn(
+                    "Border Canvas Prefab is not assigned in VgCameraManager",
+                    LogTag.VgCameraManager
+                );
                 return;
             }
 
@@ -112,7 +116,8 @@ namespace Core
 
         private void UpdateCameraViewport()
         {
-            if (m_MainCamera == null) return;
+            if (m_MainCamera == null)
+                return;
 
             m_LastScreenWidth = Screen.width;
             m_LastScreenHeight = Screen.height;
@@ -141,7 +146,8 @@ namespace Core
 
         private void UpdateBorderUI(Rect viewportRect)
         {
-            if (m_BorderCanvasInstance == null) return;
+            if (m_BorderCanvasInstance == null)
+                return;
 
             bool showTvBorder = m_IsSnakeChapter && m_TvBorderSprite != null;
 
@@ -156,7 +162,10 @@ namespace Core
 
             if (m_RightBar)
             {
-                m_RightBar.rectTransform.anchorMin = new Vector2(viewportRect.x + viewportRect.width, 0);
+                m_RightBar.rectTransform.anchorMin = new Vector2(
+                    viewportRect.x + viewportRect.width,
+                    0
+                );
                 m_RightBar.rectTransform.anchorMax = Vector2.one;
                 m_RightBar.rectTransform.sizeDelta = Vector2.zero;
                 m_RightBar.sprite = showTvBorder ? m_TvBorderSprite : null;
@@ -165,7 +174,10 @@ namespace Core
 
             if (m_TopBar)
             {
-                m_TopBar.rectTransform.anchorMin = new Vector2(0, viewportRect.y + viewportRect.height);
+                m_TopBar.rectTransform.anchorMin = new Vector2(
+                    0,
+                    viewportRect.y + viewportRect.height
+                );
                 m_TopBar.rectTransform.anchorMax = Vector2.one;
                 m_TopBar.rectTransform.sizeDelta = Vector2.zero;
                 m_TopBar.color = Color.black;
