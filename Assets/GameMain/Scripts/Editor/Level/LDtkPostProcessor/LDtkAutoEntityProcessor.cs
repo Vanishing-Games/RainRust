@@ -109,13 +109,8 @@ namespace GameMain.Editor
                 return;
 
             var upLeftWorldPos = entity.transform.position;
-            var basicSize = autoEntity.BaseGridSize;
             var entitySize = entity.Size;
-            var scale = entitySize / basicSize;
-            var finalPos =
-                upLeftWorldPos
-                + new Vector3(entitySize.x * 0.5f, entitySize.y * -0.5f)
-                - new Vector3(scale.x * 0.5f, scale.y * -0.5f, 0);
+            var finalPos = upLeftWorldPos + new Vector3(entitySize.x * 0.5f, entitySize.y * -0.5f);
 
             instance.transform.position = finalPos;
         }
