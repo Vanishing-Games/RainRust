@@ -23,9 +23,12 @@ namespace GameMain.Editor
             if (!root.TryGetComponent<LDtkComponentLevel>(out var level))
                 return;
 
+            RuntimeEntityRegistry.Clear();
+
             Transform runtimeContainer = GetOrCreateRuntimeContainer(root);
-            LDtkComponentEntity[] ldtkEntities =
-                root.GetComponentsInChildren<LDtkComponentEntity>();
+            LDtkComponentEntity[] ldtkEntities = root.GetComponentsInChildren<LDtkComponentEntity>(
+                true
+            );
 
             var pending =
                 new List<(
@@ -33,11 +36,6 @@ namespace GameMain.Editor
                     LDtkFields fields,
                     LDtkComponentEntity ldtkEntity
                 )>();
-
-            var pivotByIdentifier = projectJson.Defs.Entities.ToDictionary(
-                e => e.Identifier,
-                e => e.UnityPivot
-            );
 
             // Pass 1: instantiate all prefabs and register IIDs so entity refs can resolve in pass 2
             foreach (var ldtkEntity in ldtkEntities)
@@ -67,8 +65,6 @@ namespace GameMain.Editor
 
                 instance.name = $"{identifier}_{ldtkEntity.Iid.Iid}";
 
-                RuntimeEntityRegistry.Register(ldtkEntity.Iid.Iid, instance);
-
                 if (!instance.TryGetComponent<AutoLdtkEntity>(out var entityComp))
                 {
                     CLogger.LogError(
@@ -78,6 +74,8 @@ namespace GameMain.Editor
                     Object.DestroyImmediate(instance);
                     continue;
                 }
+
+                RuntimeEntityRegistry.Register(ldtkEntity.Iid.Iid, instance);
 
                 entityComp.LdtkIid = ldtkEntity.Iid.Iid;
                 entityComp.Level = ldtkEntity.GetComponentInParent<LDtkComponentLevel>();
@@ -90,15 +88,25 @@ namespace GameMain.Editor
             foreach (var (entityComp, fields, ldtkEntity) in pending)
             {
                 if (fields != null)
-                {
                     InjectLDtkFields(entityComp, fields);
+
+                bool syncOk = entityComp.OnSyncFromLdtk(ldtkEntity);
+                if (syncOk)
+                {
+                    try
+                    {
+                        entityComp.OnPostImport();
+                    }
+                    catch (Exception e)
+                    {
+                        CLogger.LogError(
+                            $"[LDtkAutoEntity] OnPostImport failed for '{entityComp.name}': {e.Message}",
+                            LogTag.LDtkAutoEntityProcessor
+                        );
+                    }
                 }
 
-                if (entityComp.OnSyncFromLdtk(ldtkEntity))
-                {
-                    entityComp.OnPostImport();
-                    EditorUtility.SetDirty(entityComp);
-                }
+                EditorUtility.SetDirty(entityComp);
             }
         }
 
