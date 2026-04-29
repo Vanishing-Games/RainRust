@@ -21,6 +21,7 @@ dotnet_diagnostic.IDE0003.severity = none  # 禁用"可以简化名称"提示
 dotnet_diagnostic.IDE0130.severity = none  # 禁用"命名空间与文件夹结构不符"提示
 dotnet_diagnostic.IDE0044.severity = none  # 禁用"添加只读修饰符"提示
 dotnet_diagnostic.IDE0052.severity = none  # 禁用"删除未读取的私有成员"提示
+dotnet_diagnostic.IDE0300.severity = none  # 禁用"可以使用集合初始化"提示
 
 # New line preferences
 csharp_new_line_before_open_brace = all    # 所有左大括号前换行 (Allman 风格)

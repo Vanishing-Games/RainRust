@@ -141,7 +141,7 @@ namespace GameMain.RunTime
 
         public void SetUp(Vector3 spawnPosition)
         {
-            transform.position = spawnPosition + new Vector3(0.5f, 0.5f, 0);
+            transform.position = spawnPosition;
             m_StartPos = transform.position;
         }
 
@@ -384,7 +384,7 @@ namespace GameMain.RunTime
 
         void Respawn()
         {
-            transform.position = m_CheckPos;
+            transform.position = m_CheckPos + new Vector3(-0.5f, 0.5f, 0);
             m_State = SnakeState.Stay;
         }
 
