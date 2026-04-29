@@ -1,7 +1,10 @@
 using System;
+using Core.Extensions;
 using Cysharp.Threading.Tasks;
+using R3;
 using Unity.Cinemachine;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Core
 {
@@ -9,6 +12,30 @@ namespace Core
     {
         public string SystemName => "VgCameraManager";
         public Type[] Dependencies => Array.Empty<Type>();
+
+        [Header("Aspect Ratio Settings")]
+        [SerializeField]
+        private float m_DefaultAspectRatio = 1.7777778f; // 16:9
+
+        [SerializeField]
+        private float m_SnakeAspectRatio = 1.0f; // 1:1
+
+        [Header("Retro UI Settings")]
+        [SerializeField]
+        private GameObject m_BorderCanvasPrefab;
+
+        [SerializeField]
+        private Sprite m_TvBorderSprite;
+
+        private bool m_IsSnakeChapter = false;
+        private float m_TargetAspectRatio;
+        private GameObject m_BorderCanvasInstance;
+        private Image m_LeftBar,
+            m_RightBar,
+            m_TopBar,
+            m_BottomBar;
+        private int m_LastScreenWidth,
+            m_LastScreenHeight;
 
         public void RegisterHooks(IGameCoreHookRegistry registry)
         {
@@ -34,8 +61,123 @@ namespace Core
                     m_LoadingCamera.gameObject.SetActive(false);
                 }
 
+                m_TargetAspectRatio = m_DefaultAspectRatio;
+                InitializeBorderUI();
+
                 await UniTask.CompletedTask;
             });
+
+            registry.OnUpdate(() =>
+            {
+                if (Screen.width != m_LastScreenWidth || Screen.height != m_LastScreenHeight)
+                {
+                    UpdateCameraViewport();
+                }
+            });
+        }
+
+        /// <summary>
+        /// Sets the camera to retro mode based on the chapter ID.
+        /// Called by LevelManager or other systems that know about chapters.
+        /// </summary>
+        public void SetChapterRetroMode(string chapterId)
+        {
+            m_IsSnakeChapter = chapterId == "Chapter_Snake";
+            m_TargetAspectRatio = m_IsSnakeChapter
+                ? m_SnakeAspectRatio
+                : m_DefaultAspectRatio;
+            
+            CLogger.LogInfo($"Camera switching to {(m_IsSnakeChapter ? "Retro (1:1)" : "Standard (16:9)")} mode for chapter: {chapterId}", LogTag.VgCameraManager);
+            UpdateCameraViewport();
+        }
+
+        private void InitializeBorderUI()
+        {
+            if (m_BorderCanvasPrefab == null)
+            {
+                CLogger.LogWarn("Border Canvas Prefab is not assigned in VgCameraManager", LogTag.VgCameraManager);
+                return;
+            }
+
+            m_BorderCanvasInstance = Instantiate(m_BorderCanvasPrefab);
+            m_BorderCanvasInstance.name = "[CameraBorderCanvas]";
+            DontDestroyOnLoad(m_BorderCanvasInstance);
+
+            // Assuming prefab structure: Left, Right, Top, Bottom Image components
+            m_LeftBar = m_BorderCanvasInstance.transform.Find("Left")?.GetComponent<Image>();
+            m_RightBar = m_BorderCanvasInstance.transform.Find("Right")?.GetComponent<Image>();
+            m_TopBar = m_BorderCanvasInstance.transform.Find("Top")?.GetComponent<Image>();
+            m_BottomBar = m_BorderCanvasInstance.transform.Find("Bottom")?.GetComponent<Image>();
+        }
+
+        private void UpdateCameraViewport()
+        {
+            if (m_MainCamera == null) return;
+
+            m_LastScreenWidth = Screen.width;
+            m_LastScreenHeight = Screen.height;
+
+            float screenAspect = (float)m_LastScreenWidth / m_LastScreenHeight;
+            Rect rect = new Rect(0, 0, 1, 1);
+
+            if (screenAspect > m_TargetAspectRatio)
+            {
+                // Pillarbox
+                float pillarWidth = m_TargetAspectRatio / screenAspect;
+                rect.width = pillarWidth;
+                rect.x = (1.0f - pillarWidth) / 2.0f;
+            }
+            else
+            {
+                // Letterbox
+                float letterHeight = screenAspect / m_TargetAspectRatio;
+                rect.height = letterHeight;
+                rect.y = (1.0f - letterHeight) / 2.0f;
+            }
+
+            m_MainCamera.rect = rect;
+            UpdateBorderUI(rect);
+        }
+
+        private void UpdateBorderUI(Rect viewportRect)
+        {
+            if (m_BorderCanvasInstance == null) return;
+
+            bool showTvBorder = m_IsSnakeChapter && m_TvBorderSprite != null;
+
+            if (m_LeftBar)
+            {
+                m_LeftBar.rectTransform.anchorMin = Vector2.zero;
+                m_LeftBar.rectTransform.anchorMax = new Vector2(viewportRect.x, 1);
+                m_LeftBar.rectTransform.sizeDelta = Vector2.zero;
+                m_LeftBar.sprite = showTvBorder ? m_TvBorderSprite : null;
+                m_LeftBar.color = showTvBorder ? Color.white : Color.black;
+            }
+
+            if (m_RightBar)
+            {
+                m_RightBar.rectTransform.anchorMin = new Vector2(viewportRect.x + viewportRect.width, 0);
+                m_RightBar.rectTransform.anchorMax = Vector2.one;
+                m_RightBar.rectTransform.sizeDelta = Vector2.zero;
+                m_RightBar.sprite = showTvBorder ? m_TvBorderSprite : null;
+                m_RightBar.color = showTvBorder ? Color.white : Color.black;
+            }
+
+            if (m_TopBar)
+            {
+                m_TopBar.rectTransform.anchorMin = new Vector2(0, viewportRect.y + viewportRect.height);
+                m_TopBar.rectTransform.anchorMax = Vector2.one;
+                m_TopBar.rectTransform.sizeDelta = Vector2.zero;
+                m_TopBar.color = Color.black;
+            }
+
+            if (m_BottomBar)
+            {
+                m_BottomBar.rectTransform.anchorMin = Vector2.zero;
+                m_BottomBar.rectTransform.anchorMax = new Vector2(1, viewportRect.y);
+                m_BottomBar.rectTransform.sizeDelta = Vector2.zero;
+                m_BottomBar.color = Color.black;
+            }
         }
 
         public void SetLoadingCameraActive(bool active)

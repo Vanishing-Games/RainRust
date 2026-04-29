@@ -81,11 +81,14 @@ namespace GameMain.RunTime
                     world.gameObject.SetActive(false);
             }
 
-            MessageBroker.Global.Publish<LevelManagerEvents.LevelManagerPreEnterChapterEvent>(
+            MessageBroker.Global.Publish<LevelManagerEvents.LevelManagerPostEnterChapterEvent>(
                 new(m_CurrentWorld.Identifier)
             );
 
+            VgCameraManager.Instance.SetChapterRetroMode(m_CurrentWorld.Identifier);
+
             ActivateRoom(m_CurrentLevel);
+
             CullRooms();
 
             MessageBroker.Global.Publish<LevelManagerEvents.LevelManagerPostEnterChapterEvent>(

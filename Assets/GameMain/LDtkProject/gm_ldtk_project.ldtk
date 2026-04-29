@@ -16846,14 +16846,14 @@
 								"__tags": [],
 								"__tile": null,
 								"__smartColor": "#D77643",
-								"iid": "66db20a0-21a0-11f1-a217-99604a125a2c",
+								"iid": "271a4af0-21a0-11f1-b5fa-0d0d05eab177",
 								"width": 128,
 								"height": 128,
 								"defUid": 459,
 								"px": [1024,2176],
-								"fieldInstances": [{ "__identifier": "NickName", "__type": "String", "__value": "Chapter2Start", "__tile": null, "defUid": 460, "realEditorValues": [{
+								"fieldInstances": [{ "__identifier": "NickName", "__type": "String", "__value": "Chapter2StartPoint", "__tile": null, "defUid": 460, "realEditorValues": [{
 									"id": "V_String",
-									"params": ["Chapter2Start"]
+									"params": ["Chapter2StartPoint"]
 								}] }],
 								"__worldX": -4864,
 								"__worldY": 3456
@@ -28050,23 +28050,26 @@
 						"gridTiles": [],
 						"entityInstances": [
 							{
-								"__identifier": "Ae_SavePoint",
-								"__grid": [5,12],
+								"__identifier": "Ae_LevelClearPoint",
+								"__grid": [6,9],
 								"__pivot": [0,0],
 								"__tags": [],
 								"__tile": null,
-								"__smartColor": "#D77643",
-								"iid": "b1d35030-21a0-11f1-b961-85ea360d6a91",
-								"width": 128,
-								"height": 128,
-								"defUid": 459,
-								"px": [640,1536],
-								"fieldInstances": [{ "__identifier": "NickName", "__type": "String", "__value": "TestEnd", "__tile": null, "defUid": 460, "realEditorValues": [{
-									"id": "V_String",
-									"params": ["TestEnd"]
-								}] }],
-								"__worldX": 24192,
-								"__worldY": -5888
+								"__smartColor": "#63C74D",
+								"iid": "d3c3c7b0-21a0-11f1-8b2c-3d5473c2b986",
+								"width": 256,
+								"height": 640,
+								"defUid": 502,
+								"px": [768,1152],
+								"fieldInstances": [
+									{ "__identifier": "IsGameEnd", "__type": "Bool", "__value": true, "__tile": null, "defUid": 505, "realEditorValues": [{
+										"id": "V_Bool",
+										"params": [ true ]
+									}] },
+									{ "__identifier": "NextSavePoint", "__type": "String", "__value": null, "__tile": null, "defUid": 506, "realEditorValues": [] }
+								],
+								"__worldX": 24320,
+								"__worldY": -6272
 							}
 						]
 					},
@@ -42298,30 +42301,6 @@
 								"__worldY": 5504
 							},
 							{
-								"__identifier": "Ae_SnakeDoor",
-								"__grid": [4,6],
-								"__pivot": [0,0],
-								"__tags": [],
-								"__tile": null,
-								"__smartColor": "#FEE761",
-								"iid": "71045e40-21a0-11f1-a4cd-7d06d55f9991",
-								"width": 128,
-								"height": 128,
-								"defUid": 491,
-								"px": [512,768],
-								"fieldInstances": [{ "__identifier": "_AssociatedHoneys", "__type": "Array<EntityRef>", "__value": [{
-									"entityIid": "73f7d4b0-21a0-11f1-a4cd-1fc4f13091e0",
-									"layerIid": "0acdd576-21a0-11f1-a4cd-c97dbd5618b8",
-									"levelIid": "0acdae60-21a0-11f1-a4cd-afdf98597fc7",
-									"worldIid": "66cabc40-21a0-11f1-a639-7f1ac4cfb216"
-								}], "__tile": null, "defUid": 499, "realEditorValues": [{
-									"id": "V_String",
-									"params": ["73f7d4b0-21a0-11f1-a4cd-1fc4f13091e0"]
-								}] }],
-								"__worldX": 6272,
-								"__worldY": 4992
-							},
-							{
 								"__identifier": "Ae_SnakeHoney",
 								"__grid": [3,4],
 								"__pivot": [0,0],
@@ -42368,6 +42347,30 @@
 								"fieldInstances": [{ "__identifier": "NickName", "__type": "String", "__value": "RunTime/Null", "__tile": null, "defUid": 460, "realEditorValues": [] }],
 								"__worldX": 7040,
 								"__worldY": 4736
+							},
+							{
+								"__identifier": "Ae_SnakeDoor",
+								"__grid": [5,6],
+								"__pivot": [0,0],
+								"__tags": [],
+								"__tile": null,
+								"__smartColor": "#FEE761",
+								"iid": "77603b60-21a0-11f1-b5fa-d9795fdc5d30",
+								"width": 128,
+								"height": 128,
+								"defUid": 491,
+								"px": [640,768],
+								"fieldInstances": [{ "__identifier": "_AssociatedHoneys", "__type": "Array<EntityRef>", "__value": [{
+									"entityIid": "73f7d4b0-21a0-11f1-a4cd-1fc4f13091e0",
+									"layerIid": "0acdd576-21a0-11f1-a4cd-c97dbd5618b8",
+									"levelIid": "0acdae60-21a0-11f1-a4cd-afdf98597fc7",
+									"worldIid": "66cabc40-21a0-11f1-a639-7f1ac4cfb216"
+								}], "__tile": null, "defUid": 499, "realEditorValues": [{
+									"id": "V_String",
+									"params": ["73f7d4b0-21a0-11f1-a4cd-1fc4f13091e0"]
+								}] }],
+								"__worldX": 6400,
+								"__worldY": 4992
 							}
 						]
 					},
@@ -42804,13 +42807,16 @@
 								"__tile": null,
 								"__smartColor": "#63C74D",
 								"iid": "ee142d90-21a0-11f1-a4cd-57cf652229d1",
-								"width": 256,
+								"width": 128,
 								"height": 768,
 								"defUid": 502,
 								"px": [256,896],
 								"fieldInstances": [
 									{ "__identifier": "IsGameEnd", "__type": "Bool", "__value": false, "__tile": null, "defUid": 505, "realEditorValues": [] },
-									{ "__identifier": "NextSavePoint", "__type": "String", "__value": null, "__tile": null, "defUid": 506, "realEditorValues": [] }
+									{ "__identifier": "NextSavePoint", "__type": "String", "__value": "Chapter2StartPoint", "__tile": null, "defUid": 506, "realEditorValues": [{
+										"id": "V_String",
+										"params": ["Chapter2StartPoint"]
+									}] }
 								],
 								"__worldX": 8064,
 								"__worldY": 5120
